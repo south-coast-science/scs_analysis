@@ -1,4 +1,1 @@
 matplotlib
-# Specifies the dependencies required to contribute to the project: testing, building, and generating documentation.
-# https://pip.pypa.io/en/stable/user_guide/#requirements-files
-
