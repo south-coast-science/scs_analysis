@@ -17,6 +17,7 @@ from scs_analysis.cmd.cmd_histo import CmdHisto
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -73,7 +74,7 @@ if __name__ == '__main__':
             print("histo_chart: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
-        print("histo_chart: " + type(ex).__name__, file=sys.stderr)
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

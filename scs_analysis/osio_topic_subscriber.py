@@ -16,6 +16,7 @@ from scs_analysis.cmd.cmd_topic_subscriber import CmdTopicSubscriber
 from scs_core.data.json import JSONify
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.finder.message_event_subscriber import MessageEventSubscriber
+from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_host.sys.host import Host
@@ -120,8 +121,8 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("osio_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
 
-    except RuntimeError as ex:
-        pass
+    except Exception as ex:
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
     finally:
         agent.close()

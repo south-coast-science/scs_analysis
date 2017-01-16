@@ -15,6 +15,9 @@ import time
 
 from scs_analysis.cmd.cmd_socket_receiver import CmdSocketReceiver
 
+from scs_core.data.json import JSONify
+from scs_core.sys.exception_report import ExceptionReport
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -161,7 +164,7 @@ if __name__ == '__main__':
             print("socket_receiver: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
-        print("socket_receiver: " + type(ex).__name__, file=sys.stderr)
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

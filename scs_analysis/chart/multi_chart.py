@@ -95,7 +95,7 @@ class MultiChart(object):
             try:
                 plt.pause(0.1)
             except RuntimeError:
-                print("MultiScope: exiting.")
+                print("MultiChart: exiting.")
                 return
 
 

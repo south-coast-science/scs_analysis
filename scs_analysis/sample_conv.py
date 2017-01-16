@@ -15,6 +15,7 @@ from scs_analysis.cmd.cmd_sample_conv import CmdSampleConv
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -116,4 +117,4 @@ if __name__ == '__main__':
             print("sample_conv: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
-        print("sample_conv: " + type(ex).__name__, file=sys.stderr)
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
