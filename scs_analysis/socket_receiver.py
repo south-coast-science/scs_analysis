@@ -72,7 +72,7 @@ class SocketReceiver(object):
     def close(self):
         try:
             self.ack()
-        except:
+        except RuntimeError:
             pass
 
         time.sleep(0.1)     # allows the client to close first?
@@ -82,7 +82,7 @@ class SocketReceiver(object):
 
             if self.__verbose:
                 print("SocketReceiver: connection closed.")
-        except:
+        except RuntimeError:
             pass
 
         self.__socket.close()

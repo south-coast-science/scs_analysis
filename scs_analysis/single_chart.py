@@ -87,5 +87,5 @@ if __name__ == '__main__':
         if scope is not None:
             try:
                 scope.hold()
-            except:
+            except RuntimeError:
                 pass

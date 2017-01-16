@@ -120,7 +120,7 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("osio_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
 
-    except Exception as ex:
+    except RuntimeError as ex:
         pass
 
     finally:

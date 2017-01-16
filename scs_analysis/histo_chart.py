@@ -89,5 +89,5 @@ if __name__ == '__main__':
                 scope.close()
                 scope.hold()
 
-            except:
+            except RuntimeError:
                 pass

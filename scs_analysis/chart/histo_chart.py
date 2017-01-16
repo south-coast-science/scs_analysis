@@ -101,7 +101,7 @@ class HistoChart(object):
         while True:
             try:
                 plt.pause(0.1)
-            except:
+            except RuntimeError:
                 print("HistoScope: exiting.")
                 return
 
