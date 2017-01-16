@@ -8,7 +8,7 @@ http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
 
 from matplotlib import use as muse
 
-from scs_core.common.histogram import Histogram
+from scs_core.data.histogram import Histogram
 muse('TKAgg')
 
 from matplotlib import pyplot as plt

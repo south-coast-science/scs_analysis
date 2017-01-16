@@ -14,8 +14,8 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_roll import CmdSampleRoll
 
-from scs_core.common.path_dict import PathDict
-from scs_core.common.json import JSONify
+from scs_core.data.path_dict import PathDict
+from scs_core.data.json import JSONify
 
 
 # TODO: should deal with list of paths
