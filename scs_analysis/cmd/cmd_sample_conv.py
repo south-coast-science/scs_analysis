@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 import optparse
 
@@ -10,12 +10,12 @@ import optparse
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleConv(object):
-    '''
+    """
     unix command line handler
-    '''
+    """
 
     def __init__(self):
-        '''stuff'''
+        """stuff"""
         self.__parser = optparse.OptionParser(usage="%prog PATH -s SENSITIVITY [-v]", version="%prog 1.0")
 
         # compulsory...

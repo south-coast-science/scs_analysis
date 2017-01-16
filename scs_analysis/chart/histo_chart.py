@@ -1,10 +1,10 @@
-'''
+"""
 Created on 9 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
-'''
+"""
 
 from matplotlib import use as muse
 
@@ -22,14 +22,14 @@ from matplotlib.ticker import MaxNLocator
 # --------------------------------------------------------------------------------------------------------------------
 
 class HistoChart(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
-    def __init__(self, batch_mode, x_min, x_max, bin_count, path, outfile = None):
-        '''
+    def __init__(self, batch_mode, x_min, x_max, bin_count, path, outfile=None):
+        """
         Constructor
-        '''
+        """
         # fields...
         self.__batch_mode = batch_mode
 

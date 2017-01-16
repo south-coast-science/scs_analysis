@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 19 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 | ./sample_error.py val.afe.sns.CO.conv
-'''
+"""
 
 import sys
 
@@ -22,16 +22,16 @@ from scs_core.data.path_dict import PathDict
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleError(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, path):
-        '''
+        """
         Constructor
-        '''
+        """
         self.__path = path
         self.__aggregate = None
 

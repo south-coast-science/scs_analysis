@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 20 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./osio_topic_subscriber.py /users/southcoastscience-dev/test/json
-'''
+"""
 
 import sys
 
@@ -26,16 +26,16 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 class OSIOTopicAgent(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, topic, verbose = False):
-        '''
+    def __init__(self, topic, verbose=False):
+        """
         Constructor
-        '''
+        """
         # fields...
         self.__topic = topic
         self.__verbose = verbose

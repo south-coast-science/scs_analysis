@@ -1,8 +1,8 @@
-'''
+"""
 Created on 10 Sep 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 import multiprocessing
 import os
@@ -12,9 +12,9 @@ import sys
 # --------------------------------------------------------------------------------------------------------------------
 
 class StdIn(multiprocessing.Process):
-    '''
+    """
     classdocs
-    '''
+    """
 
     @staticmethod
     def construct():
@@ -33,9 +33,9 @@ class StdIn(multiprocessing.Process):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, stdin_fileno, output_conn, input_conn):
-        '''
+        """
         Constructor
-        '''
+        """
         multiprocessing.Process.__init__(self)
 
         # fields...

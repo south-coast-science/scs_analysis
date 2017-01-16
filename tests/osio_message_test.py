@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 12 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
@@ -14,7 +14,7 @@ deliver-change
 
 south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
-'''
+"""
 
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.osio.data.message import Message

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321
-'''
+"""
 
 import sys
 
@@ -20,16 +20,16 @@ from scs_core.data.path_dict import PathDict
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleConv(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, path, sensitivity):
-        '''
+        """
         Constructor
-        '''
+        """
         self.__path = path
         self.__sensitivity = sensitivity
 
@@ -37,10 +37,10 @@ class SampleConv(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def datum(self, datum):
-        weV = float(datum.node(self.__path + '.weV'))
-        aeV = float(datum.node(self.__path + '.aeV'))
+        we_v = float(datum.node(self.__path + '.weV'))
+        ae_v = float(datum.node(self.__path + '.aeV'))
 
-        diff = weV - aeV
+        diff = we_v - ae_v
         conv = (diff * 1000) / float(self.__sensitivity)            # value [ppb] = raw [mV] / sensitivity [mV / ppb]
 
         target = PathDict()

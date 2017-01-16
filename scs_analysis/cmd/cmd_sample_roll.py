@@ -1,18 +1,19 @@
-'''
+"""
 Created on 14 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 import optparse
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleRoll(object):
-    '''unix command line handler'''
+    """unix command line handler"""
 
     def __init__(self):
-        '''stuff'''
+        """stuff"""
         self.__parser = optparse.OptionParser(usage="%prog PATH -c COUNT [-v]", version="%prog 1.0")
 
         # compulsory...

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 17 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 import optparse
 
@@ -10,10 +10,10 @@ import optparse
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdTopicSubscriber(object):
-    '''unix command line handler'''
+    """unix command line handler"""
 
     def __init__(self):
-        '''stuff'''
+        """stuff"""
         self.__parser = optparse.OptionParser(usage="%prog TOPIC [-v]", version="%prog 1.0")
 
         # optional...

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./socket_receiver.py | ./sample_roll.py val.sht.tmp -c 4
-'''
+"""
 
 
 import sys
@@ -23,16 +23,16 @@ from scs_core.data.json import JSONify
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleRoll(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, count, path):
-        '''
+        """
         Constructor
-        '''
+        """
         self.__count = count
         self.__path = path
 

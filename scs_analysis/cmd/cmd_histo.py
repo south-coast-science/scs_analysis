@@ -1,8 +1,8 @@
-'''
+"""
 Created on 4 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 import optparse
 
@@ -10,12 +10,12 @@ import optparse
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdHisto(object):
-    '''
+    """
     unix command line handler
-    '''
+    """
 
     def __init__(self):
-        '''stuff'''
+        """stuff"""
         self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BINCOUNT] [-o FILENAME] [-e] [-v]", version="%prog 1.0")
 
         # optional...

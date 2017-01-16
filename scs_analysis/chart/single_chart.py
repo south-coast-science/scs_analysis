@@ -1,8 +1,8 @@
-'''
+"""
 Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-'''
+"""
 
 from matplotlib import use as muse
 muse('TKAgg')
@@ -18,14 +18,14 @@ from matplotlib import pyplot as plt
 # --------------------------------------------------------------------------------------------------------------------
 
 class SingleChart(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     def __init__(self, batch_mode, x_count, y_min, y_max, is_relative, path):
-        '''
+        """
         Constructor
-        '''
+        """
         # fields...
         self.__batch_mode = batch_mode
 

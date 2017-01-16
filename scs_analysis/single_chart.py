@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
-'''
+"""
 
 import sys
 import warnings

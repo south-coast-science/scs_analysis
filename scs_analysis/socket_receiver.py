@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 18 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
 ./socket_receiver.py -v
-'''
+"""
 
 import socket
 import sys
@@ -19,9 +19,9 @@ from scs_analysis.cmd.cmd_socket_receiver import CmdSocketReceiver
 # --------------------------------------------------------------------------------------------------------------------
 
 class SocketReceiver(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     __BUFFER_SIZE =     1024        # bytes
     __BACKLOG =         5
@@ -31,10 +31,10 @@ class SocketReceiver(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, port, verbose = False):
-        '''
+    def __init__(self, port, verbose=False):
+        """
         Constructor
-        '''
+        """
         # fields...
         self.__port = port
         self.__verbose = verbose
