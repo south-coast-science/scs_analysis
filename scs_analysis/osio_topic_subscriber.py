@@ -11,15 +11,14 @@ command line example:
 
 import sys
 
-from scs_host.sys.host import Host
-
-from scs_host.client.http_streaming_client import HTTPStreamingClient
-
 from scs_analysis.cmd.cmd_topic_subscriber import CmdTopicSubscriber
 
 from scs_core.common.json import JSONify
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.finder.message_event_subscriber import MessageEventSubscriber
+
+from scs_host.client.http_streaming_client import HTTPStreamingClient
+from scs_host.sys.host import Host
 
 
 # TODO: sort out exceptions on close

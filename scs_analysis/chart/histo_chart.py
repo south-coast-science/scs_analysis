@@ -6,9 +6,9 @@ Created on 9 Aug 2016
 http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
 '''
 
-from scs_core.common.histogram import Histogram
-
 from matplotlib import use as muse
+
+from scs_core.common.histogram import Histogram
 muse('TKAgg')
 
 from matplotlib import pyplot as plt

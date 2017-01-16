@@ -18,11 +18,11 @@ south-coast-science-dev
 
 import sys
 
-from scs_host.sys.host import Host
-
-from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.finder.message_event_subscriber import MessageEventSubscriber
+
+from scs_host.client.http_streaming_client import HTTPStreamingClient
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------

@@ -16,9 +16,9 @@ south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
 '''
 
-from scs_host.client.http_client import HTTPClient
-
 from scs_core.osio.data.topic import Topic
+
+from scs_host.client.http_client import HTTPClient
 
 
 # --------------------------------------------------------------------------------------------------------------------

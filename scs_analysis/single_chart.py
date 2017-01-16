@@ -13,11 +13,10 @@ import sys
 import warnings
 
 from scs_analysis.chart.single_chart import SingleChart
-
 from scs_analysis.cmd.cmd_single_chart import CmdSingleChart
 
-from scs_core.common.path_dict import PathDict
 from scs_core.common.json import JSONify
+from scs_core.common.path_dict import PathDict
 
 
 # --------------------------------------------------------------------------------------------------------------------

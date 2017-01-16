@@ -13,13 +13,12 @@ import sys
 import warnings
 
 from scs_analysis.chart.multi_chart import MultiChart
-
 from scs_analysis.cmd.cmd_multi_chart import CmdMultiChart
 
-from scs_core.common.path_dict import PathDict
 from scs_core.common.json import JSONify
+from scs_core.common.path_dict import PathDict
 
- 
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

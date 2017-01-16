@@ -11,7 +11,6 @@ import time
 from scs_analysis.cmd.std_in import StdIn
 
 
-
 # --------------------------------------------------------------------------------------------------------------------
 
 conn = StdIn.construct()
