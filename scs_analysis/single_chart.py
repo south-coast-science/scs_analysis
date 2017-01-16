@@ -9,6 +9,7 @@ command line example:
 ./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
 """
 
+import tkinter
 import sys
 import warnings
 
@@ -88,5 +89,6 @@ if __name__ == '__main__':
         if scope is not None:
             try:
                 scope.hold()
-            except RuntimeError:
+
+            except tkinter.TclError:
                 pass

@@ -9,6 +9,7 @@ command line example:
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
 """
 
+import tkinter
 import sys
 import warnings
 
@@ -88,5 +89,6 @@ if __name__ == '__main__':
         if scope is not None:
             try:
                 scope.hold()
-            except RuntimeError:
+
+            except tkinter.TclError:
                 pass
