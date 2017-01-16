@@ -9,6 +9,7 @@ command line example:
 ./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 | ./sample_error.py val.afe.sns.CO.conv | ./multi_chart.py val.afe.sns.CO.conv.src val.afe.sns.CO.conv.agr -e | ./histo_chart.py val.afe.sns.CO.conv.err -x -10 10 -e -o err.csv
 """
 
+import tkinter
 import sys
 import warnings
 
@@ -90,5 +91,5 @@ if __name__ == '__main__':
                 scope.close()
                 scope.hold()
 
-            except RuntimeError:
+            except tkinter.TclError:
                 pass
