@@ -44,7 +44,7 @@ subscriber = None
 
 try:
     streaming_client = HTTPStreamingClient()
-    auth = APIAuth.load(Host)
+    auth = APIAuth.load_from_host(Host)
 
     subscriber = MessageEventSubscriber(streaming_client)
     subscriber.subscribe(listener, auth, topic)
