@@ -33,6 +33,16 @@ class OSIOTopicAgent(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    @classmethod
+    def __local_listener(cls, event):
+        datum = JSONify.dumps(event.message)
+
+        print(datum)
+        sys.stdout.flush()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __init__(self, topic, verbose=False):
         """
         Constructor
@@ -56,15 +66,6 @@ class OSIOTopicAgent(object):
 
     def close(self):
         self.__subscriber.close()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __local_listener(self, event):
-        datum = JSONify.dumps(event.message)
-
-        print(datum)
-        sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -117,12 +118,13 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
             print("osio_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+        if not ex.__class__.__name__ == "error":                                    # TODO: needs cleaner handling
+            print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
     finally:
         agent.close()
