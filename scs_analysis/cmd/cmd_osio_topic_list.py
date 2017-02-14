@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTopicList(object):
+class CmdOSIOTopicList(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -46,4 +46,4 @@ class CmdTopicList(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicList:{path:%s, verbose:%s, args:%s}" % (self.path, self.verbose, self.args)
+        return "CmdOSIOTopicList:{path:%s, verbose:%s, args:%s}" % (self.path, self.verbose, self.args)

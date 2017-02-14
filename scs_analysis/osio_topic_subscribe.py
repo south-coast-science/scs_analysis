@@ -6,12 +6,12 @@ Created on 20 Nov 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/osio_topic_subscriber.py /users/southcoastscience-dev/test/gases
+./scs_analysis/osio_topic_subscribe.py /users/southcoastscience-dev/test/gases
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_topic_subscriber import CmdTopicSubscriber
+from scs_analysis.cmd.cmd_osio_topic_subscribe import CmdOSIOTopicSubscribe
 
 from scs_core.data.json import JSONify
 from scs_core.osio.client.api_auth import APIAuth
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdTopicSubscriber()
+    cmd = CmdOSIOTopicSubscribe()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
+            print("osio_topic_subscribe: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         if not ex.__class__.__name__ == "error":                                    # TODO: needs cleaner handling

@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTopicSubscriber(object):
+class CmdOSIOTopicSubscribe(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -56,5 +56,5 @@ class CmdTopicSubscriber(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicSubscriber:{topic:%s, verbose:%s, args:%s}" % \
+        return "CmdOSIOTopicSubscribe:{topic:%s, verbose:%s, args:%s}" % \
                     (self.topic, self.verbose, self.args)

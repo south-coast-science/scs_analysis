@@ -11,7 +11,7 @@ command line example:
 
 import sys
 
-from scs_analysis.cmd.cmd_topic_list import CmdTopicList
+from scs_analysis.cmd.cmd_osio_topic_list import CmdOSIOTopicList
 
 from scs_core.data.json import JSONify
 from scs_core.osio.finder.topic_finder import TopicFinder
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdTopicList()
+    cmd = CmdOSIOTopicList()
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
