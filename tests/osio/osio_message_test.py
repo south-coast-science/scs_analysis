@@ -17,7 +17,7 @@ south-coast-science-dev
 """
 
 from scs_core.data.localized_datetime import LocalizedDatetime
-from scs_core.osio.finder.message_finder import MessageFinder
+from scs_core.osio.manager.message_manager import MessageManager
 
 from scs_host.client.http_client import HTTPClient
 
@@ -47,12 +47,12 @@ print("-")
 http_client = HTTPClient()
 
 
-finder = MessageFinder(http_client, api_key)
-print(finder)
+manager = MessageManager(http_client, api_key)
+print(manager)
 print("=")
 
 
-messages = finder.find_for_topic(topic, start_date, end_date)
+messages = manager.find_for_topic(topic, start_date, end_date)
 
 print("got:%d" % (len(messages)))
 print("-")

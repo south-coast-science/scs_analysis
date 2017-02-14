@@ -16,7 +16,7 @@ south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
 """
 
-from scs_core.osio.finder.topic_finder import TopicFinder
+from scs_core.osio.manager.topic_manager import TopicManager
 
 from scs_host.client.http_client import HTTPClient
 
@@ -31,11 +31,11 @@ http_client = HTTPClient()
 
 # --------------------------------------------------------------------------------------------------------------------
 
-finder = TopicFinder(http_client, api_key)
-print(finder)
+manager = TopicManager(http_client, api_key)
+print(manager)
 print("=")
 
-topics = finder.find_for_org(org_id)
+topics = manager.find_for_org(org_id)
 
 for topic in topics:
     print(topic)

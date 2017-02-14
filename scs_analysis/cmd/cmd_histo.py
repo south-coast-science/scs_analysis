@@ -16,7 +16,8 @@ class CmdHisto(object):
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BINCOUNT] [-o FILENAME] [-e] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BINCOUNT] [-o FILENAME] [-e] [-v]",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,

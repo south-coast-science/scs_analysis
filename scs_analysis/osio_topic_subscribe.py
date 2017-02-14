@@ -15,7 +15,7 @@ from scs_analysis.cmd.cmd_osio_topic_subscribe import CmdOSIOTopicSubscribe
 
 from scs_core.data.json import JSONify
 from scs_core.osio.client.api_auth import APIAuth
-from scs_core.osio.finder.message_event_subscriber import MessageEventSubscriber
+from scs_core.osio.manager.message_event_subscriber import MessageEventSubscriber
 from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.client.http_streaming_client import HTTPStreamingClient

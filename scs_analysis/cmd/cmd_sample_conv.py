@@ -19,10 +19,12 @@ class CmdSampleConv(object):
         self.__parser = optparse.OptionParser(usage="%prog PATH -s SENSITIVITY [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--sensitivity", "-s", type="float", nargs=1, action="store", dest="sensitivity", help="sensitivity (mV / ppb)")
+        self.__parser.add_option("--sensitivity", "-s", type="float", nargs=1, action="store", dest="sensitivity",
+                                 help="sensitivity (mV / ppb)")
 
         # optional...
-        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False, help="report narrative to stderr")
+        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
+                                 help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
 

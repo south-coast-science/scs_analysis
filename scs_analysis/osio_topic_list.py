@@ -14,7 +14,7 @@ import sys
 from scs_analysis.cmd.cmd_osio_topic_list import CmdOSIOTopicList
 
 from scs_core.data.json import JSONify
-from scs_core.osio.finder.topic_finder import TopicFinder
+from scs_core.osio.manager.topic_manager import TopicManager
 from scs_core.osio.client.api_auth import APIAuth
 
 from scs_host.client.http_client import HTTPClient
@@ -50,9 +50,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        finder = TopicFinder(http_client, auth.api_key)
+        manager = TopicManager(http_client, auth.api_key)
 
-        topics = finder.find_for_org(auth.org_id)
+        topics = manager.find_for_org(auth.org_id)
 
         for topic in topics:
             if topic.path.startswith(cmd.path):

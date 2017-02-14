@@ -16,7 +16,7 @@ south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
 """
 
-from scs_core.osio.finder.schema_finder import SchemaFinder
+from scs_core.osio.manager.schema_manager import SchemaManager
 
 from scs_host.client.http_client import HTTPClient
 
@@ -31,7 +31,7 @@ http_client = HTTPClient()
 
 # --------------------------------------------------------------------------------------------------------------------
 
-finder = SchemaFinder(http_client, api_key)
+finder = SchemaManager(http_client, api_key)
 print(finder)
 print("=")
 
