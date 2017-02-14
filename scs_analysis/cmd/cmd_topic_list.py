@@ -14,11 +14,11 @@ class CmdTopicList(object):
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog ORG_ID [-p PATH] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p PATH] [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--path", "-p", type="string", nargs=1, action="store", default="/", dest="path",
-                                 help="partial path")
+                                 help="partial path (default is /)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -27,20 +27,6 @@ class CmdTopicList(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    def is_valid(self):
-        if self.org_id is None:
-            return False
-
-        return True
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def org_id(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
 
     @property
     def path(self):
@@ -59,10 +45,5 @@ class CmdTopicList(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def print_help(self, file):
-        self.__parser.print_help(file)
-
-
     def __str__(self, *args, **kwargs):
-        return "CmdTopicList:{org_id:%s, path:%s, verbose:%s, args:%s}" % \
-                    (self.org_id, self.path, self.verbose, self.args)
+        return "CmdTopicList:{path:%s, verbose:%s, args:%s}" % (self.path, self.verbose, self.args)

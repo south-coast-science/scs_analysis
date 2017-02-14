@@ -6,7 +6,7 @@ Created on 14 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/osio_topic_list.py south-coast-science-dev -p /orgs/south-coast-science-dev/uk -v
+./scs_analysis/osio_topic_list.py -p /orgs/south-coast-science-dev/uk -v
 """
 
 import sys
@@ -32,10 +32,6 @@ if __name__ == '__main__':
 
     cmd = CmdTopicList()
 
-    if not cmd.is_valid():
-        cmd.print_help(sys.stderr)
-        exit()
-
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
@@ -56,7 +52,7 @@ if __name__ == '__main__':
 
         finder = TopicFinder(http_client, auth.api_key)
 
-        topics = finder.find_for_org(cmd.org_id)
+        topics = finder.find_for_org(auth.org_id)
 
         for topic in topics:
             if topic.path.startswith(cmd.path):
