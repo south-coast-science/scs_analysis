@@ -14,16 +14,24 @@ class CmdMultiChart(object):
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog PATH1 .. PATHn [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH1 .. PATHn [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v]",
+                                              version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False, help="wait for all data before displaying chart")
+        self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
+                                 help="wait for all data before displaying chart")
 
-        self.__parser.add_option("--x", "-x", type="int", nargs=1, action="store", default=600, dest="x", help="number of x points (default 600)")
-        self.__parser.add_option("--y", "-y", type="float", nargs=2, action="store", default=(-10.0, 10.0), dest="y", help="set y-axis to min / max (default -10, 10)")
+        self.__parser.add_option("--x", "-x", type="int", nargs=1, action="store", default=600, dest="x",
+                                 help="number of x points (default 600)")
 
-        self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False, help="report samples to stdout")
-        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False, help="report narrative to stderr")
+        self.__parser.add_option("--y", "-y", type="float", nargs=2, action="store", default=(-10.0, 10.0), dest="y",
+                                 help="set y-axis to min / max (default -10, 10)")
+
+        self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
+                                 help="report samples to stdout")
+
+        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
+                                 help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
 

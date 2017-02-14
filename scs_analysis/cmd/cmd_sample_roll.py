@@ -17,10 +17,12 @@ class CmdSampleRoll(object):
         self.__parser = optparse.OptionParser(usage="%prog PATH -c COUNT [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--count", "-c", type="int", nargs=1, action="store", dest="count", help="number of points to average")
+        self.__parser.add_option("--count", "-c", type="int", nargs=1, action="store", dest="count",
+                                 help="number of points to average")
 
         # optional...
-        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False, help="report narrative to stderr")
+        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
+                                 help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
 

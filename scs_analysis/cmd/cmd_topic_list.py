@@ -1,5 +1,5 @@
 """
-Created on 17 Nov 2016
+Created on 14 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,14 +9,17 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTopicSubscriber(object):
+class CmdTopicList(object):
     """unix command line handler"""
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog TOPIC [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog ORG_ID [-p PATH] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--path", "-p", type="string", nargs=1, action="store", default="/", dest="path",
+                                 help="partial path")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -26,7 +29,7 @@ class CmdTopicSubscriber(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.topic is None:
+        if self.org_id is None:
             return False
 
         return True
@@ -35,8 +38,13 @@ class CmdTopicSubscriber(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def topic(self):
+    def org_id(self):
         return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
+    def path(self):
+        return self.__opts.path
 
 
     @property
@@ -56,5 +64,5 @@ class CmdTopicSubscriber(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicSubscriber:{topic:%s, verbose:%s, args:%s}" % \
-                    (self.topic, self.verbose, self.args)
+        return "CmdTopicList:{org_id:%s, path:%s, verbose:%s, args:%s}" % \
+                    (self.org_id, self.path, self.verbose, self.args)
