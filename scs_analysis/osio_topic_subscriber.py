@@ -6,7 +6,7 @@ Created on 20 Nov 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./osio_topic_subscriber.py /users/southcoastscience-dev/test/json
+./osio_topic_subscriber.py /users/southcoastscience-dev/test/gases
 """
 
 import sys
