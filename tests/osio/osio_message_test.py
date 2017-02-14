@@ -17,7 +17,7 @@ south-coast-science-dev
 """
 
 from scs_core.data.localized_datetime import LocalizedDatetime
-from scs_core.osio.data.message import Message
+from scs_core.osio.finder.message_finder import MessageFinder
 
 from scs_host.client.http_client import HTTPClient
 
@@ -30,11 +30,11 @@ print(org_id)
 api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 print(api_key)
 
-topic = "/users/southcoastscience-dev/test/json"
+topic = "/users/southcoastscience-dev/test/gases"
 print(topic)
 
 end_date = LocalizedDatetime.now()
-start_date = LocalizedDatetime.construct_from_timestamp(end_date.timestamp() - 100)
+start_date = LocalizedDatetime.construct_from_timestamp(end_date.timestamp() - 60)
 
 print("start: %s" % start_date)
 print("end: %s" % end_date)
@@ -46,7 +46,13 @@ print("-")
 
 http_client = HTTPClient()
 
-messages = Message.find_for_topic(http_client, api_key, topic, start_date, end_date)
+
+finder = MessageFinder(http_client, api_key)
+print(finder)
+print("=")
+
+
+messages = finder.find_for_topic(topic, start_date, end_date)
 
 print("got:%d" % (len(messages)))
 print("-")

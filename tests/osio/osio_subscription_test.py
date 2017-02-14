@@ -18,6 +18,7 @@ south-coast-science-dev
 
 from scs_core.osio.data.message import Message
 
+from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_host.client.http_client import HTTPClient
 
 
@@ -29,7 +30,7 @@ print(org_id)
 api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 print(api_key)
 
-topic = "/users/southcoastscience-dev/test/json"
+topic = "/users/southcoastscience-dev/test/gases"
 print(topic)
 
 print("-")
@@ -37,8 +38,10 @@ print("-")
 
 # --------------------------------------------------------------------------------------------------------------------
 
-http_client = HTTPClient()
+http_client = HTTPStreamingClient()
 
+# self.__subscriber = MessageEventSubscriber(client)
+# self.__subscriber.subscribe(self.__local_listener, auth, self.__topic)
 
 for message in Message.subscribe_to_topic(http_client, api_key, topic):
     print(message)

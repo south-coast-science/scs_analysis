@@ -14,6 +14,8 @@ deliver-change
 
 south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
+
+WARNING: fails on [Payload too big for realtime feed] message
 """
 
 import sys
@@ -27,7 +29,7 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-topic = "/users/southcoastscience-dev/test/json"
+topic = "/users/southcoastscience-dev/test/gases"
 print(topic)
 
 print("-")
@@ -36,9 +38,11 @@ print("-")
 # --------------------------------------------------------------------------------------------------------------------
 
 def listener(event):
-    print("event:%s" % event)
+    print("listener: %s" % event)
     print("-")
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 subscriber = None
 
@@ -67,4 +71,3 @@ except Exception as ex:
 finally:
     if subscriber:
         subscriber.close()
-

@@ -32,6 +32,8 @@ http_client = HTTPClient()
 # --------------------------------------------------------------------------------------------------------------------
 
 finder = SchemaFinder(http_client, api_key)
+print(finder)
+print("=")
 
 schemas = finder.find_all()
 
