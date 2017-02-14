@@ -6,7 +6,7 @@ Created on 14 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./osio_topic_list.py south-coast-science-dev -v
+./scs_analysis/osio_topic_list.py south-coast-science-dev -p /orgs/south-coast-science-dev/uk -v
 """
 
 import sys

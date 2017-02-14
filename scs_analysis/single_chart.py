@@ -6,7 +6,7 @@ Created on 21 Jul 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
+./scs_analysis/socket_receiver.py | ./scs_analysis/single_chart.py -r val.afe.sns.CO.cnc
 """
 
 import tkinter

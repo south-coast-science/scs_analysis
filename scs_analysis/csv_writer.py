@@ -6,7 +6,7 @@ Created on 19 Aug 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./csv_writer.py temp.csv -e
+./scs_analysis/socket_receiver.py | ./scs_analysis/csv_writer.py temp.csv -e
 """
 
 import sys

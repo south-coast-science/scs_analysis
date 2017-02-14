@@ -6,7 +6,7 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321
+./scs_analysis/socket_receiver.py | ./scs_analysis/sample_conv.py val.afe.sns.CO -s 0.321
 """
 
 import sys
