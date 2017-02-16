@@ -31,11 +31,11 @@ http_client = HTTPClient()
 
 # --------------------------------------------------------------------------------------------------------------------
 
-finder = SchemaManager(http_client, api_key)
-print(finder)
+manager = SchemaManager(http_client, api_key)
+print(manager)
 print("=")
 
-schemas = finder.find_all()
+schemas = manager.find_all()
 
 for schema in schemas:
     print(schema)
