@@ -6,7 +6,7 @@ Created on 14 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/osio_topic_list.py -p /orgs/south-coast-science-dev/uk -v
+./scs_mfr/osio_topic_list.py -p /orgs/south-coast-science-dev/uk -v
 """
 
 import sys
@@ -35,33 +35,24 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
-    try:
-        # ------------------------------------------------------------------------------------------------------------
-        # resource...
+    # ----------------------------------------------------------------------------------------------------------------
+    # resource...
 
-        http_client = HTTPClient()
+    http_client = HTTPClient()
 
-        auth = APIAuth.load_from_host(Host)
+    auth = APIAuth.load_from_host(Host)
 
-        if cmd.verbose:
-            print(auth, file=sys.stderr)
-
-
-        # ------------------------------------------------------------------------------------------------------------
-        # run...
-
-        manager = TopicManager(http_client, auth.api_key)
-
-        topics = manager.find_for_org(auth.org_id)
-
-        for topic in topics:
-            if topic.path.startswith(cmd.path):
-                print(JSONify.dumps(topic))
+    if cmd.verbose:
+        print(auth, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # end...
+    # run...
 
-    except KeyboardInterrupt:
-        if cmd.verbose:
-            print("osio_topic_list: KeyboardInterrupt", file=sys.stderr)
+    manager = TopicManager(http_client, auth.api_key)
+
+    topics = manager.find_for_org(auth.org_id)
+
+    for topic in topics:
+        if topic.path.startswith(cmd.path):
+            print(JSONify.dumps(topic))
