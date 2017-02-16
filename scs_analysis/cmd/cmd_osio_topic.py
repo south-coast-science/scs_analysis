@@ -9,12 +9,12 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOTopicSubscribe(object):
+class CmdOSIOTopic(object):
     """unix command line handler"""
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog TOPIC [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -26,7 +26,7 @@ class CmdOSIOTopicSubscribe(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.topic is None:
+        if self.path is None:
             return False
 
         return True
@@ -35,7 +35,7 @@ class CmdOSIOTopicSubscribe(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def topic(self):
+    def path(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
@@ -56,5 +56,5 @@ class CmdOSIOTopicSubscribe(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicSubscribe:{topic:%s, verbose:%s, args:%s}" % \
-                    (self.topic, self.verbose, self.args)
+        return "CmdOSIOTopic:{path:%s, verbose:%s, args:%s}" % \
+                    (self.path, self.verbose, self.args)

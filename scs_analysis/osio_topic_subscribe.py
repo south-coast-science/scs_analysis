@@ -11,7 +11,7 @@ command line example:
 
 import sys
 
-from scs_analysis.cmd.cmd_osio_topic_subscribe import CmdOSIOTopicSubscribe
+from scs_analysis.cmd.cmd_osio_topic import CmdOSIOTopic
 
 from scs_core.data.json import JSONify
 from scs_core.osio.client.api_auth import APIAuth
@@ -43,12 +43,12 @@ class OSIOTopicAgent(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, topic, verbose=False):
+    def __init__(self, path, verbose=False):
         """
         Constructor
         """
         # fields...
-        self.__topic = topic
+        self.__path = path
         self.__verbose = verbose
 
         self.__subscriber = None
@@ -61,7 +61,7 @@ class OSIOTopicAgent(object):
         auth = APIAuth.load_from_host(Host)
 
         self.__subscriber = MessageEventSubscriber(client)
-        self.__subscriber.subscribe(self.__local_listener, auth, self.__topic)
+        self.__subscriber.subscribe(self.__local_listener, auth, self.__path)
 
 
     def close(self):
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOTopicSubscribe()
+    cmd = CmdOSIOTopic()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resource...
 
-        agent = OSIOTopicAgent(cmd.topic, cmd.verbose)
+        agent = OSIOTopicAgent(cmd.path, cmd.verbose)
 
         if cmd.verbose:
             print(agent, file=sys.stderr)
