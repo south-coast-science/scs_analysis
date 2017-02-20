@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Created on 14 Feb 2017
+Created on 20 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -13,13 +13,7 @@ import sys
 
 from scs_core.data.localized_datetime import LocalizedDatetime
 
-from scs_core.data.json import JSONify
-from scs_core.osio.manager.topic_manager import TopicManager
-from scs_core.osio.client.api_auth import APIAuth
-
-from scs_host.client.http_client import HTTPClient
-from scs_host.sys.host import Host
-
+from scs_analysis.cmd.cmd_localised_datetime import CmdLocalizedDatetime
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -28,13 +22,16 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    # cmd = CmdOSIOTopicList()
-    #
-    # if cmd.verbose:
-    #     print(cmd, file=sys.stderr)
+    cmd = CmdLocalizedDatetime()
+
+    if cmd.verbose:
+        print(cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # run...
 
-    pass
+    now = LocalizedDatetime.now()
+    offset = now.timedelta(hours=cmd.hours, minutes=cmd.minutes, seconds=cmd.seconds)
+
+    print(offset.as_iso8601())
