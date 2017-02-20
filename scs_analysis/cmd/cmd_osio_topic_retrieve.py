@@ -16,7 +16,8 @@ class CmdOSIOTopicRetrieve(object):
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-v]",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
