@@ -16,13 +16,15 @@ class CmdOSIOTopicRetrieve(object):
 
     def __init__(self):
         """stuff"""
-        self.__parser = optparse.OptionParser(usage="%prog PATH -s START [-e END] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-v]", version="%prog 1.0")
 
-        # compulsory...
+        # optional...
+        self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
+                                 help="starting minutes ago")
+
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
                                  help="localised datetime start")
 
-        # optional...
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="localised datetime end")
 
@@ -35,10 +37,10 @@ class CmdOSIOTopicRetrieve(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None or self.__opts.start is None:
+        if self.path is None or (self.__opts.start is None and self.minutes is None):
             return False
 
-        if LocalizedDatetime.construct_from_iso8601(self.__opts.start) is None:
+        if self.__opts.start is not None and LocalizedDatetime.construct_from_iso8601(self.__opts.start) is None:
             return False
 
         if self.__opts.end is not None and LocalizedDatetime.construct_from_iso8601(self.__opts.end) is None:
@@ -49,14 +51,25 @@ class CmdOSIOTopicRetrieve(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def use_offset(self):
+        return self.minutes is not None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     @property
     def path(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
+    def minutes(self):
+        return self.__opts.minutes
+
+
+    @property
     def start(self):
-        return LocalizedDatetime.construct_from_iso8601(self.__opts.start)
+        return LocalizedDatetime.construct_from_iso8601(self.__opts.start) if self.__opts.start else None
 
 
     @property
@@ -81,5 +94,5 @@ class CmdOSIOTopicRetrieve(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicRetrieve:{path:%s, start:%s, end:%s, verbose:%s, args:%s}" % \
-                    (self.path, self.start, self.end, self.verbose, self.args)
+        return "CmdOSIOTopicRetrieve:{path:%s, minutes:%s, start:%s, end:%s, verbose:%s, args:%s}" % \
+                    (self.path, self.minutes, self.start, self.end, self.verbose, self.args)

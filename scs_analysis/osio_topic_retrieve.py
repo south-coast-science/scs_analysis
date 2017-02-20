@@ -63,9 +63,14 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        end = LocalizedDatetime.now() if cmd.end is None else cmd.end
+        if cmd.use_offset():
+            end = LocalizedDatetime.now()
+            start = end.timedelta(minutes=-cmd.minutes)
+        else:
+            end = LocalizedDatetime.now() if cmd.end is None else cmd.end
+            start = cmd.start
 
-        messages = manager.find_for_topic(cmd.path, cmd.start, end)
+        messages = manager.find_for_topic(cmd.path, start, end)
 
         for message in messages:
             print(JSONify.dumps(message.payload.payload))
@@ -73,10 +78,6 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
-
-    except KeyboardInterrupt as ex:
-        if cmd.verbose:
-            print("osio_topic_retrieve: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
