@@ -37,20 +37,24 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # resource...
 
-    http_client = HTTPClient()
+    api_auth = APIAuth.load_from_host(Host)
 
-    auth = APIAuth.load_from_host(Host)
+    if api_auth is None:
+        print("APIAuth not available.")
+        exit()
 
     if cmd.verbose:
-        print(auth, file=sys.stderr)
+        print(api_auth, file=sys.stderr)
+
+    http_client = HTTPClient()
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # run...
 
-    manager = TopicManager(http_client, auth.api_key)
+    manager = TopicManager(http_client, api_auth.api_key)
 
-    topics = manager.find_for_org(auth.org_id)
+    topics = manager.find_for_org(api_auth.org_id)
 
     for topic in topics:
         if topic.path.startswith(cmd.path):

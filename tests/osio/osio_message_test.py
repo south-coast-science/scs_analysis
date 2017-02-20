@@ -9,9 +9,6 @@ examples:
 {"msg": null, "err": {"code": "UNKNOWN_CMD", "value": "hello"}}
 {"msg": {"op": "scs-rpi-006", "spec": "scs-rpi-006"}, "err": null}
 
-deliver-change
-870725f3-e692-4538-aa81-bfa8b51d44e7
-
 south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
 """
@@ -30,7 +27,7 @@ print(org_id)
 api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 print(api_key)
 
-topic = "/users/southcoastscience-dev/test/gases"
+topic = "/orgs/south-coast-science-dev/exhibition/loc/1/climate"
 print(topic)
 
 end_date = LocalizedDatetime.now()
