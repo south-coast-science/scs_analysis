@@ -76,6 +76,10 @@ if __name__ == '__main__':
             print(JSONify.dumps(message.payload.payload))
 
 
+        if cmd.verbose:
+            print("message count: %d" % len(messages), file=sys.stderr)
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
