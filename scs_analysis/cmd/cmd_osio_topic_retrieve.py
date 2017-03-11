@@ -9,6 +9,8 @@ import optparse
 from scs_core.data.localized_datetime import LocalizedDatetime
 
 
+# TODO: end datetime should be optional - defults to now on OSIO - check the whole system for this
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdOSIOTopicRetrieve(object):
