@@ -13,7 +13,9 @@ class CmdSingleChart(object):
     """unix command line handler"""
 
     def __init__(self):
-        """stuff"""
+        """
+        Constructor
+        """
         self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v]",
                                               version="%prog 1.0")
 

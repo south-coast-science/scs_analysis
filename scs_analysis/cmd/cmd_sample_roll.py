@@ -13,7 +13,9 @@ class CmdSampleRoll(object):
     """unix command line handler"""
 
     def __init__(self):
-        """stuff"""
+        """
+        Constructor
+        """
         self.__parser = optparse.OptionParser(usage="%prog PATH -c COUNT [-v]", version="%prog 1.0")
 
         # compulsory...
