@@ -5,4 +5,4 @@ Required libraries:
 
 * Third party: matplotlib, python3-tk
 * SCS root: scs_core
-* SCS host: scs_host_rpi or scs_host_mac
+* SCS host: scs_host_posix or scs_host_rpi
