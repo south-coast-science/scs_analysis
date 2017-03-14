@@ -49,7 +49,7 @@ if __name__ == '__main__':
         api_auth = APIAuth.load_from_host(Host)
 
         if api_auth is None:
-            print("APIAuth not available.")
+            print("APIAuth not available.", file=sys.stderr)
             exit()
 
         if cmd.verbose:
