@@ -15,7 +15,9 @@ class CmdSampleConv(object):
     """
 
     def __init__(self):
-        """stuff"""
+        """
+        Constructor
+        """
         self.__parser = optparse.OptionParser(usage="%prog PATH -s SENSITIVITY [-v]", version="%prog 1.0")
 
         # compulsory...

@@ -13,7 +13,9 @@ class CmdLocalizedDatetime(object):
     """unix command line handler"""
 
     def __init__(self):
-        """stuff"""
+        """
+        Constructor
+        """
         self.__parser = optparse.OptionParser(usage="%prog [-o HOURS] [-m MINUTES] [-s SECONDS]", version="%prog 1.0")
 
         # optional...
