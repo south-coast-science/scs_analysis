@@ -18,7 +18,7 @@ class CmdOSIOTopicRetrieve(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-w] [-v]",
                                               version="%prog 1.0")
 
         # optional...
@@ -30,6 +30,9 @@ class CmdOSIOTopicRetrieve(object):
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="localised datetime end")
+
+        self.__parser.add_option("--wrapping", "-w", action="store_true", dest="include_wrapping", default=False,
+                                 help="include message wrapper")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -81,6 +84,11 @@ class CmdOSIOTopicRetrieve(object):
 
 
     @property
+    def include_wrapping(self):
+        return self.__opts.include_wrapping
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -97,5 +105,7 @@ class CmdOSIOTopicRetrieve(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicRetrieve:{path:%s, minutes:%s, start:%s, end:%s, verbose:%s, args:%s}" % \
-                    (self.path, self.minutes, self.start, self.end, self.verbose, self.args)
+        return "CmdOSIOTopicRetrieve:{path:%s, minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
+               "verbose:%s, args:%s}" % \
+                    (self.path, self.minutes, self.start, self.end, self.include_wrapping,
+                     self.verbose, self.args)

@@ -78,7 +78,7 @@ class OSIOTopicAgent(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOTopicAgent:{verbose:%s}" % self.verbose
+        return "OSIOTopicAgent:{path:%s, verbose:%s}" % (self.__path, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------

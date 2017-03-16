@@ -73,7 +73,8 @@ if __name__ == '__main__':
         messages = manager.find_for_topic(cmd.path, start, end)
 
         for message in messages:
-            print(JSONify.dumps(message.payload.payload))
+            document = message if cmd.include_wrapping else message.payload.payload
+            print(JSONify.dumps(document))
 
 
         if cmd.verbose:
