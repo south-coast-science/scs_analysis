@@ -21,6 +21,10 @@ class CmdSampleInterval(object):
         self.__parser = optparse.OptionParser(usage="%prog PATH [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
+                                 help="precision (default 3 decimal places)")
+
+        # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -44,6 +48,11 @@ class CmdSampleInterval(object):
 
 
     @property
+    def precision(self):
+        return self.__opts.precision
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -60,4 +69,5 @@ class CmdSampleInterval(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleInterval:{path:%s, verbose:%s, args:%s}" % (self.path, self.verbose, self.args)
+        return "CmdSampleInterval:{path:%s, precision:%s, verbose:%s, args:%s}" % \
+               (self.path, self.precision, self.verbose, self.args)

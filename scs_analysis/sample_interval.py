@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
             time = LocalizedDatetime.construct_from_iso8601(sample_datum.node(cmd.path))
 
-            interval = Interval.construct(prev_time, time)
+            interval = Interval.construct(prev_time, time, cmd.precision)
             print(JSONify.dumps(interval))
 
             prev_time = time
