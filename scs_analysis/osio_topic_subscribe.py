@@ -22,6 +22,7 @@ from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_host.sys.host import Host
 
 
+# TODO: enable multiple topics?
 # TODO: sort out exceptions on close
 
 # --------------------------------------------------------------------------------------------------------------------
