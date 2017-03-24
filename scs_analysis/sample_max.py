@@ -46,7 +46,8 @@ if __name__ == '__main__':
             if max_datum is None or sample_datum.node(cmd.path) > max_datum.node(cmd.path):
                 max_datum = sample_datum
 
-        print(JSONify.dumps(max_datum.node()))
+        if max_datum:
+            print(JSONify.dumps(max_datum.node()))
 
 
     # ----------------------------------------------------------------------------------------------------------------
