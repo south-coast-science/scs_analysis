@@ -140,4 +140,5 @@ class SingleChart(object):
 
     def __str__(self, *args, **kwargs):
         return "SingleScope:{batch_mode:%s, y_min:%s, y_max:%s, is_relative:%s, path:%s, index:%s, first_datum:%s}" % \
-                (self.__batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index, self.first_datum)
+                (self.__batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index,
+                 self.first_datum)

@@ -6,7 +6,9 @@ Created on 3 Aug 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 | ./sample_error.py val.afe.sns.CO.conv | ./multi_chart.py val.afe.sns.CO.conv.src val.afe.sns.CO.conv.agr -e | ./histo_chart.py val.afe.sns.CO.conv.err -x -10 10 -e -o err.csv
+./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 | ./sample_error.py val.afe.sns.CO.conv | \
+./multi_chart.py val.afe.sns.CO.conv.src val.afe.sns.CO.conv.agr -e | \
+./histo_chart.py val.afe.sns.CO.conv.err -x -10 10 -e -o err.csv
 """
 
 import tkinter

@@ -22,6 +22,7 @@ from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_host.sys.host import Host
 
 
+# TODO: enable multiple topics?
 # TODO: sort out exceptions on close
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ class OSIOTopicAgent(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOTopicAgent:{verbose:%s}" % self.verbose
+        return "OSIOTopicAgent:{path:%s, verbose:%s}" % (self.__path, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------
