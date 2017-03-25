@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 """
-Created on 24 Mar 2017
+Created on 25 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/sample_max.py val.afe.sns.CO
+./scs_analysis/socket_receiver.py | ./scs_analysis/sample_min.py val.afe.sns.CO
 """
 
 import sys
@@ -38,16 +38,16 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        max_datum = None
+        min_datum = None
 
         for line in sys.stdin:
             sample_datum = PathDict.construct_from_jstr(line)
 
-            if max_datum is None or sample_datum.node(cmd.path) > max_datum.node(cmd.path):
-                max_datum = sample_datum
+            if min_datum is None or sample_datum.node(cmd.path) < min_datum.node(cmd.path):
+                min_datum = sample_datum
 
-        if max_datum:
-            print(JSONify.dumps(max_datum.node()))
+        if min_datum:
+            print(JSONify.dumps(min_datum.node()))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt as ex:
         if cmd.verbose:
-            print("sample_max: KeyboardInterrupt", file=sys.stderr)
+            print("sample_min: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
