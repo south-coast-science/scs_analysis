@@ -12,7 +12,8 @@ Information management and analysis tools for South Coast Science data consumers
 
 Raspberry Pi, in /home/pi/.profile:
 
-export PYTHONPATH=$HOME/SCS/scs_analysis:$HOME/SCS/scs_dev:$HOME/SCS/scs_osio:$HOME/SCS/scs_mfr:$HOME/SCS/scs_dfe_eng:$HOME/SCS/scs_host_rpi:$HOME/SCS/scs_core:$PYTHONPATH
+export \\
+PYTHONPATH=$HOME/SCS/scs_analysis:$HOME/SCS/scs_dev:$HOME/SCS/scs_osio:$HOME/SCS/scs_mfr:$HOME/SCS/scs_dfe_eng:$HOME/SCS/scs_host_rpi:$HOME/SCS/scs_core:$PYTHONPATH
 
 
 MacOS, in ~/.bash_profile:
