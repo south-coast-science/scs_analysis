@@ -1,14 +1,14 @@
 # scs-analysis
 Information management and analysis tools for South Coast Science data consumers.
 
-Required libraries: 
+**Required libraries:** 
 
 * Third party: matplotlib, python3-tk
 * SCS root: scs_core
 * SCS host: scs_host_posix or scs_host_rpi
 
 
-Typical PYTHONPATH:
+**Typical PYTHONPATH:**
 
 Raspberry Pi, in /home/pi/.profile:
 
