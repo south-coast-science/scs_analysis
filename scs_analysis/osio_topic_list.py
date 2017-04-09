@@ -35,8 +35,9 @@ if __name__ == '__main__':
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # resource...
+    # resources...
 
+    # APIAuth...
     api_auth = APIAuth.load_from_host(Host)
 
     if api_auth is None:
@@ -46,13 +47,12 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(api_auth, file=sys.stderr)
 
-    http_client = HTTPClient()
+    # manager...
+    manager = TopicManager(HTTPClient(), api_auth.api_key)
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # run...
-
-    manager = TopicManager(http_client, api_auth.api_key)
 
     topics = manager.find_for_org(api_auth.org_id)
 

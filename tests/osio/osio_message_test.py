@@ -41,10 +41,8 @@ print("-")
 
 # --------------------------------------------------------------------------------------------------------------------
 
-http_client = HTTPClient()
-
-
-manager = MessageManager(http_client, api_key)
+# manager...
+manager = MessageManager(HTTPClient(), api_key)
 print(manager)
 print("=")
 
