@@ -18,9 +18,11 @@ import random
 import sys
 import time
 
+from json.decoder import JSONDecodeError
+
 from collections import OrderedDict
 
-from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
+from scs_analysis.cmd.cmd_osio_mqtt_client import CmdOSIOMQTTClient
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -57,7 +59,11 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdMQTTClient()
+    cmd = CmdOSIOMQTTClient()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit()
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -89,43 +95,51 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        for line in sys.stdin:
-            datum = json.loads(line, object_pairs_hook=OrderedDict)
-
-            while True:
-                publication = Publication.construct_from_jdict(datum)
-
+        if cmd.publish:
+            for line in sys.stdin:
                 try:
-                    if cmd.verbose:
-                        now = LocalizedDatetime.now()
-                        print("%s:         mqtt: %s" % (now.as_iso8601(), datum['payload']['rec']), file=sys.stderr)
-                        sys.stderr.flush()
+                    datum = json.loads(line, object_pairs_hook=OrderedDict)
+                except JSONDecodeError:
+                    continue
 
-                    success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
+                while True:
+                    publication = Publication.construct_from_jdict(datum)
 
-                    if cmd.verbose and not success:
-                        now = LocalizedDatetime.now()
-                        print("%s:         mqtt: abandoned" % now.as_iso8601(), file=sys.stderr)
-                        sys.stderr.flush()
+                    try:
+                        if cmd.verbose:
+                            now = LocalizedDatetime.now()
+                            print("%s:         mqtt: %s" % (now.as_iso8601(), datum['payload']['rec']), file=sys.stderr)
+                            sys.stderr.flush()
 
-                    break
+                        success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
-                except Exception as ex:
-                    if cmd.verbose:
-                        print(JSONify.dumps(ExceptionReport.construct(ex)))
-                        sys.stderr.flush()
+                        if cmd.verbose and not success:
+                            now = LocalizedDatetime.now()
+                            print("%s:         mqtt: abandoned" % now.as_iso8601(), file=sys.stderr)
+                            sys.stderr.flush()
 
-                time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
+                        break
 
-            if cmd.verbose:
-                now = LocalizedDatetime.now()
-                print("%s:         mqtt: done" % now.as_iso8601(), file=sys.stderr)
-                print("-", file=sys.stderr)
-                sys.stderr.flush()
+                    except Exception as ex:
+                        if cmd.verbose:
+                            print(JSONify.dumps(ExceptionReport.construct(ex)))
+                            sys.stderr.flush()
 
-            if cmd.echo:
-                print(line, end="")
-                sys.stdout.flush()
+                    time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
+
+                if cmd.verbose:
+                    now = LocalizedDatetime.now()
+                    print("%s:         mqtt: done" % now.as_iso8601(), file=sys.stderr)
+                    print("-", file=sys.stderr)
+                    sys.stderr.flush()
+
+                if cmd.echo:
+                    print(line, end="")
+                    sys.stdout.flush()
+
+        if cmd.topic:
+            while True:
+                time.sleep(0.1)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -133,7 +147,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt as ex:
         if cmd.verbose:
-            print("mqtt_client: KeyboardInterrupt", file=sys.stderr)
+            print("osio_mqtt_client: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
