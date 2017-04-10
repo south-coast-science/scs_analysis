@@ -109,7 +109,7 @@ if __name__ == '__main__':
                     datum = json.loads(line, object_pairs_hook=OrderedDict)
                 except JSONDecodeError:
                     if cmd.verbose:
-                        OSIOMQTTClient.print_status("bad datum: %s" % line)
+                        OSIOMQTTClient.print_status("bad datum: %s" % line.strip())
 
                     continue
 
