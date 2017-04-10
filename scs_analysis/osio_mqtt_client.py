@@ -50,6 +50,13 @@ class OSIOMQTTClient(object):
         sys.stdout.flush()
 
 
+    @classmethod
+    def print_status(cls, status):
+        now = LocalizedDatetime.now()
+        print("%s:         mqtt: %s" % (now.as_iso8601(), status), file=sys.stderr)
+        sys.stderr.flush()
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -95,11 +102,15 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        # publish loop...
         if cmd.publish:
             for line in sys.stdin:
                 try:
                     datum = json.loads(line, object_pairs_hook=OrderedDict)
                 except JSONDecodeError:
+                    if cmd.verbose:
+                        OSIOMQTTClient.print_status("bad datum: %s" % line)
+
                     continue
 
                 while True:
@@ -107,16 +118,12 @@ if __name__ == '__main__':
 
                     try:
                         if cmd.verbose:
-                            now = LocalizedDatetime.now()
-                            print("%s:         mqtt: %s" % (now.as_iso8601(), datum['payload']['rec']), file=sys.stderr)
-                            sys.stderr.flush()
+                            OSIOMQTTClient.print_status(datum['payload']['rec'])
 
                         success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
                         if cmd.verbose and not success:
-                            now = LocalizedDatetime.now()
-                            print("%s:         mqtt: abandoned" % now.as_iso8601(), file=sys.stderr)
-                            sys.stderr.flush()
+                            OSIOMQTTClient.print_status("abandoned")
 
                         break
 
@@ -128,15 +135,13 @@ if __name__ == '__main__':
                     time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
 
                 if cmd.verbose:
-                    now = LocalizedDatetime.now()
-                    print("%s:         mqtt: done" % now.as_iso8601(), file=sys.stderr)
-                    print("-", file=sys.stderr)
-                    sys.stderr.flush()
+                    OSIOMQTTClient.print_status("done")
 
                 if cmd.echo:
                     print(line, end="")
                     sys.stdout.flush()
 
+        # subscribe loop...
         if cmd.topic:
             while True:
                 time.sleep(0.1)
