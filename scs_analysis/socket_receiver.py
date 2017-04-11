@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resource...
+        # resources...
 
         receiver = SocketReceiver(cmd.port, cmd.verbose)
 

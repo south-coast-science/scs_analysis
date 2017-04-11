@@ -44,8 +44,9 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resource...
+        # resources...
 
+        # APIAuth...
         api_auth = APIAuth.load_from_host(Host)
 
         if api_auth is None:
@@ -55,9 +56,8 @@ if __name__ == '__main__':
         if cmd.verbose:
             print(api_auth, file=sys.stderr)
 
-        http_client = HTTPClient()
-
-        manager = MessageManager(http_client, api_auth.api_key)
+        # manager...
+        manager = MessageManager(HTTPClient(), api_auth.api_key)
 
 
         # ------------------------------------------------------------------------------------------------------------

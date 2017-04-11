@@ -6,7 +6,7 @@ Created on 20 Nov 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/osio_topic_subscribe.py /users/southcoastscience-dev/test/status
+./scs_analysis/osio_topic_stream.py /users/southcoastscience-dev/test/status
 """
 
 import sys
@@ -22,7 +22,6 @@ from scs_host.client.http_streaming_client import HTTPStreamingClient
 from scs_host.sys.host import Host
 
 
-# TODO: enable multiple topics?
 # TODO: sort out exceptions on close
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -102,7 +101,7 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resource...
+        # resources...
 
         agent = OSIOTopicAgent(cmd.path, cmd.verbose)
 
@@ -121,7 +120,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_topic_subscribe: KeyboardInterrupt", file=sys.stderr)
+            print("osio_topic_stream: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         if not ex.__class__.__name__ == "error":                                    # TODO: needs cleaner handling

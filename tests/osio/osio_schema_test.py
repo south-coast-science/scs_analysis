@@ -26,12 +26,11 @@ from scs_host.client.http_client import HTTPClient
 org_id = "south-coast-science-dev"
 api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 
-http_client = HTTPClient()
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
-manager = SchemaManager(http_client, api_key)
+# manager...
+manager = SchemaManager(HTTPClient(), api_key)
 print(manager)
 print("=")
 
