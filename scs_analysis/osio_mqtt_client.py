@@ -18,8 +18,6 @@ import random
 import sys
 import time
 
-from json.decoder import JSONDecodeError
-
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_osio_mqtt_client import CmdOSIOMQTTClient
@@ -107,7 +105,7 @@ if __name__ == '__main__':
             for line in sys.stdin:
                 try:
                     datum = json.loads(line, object_pairs_hook=OrderedDict)
-                except JSONDecodeError:
+                except ValueError:
                     if cmd.verbose:
                         OSIOMQTTClient.print_status("bad datum: %s" % line.strip())
 
