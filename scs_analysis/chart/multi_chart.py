@@ -78,8 +78,8 @@ class MultiChart(object):
             self.__lines[i].set_ydata(self.__y_data[i])
 
         # min / max...
-        min_data_y = float(min(self.__flat_y_data)[0])
-        max_data_y = float(max(self.__flat_y_data)[0])
+        min_data_y = float(min(self.__flat_y_data))     # TODO: sort out this type error
+        max_data_y = float(max(self.__flat_y_data))     # TODO: sort out this type error
 
         min_axis_y = self.__y_min if min_data_y > self.__y_min else min_data_y - (abs(min_data_y) * 0.05)
         max_axis_y = self.__y_max if max_data_y < self.__y_max else max_data_y + (abs(max_data_y) * 0.05)
