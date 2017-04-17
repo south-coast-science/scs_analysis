@@ -6,7 +6,7 @@ Created on 20 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/osio_topic_retrieve.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
+./osio_topic_retrieve.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
 """
 
 import sys

@@ -6,7 +6,7 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/sample_roll.py val.sht.tmp -c 4
+./socket_receiver.py | ./sample_roll.py val.sht.tmp -c 4
 """
 
 

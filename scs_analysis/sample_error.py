@@ -6,8 +6,8 @@ Created on 19 Aug 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/sample_conv.py val.afe.sns.CO -s 0.321 \
-| ./scs_analysis/sample_error.py val.afe.sns.CO.conv
+./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 \
+| ./sample_error.py val.afe.sns.CO.conv
 """
 
 import sys

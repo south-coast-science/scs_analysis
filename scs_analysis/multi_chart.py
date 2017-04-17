@@ -6,7 +6,7 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
+./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
 """
 
 import tkinter
