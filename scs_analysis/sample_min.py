@@ -6,7 +6,7 @@ Created on 25 Mar 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/sample_min.py val.afe.sns.CO
+./socket_receiver.py | ./sample_min.py val.afe.sns.CO
 """
 
 import sys

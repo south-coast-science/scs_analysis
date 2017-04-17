@@ -6,7 +6,7 @@ Created on 16 Mar 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/socket_receiver.py | ./scs_analysis/sample_interval.py rec
+./socket_receiver.py | ./sample_interval.py rec
 """
 
 import sys

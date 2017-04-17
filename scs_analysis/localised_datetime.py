@@ -6,7 +6,7 @@ Created on 20 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./scs_analysis/localised_datetime.py -m -10
+./localised_datetime.py -m -10
 """
 
 import sys
