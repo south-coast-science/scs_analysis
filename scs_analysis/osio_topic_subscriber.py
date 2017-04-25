@@ -47,22 +47,21 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
 
-        # SystemID...
-        system_id = SystemID.load_from_host(Host)
-
-        if system_id is None:
-            print("SystemID not available.", file=sys.stderr)
-            exit()
-
-        if cmd.verbose:
-            print(system_id, file=sys.stderr)
-
-        # topic...
         if cmd.channel:
+            # SystemID...
+            system_id = SystemID.load_from_host(Host)
+
+            if system_id is None:
+                print("SystemID not available.", file=sys.stderr)
+                exit()
+
+            if cmd.verbose:
+                print(system_id, file=sys.stderr)
+
             project = Project.load_from_host(Host)
 
+            # topic...
             if project is None:
                 print("Project not available.", file=sys.stderr)
                 exit()
