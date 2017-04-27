@@ -6,12 +6,12 @@ Created on 11 Apr 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_node.py val.afe.sns.CO
+./socket_receiver.py | ./sample_node.py -s val.afe.sns.CO
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_filter import CmdSampleFilter
+from scs_analysis.cmd.cmd_sample_node import CmdSampleNode
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleFilter()
+    cmd = CmdSampleNode()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -40,6 +40,10 @@ if __name__ == '__main__':
 
         for line in sys.stdin:
             sample_datum = PathDict.construct_from_jstr(line)
+
+            if cmd.skip and not sample_datum.has_path(cmd.path):
+                continue
+
             node = sample_datum.node(cmd.path)
 
             print(JSONify.dumps(node))

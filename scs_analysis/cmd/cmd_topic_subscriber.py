@@ -1,7 +1,9 @@
 """
-Created on 11 Jul 2016
+Created on 19 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-information-in-message-payload
 """
 
 import optparse
@@ -9,14 +11,22 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleFilter(object):
+class CmdTopicSubscriber(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-s] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -t TOPIC | -c { C | G | P | S | X } } [-v]",
+                                              version="%prog 1.0")
+
+        # compulsory...
+        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+                                 help="topic path")
+
+        self.__parser.add_option("--channel", "-c", type="string", nargs=1, action="store", dest="channel",
+                                 help="publication channel")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -28,8 +38,13 @@ class CmdSampleFilter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None:
+        if bool(self.topic) == bool(self.channel):
             return False
+
+        if self.channel:
+            if self.channel != 'C' and self.channel != 'G' and self.channel != 'P' and self.channel != 'S' \
+                    and self.channel != 'X':
+                return False
 
         return True
 
@@ -37,8 +52,13 @@ class CmdSampleFilter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def topic(self):
+        return self.__opts.topic
+
+
+    @property
+    def channel(self):
+        return self.__opts.channel
 
 
     @property
@@ -58,5 +78,5 @@ class CmdSampleFilter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdFilter:{verbose:%s, args:%s}" % \
-                    (self.verbose, self.args)
+        return "CmdTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
+                    (self.topic, self.channel, self.verbose, self.args)

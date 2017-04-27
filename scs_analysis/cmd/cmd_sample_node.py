@@ -1,5 +1,5 @@
 """
-Created on 11 Jul 2016
+Created on 25 Apr 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleFilter(object):
+class CmdSampleNode(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -19,6 +19,9 @@ class CmdSampleFilter(object):
         self.__parser = optparse.OptionParser(usage="%prog PATH [-s] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--skip", "-s", action="store_true", dest="skip", default=False,
+                                 help="skip data where node is missing")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -42,6 +45,11 @@ class CmdSampleFilter(object):
 
 
     @property
+    def skip(self):
+        return self.__opts.skip
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -58,5 +66,5 @@ class CmdSampleFilter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdFilter:{verbose:%s, args:%s}" % \
-                    (self.verbose, self.args)
+        return "CmdSampleNode:{skip:%s, verbose:%s, args:%s}" % \
+                    (self.skip, self.verbose, self.args)
