@@ -6,12 +6,12 @@ Created on 11 Apr 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_node.py -s val.afe.sns.CO
+./socket_receiver.py | ./node.py -s val.afe.sns.CO
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_node import CmdSampleNode
+from scs_analysis.cmd.cmd_node import CmdNode
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleNode()
+    cmd = CmdNode()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -41,12 +41,12 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if cmd.skip and not sample_datum.has_path(cmd.path):
+            if cmd.ignore and not datum.has_path(cmd.path):
                 continue
 
-            node = sample_datum.node(cmd.path)
+            node = datum.node(cmd.path)
 
             print(JSONify.dumps(node))
             sys.stdout.flush()
@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt as ex:
         if cmd.verbose:
-            print("sample_node: KeyboardInterrupt", file=sys.stderr)
+            print("node: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
