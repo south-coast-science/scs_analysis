@@ -9,18 +9,18 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleNode(object):
+class CmdNode(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-s] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-i] [-v]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--skip", "-s", action="store_true", dest="skip", default=False,
-                                 help="skip data where node is missing")
+        self.__parser.add_option("--ignore", "-i", action="store_true", dest="ignore", default=False,
+                                 help="ignore data where node is missing")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -45,8 +45,8 @@ class CmdSampleNode(object):
 
 
     @property
-    def skip(self):
-        return self.__opts.skip
+    def ignore(self):
+        return self.__opts.ignore
 
 
     @property
@@ -66,5 +66,4 @@ class CmdSampleNode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleNode:{skip:%s, verbose:%s, args:%s}" % \
-                    (self.skip, self.verbose, self.args)
+        return "CmdNode:{ignore:%s, verbose:%s, args:%s}" %  (self.ignore, self.verbose, self.args)
