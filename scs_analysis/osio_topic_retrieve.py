@@ -80,7 +80,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(document))
 
         if cmd.verbose:
-            print("count: %d" % len(messages), file=sys.stderr)
+            print("total: %d" % len(messages), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
