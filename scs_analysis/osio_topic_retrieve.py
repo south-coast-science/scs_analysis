@@ -23,6 +23,8 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
+# TODO: test whether topic is available
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -77,9 +79,8 @@ if __name__ == '__main__':
             document = message if cmd.include_wrapping else message.payload.payload
             print(JSONify.dumps(document))
 
-
         if cmd.verbose:
-            print("message count: %d" % len(messages), file=sys.stderr)
+            print("count: %d" % len(messages), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
