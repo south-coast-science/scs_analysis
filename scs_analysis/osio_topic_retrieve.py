@@ -15,8 +15,11 @@ from scs_analysis.cmd.cmd_osio_topic_retrieve import CmdOSIOTopicRetrieve
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
+
 from scs_core.osio.client.api_auth import APIAuth
+from scs_core.osio.manager.topic_manager import TopicManager
 from scs_core.osio.manager.message_manager import MessageManager
+
 from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.client.http_client import HTTPClient
@@ -59,13 +62,25 @@ if __name__ == '__main__':
             print(api_auth, file=sys.stderr)
             sys.stderr.flush()
 
-        # manager...
-        manager = MessageManager(HTTPClient(), api_auth.api_key)
+        # topic manager...
+        topic_manager = TopicManager(HTTPClient(), api_auth.api_key)
+
+        # message manager...
+        message_manager = MessageManager(HTTPClient(), api_auth.api_key)
+
+        if cmd.verbose:
+            print(message_manager, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        # check topics...
+        if not topic_manager.find(cmd.path):
+            print("Topic not available: %s" % cmd.path, file=sys.stderr)
+            exit()
+
+        # time...
         if cmd.use_offset():
             end = LocalizedDatetime.now()
             start = end.timedelta(minutes=-cmd.minutes)
@@ -73,7 +88,8 @@ if __name__ == '__main__':
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end
             start = cmd.start
 
-        messages = manager.find_for_topic(cmd.path, start, end)
+        # messages...
+        messages = message_manager.find_for_topic(cmd.path, start, end)
 
         for message in messages:
             document = message if cmd.include_wrapping else message.payload.payload
