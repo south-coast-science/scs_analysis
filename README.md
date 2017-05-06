@@ -3,7 +3,7 @@ Information management and analysis tools for South Coast Science data consumers
 
 **Required libraries:** 
 
-* Third party: matplotlib, python3-tk, paho-mqtt
+* Third party: matplotlib, python3-tk, paho-mqtt, pycurl, tzlocal
 * SCS root: scs_core
 * SCS host: scs_host_posix or scs_host_rpi
 
@@ -20,3 +20,9 @@ PYTHONPATH=$HOME/SCS/scs_analysis:$HOME/SCS/scs_dev:$HOME/SCS/scs_osio:$HOME/SCS
 
 PYTHONPATH="${HOME}/Documents/Development/Python/Mac/scs_analysis:${HOME}/Documents/Development/Python/Mac/scs_osio:${HOME}/Documents/Development/Python/Mac/scs_host_posix:${HOME}/Documents/Development/Python/Mac/scs_core:${PYTHONPATH}" \
 export PYTHONPATH
+
+
+**Ubuntu, in ~/.bashrc:**
+
+export \\
+PYTHONPATH="$HOME/SCS/scs_analysis:$HOME/SCS/scs_osio:$HOME/SCS/scs_host_posix:$HOME/SCS/scs_core:$PYTHONPATH"
