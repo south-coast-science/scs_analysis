@@ -27,6 +27,8 @@ from scs_core.sys.system_id import SystemID
 from scs_host.sys.host import Host
 
 
+# TODO: the analysis control_receiver.py is different from the dev one - it has no channels and no serial number
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -90,12 +92,20 @@ if __name__ == '__main__':
                 print(JSONify.dumps(datum))
                 sys.stdout.flush()
 
+            if cmd.verbose:
+                print(datum, file=sys.stderr)
+                sys.stderr.flush()
+
             if cmd.receipt:
                 now = LocalizedDatetime.now()
                 receipt = ControlReceipt.construct_from_datum(datum, now, subscriber_sn)
 
                 print(JSONify.dumps(receipt))
                 sys.stdout.flush()
+
+                if cmd.verbose:
+                    print(datum, file=sys.stderr)
+                    sys.stderr.flush()
 
             # TODO: perform command here
 
