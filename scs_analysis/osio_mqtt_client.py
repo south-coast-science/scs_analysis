@@ -51,6 +51,7 @@ class OSIOMQTTClient(object):
 
     @classmethod
     def print_publication(cls, pub):
+        print("received...")
         print(JSONify.dumps(pub))
         sys.stdout.flush()
 
@@ -149,7 +150,7 @@ if __name__ == '__main__':
                     publication = Publication.construct_from_jdict(datum)
 
                     try:
-                        if cmd.verbose:
+                        if cmd.verbose and 'rec' in publication.payload:
                             OSIOMQTTClient.print_status(publication.payload['rec'])
 
                         success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)

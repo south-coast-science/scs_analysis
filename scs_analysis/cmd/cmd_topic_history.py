@@ -11,7 +11,7 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOTopicRetrieve(object):
+class CmdTopicHistory(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -105,7 +105,7 @@ class CmdOSIOTopicRetrieve(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicRetrieve:{path:%s, minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
+        return "CmdTopicHistory:{path:%s, minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
                "verbose:%s, args:%s}" % \
                     (self.path, self.minutes, self.start, self.end, self.include_wrapping,
                      self.verbose, self.args)

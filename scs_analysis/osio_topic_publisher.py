@@ -10,8 +10,7 @@ https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-informat
 Requires SystemID and Project documents.
 
 command line example:
-./osio_mqtt_client.py /orgs/south-coast-science-dev/development/device/alpha-bb-eng-000003/control | \
-./osio_topic_subscriber.py -cX
+./status_sampler.py | ./osio_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
 """
 
 import json
@@ -19,7 +18,7 @@ import sys
 
 from collections import OrderedDict
 
-from scs_analysis.cmd.cmd_topic_subscriber import CmdTopicSubscriber
+from scs_analysis.cmd.cmd_topic_publisher import CmdTopicPublisher
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
@@ -37,7 +36,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdTopicSubscriber()
+    cmd = CmdTopicPublisher()
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit()
@@ -49,18 +48,18 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # SystemID...
-        system_id = SystemID.load_from_host(Host)
-
-        if system_id is None:
-            print("SystemID not available.", file=sys.stderr)
-            exit()
-
-        if cmd.verbose:
-            print(system_id, file=sys.stderr)
-
         # topic...
         if cmd.channel:
+            # SystemID...
+            system_id = SystemID.load_from_host(Host)
+
+            if system_id is None:
+                print("SystemID not available.", file=sys.stderr)
+                exit()
+
+            if cmd.verbose:
+                print(system_id, file=sys.stderr)
+
             project = Project.load_from_host(Host)
 
             if project is None:
@@ -83,7 +82,7 @@ if __name__ == '__main__':
                 topic = project.control_topic_path(system_id)
 
             else:
-                raise ValueError("osio_topic_subscriber: unrecognised channel: %s" % cmd.channel)
+                raise ValueError("osio_topic_publisher: unrecognised channel: %s" % cmd.channel)
 
         else:
             topic = cmd.topic
@@ -99,13 +98,21 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            jdict = json.loads(line, object_pairs_hook=OrderedDict)
+            datum = json.loads(line, object_pairs_hook=OrderedDict)
 
-            publication = Publication.construct_from_jdict(jdict)
+            if cmd.override:
+                payload = OrderedDict({'__timestamp': datum['rec']})
+                payload.update(datum)
 
-            if publication.topic == topic:
-                print(JSONify.dumps(publication.payload))
-                sys.stdout.flush()
+            else:
+                payload = datum
+
+            # time.sleep(1)
+
+            publication = Publication(topic, payload)
+
+            print(JSONify.dumps(publication))
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -113,7 +120,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt as ex:
         if cmd.verbose:
-            print("osio_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
+            print("osio_topic_publisher: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
