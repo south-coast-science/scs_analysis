@@ -8,9 +8,8 @@ Created on 9 May 2017
 Requires APIAuth and ClientAuth documents.
 
 command line example:
-./osio_mqtt_control.py -d scs-ap1-6 00000000cda1f8b9 \
--t /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control \
--r shutdown now
+./osio_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
+-t /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
 """
 
 import random

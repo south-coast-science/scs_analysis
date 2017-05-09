@@ -26,8 +26,6 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
-# TODO: test whether topic is available
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
