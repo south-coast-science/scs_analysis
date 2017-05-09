@@ -16,7 +16,7 @@ class CmdControlSender(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog TAG SERIAL_NUMBER CMD [PARAMS] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog ATTN SERIAL_NUMBER CMD_TOKEN_1 .. CMD_TOKEN_N [-v]",
                                               version="%prog 1.0")
 
         # optional...
@@ -29,13 +29,13 @@ class CmdControlSender(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return len(self.__args) > 2
+        return len(self.__args) > 4
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def tag(self):
+    def attn(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
@@ -45,13 +45,8 @@ class CmdControlSender(object):
 
 
     @property
-    def command(self):
-        return self.__args[2] if len(self.__args) > 2 else None
-
-
-    @property
-    def params(self):
-        return self.__args[3:] if len(self.__args) > 3 else []
+    def cmd_tokens(self):
+        return self.__args[2:] if len(self.__args) > 2 else None
 
 
     @property
@@ -71,5 +66,5 @@ class CmdControlSender(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdControlSender:{tag:%s, serial_number:%s, command:%s, params:%s, verbose:%s, args:%s}" % \
-                    (self.tag, self.serial_number, self.command, self.params, self.verbose, self.args)
+        return "CmdControlSender:{attn:%s, serial_number:%s, cmd_tokens:%s, verbose:%s, args:%s}" % \
+                    (self.attn, self.serial_number, self.cmd_tokens, self.verbose, self.args)

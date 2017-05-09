@@ -20,6 +20,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.sys.exception_report import ExceptionReport
 
+from scs_host.sys.host import Host
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -38,6 +40,13 @@ if __name__ == '__main__':
         print(cmd, file=sys.stderr)
         sys.stderr.flush()
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # resources...
+
+    tag = Host.name()
+
+
     try:
 
         # ------------------------------------------------------------------------------------------------------------
@@ -45,7 +54,7 @@ if __name__ == '__main__':
 
         now = LocalizedDatetime.now()
 
-        datum = ControlDatum.construct(cmd.tag, now, cmd.command, cmd.params, cmd.serial_number)
+        datum = ControlDatum.construct(tag, cmd.attn, now, cmd.cmd_tokens, cmd.serial_number)
 
         print(JSONify.dumps(datum))
         sys.stdout.flush()
