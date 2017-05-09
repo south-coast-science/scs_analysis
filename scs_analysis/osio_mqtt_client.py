@@ -43,24 +43,46 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
-class OSIOMQTTClient(object):
+class OSIOMQTTResponder(object):
     """
     classdocs
     """
+
     # ----------------------------------------------------------------------------------------------------------------
 
-    @classmethod
-    def print_publication(cls, pub):
-        print("received...")
+    def __init__(self, verbose):
+        """
+        Constructor
+        """
+        self.__verbose = verbose
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def print_publication(self, pub):
         print(JSONify.dumps(pub))
         sys.stdout.flush()
 
+        if not self.__verbose:
+            return
 
-    @classmethod
-    def print_status(cls, status):
+        print("received: %s" % JSONify.dumps(pub), file=sys.stderr)
+        sys.stderr.flush()
+
+
+    def print_status(self, status):
+        if not self.__verbose:
+            return
+
         now = LocalizedDatetime.now()
         print("%s:         mqtt: %s" % (now.as_iso8601(), status), file=sys.stderr)
         sys.stderr.flush()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return "OSIOMQTTResponder:{verbose:%s}" % self.__verbose
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -111,8 +133,14 @@ if __name__ == '__main__':
         if cmd.verbose:
             print(manager, file=sys.stderr)
 
+        # responder...
+        responder = OSIOMQTTResponder(cmd.verbose)
+
+        if cmd.verbose:
+            print(responder, file=sys.stderr)
+
         # client...
-        subscribers = [MQTTSubscriber(topic, OSIOMQTTClient.print_publication) for topic in cmd.topics]
+        subscribers = [MQTTSubscriber(topic, responder.print_publication) for topic in cmd.topics]
 
         client = MQTTClient(*subscribers)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
@@ -141,22 +169,20 @@ if __name__ == '__main__':
                 try:
                     datum = json.loads(line, object_pairs_hook=OrderedDict)
                 except ValueError:
-                    if cmd.verbose:
-                        OSIOMQTTClient.print_status("bad datum: %s" % line.strip())
-
+                    responder.print_status("bad datum: %s" % line.strip())
                     continue
 
                 while True:
                     publication = Publication.construct_from_jdict(datum)
 
                     try:
-                        if cmd.verbose and 'rec' in publication.payload:
-                            OSIOMQTTClient.print_status(publication.payload['rec'])
+                        if 'rec' in publication.payload:
+                            responder.print_status(publication.payload['rec'])
 
                         success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
-                        if cmd.verbose and not success:
-                            OSIOMQTTClient.print_status("abandoned")
+                        if not success:
+                            responder.print_status("abandoned")
 
                         break
 
@@ -167,8 +193,7 @@ if __name__ == '__main__':
 
                     time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
 
-                if cmd.verbose:
-                    OSIOMQTTClient.print_status("done")
+                responder.print_status("done")
 
                 if cmd.echo:
                     print(line, end="")

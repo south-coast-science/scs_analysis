@@ -16,10 +16,13 @@ class CmdControlSender(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog ATTN SERIAL_NUMBER CMD_TOKEN_1 .. CMD_TOKEN_N [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog ATTN SERIAL_NUMBER CMD_TOKEN_1 .. CMD_TOKEN_N [-r] [-v]",
                                               version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
+                                 help="wait for receipt from target device")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -29,7 +32,7 @@ class CmdControlSender(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return len(self.__args) > 4
+        return len(self.__args) > 2
 
 
     # ----------------------------------------------------------------------------------------------------------------
