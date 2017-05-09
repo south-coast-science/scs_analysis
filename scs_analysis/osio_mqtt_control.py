@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 
 """
-Created on 23 Mar 2017
+Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-WARNING: only one MQTT client can run at any one time on a TCP/IP host.
 
 Requires APIAuth and ClientAuth documents.
 
 command line example:
-osio_mqtt_client.py -v /orgs/south-coast-science-dev/development/loc/3/gases \
-/orgs/south-coast-science-dev/development/loc/3/particulates
+./osio_mqtt_control.py -d scs-ap1-6 00000000cda1f8b9 \
+-t /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control \
+-r shutdown now
 """
 
-import json
 import random
 import sys
 import time
 
-from collections import OrderedDict
+from scs_analysis.cmd.cmd_osio_mqtt_control import CmdOSIOMQTTControl
 
-from scs_analysis.cmd.cmd_osio_mqtt_client import CmdOSIOMQTTClient
+from scs_core.control.control_datum import ControlDatum
+from scs_core.control.control_receipt import ControlReceipt
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -43,46 +42,44 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
-class OSIOMQTTHandler(object):
+class OSIOMQTTControlHandler(object):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, verbose):
+    def __init__(self, outgoing_pub):
         """
         Constructor
         """
-        self.__verbose = verbose
+        self.__outgoing_pub = outgoing_pub
+        self.__receipt = None
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def print_publication(self, pub):
-        print(JSONify.dumps(pub))
-        sys.stdout.flush()
-
-        if not self.__verbose:
+    def handle(self, pub):
+        try:
+            receipt = ControlReceipt.construct_from_jdict(pub.payload)
+        except TypeError:
             return
 
-        print("received: %s" % JSONify.dumps(pub), file=sys.stderr)
-        sys.stderr.flush()
+        if receipt.tag == self.__outgoing_pub.payload.attn and receipt.omd == self.__outgoing_pub.payload.digest:
+            self.__receipt = receipt
 
 
-    def print_status(self, status):
-        if not self.__verbose:
-            return
+    # ----------------------------------------------------------------------------------------------------------------
 
-        now = LocalizedDatetime.now()
-        print("%s:         mqtt: %s" % (now.as_iso8601(), status), file=sys.stderr)
-        sys.stderr.flush()
+    @property
+    def receipt(self):
+        return self.__receipt
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOMQTTControlHandler:{verbose:%s}" % self.__verbose
+        return "OSIOMQTTControlHandler:{outgoing_pub:%s, receipt:%s}" %  (self.__outgoing_pub, self.receipt)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -94,7 +91,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOMQTTClient()
+    cmd = CmdOSIOMQTTControl()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -102,6 +99,17 @@ if __name__ == '__main__':
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # datum...
+
+    tag = Host.name()
+    now = LocalizedDatetime.now()
+
+    datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd.cmd_tokens, cmd.device_serial_number)
+    publication = Publication(cmd.topic, datum)
+
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -134,15 +142,15 @@ if __name__ == '__main__':
             print(manager, file=sys.stderr)
 
         # responder...
-        handler = OSIOMQTTHandler(cmd.verbose)
+        handler = OSIOMQTTControlHandler(publication)
 
         if cmd.verbose:
             print(handler, file=sys.stderr)
 
         # client...
-        subscribers = [MQTTSubscriber(topic, handler.print_publication) for topic in cmd.topics]
+        subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
-        client = MQTTClient(*subscribers)
+        client = MQTTClient(subscriber)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
 
         if cmd.verbose:
@@ -153,55 +161,44 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # check topics...
-        unavailable = False
-        for topic in cmd.topics:
-            if not manager.find(topic):
-                print("Topic not available: %s" % topic, file=sys.stderr)
-                unavailable = True
-
-        if unavailable:
+        # check topic...
+        if not manager.find(cmd.topic):
+            print("Topic not available: %s" % cmd.topic, file=sys.stderr)
             exit()
 
-        # publish loop...
-        if cmd.publish:
-            for line in sys.stdin:
-                try:
-                    datum = json.loads(line, object_pairs_hook=OrderedDict)
-                except ValueError:
-                    handler.print_status("bad datum: %s" % line.strip())
-                    continue
+        if cmd.verbose:
+            print(datum, file=sys.stderr)
+            sys.stderr.flush()
 
-                while True:
-                    publication = Publication.construct_from_jdict(datum)
+        # publish...
+        while True:
+            try:
+                success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
-                    try:
-                        if 'rec' in publication.payload:
-                            handler.print_status(publication.payload['rec'])
+                if not success:
+                    print("abandoned", file=sys.stderr)
+                    sys.stderr.flush()
 
-                        success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
+                break
 
-                        if not success:
-                            handler.print_status("abandoned")
+            except Exception as ex:
+                if cmd.verbose:
+                    print(JSONify.dumps(ExceptionReport.construct(ex)))
+                    sys.stderr.flush()
 
-                        break
+            time.sleep(random.uniform(1.0, 2.0))
 
-                    except Exception as ex:
-                        if cmd.verbose:
-                            print(JSONify.dumps(ExceptionReport.construct(ex)))
-                            sys.stderr.flush()
-
-                    time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
-
-                handler.print_status("done")
-
-                if cmd.echo:
-                    print(line, end="")
-                    sys.stdout.flush()
-
-        # subscribe loop...
-        if cmd.topics:
+        # subscribe...
+        if cmd.receipt:
             while True:
+                if handler.receipt:
+                    print(JSONify.dumps(handler.receipt))
+
+                    if not handler.receipt.is_valid(cmd.device_serial_number):
+                        raise ValueError("control_receiver: invalid digest: %s" % handler.receipt)
+
+                    break
+
                 time.sleep(0.1)
 
 
@@ -210,7 +207,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt as ex:
         if cmd.verbose:
-            print("osio_mqtt_client: KeyboardInterrupt", file=sys.stderr)
+            print("osio_mqtt_control: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

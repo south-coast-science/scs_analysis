@@ -1,5 +1,5 @@
 """
-Created on 17 Apr 2017
+Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,15 +9,22 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdControlSender(object):
+class CmdOSIOMQTTControl(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog ATTN SERIAL_NUMBER CMD_TOKEN_1 .. CMD_TOKEN_N [-r] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG SERIAL_NUMBER -t TOPIC [-r] [-v]"
+                                                    "CMD_TOKEN_1 .. CMD_TOKEN_N", version="%prog 1.0")
+
+        # compulsory...
+        self.__parser.add_option("--device", "-d", type="string", nargs=2, action="store", dest="device",
+                                 help="tag and serial number of target device")
+
+        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+                                 help="full topic path")
 
         # optional...
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
@@ -32,24 +39,34 @@ class CmdControlSender(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return len(self.__args) > 2
+        return self.__opts.device and self.__opts.topic
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def attn(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def device_tag(self):
+        return self.__opts.device[0]
 
 
     @property
-    def serial_number(self):
-        return self.__args[1] if len(self.__args) > 1 else None
+    def device_serial_number(self):
+        return self.__opts.device[1]
+
+
+    @property
+    def topic(self):
+        return self.__opts.topic
 
 
     @property
     def cmd_tokens(self):
-        return self.__args[2:] if len(self.__args) > 2 else None
+        return self.__args
+
+
+    @property
+    def receipt(self):
+        return self.__opts.receipt
 
 
     @property
@@ -69,5 +86,5 @@ class CmdControlSender(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdControlSender:{attn:%s, serial_number:%s, cmd_tokens:%s, verbose:%s, args:%s}" % \
-                    (self.attn, self.serial_number, self.cmd_tokens, self.verbose, self.args)
+        return "CmdOSIOMQTTControl:{device:%s, topic:%s, cmd_tokens:%s, receipt:%s, verbose:%s, args:%s}" % \
+               (self.__opts.device, self.topic, self.cmd_tokens, self.receipt, self.verbose, self.args)
