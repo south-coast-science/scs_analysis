@@ -6,12 +6,12 @@ Created on 20 Feb 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./osio_topic_retrieve.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
+./osio_topic_history.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_osio_topic_retrieve import CmdOSIOTopicRetrieve
+from scs_analysis.cmd.cmd_topic_history import CmdTopicHistory
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -26,8 +26,6 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
-# TODO: test whether topic is available
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -37,7 +35,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOTopicRetrieve()
+    cmd = CmdTopicHistory()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
