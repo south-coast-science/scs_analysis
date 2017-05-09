@@ -1,5 +1,5 @@
 """
-Created on 23 Mar 2017
+Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -16,7 +16,7 @@ class CmdOSIOMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG SERIAL_NUMBER -t TOPIC [-r] [-v]"
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG SERIAL_NUMBER -t TOPIC [-r] [-v] "
                                                     "CMD_TOKEN_1 .. CMD_TOKEN_N", version="%prog 1.0")
 
         # compulsory...

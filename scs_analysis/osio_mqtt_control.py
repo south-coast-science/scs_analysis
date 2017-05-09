@@ -134,28 +134,19 @@ if __name__ == '__main__':
 
         if cmd.verbose:
             print(client_auth, file=sys.stderr)
+            sys.stderr.flush()
 
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
-        if cmd.verbose:
-            print(manager, file=sys.stderr)
-
         # responder...
         handler = OSIOMQTTControlHandler(publication)
-
-        if cmd.verbose:
-            print(handler, file=sys.stderr)
 
         # client...
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
         client = MQTTClient(subscriber)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
-
-        if cmd.verbose:
-            print(client, file=sys.stderr)
-            sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -192,11 +183,10 @@ if __name__ == '__main__':
         if cmd.receipt:
             while True:
                 if handler.receipt:
-                    print(JSONify.dumps(handler.receipt))
-
                     if not handler.receipt.is_valid(cmd.device_serial_number):
-                        raise ValueError("control_receiver: invalid digest: %s" % handler.receipt)
+                        raise ValueError("invalid digest: %s" % handler.receipt)
 
+                    print(JSONify.dumps(handler.receipt))
                     break
 
                 time.sleep(0.1)

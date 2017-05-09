@@ -126,28 +126,19 @@ if __name__ == '__main__':
 
         if cmd.verbose:
             print(client_auth, file=sys.stderr)
+            sys.stderr.flush()
 
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
-        if cmd.verbose:
-            print(manager, file=sys.stderr)
-
         # responder...
         handler = OSIOMQTTHandler(cmd.verbose)
-
-        if cmd.verbose:
-            print(handler, file=sys.stderr)
 
         # client...
         subscribers = [MQTTSubscriber(topic, handler.print_publication) for topic in cmd.topics]
 
         client = MQTTClient(*subscribers)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
-
-        if cmd.verbose:
-            print(client, file=sys.stderr)
-            sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
