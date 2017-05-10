@@ -172,20 +172,25 @@ if __name__ == '__main__':
                 break
 
             except Exception as ex:
-                if cmd.verbose:
-                    print(JSONify.dumps(ExceptionReport.construct(ex)))
-                    sys.stderr.flush()
+                print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+                sys.stderr.flush()
 
             time.sleep(random.uniform(1.0, 2.0))
 
-        # subscribe...
+        # wait...
         if cmd.receipt:
             while True:
                 if handler.receipt:
-                    if not handler.receipt.is_valid(cmd.device_serial_number):
-                        raise ValueError("invalid digest: %s" % handler.receipt)
+                    receipt = handler.receipt
 
-                    print(JSONify.dumps(handler.receipt))
+                    if not receipt.is_valid(cmd.device_serial_number):
+                        raise ValueError("invalid digest: %s" % receipt)
+
+                    if cmd.verbose:
+                        print(receipt, file=sys.stderr)
+                        sys.stderr.flush()
+
+                    print(JSONify.dumps(receipt.return_code))
                     break
 
                 time.sleep(0.1)
