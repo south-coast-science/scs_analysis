@@ -7,9 +7,12 @@ Created on 9 May 2017
 
 Requires APIAuth and ClientAuth documents.
 
-command line example:
+command line examples:
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
 -t /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
+
+./osio_mqtt_control.py -d scs-be2-3 5016BBBK202F \
+-t /orgs/south-coast-science-dev/development/device/alpha-bb-eng-000003/control -r -v hello
 """
 
 import random
