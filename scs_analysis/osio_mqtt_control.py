@@ -191,7 +191,7 @@ if __name__ == '__main__':
                         print(handler.receipt, file=sys.stderr)
                         sys.stderr.flush()
 
-                    print(JSONify.dumps(handler.receipt.return_code))
+                    print(JSONify.dumps(handler.receipt.command))
                     break
 
                 time.sleep(0.1)
