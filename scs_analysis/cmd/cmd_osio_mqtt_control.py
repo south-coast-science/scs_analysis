@@ -17,7 +17,7 @@ class CmdOSIOMQTTControl(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -d TAG SERIAL_NUMBER -t TOPIC [-r] [-v] "
-                                                    "CMD_TOKEN_1 .. CMD_TOKEN_N", version="%prog 1.0")
+                                                    "[CMD_TOKEN_1 .. CMD_TOKEN_N]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--device", "-d", type="string", nargs=2, action="store", dest="tag_serial",
