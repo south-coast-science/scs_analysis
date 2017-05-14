@@ -41,7 +41,6 @@ class SampleError(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def datum(self, datum):
-        # TODO: find number of decimal places of source, adjust output accordingly
         latest = float(datum.node(self.__path))
 
         if self.__aggregate is None:
