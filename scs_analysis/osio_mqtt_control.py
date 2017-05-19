@@ -7,9 +7,12 @@ Created on 9 May 2017
 
 Requires APIAuth and ClientAuth documents.
 
-command line example:
+command line examples:
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
 -t /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
+
+./osio_mqtt_control.py -d scs-be2-3 5016BBBK202F \
+-t /orgs/south-coast-science-dev/development/device/alpha-bb-eng-000003/control -r -v hello
 """
 
 import random
@@ -172,20 +175,23 @@ if __name__ == '__main__':
                 break
 
             except Exception as ex:
-                if cmd.verbose:
-                    print(JSONify.dumps(ExceptionReport.construct(ex)))
-                    sys.stderr.flush()
+                print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+                sys.stderr.flush()
 
             time.sleep(random.uniform(1.0, 2.0))
 
-        # subscribe...
+        # wait...
         if cmd.receipt:
             while True:
                 if handler.receipt:
                     if not handler.receipt.is_valid(cmd.device_serial_number):
                         raise ValueError("invalid digest: %s" % handler.receipt)
 
-                    print(JSONify.dumps(handler.receipt))
+                    if cmd.verbose:
+                        print(handler.receipt, file=sys.stderr)
+                        sys.stderr.flush()
+
+                    print(JSONify.dumps(handler.receipt.command))
                     break
 
                 time.sleep(0.1)
