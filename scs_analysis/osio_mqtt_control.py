@@ -109,7 +109,7 @@ if __name__ == '__main__':
     tag = Host.name()
     now = LocalizedDatetime.now()
 
-    datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd.cmd_tokens, cmd.device_serial_number)
+    datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd.cmd_tokens, cmd.device_host_id)
     publication = Publication(cmd.topic, datum)
 
 
@@ -184,7 +184,7 @@ if __name__ == '__main__':
         if cmd.receipt:
             while True:
                 if handler.receipt:
-                    if not handler.receipt.is_valid(cmd.device_serial_number):
+                    if not handler.receipt.is_valid(cmd.device_host_id):
                         raise ValueError("invalid digest: %s" % handler.receipt)
 
                     if cmd.verbose:
