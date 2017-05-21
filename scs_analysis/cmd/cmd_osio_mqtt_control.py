@@ -39,7 +39,7 @@ class CmdOSIOMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return self.__opts.tag_serial and self.__opts.topic
+        return self.__opts.tag_host and self.__opts.topic
 
 
     # ----------------------------------------------------------------------------------------------------------------
