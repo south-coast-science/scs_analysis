@@ -16,8 +16,8 @@ class CmdOSIOMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID -t TOPIC [-r] [-v] "
-                                                    "[CMD_TOKEN_1 .. CMD_TOKEN_N]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID -t TOPIC [-r] [-v] [CMD]",
+                                              version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--device", "-d", type="string", nargs=2, action="store", dest="tag_host",
@@ -61,7 +61,7 @@ class CmdOSIOMQTTControl(object):
 
     @property
     def cmd_tokens(self):
-        return self.__args
+        return self.__args[0].split() if len(self.__args) > 0 else None
 
 
     @property
