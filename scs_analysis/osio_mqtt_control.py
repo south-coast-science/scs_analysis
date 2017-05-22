@@ -183,15 +183,21 @@ if __name__ == '__main__':
         # wait...
         if cmd.receipt:
             while True:
-                if handler.receipt:
-                    if not handler.receipt.is_valid(cmd.device_host_id):
-                        raise ValueError("invalid digest: %s" % handler.receipt)
+                receipt = handler.receipt
+
+                if receipt:
+                    if not receipt.is_valid(cmd.device_host_id):
+                        raise ValueError("invalid digest: %s" % receipt)
 
                     if cmd.verbose:
-                        print(handler.receipt, file=sys.stderr)
-                        sys.stderr.flush()
+                        print(receipt, file=sys.stderr)
 
-                    print(JSONify.dumps(handler.receipt.command))
+                    if receipt.command.stderr:
+                        print(*receipt.command.stderr, sep='\n', file=sys.stderr)
+
+                    if receipt.command.stdout:
+                        print(*receipt.command.stdout, sep='\n')
+
                     break
 
                 time.sleep(0.1)
