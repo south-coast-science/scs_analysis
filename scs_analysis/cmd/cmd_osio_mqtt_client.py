@@ -16,14 +16,18 @@ class CmdOSIOMQTTClient(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [TOPIC_1 .. TOPIC_N] [-p [-e]] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [TOPIC_1 .. TOPIC_N] [-f FIFO] [-p [-e]] [-v]",
+                                              version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--fifo", "-f", type="string", nargs=1, action="store", dest="fifo",
+                                 help="use FIFO for message input and output")
+
         self.__parser.add_option("--pub", "-p", action="store_true", dest="publish", default=False,
-                                 help="publish stdin publication documents")
+                                 help="publish input publication documents")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo stdin to stdout (if publishing)")
+                                 help="echo input to stdout (if publishing)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -45,6 +49,11 @@ class CmdOSIOMQTTClient(object):
     @property
     def topics(self):
         return self.__args
+
+
+    @property
+    def fifo(self):
+        return self.__opts.fifo
 
 
     @property
@@ -74,5 +83,5 @@ class CmdOSIOMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTClient:{topics:%s, publish:%s, echo:%s, verbose:%s, args:%s}" % \
-               (self.topics, self.publish, self.echo, self.verbose, self.args)
+        return "CmdOSIOMQTTClient:{topics:%s, fifo:%s, publish:%s, echo:%s, verbose:%s, args:%s}" % \
+               (self.topics, self.fifo, self.publish, self.echo, self.verbose, self.args)
