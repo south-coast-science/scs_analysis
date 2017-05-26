@@ -41,6 +41,8 @@ from scs_host.client.mqtt_client import MQTTSubscriber
 from scs_host.sys.host import Host
 
 
+# TODO: needs two modes: (1) has own MQTT client, (2) uses stdin and stdout with other MQTT client?
+
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 

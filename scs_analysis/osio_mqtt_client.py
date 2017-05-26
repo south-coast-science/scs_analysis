@@ -40,6 +40,8 @@ from scs_host.client.mqtt_client import MQTTSubscriber
 from scs_host.sys.host import Host
 
 
+# TODO: automated creation and management of MQTT client
+
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
