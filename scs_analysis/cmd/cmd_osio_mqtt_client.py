@@ -16,18 +16,18 @@ class CmdOSIOMQTTClient(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [TOPIC_1 .. TOPIC_N] [-f FIFO] [-p [-e]] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [SUB_TOPIC_1 .. SUB_TOPIC_N] [-p UDS_PUB] [-s UDS_SUB] [-e] "
+                                                    "[-v]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--fifo", "-f", type="string", nargs=1, action="store", dest="fifo",
-                                 help="use FIFO for message input and output")
+        self.__parser.add_option("--pub-addr", "-p", type="string", nargs=1, action="store", dest="uds_pub_addr",
+                                 help="read publications from UDS instead of stdin")
 
-        self.__parser.add_option("--pub", "-p", action="store_true", dest="publish", default=False,
-                                 help="publish input publication documents")
+        self.__parser.add_option("--sub-addr", "-s", type="string", nargs=1, action="store", dest="uds_sub_addr",
+                                 help="write subscriptions to UDS instead of stdout")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo input to stdout (if publishing)")
+                                 help="echo input to stdout (if writing subscriptions to UDS)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -38,7 +38,7 @@ class CmdOSIOMQTTClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.echo and not self.publish:
+        if self.echo and self.__opts.uds_sub_addr is None:
             return False
 
         return True
@@ -52,13 +52,13 @@ class CmdOSIOMQTTClient(object):
 
 
     @property
-    def fifo(self):
-        return self.__opts.fifo
+    def uds_pub_addr(self):
+        return self.__opts.uds_pub_addr
 
 
     @property
-    def publish(self):
-        return self.__opts.publish
+    def uds_sub_addr(self):
+        return self.__opts.uds_sub_addr
 
 
     @property
@@ -83,5 +83,5 @@ class CmdOSIOMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTClient:{topics:%s, fifo:%s, publish:%s, echo:%s, verbose:%s, args:%s}" % \
-               (self.topics, self.fifo, self.publish, self.echo, self.verbose, self.args)
+        return "CmdOSIOMQTTClient:{topics:%s, uds_pub_addr:%s, uds_sub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
+               (self.topics, self.uds_pub_addr, self.uds_sub_addr, self.echo, self.verbose, self.args)

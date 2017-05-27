@@ -10,8 +10,7 @@ WARNING: only one MQTT client can run at any one time on a TCP/IP host.
 Requires APIAuth and ClientAuth documents.
 
 command line example:
-osio_mqtt_client.py -v /orgs/south-coast-science-dev/development/loc/3/gases \
-/orgs/south-coast-science-dev/development/loc/3/particulates
+osio_mqtt_client.py -e -p osio_mqtt_pub.uds -s osio_mqtt_sub.uds /orgs/south-coast-science-dev/development/loc/3/gases 
 """
 
 import json
@@ -38,9 +37,9 @@ from scs_host.client.mqtt_client import MQTTClient
 from scs_host.client.mqtt_client import MQTTSubscriber
 
 from scs_host.sys.host import Host
+from scs_host.sys.std_io import StdIO
+from scs_host.sys.uds import UDS
 
-
-# TODO: automated creation and management of MQTT client
 
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
@@ -52,24 +51,33 @@ class OSIOMQTTHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, verbose):
+    def __init__(self, comms, echo, verbose):
         """
         Constructor
         """
+        self.__comms = comms
+
+        self.__echo = echo
         self.__verbose = verbose
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_publication(self, pub):
-        print(JSONify.dumps(pub))
-        sys.stdout.flush()
+        try:
+            self.__comms.connect()
+            self.__comms.write(JSONify.dumps(pub))
 
-        if not self.__verbose:
-            return
+        finally:
+            self.__comms.close()
 
-        print("received: %s" % JSONify.dumps(pub), file=sys.stderr)
-        sys.stderr.flush()
+        if self.__echo:
+            print(JSONify.dumps(pub))
+            sys.stdout.flush()
+
+        if self.__verbose:
+            print("received: %s" % JSONify.dumps(pub), file=sys.stderr)
+            sys.stderr.flush()
 
 
     def print_status(self, status):
@@ -84,7 +92,8 @@ class OSIOMQTTHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOMQTTControlHandler:{verbose:%s}" % self.__verbose
+        return "OSIOMQTTControlHandler:{comms:%s, echo:%s, verbose:%s}" % \
+               (self.__comms, self.__echo, self.__verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -92,6 +101,8 @@ class OSIOMQTTHandler(object):
 if __name__ == '__main__':
 
     client = None
+    pub_comms = None
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -128,13 +139,20 @@ if __name__ == '__main__':
 
         if cmd.verbose:
             print(client_auth, file=sys.stderr)
-            sys.stderr.flush()
+
+        # comms...
+        pub_comms = UDS(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
+        sub_comms = UDS(cmd.uds_sub_addr) if cmd.uds_sub_addr else StdIO()
 
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
-        # responder...
-        handler = OSIOMQTTHandler(cmd.verbose)
+        # handler...
+        handler = OSIOMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
+
+        if cmd.verbose:
+            print(handler, file=sys.stderr)
+            sys.stderr.flush()
 
         # client...
         subscribers = [MQTTSubscriber(topic, handler.print_publication) for topic in cmd.topics]
@@ -156,46 +174,42 @@ if __name__ == '__main__':
         if unavailable:
             exit()
 
-        # publish loop...
-        if cmd.publish:
-            for line in sys.stdin:
-                try:
-                    datum = json.loads(line, object_pairs_hook=OrderedDict)
-                except ValueError:
-                    handler.print_status("bad datum: %s" % line.strip())
-                    continue
+        # publish...
+        pub_comms.connect()
 
-                while True:
-                    publication = Publication.construct_from_jdict(datum)
+        for message in pub_comms.read():
+            try:
+                datum = json.loads(message, object_pairs_hook=OrderedDict)
+            except ValueError:
+                handler.print_status("bad datum: %s" % message)
+                continue
 
-                    try:
-                        if 'rec' in publication.payload:
-                            handler.print_status(publication.payload['rec'])
-
-                        success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
-
-                        if not success:
-                            handler.print_status("abandoned")
-
-                        break
-
-                    except Exception as ex:
-                        if cmd.verbose:
-                            print(JSONify.dumps(ExceptionReport.construct(ex)))
-                            sys.stderr.flush()
-
-                    time.sleep(random.uniform(1.0, 2.0))           # Don't hammer the client!
-
-                handler.print_status("done")
-
-                if cmd.echo:
-                    print(line, end="")
-                    sys.stdout.flush()
-
-        # subscribe loop...
-        if cmd.topics:
             while True:
-                time.sleep(0.1)
+                publication = Publication.construct_from_jdict(datum)
+
+                try:
+                    if 'rec' in publication.payload:
+                        handler.print_status(publication.payload['rec'])
+
+                    success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
+
+                    if not success:
+                        handler.print_status("abandoned")
+
+                    break
+
+                except Exception as ex:
+                    if cmd.verbose:
+                        print(JSONify.dumps(ExceptionReport.construct(ex)))
+                        sys.stderr.flush()
+
+                time.sleep(random.uniform(1.0, 2.0))  # Don't hammer the client!
+
+            handler.print_status("done")
+
+            if cmd.echo:
+                print(message)
+                sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -211,3 +225,6 @@ if __name__ == '__main__':
     finally:
         if client:
             client.disconnect()
+
+        if pub_comms:
+            pub_comms.close()
