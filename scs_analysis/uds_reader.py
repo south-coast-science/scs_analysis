@@ -8,6 +8,7 @@ Created on 11 Apr 2017
 Writes socket stream to stdout.
 
 command line example:
+./uds_reader.py particulates.uds
 """
 
 import sys
