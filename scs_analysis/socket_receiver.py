@@ -19,6 +19,8 @@ from scs_core.data.json import JSONify
 from scs_core.sys.exception_report import ExceptionReport
 
 
+# TODO: put the SocketReceiver class in the host repo.
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class SocketReceiver(object):

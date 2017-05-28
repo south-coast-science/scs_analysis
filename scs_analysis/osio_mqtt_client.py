@@ -63,10 +63,15 @@ class OSIOMQTTHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def print_publication(self, pub):
+    def handle(self, pub):
         try:
             self.__comms.connect()
-            self.__comms.write(JSONify.dumps(pub))
+            self.__comms.write(JSONify.dumps(pub), False)
+
+        except ConnectionRefusedError:
+            if self.__verbose:
+                print("OSIOMQTTHandler: connection refused for %s" % self.__comms.address, file=sys.stderr)
+                sys.stderr.flush()
 
         finally:
             self.__comms.close()
@@ -142,21 +147,26 @@ if __name__ == '__main__':
 
         # comms...
         pub_comms = UDS(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
-        sub_comms = UDS(cmd.uds_sub_addr) if cmd.uds_sub_addr else StdIO()
 
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
-        # handler...
-        handler = OSIOMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
+        # subscribers...
+        subscribers = []
 
-        if cmd.verbose:
-            print(handler, file=sys.stderr)
-            sys.stderr.flush()
+        for subscription in cmd.subscriptions:
+            sub_comms = UDS(subscription.address) if subscription.address else StdIO()
+
+            # handler...
+            handler = OSIOMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
+
+            if cmd.verbose:
+                print(handler, file=sys.stderr)
+                sys.stderr.flush()
+
+            subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
         # client...
-        subscribers = [MQTTSubscriber(topic, handler.print_publication) for topic in cmd.topics]
-
         client = MQTTClient(*subscribers)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
 
@@ -166,9 +176,9 @@ if __name__ == '__main__':
 
         # check topics...
         unavailable = False
-        for topic in cmd.topics:
-            if not manager.find(topic):
-                print("Topic not available: %s" % topic, file=sys.stderr)
+        for subscription in cmd.subscriptions:
+            if not manager.find(subscription.topic):
+                print("Topic not available: %s" % subscription[0], file=sys.stderr)
                 unavailable = True
 
         if unavailable:
@@ -203,7 +213,7 @@ if __name__ == '__main__':
                         print(JSONify.dumps(ExceptionReport.construct(ex)))
                         sys.stderr.flush()
 
-                time.sleep(random.uniform(1.0, 2.0))  # Don't hammer the client!
+                time.sleep(random.uniform(1.0, 2.0))        # Don't hammer the client!
 
             handler.print_status("done")
 
