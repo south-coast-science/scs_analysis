@@ -41,8 +41,6 @@ from scs_host.client.mqtt_client import MQTTSubscriber
 from scs_host.sys.host import Host
 
 
-# TODO: needs two modes: (1) has own MQTT client, (2) uses stdin and stdout with other MQTT client?
-
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
@@ -182,23 +180,21 @@ if __name__ == '__main__':
 
             time.sleep(random.uniform(1.0, 2.0))
 
-        # wait...
+        # subscribe...
         if cmd.receipt:
             while True:
-                receipt = handler.receipt
-
-                if receipt:
-                    if not receipt.is_valid(cmd.device_host_id):
-                        raise ValueError("invalid digest: %s" % receipt)
+                if handler.receipt:
+                    if not handler.receipt.is_valid(cmd.device_host_id):
+                        raise ValueError("invalid digest: %s" % handler.receipt)
 
                     if cmd.verbose:
-                        print(receipt, file=sys.stderr)
+                        print(handler.receipt, file=sys.stderr)
 
-                    if receipt.command.stderr:
-                        print(*receipt.command.stderr, sep='\n', file=sys.stderr)
+                    if handler.receipt.command.stderr:
+                        print(*handler.receipt.command.stderr, sep='\n', file=sys.stderr)
 
-                    if receipt.command.stdout:
-                        print(*receipt.command.stdout, sep='\n')
+                    if handler.receipt.command.stdout:
+                        print(*handler.receipt.command.stdout, sep='\n')
 
                     break
 

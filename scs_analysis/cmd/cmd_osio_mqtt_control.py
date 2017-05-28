@@ -46,12 +46,12 @@ class CmdOSIOMQTTControl(object):
 
     @property
     def device_tag(self):
-        return self.__opts.tag_host[0]
+        return self.__opts.tag_host[0] if self.__opts.tag_host else None
 
 
     @property
     def device_host_id(self):
-        return self.__opts.tag_host[1]
+        return self.__opts.tag_host[1] if self.__opts.tag_host else None
 
 
     @property

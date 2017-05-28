@@ -5,7 +5,7 @@ Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-WARNING: only one MQTT client can run at any one time on a TCP/IP host.
+WARNING: only one MQTT client should run at any one time, per a TCP/IP host.
 
 Requires APIAuth and ClientAuth documents.
 
