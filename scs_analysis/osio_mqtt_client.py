@@ -154,6 +154,16 @@ if __name__ == '__main__':
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
+        # check topics...
+        unavailable = False
+        for subscription in cmd.subscriptions:
+            if not manager.find(subscription.topic):
+                print("Topic not available: %s" % subscription[0], file=sys.stderr)
+                unavailable = True
+
+        if unavailable:
+            exit()
+
         # subscribers...
         subscribers = []
 
@@ -176,16 +186,6 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-
-        # check topics...
-        unavailable = False
-        for subscription in cmd.subscriptions:
-            if not manager.find(subscription.topic):
-                print("Topic not available: %s" % subscription[0], file=sys.stderr)
-                unavailable = True
-
-        if unavailable:
-            exit()
 
         # publish...
         pub_comms.connect()
