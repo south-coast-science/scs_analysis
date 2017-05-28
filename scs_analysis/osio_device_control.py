@@ -5,9 +5,14 @@ Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+Use this script in conjunction with osio_mqtt_client.py
+
 Requires APIAuth and ClientAuth documents.
 
-command line examples:
+command line example:
+./osio_device_control.py -d scs-bgx-120 5016BBBK20AB \
+-t /orgs/south-coast-science-dev/unep/device/praxis-000120/control \
+-p osio_mqtt_pub.uds -s control.uds uptime -v
 """
 
 import json
