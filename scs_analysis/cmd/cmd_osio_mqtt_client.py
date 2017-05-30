@@ -16,14 +16,19 @@ class CmdOSIOMQTTClient(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [TOPIC_1 .. TOPIC_N] [-p [-e]] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p UDS_PUB] "
+                                                    "[-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] "
+                                                    "[-e] [-v]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--pub", "-p", action="store_true", dest="publish", default=False,
-                                 help="publish stdin publication documents")
+        self.__parser.add_option("--pub-addr", "-p", type="string", nargs=1, action="store", dest="uds_pub_addr",
+                                 help="read publications from UDS instead of stdin")
+
+        self.__parser.add_option("--sub", "-s", action="store_true", dest="uds_sub",
+                                 help="write subscriptions to UDS instead of stdout")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo stdin to stdout (if publishing)")
+                                 help="echo input to stdout (if writing subscriptions to UDS)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -34,7 +39,10 @@ class CmdOSIOMQTTClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.echo and not self.publish:
+        if self.echo and not self.__opts.uds_sub:
+            return False
+
+        if self.__opts.uds_sub and len(self.__args) % 2 != 0:
             return False
 
         return True
@@ -43,13 +51,22 @@ class CmdOSIOMQTTClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def topics(self):
-        return self.__args
+    def subscriptions(self):
+        subscriptions = []
+
+        if self.__opts.uds_sub:
+            for i in range(0, len(self.__args), 2):
+                subscriptions.append(Subscription(self.__args[i], self.__args[i + 1]))
+        else:
+            for i in range(len(self.__args)):
+                subscriptions.append(Subscription(self.__args[i]))
+
+        return subscriptions
 
 
     @property
-    def publish(self):
-        return self.__opts.publish
+    def uds_pub_addr(self):
+        return self.__opts.uds_pub_addr
 
 
     @property
@@ -74,5 +91,40 @@ class CmdOSIOMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTClient:{topics:%s, publish:%s, echo:%s, verbose:%s, args:%s}" % \
-               (self.topics, self.publish, self.echo, self.verbose, self.args)
+        return "CmdOSIOMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
+               (self.subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class Subscription(object):
+    """
+    classdocs
+    """
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, topic, address=None):
+        """
+        Constructor
+        """
+        self.__topic = topic            # string        topic path
+        self.__address = address        # string        UDS address
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def topic(self):
+        return self.__topic
+
+
+    @property
+    def address(self):
+        return self.__address
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return "Subscription:{topic:%s, address:%s}" % (self.topic, self.address)
