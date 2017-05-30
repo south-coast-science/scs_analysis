@@ -9,117 +9,14 @@ command line example:
 ./socket_receiver.py -v
 """
 
-import socket
 import sys
-import time
 
 from scs_analysis.cmd.cmd_socket_receiver import CmdSocketReceiver
 
 from scs_core.data.json import JSONify
 from scs_core.sys.exception_report import ExceptionReport
 
-
-# TODO: put the SocketReceiver class in the host repo.
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class SocketReceiver(object):
-    """
-    classdocs
-    """
-
-    __BUFFER_SIZE =     1024        # bytes
-    __BACKLOG =         5
-
-    __ACK =             "ACK"
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, port, verbose=False):
-        """
-        Constructor
-        """
-        # fields...
-        self.__port = port
-        self.__verbose = verbose
-
-        # socket...
-        self.__address = ('', port)        # a receiving socket should not be given an IP address!
-
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__socket.bind(self.__address)
-        self.__socket.listen(SocketReceiver.__BACKLOG)
-
-        self._conn = None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def accept(self):
-        self._conn, self.__address = self.__socket.accept()
-
-
-    def messages(self):
-        while True:
-            message = self.__receive()
-
-            if len(message) == 0:
-                break
-
-            yield message
-
-
-    def ack(self):
-        self._conn.send(str(SocketReceiver.__ACK).encode())
-
-
-    def close(self):
-        try:
-            self.ack()
-        except RuntimeError:
-            pass
-
-        time.sleep(0.1)     # allows the client to close first?
-
-        try:
-            self._conn.close()
-
-            if self.__verbose:
-                print("SocketReceiver: connection closed.")
-        except RuntimeError:
-            pass
-
-        self.__socket.close()
-
-        if self.__verbose:
-            print("SocketReceiver: socket closed.")
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __receive(self):
-        received = self._conn.recv(SocketReceiver.__BUFFER_SIZE).decode()
-
-        return received.strip()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def address(self):
-        return self.__address
-
-
-    @property
-    def verbose(self):
-        return self.__verbose
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "SocketReceiver:{address:%s, verbose:%s}" % (str(self.address), self.verbose)
+from scs_host.comms.network_socket import NetworkSocket
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -140,7 +37,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        receiver = SocketReceiver(cmd.port, cmd.verbose)
+        receiver = NetworkSocket('', cmd.port)
 
         if cmd.verbose:
             print(receiver, file=sys.stderr)
@@ -150,9 +47,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        receiver.accept()
-
-        for message in receiver.messages():
+        for message in receiver.read():
             print(message)
             sys.stdout.flush()
 
@@ -174,8 +69,5 @@ if __name__ == '__main__':
     # close...
 
     finally:
-        try:
-            if receiver is not None:
-                receiver.close()
-        except:
-            raise
+        if receiver:
+            receiver.close()
