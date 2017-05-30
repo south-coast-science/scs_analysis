@@ -39,9 +39,10 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.client.mqtt_client import MQTTClient
 from scs_host.client.mqtt_client import MQTTSubscriber
 
+from scs_host.comms.stdio import StdIO
+from scs_host.comms.uds import UDS
+
 from scs_host.sys.host import Host
-from scs_host.sys.stdio import StdIO
-from scs_host.sys.uds import UDS
 
 
 # --------------------------------------------------------------------------------------------------------------------

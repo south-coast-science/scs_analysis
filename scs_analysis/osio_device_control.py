@@ -36,9 +36,8 @@ from scs_core.osio.manager.topic_manager import TopicManager
 from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.client.http_client import HTTPClient
-
+from scs_host.comms.uds import UDS
 from scs_host.sys.host import Host
-from scs_host.sys.uds import UDS
 
 
 # --------------------------------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ from scs_analysis.cmd.cmd_uds import CmdUDS
 from scs_core.data.json import JSONify
 from scs_core.sys.exception_report import ExceptionReport
 
-from scs_host.sys.uds import UDS
+from scs_host.comms.uds import UDS
 
 
 # --------------------------------------------------------------------------------------------------------------------
