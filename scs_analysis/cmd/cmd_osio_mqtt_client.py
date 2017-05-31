@@ -28,7 +28,7 @@ class CmdOSIOMQTTClient(object):
                                  help="write subscriptions to UDS instead of stdout")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo input to stdout (if writing subscriptions to UDS)")
+                                 help="echo input to stdout (if writing subscriptions to DomainSocket)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -109,7 +109,7 @@ class Subscription(object):
         Constructor
         """
         self.__topic = topic            # string        topic path
-        self.__address = address        # string        UDS address
+        self.__address = address        # string        DomainSocket address
 
 
     # ----------------------------------------------------------------------------------------------------------------

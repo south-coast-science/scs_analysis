@@ -39,9 +39,10 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.client.mqtt_client import MQTTClient
 from scs_host.client.mqtt_client import MQTTSubscriber
 
+from scs_host.comms.domain_socket import DomainSocket
+from scs_host.comms.stdio import StdIO
+
 from scs_host.sys.host import Host
-from scs_host.sys.stdio import StdIO
-from scs_host.sys.uds import UDS
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -149,7 +150,7 @@ if __name__ == '__main__':
             print(client_auth, file=sys.stderr)
 
         # comms...
-        pub_comms = UDS(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
+        pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
 
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
@@ -168,7 +169,7 @@ if __name__ == '__main__':
         subscribers = []
 
         for subscription in cmd.subscriptions:
-            sub_comms = UDS(subscription.address) if subscription.address else StdIO()
+            sub_comms = DomainSocket(subscription.address) if subscription.address else StdIO()
 
             # handler...
             handler = OSIOMQTTHandler(sub_comms, cmd.echo, cmd.verbose)

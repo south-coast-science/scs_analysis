@@ -36,9 +36,8 @@ from scs_core.osio.manager.topic_manager import TopicManager
 from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.client.http_client import HTTPClient
-
+from scs_host.comms.domain_socket import DomainSocket
 from scs_host.sys.host import Host
-from scs_host.sys.uds import UDS
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -101,8 +100,8 @@ if __name__ == '__main__':
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
         # comms...
-        pub_comms = UDS(cmd.uds_pub_addr)
-        sub_comms = UDS(cmd.uds_sub_addr) if cmd.uds_sub_addr else None
+        pub_comms = DomainSocket(cmd.uds_pub_addr)
+        sub_comms = DomainSocket(cmd.uds_sub_addr) if cmd.uds_sub_addr else None
 
         if cmd.verbose:
             print("pub: %s" % pub_comms, file=sys.stderr)

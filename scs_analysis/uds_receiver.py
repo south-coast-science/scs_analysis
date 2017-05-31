@@ -18,7 +18,7 @@ from scs_analysis.cmd.cmd_uds import CmdUDS
 from scs_core.data.json import JSONify
 from scs_core.sys.exception_report import ExceptionReport
 
-from scs_host.sys.uds import UDS
+from scs_host.comms.domain_socket import DomainSocket
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # resources...
 
-    uds = UDS(cmd.path)
+    uds = DomainSocket(cmd.path)
 
     if cmd.verbose:
         print(uds, file=sys.stderr)
