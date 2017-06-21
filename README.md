@@ -8,21 +8,21 @@ Information management and analysis tools for South Coast Science data consumers
 * SCS host: scs_host_posix or scs_host_rpi
 
 
-**Typical PYTHONPATH:**
+**Example PYTHONPATH:**
 
 **Raspberry Pi, in /home/pi/.profile:**
 
 export \\
-PYTHONPATH=$HOME/SCS/scs_analysis:$HOME/SCS/scs_dev:$HOME/SCS/scs_osio:$HOME/SCS/scs_mfr:$HOME/SCS/scs_dfe_eng:$HOME/SCS/scs_host_rpi:$HOME/SCS/scs_core:$PYTHONPATH
+PYTHONPATH=\~/SCS/scs_analysis:\~/SCS/scs_dev:\~/SCS/scs_osio:\~/SCS/scs_mfr:\~/SCS/scs_dfe_eng:\~/SCS/scs_host_rpi:\~/SCS/scs_core:$PYTHONPATH
 
 
 **MacOS, in ~/.bash_profile:**
 
-PYTHONPATH="${HOME}/Documents/Development/Python/Mac/scs_analysis:${HOME}/Documents/Development/Python/Mac/scs_osio:${HOME}/Documents/Development/Python/Mac/scs_host_posix:${HOME}/Documents/Development/Python/Mac/scs_core:${PYTHONPATH}" \
+PYTHONPATH="\~/SCS/scs_analysis:\~/SCS/scs_osio:\~/SCS/scs_host_posix:\~/SCS/scs_core:${PYTHONPATH}" \
 export PYTHONPATH
 
 
 **Ubuntu, in ~/.bashrc:**
 
 export \\
-PYTHONPATH="$HOME/SCS/scs_analysis:$HOME/SCS/scs_osio:$HOME/SCS/scs_host_posix:$HOME/SCS/scs_core:$PYTHONPATH"
+PYTHONPATH="\~/SCS/scs_analysis:\~/SCS/scs_osio:\~/SCS/scs_host_posix:\~/SCS/scs_core:$PYTHONPATH"
