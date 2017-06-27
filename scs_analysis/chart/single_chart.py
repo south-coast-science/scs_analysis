@@ -15,6 +15,8 @@ from matplotlib import pyplot as plt
 
 # TODO: add window title - scope + path
 
+# TODO: keep plt.pause(0.001) running in a sub-process?
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class SingleChart(object):
