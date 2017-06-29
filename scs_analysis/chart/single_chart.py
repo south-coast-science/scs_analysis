@@ -2,6 +2,9 @@
 Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
+https://matplotlib.org/faq/usage_faq.html
 """
 
 from matplotlib import use as muse
