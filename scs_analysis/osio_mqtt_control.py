@@ -40,6 +40,7 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.client.mqtt_client import MQTTClient
 from scs_host.client.mqtt_client import MQTTSubscriber
 
+from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
@@ -53,15 +54,20 @@ class OSIOMQTTControlHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, outgoing_pub):
+    def __init__(self):
         """
         Constructor
         """
-        self.__outgoing_pub = outgoing_pub
+        self.__outgoing_pub = None
         self.__receipt = None
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    def set(self, outgoing_pub):
+        self.__outgoing_pub = outgoing_pub
+        self.__receipt = None
+
 
     def handle(self, pub):
         try:
@@ -104,17 +110,6 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # datum...
-
-    tag = Host.name()
-    now = LocalizedDatetime.now()
-
-    datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd.cmd_tokens, cmd.device_host_id)
-    publication = Publication(cmd.topic, datum)
-
-
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
@@ -143,8 +138,13 @@ if __name__ == '__main__':
         # manager...
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
+        # check topic...
+        if not manager.find(cmd.topic):
+            print("Topic not available: %s" % cmd.topic, file=sys.stderr)
+            exit()
+
         # responder...
-        handler = OSIOMQTTControlHandler(publication)
+        handler = OSIOMQTTControlHandler()
 
         # client...
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
@@ -152,55 +152,78 @@ if __name__ == '__main__':
         client = MQTTClient(subscriber)
         client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
 
+        # tag...
+        tag = Host.name()
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # check topic...
-        if not manager.find(cmd.topic):
-            print("Topic not available: %s" % cmd.topic, file=sys.stderr)
-            exit()
-
-        if cmd.verbose:
-            print(datum, file=sys.stderr)
-            sys.stderr.flush()
-
-        # publish...
         while True:
-            try:
-                success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
+            # cmd...
+            if cmd.interactive:
+                line = StdIO.prompt('> ')
+                cmd_tokens = line.split() if len(line) > 0 else None
 
-                if not success:
-                    print("abandoned", file=sys.stderr)
-                    sys.stderr.flush()
+            else:
+                cmd_tokens = cmd.cmd_tokens
 
-                break
+            # datum...
+            now = LocalizedDatetime.now()
+            datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_host_id)
 
-            except Exception as ex:
-                print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+            publication = Publication(cmd.topic, datum)
+
+            handler.set(publication)
+
+            if cmd.verbose:
+                print(datum, file=sys.stderr)
                 sys.stderr.flush()
 
-            time.sleep(random.uniform(1.0, 2.0))
-
-        # subscribe...
-        if cmd.receipt:
+            # publish...
             while True:
-                if handler.receipt:
-                    if not handler.receipt.is_valid(cmd.device_host_id):
-                        raise ValueError("invalid digest: %s" % handler.receipt)
+                try:
+                    success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
-                    if cmd.verbose:
-                        print(handler.receipt, file=sys.stderr)
-
-                    if handler.receipt.command.stderr:
-                        print(*handler.receipt.command.stderr, sep='\n', file=sys.stderr)
-
-                    if handler.receipt.command.stdout:
-                        print(*handler.receipt.command.stdout, sep='\n')
+                    if not success:
+                        print("abandoned", file=sys.stderr)
+                        sys.stderr.flush()
 
                     break
 
-                time.sleep(0.1)
+                except Exception as ex:
+                    print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+                    sys.stderr.flush()
+
+                time.sleep(random.uniform(1.0, 2.0))
+
+            # subscribe...
+            timeout = time.time() + 15
+
+            if cmd.receipt or cmd.interactive:
+                while True:
+                    if handler.receipt:
+                        if not handler.receipt.is_valid(cmd.device_host_id):
+                            raise ValueError("invalid digest: %s" % handler.receipt)
+
+                        if cmd.verbose:
+                            print(handler.receipt, file=sys.stderr)
+
+                        if handler.receipt.command.stderr:
+                            print(*handler.receipt.command.stderr, sep='\n', file=sys.stderr)
+
+                        if handler.receipt.command.stdout:
+                            print(*handler.receipt.command.stdout, sep='\n')
+
+                        break
+
+                    if cmd.interactive and time.time() > timeout:
+                        break
+
+                    time.sleep(0.1)
+
+            if not cmd.interactive:
+                break
 
 
     # ----------------------------------------------------------------------------------------------------------------

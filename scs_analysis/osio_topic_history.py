@@ -44,7 +44,6 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
-
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
@@ -86,6 +85,11 @@ if __name__ == '__main__':
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end
             start = cmd.start
 
+        if cmd.verbose:
+            print("start: %s" % start, file=sys.stderr)
+            print("end: %s" % end, file=sys.stderr)
+            sys.stderr.flush()
+
         # messages...
         messages = message_manager.find_for_topic(cmd.path, start, end)
 
@@ -99,6 +103,10 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
+
+    except KeyboardInterrupt as ex:
+        if cmd.verbose:
+            print("osio_topic_history: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

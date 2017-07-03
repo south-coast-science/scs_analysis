@@ -16,7 +16,7 @@ class CmdOSIOMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID -t TOPIC [-r] [-v] [CMD]",
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID -t TOPIC [-r] [{ -i | CMD }] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -30,6 +30,9 @@ class CmdOSIOMQTTControl(object):
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
                                  help="wait for receipt from target device")
 
+        self.__parser.add_option("--interactive", "-i", action="store_true", dest="interactive", default=False,
+                                 help="interactive mode")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -39,7 +42,10 @@ class CmdOSIOMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return self.__opts.tag_host and self.__opts.topic
+        if self.interactive and self.cmd_tokens is not None:
+            return False
+
+        return bool(self.__opts.tag_host) and bool(self.__opts.topic)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -70,6 +76,11 @@ class CmdOSIOMQTTControl(object):
 
 
     @property
+    def interactive(self):
+        return self.__opts.interactive
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -86,5 +97,7 @@ class CmdOSIOMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, verbose:%s, args:%s}" % \
-               (self.__opts.tag_host, self.topic, self.cmd_tokens, self.receipt, self.verbose, self.args)
+        return "CmdOSIOMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, " \
+               "verbose:%s, args:%s}" % \
+               (self.__opts.tag_host, self.topic, self.cmd_tokens, self.receipt, self.interactive,
+                self.verbose, self.args)
