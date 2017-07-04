@@ -162,7 +162,7 @@ if __name__ == '__main__':
         while True:
             # cmd...
             if cmd.interactive:
-                line = StdIO.prompt('> ')
+                line = StdIO.prompt(cmd.device_tag + ' > ')
                 cmd_tokens = line.split() if len(line) > 0 else None
 
             else:
