@@ -9,8 +9,8 @@ command line example:
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
 """
 
-import tkinter
 import sys
+import tkinter
 import warnings
 
 from scs_analysis.chart.multi_chart import MultiChart
