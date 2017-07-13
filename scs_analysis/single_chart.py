@@ -15,10 +15,8 @@ import warnings
 
 from scs_analysis.chart.single_chart import SingleChart
 from scs_analysis.cmd.cmd_single_chart import CmdSingleChart
-
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
-from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -75,8 +73,8 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("single_chart: KeyboardInterrupt", file=sys.stderr)
 
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+    # except Exception as ex:
+    #     print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

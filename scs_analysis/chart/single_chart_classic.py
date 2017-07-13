@@ -11,9 +11,6 @@ from matplotlib import use as muse
 muse('TKAgg')
 
 from matplotlib import pyplot as plt
-from multiprocessing import Manager
-
-from scs_core.sync.synchronised_process import SynchronisedProcess
 
 
 # TODO: move the Y baseline up if zero is not needed
@@ -21,20 +18,19 @@ from scs_core.sync.synchronised_process import SynchronisedProcess
 
 # TODO: add window title - scope + path
 
+# TODO: keep plt.pause(0.001) running in a sub-process?
+
 # --------------------------------------------------------------------------------------------------------------------
 
-class SingleChart(SynchronisedProcess):
+class SingleChart(object):
     """
     classdocs
     """
+
     def __init__(self, batch_mode, x_count, y_min, y_max, is_relative, path):
         """
         Constructor
         """
-        manager = Manager()
-
-        SynchronisedProcess.__init__(self, manager.Value('f', 0.0))
-
         # fields...
         self.__batch_mode = batch_mode
 
@@ -70,30 +66,15 @@ class SingleChart(SynchronisedProcess):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def run(self):
-        while True:
-            with self._lock():
-                value = self._value.value
-
-            if self._value.value is not None:
-                self.plot(float(value))
-
-            plt.pause(0.001)
-
-
-    def update(self, dictionary):
+    def plot(self, dictionary):
+        # datum...
         value = dictionary.node(self.__path)
 
         if value is None:
             return
 
-        with self._lock():
-            self._value.value = float(value)
+        datum = float(value)
 
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def plot(self, value):
         # adjust...
         if self.__is_relative:
             if self.__first_datum is None:
@@ -118,6 +99,10 @@ class SingleChart(SynchronisedProcess):
         max_axis_y = self.__y_max if max_data_y < self.__y_max else max_data_y + (abs(max_data_y) * 0.05)
 
         plt.ylim([min_axis_y, max_axis_y])
+
+        # plot...
+        if not self.__batch_mode:
+            plt.pause(0.001)
 
 
     def hold(self):
