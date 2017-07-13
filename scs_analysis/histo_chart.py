@@ -11,8 +11,8 @@ command line example:
 ./histo_chart.py val.afe.sns.CO.conv.err -x -10 10 -e -o err.csv
 """
 
-import tkinter
 import sys
+import tkinter
 import warnings
 
 from scs_analysis.chart.histo_chart import HistoChart

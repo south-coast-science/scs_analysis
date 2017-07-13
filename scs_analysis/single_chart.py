@@ -9,8 +9,8 @@ command line example:
 ./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
 """
 
-import tkinter
 import sys
+import tkinter
 import warnings
 
 from scs_analysis.chart.single_chart import SingleChart
