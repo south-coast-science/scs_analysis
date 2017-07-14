@@ -17,7 +17,7 @@ from matplotlib.ticker import MaxNLocator
 
 # TODO: use x_min_max
 
-# TODO: add window title - scope + path
+# TODO: add window title - chart + path
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -95,6 +95,10 @@ class HistoChart(object):
 
         except ValueError:
             pass
+
+
+    def pause(self):
+        plt.pause(0.5)
 
 
     def hold(self):

@@ -10,7 +10,7 @@ muse('TKAgg')    # TKAgg    nbagg
 from matplotlib import pyplot as plt
 
 
-# TODO: add window title - scope + path
+# TODO: add window title - chart + path
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -90,10 +90,14 @@ class MultiChart(object):
             plt.pause(0.001)
 
 
+    def pause(self):
+        plt.pause(0.5)
+
+
     def hold(self):
         while True:
             try:
-                plt.pause(0.1)
+                plt.pause(0.5)
             except RuntimeError:
                 print("MultiChart: exiting.")
                 return

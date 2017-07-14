@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 # TODO: move the Y baseline up if zero is not needed
 # TODO: add a lock / clip Y vs. scale Y
 
-# TODO: add window title - scope + path
+# TODO: add window title - chart + path
 
 # TODO: keep plt.pause(0.001) running in a sub-process?
 

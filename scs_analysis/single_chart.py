@@ -15,8 +15,13 @@ import warnings
 
 from scs_analysis.chart.single_chart import SingleChart
 from scs_analysis.cmd.cmd_single_chart import CmdSingleChart
+
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+
+from scs_core.sync.line_reader import LineReader
+
+from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -37,23 +42,36 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
-    scope = None
+    chart = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        scope = SingleChart(cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], cmd.relative, cmd.path)
+        # reader...
+        reader = LineReader(sys.stdin.fileno())
 
         if cmd.verbose:
-            print(scope, file=sys.stderr)
+            print(reader, file=sys.stderr)
+
+        # chart...
+        chart = SingleChart(cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], cmd.relative, cmd.path)
+
+        if cmd.verbose:
+            print(chart, file=sys.stderr)
             sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        for line in sys.stdin:
+        reader.start()
+
+        for line in reader.lines:
+            if line is None:
+                chart.pause()
+                continue
+
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
@@ -63,7 +81,7 @@ if __name__ == '__main__':
                 print(JSONify.dumps(datum.node()))
                 sys.stdout.flush()
 
-            scope.plot(datum)
+            chart.plot(datum)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -73,8 +91,8 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("single_chart: KeyboardInterrupt", file=sys.stderr)
 
-    # except Exception as ex:
-    #     print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+    except Exception as ex:
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -82,12 +100,12 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            print(scope, file=sys.stderr)
+            print(chart, file=sys.stderr)
             print("single_chart: holding", file=sys.stderr)
 
-        if scope is not None:
+        if chart is not None:
             try:
-                scope.hold()
+                chart.hold()
 
             except tkinter.TclError:
                 pass

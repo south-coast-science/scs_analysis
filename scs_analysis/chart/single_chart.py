@@ -11,30 +11,26 @@ from matplotlib import use as muse
 muse('TKAgg')
 
 from matplotlib import pyplot as plt
-from multiprocessing import Manager
-
-from scs_core.sync.synchronised_process import SynchronisedProcess
 
 
 # TODO: move the Y baseline up if zero is not needed
 # TODO: add a lock / clip Y vs. scale Y
 
-# TODO: add window title - scope + path
+# TODO: add window title - chart + path
+
+# TODO: keep plt.pause(0.001) running in a sub-process?
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SingleChart(SynchronisedProcess):
+class SingleChart(object):
     """
     classdocs
     """
+
     def __init__(self, batch_mode, x_count, y_min, y_max, is_relative, path):
         """
         Constructor
         """
-        manager = Manager()
-
-        SynchronisedProcess.__init__(self, manager.Value('f', 0.0))
-
         # fields...
         self.__batch_mode = batch_mode
 
@@ -70,30 +66,15 @@ class SingleChart(SynchronisedProcess):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def run(self):
-        while True:
-            with self._lock():
-                value = self._value.value
-
-            if self._value.value is not None:
-                self.plot(float(value))
-
-            plt.pause(0.001)
-
-
-    def update(self, dictionary):
+    def plot(self, dictionary):
+        # datum...
         value = dictionary.node(self.__path)
 
         if value is None:
             return
 
-        with self._lock():
-            self._value.value = float(value)
+        datum = float(value)
 
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def plot(self, value):
         # adjust...
         if self.__is_relative:
             if self.__first_datum is None:
@@ -119,11 +100,17 @@ class SingleChart(SynchronisedProcess):
 
         plt.ylim([min_axis_y, max_axis_y])
 
+        plt.pause(0.001)
+
+
+    def pause(self):
+        plt.pause(0.5)
+
 
     def hold(self):
         while True:
             try:
-                plt.pause(0.1)
+                plt.pause(0.5)
             except RuntimeError:
                 print("SingleScope: exiting.")
                 return
