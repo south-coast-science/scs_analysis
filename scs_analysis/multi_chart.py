@@ -68,6 +68,9 @@ if __name__ == '__main__':
         proc = reader.start()
 
         for line in reader.lines:
+            if chart.closed:
+                break
+
             if line is None:
                 chart.pause()
                 continue
