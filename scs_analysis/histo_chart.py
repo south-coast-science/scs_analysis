@@ -12,14 +12,16 @@ command line example:
 """
 
 import sys
-import tkinter
 import warnings
 
 from scs_analysis.chart.histo_chart import HistoChart
-from scs_analysis.cmd.cmd_histo import CmdHisto
+from scs_analysis.cmd.cmd_histo_chart import CmdHistoChart
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+
+from scs_core.sync.line_reader import LineReader
+
 from scs_core.sys.exception_report import ExceptionReport
 
 
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdHisto()
+    cmd = CmdHistoChart()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -41,23 +43,37 @@ if __name__ == '__main__':
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
-    scope = None
+    chart = None
+    proc = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        scope = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.path, cmd.outfile)
+        # reader...
+        reader = LineReader(sys.stdin.fileno())
 
         if cmd.verbose:
-            print(scope, file=sys.stderr)
+            print(reader, file=sys.stderr)
+
+        # chart...
+        chart = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.path, cmd.outfile)
+
+        if cmd.verbose:
+            print(chart, file=sys.stderr)
             sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        for line in sys.stdin:
+        proc = reader.start()
+
+        for line in reader.lines:
+            if line is None:
+                chart.pause()
+                continue
+
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
@@ -67,7 +83,7 @@ if __name__ == '__main__':
                 print(JSONify.dumps(datum.node()))
                 sys.stdout.flush()
 
-            scope.plot(datum)
+            chart.plot(datum)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,14 +101,18 @@ if __name__ == '__main__':
     # close...
 
     finally:
-        if cmd is not None and cmd.verbose:
-            print(scope, file=sys.stderr)
-            print("histo_chart: holding", file=sys.stderr)
+        if proc:
+            proc.terminate()
 
-        if scope is not None:
+        if chart is not None and not chart.closed:
+            if cmd.verbose:
+                print(chart, file=sys.stderr)
+                print("histo_chart: holding", file=sys.stderr)
+
+            # noinspection PyBroadException
+
             try:
-                scope.close()
-                scope.hold()
+                chart.hold()
 
-            except tkinter.TclError:
+            except Exception:
                 pass

@@ -1,0 +1,4 @@
+
+# https://matplotlib.org/faq/usage_faq.html
+
+backend : TKAgg

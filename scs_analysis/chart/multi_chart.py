@@ -2,19 +2,21 @@
 Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-"""
 
-from matplotlib import use as muse
-muse('TKAgg')    # TKAgg    nbagg
+uses matplotlibrc configuration file
+
+https://matplotlib.org/faq/usage_faq.html
+https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
+"""
 
 from matplotlib import pyplot as plt
 
+from scs_analysis.chart.chart import Chart
 
-# TODO: add window title - scope + path
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class MultiChart(object):
+class MultiChart(Chart):
     """
     classdocs
     """
@@ -23,9 +25,9 @@ class MultiChart(object):
         """
         Constructor
         """
-        # fields...
-        self.__batch_mode = batch_mode
+        Chart.__init__(self, batch_mode)
 
+        # fields...
         self.__y_min = y_min
         self.__y_max = y_max
 
@@ -40,6 +42,10 @@ class MultiChart(object):
         plt.ion()               # set plot to animated
 
         fig = plt.figure()
+
+        fig.canvas.set_window_title(self.__paths)
+
+        fig.canvas.mpl_connect('close_event', self.close)
 
         ax1 = plt.axes()
         ax1.xaxis.grid(True)
@@ -59,6 +65,9 @@ class MultiChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def plot(self, dictionary):
+        if self.closed:
+            return
+
         # datum...
         datum = []
 
@@ -86,17 +95,8 @@ class MultiChart(object):
 
         plt.ylim([min_axis_y, max_axis_y])
 
-        if not self.__batch_mode:
+        if not self._batch_mode:
             plt.pause(0.001)
-
-
-    def hold(self):
-        while True:
-            try:
-                plt.pause(0.1)
-            except RuntimeError:
-                print("MultiChart: exiting.")
-                return
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -145,5 +145,5 @@ class MultiChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "MultiScope:{batch_mode:%s, y_min:%s, y_max:%s, paths:%s}" % \
-                (self.__batch_mode, self.y_min, self.y_max, self.__paths)
+        return "MultiChart:{batch_mode:%s, y_min:%s, y_max:%s, paths:%s}" % \
+                (self._batch_mode, self.y_min, self.y_max, self.__paths)

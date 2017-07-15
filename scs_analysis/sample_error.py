@@ -48,7 +48,7 @@ class SampleError(object):
             return None
 
         self.__aggregate = (0.9 * self.__aggregate) + (0.1 * latest)
-        err = latest - self.__aggregate
+        error = latest - self.__aggregate
 
         target = PathDict()
 
@@ -56,7 +56,7 @@ class SampleError(object):
 
         target.append(self.__path + '.src', latest)
         target.append(self.__path + '.agr', round(self.__aggregate, 6))
-        target.append(self.__path + '.err', round(err, 6))
+        target.append(self.__path + '.err', round(error, 6))
 
         return target.node()
 
