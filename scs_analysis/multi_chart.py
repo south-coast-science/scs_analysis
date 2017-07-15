@@ -10,7 +10,6 @@ command line example:
 """
 
 import sys
-import tkinter
 import warnings
 
 from scs_analysis.chart.multi_chart import MultiChart
@@ -43,6 +42,7 @@ if __name__ == '__main__':
         print(cmd, file=sys.stderr)
 
     chart = None
+    proc = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        reader.start()
+        proc = reader.start()
 
         for line in reader.lines:
             if line is None:
@@ -99,13 +99,18 @@ if __name__ == '__main__':
     # close...
 
     finally:
-        if cmd.verbose:
-            print(chart, file=sys.stderr)
-            print("multi_chart: holding", file=sys.stderr)
+        if proc:
+            proc.terminate()
 
-        if chart is not None:
+        if chart is not None and not chart.closed:
+            if cmd.verbose:
+                print(chart, file=sys.stderr)
+                print("multi_chart: holding", file=sys.stderr)
+
+            # noinspection PyBroadException
+
             try:
                 chart.hold()
 
-            except tkinter.TclError:
+            except Exception:
                 pass
