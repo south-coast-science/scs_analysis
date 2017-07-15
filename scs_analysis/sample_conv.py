@@ -42,14 +42,14 @@ class SampleConv(object):
         ae_v = float(datum.node(self.__path + '.aeV'))
 
         diff = we_v - ae_v
-        conv = (diff * 1000) / float(self.__sensitivity)            # value [ppb] = raw [mV] / sensitivity [mV / ppb]
+        conversion = (diff * 1000) / float(self.__sensitivity)      # value [ppb] = raw [mV] / sensitivity [mV / ppb]
 
         target = PathDict()
 
         target.copy(datum, 'rec', self.__path + '.weV', self.__path + '.aeV')
 
         target.append(self.__path + '.diff', round(diff, 6))
-        target.append(self.__path + '.conv', round(conv, 6))
+        target.append(self.__path + '.conv', round(conversion, 6))
 
         return target.node()
 

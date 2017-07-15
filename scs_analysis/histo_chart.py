@@ -16,7 +16,7 @@ import tkinter
 import warnings
 
 from scs_analysis.chart.histo_chart import HistoChart
-from scs_analysis.cmd.cmd_histo import CmdHisto
+from scs_analysis.cmd.cmd_histo_chart import CmdHistoChart
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdHisto()
+    cmd = CmdHistoChart()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
         if chart is not None:
             try:
-                chart.close()
+                chart.close(None)
                 chart.hold()
 
             except tkinter.TclError:

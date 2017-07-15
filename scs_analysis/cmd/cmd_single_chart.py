@@ -99,5 +99,5 @@ class CmdSingleChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSingleScope:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
+        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
                     (self.batch_mode, self.relative, self.x, self.y, self.echo, self.verbose, self.args)

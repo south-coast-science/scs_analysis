@@ -3,26 +3,22 @@ Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
-https://matplotlib.org/faq/usage_faq.html
-"""
+uses matplotlibrc configuration file
 
-from matplotlib import use as muse
-muse('TKAgg')
+https://matplotlib.org/faq/usage_faq.html
+https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
+"""
 
 from matplotlib import pyplot as plt
 
+from scs_analysis.chart.chart import Chart
+
 
 # TODO: move the Y baseline up if zero is not needed
-# TODO: add a lock / clip Y vs. scale Y
-
-# TODO: add window title - chart + path
-
-# TODO: keep plt.pause(0.001) running in a sub-process?
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SingleChart(object):
+class SingleChart(Chart):
     """
     classdocs
     """
@@ -31,9 +27,9 @@ class SingleChart(object):
         """
         Constructor
         """
-        # fields...
-        self.__batch_mode = batch_mode
+        Chart.__init__(self, batch_mode)
 
+        # fields...
         self.__y_min = y_min
         self.__y_max = y_max
         self.__is_relative = is_relative
@@ -51,6 +47,10 @@ class SingleChart(object):
 
         fig = plt.figure()
 
+        fig.canvas.set_window_title(self.__path)
+
+        fig.canvas.mpl_connect('close_event', self.close)
+
         ax1 = plt.axes()
         ax1.xaxis.grid(True)
 
@@ -67,6 +67,9 @@ class SingleChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def plot(self, dictionary):
+        if self.closed:
+            return
+
         # datum...
         value = dictionary.node(self.__path)
 
@@ -100,20 +103,8 @@ class SingleChart(object):
 
         plt.ylim([min_axis_y, max_axis_y])
 
-        plt.pause(0.001)
-
-
-    def pause(self):
-        plt.pause(0.5)
-
-
-    def hold(self):
-        while True:
-            try:
-                plt.pause(0.5)
-            except RuntimeError:
-                print("SingleScope: exiting.")
-                return
+        if not self._batch_mode:
+            plt.pause(0.001)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -146,6 +137,6 @@ class SingleChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SingleScope:{batch_mode:%s, y_min:%s, y_max:%s, is_relative:%s, path:%s, index:%s, first_datum:%s}" % \
-                (self.__batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index,
+        return "SingleChart:{batch_mode:%s, y_min:%s, y_max:%s, is_relative:%s, path:%s, index:%s, first_datum:%s}" % \
+                (self._batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index,
                  self.first_datum)

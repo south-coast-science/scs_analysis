@@ -91,5 +91,5 @@ class CmdMultiChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMultiScope:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
+        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
                     (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.args)

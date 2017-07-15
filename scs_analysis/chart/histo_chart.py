@@ -3,25 +3,25 @@ Created on 9 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+
+uses matplotlibrc configuration file
+
+https://matplotlib.org/faq/usage_faq.html
+https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
 http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
 """
-
-from matplotlib import use as muse
-
-from scs_core.data.histogram import Histogram
-muse('TKAgg')
 
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
+from scs_analysis.chart.chart import Chart
 
-# TODO: use x_min_max
+from scs_core.data.histogram import Histogram
 
-# TODO: add window title - chart + path
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class HistoChart(object):
+class HistoChart(Chart):
     """
     classdocs
     """
@@ -30,9 +30,9 @@ class HistoChart(object):
         """
         Constructor
         """
-        # fields...
-        self.__batch_mode = batch_mode
+        Chart.__init__(self, batch_mode)
 
+        # fields...
         self.__x_min = x_min
         self.__x_max = x_max
         self.__y_max = 1
@@ -48,6 +48,10 @@ class HistoChart(object):
         plt.ion()                   # set plot to animated
 
         self.__fig, self.__ax = plt.subplots()
+
+        self.__fig.canvas.set_window_title(self.__path)
+
+        self.__fig.canvas.mpl_connect('close_event', self.close)
 
         self.__ax.set(xlim=[self.__x_min, self.__x_max], ylim=[0, self.__y_max])
         self.__ax.yaxis.set_major_locator(MaxNLocator(integer=True))
@@ -66,6 +70,9 @@ class HistoChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def plot(self, dictionary):
+        if self.closed:
+            return
+
         # datum...
         value = dictionary.node(self.__path)
 
@@ -86,10 +93,10 @@ class HistoChart(object):
                 self.__y_max = max_count
                 self.__ax.set(ylim=[0, self.__y_max + (self.__y_max * 0.10)])
 
-                if not self.__batch_mode:
+                if not self._batch_mode:
                     plt.pause(0.001)
             else:
-                if not self.__batch_mode:
+                if not self._batch_mode:
                     self.__ax.draw_artist(self.__rects[index])
                     self.__fig.canvas.flush_events()                # may need self.__fig.canvas.update()
 
@@ -97,20 +104,9 @@ class HistoChart(object):
             pass
 
 
-    def pause(self):
-        plt.pause(0.5)
+    def close(self, _):
+        self._closed = True
 
-
-    def hold(self):
-        while True:
-            try:
-                plt.pause(0.1)
-            except RuntimeError:
-                print("HistoScope: exiting.")
-                return
-
-
-    def close(self):
         if self.__outfile is None:
             return
 
@@ -148,4 +144,4 @@ class HistoChart(object):
 
     def __str__(self, *args, **kwargs):
         return "HistoChart:{batch_mode:%s, x_min:%0.3f, x_max:%0.3f, y_max:%0.3f, path:%s, outfile:%s}" % \
-                (self.__batch_mode, self.x_min, self.x_max, self.y_max, self.__path, self.outfile)
+                (self._batch_mode, self.x_min, self.x_max, self.y_max, self.__path, self.outfile)

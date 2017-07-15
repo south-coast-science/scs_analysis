@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdHisto(object):
+class CmdHistoChart(object):
     """
     unix command line handler
     """
@@ -101,5 +101,5 @@ class CmdHisto(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdHisto:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, args:%s}" % \
+        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, args:%s}" % \
                     (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.args)
