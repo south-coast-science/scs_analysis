@@ -107,7 +107,6 @@ if __name__ == '__main__':
 
         if chart is not None and not chart.closed:
             if cmd.verbose:
-                print(chart, file=sys.stderr)
                 print("multi_chart: holding", file=sys.stderr)
 
             # noinspection PyBroadException
