@@ -71,7 +71,10 @@ class SingleChart(Chart):
             return
 
         # datum...
-        value = dictionary.node(self.__path)
+        try:
+            value = dictionary.node(self.__path)
+        except KeyError:
+            return
 
         if value is None:
             return

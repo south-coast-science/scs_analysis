@@ -72,7 +72,10 @@ class MultiChart(Chart):
         datum = []
 
         for path in self.__paths:
-            value = dictionary.node(path)
+            try:
+                value = dictionary.node(path)
+            except KeyError:
+                return
 
             if value is None:       # TODO: test whether the system can survive missing values
                 return
