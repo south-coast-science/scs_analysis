@@ -16,22 +16,22 @@ class CmdOSIOMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID -t TOPIC [-r] [{ -i | CMD }] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC [-r] [{ -i | CMD }] [-t] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--device", "-d", type="string", nargs=2, action="store", dest="tag_host",
+        self.__parser.add_option("--device", "-d", type="string", nargs=3, action="store", dest="tag_host_topic",
                                  help="tag and host ID of target device")
-
-        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
-                                 help="full topic path")
 
         # optional...
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
                                  help="wait for receipt from target device")
 
         self.__parser.add_option("--interactive", "-i", action="store_true", dest="interactive", default=False,
-                                 help="interactive mode")
+                                 help="interactive mode (always waits for receipt)")
+
+        self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout", default=10,
+                                 help="receipt timeout (default 10 seconds)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -45,24 +45,24 @@ class CmdOSIOMQTTControl(object):
         if self.interactive and self.cmd_tokens is not None:
             return False
 
-        return bool(self.__opts.tag_host) and bool(self.__opts.topic)
+        return bool(self.__opts.tag_host_topic)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def device_tag(self):
-        return self.__opts.tag_host[0] if self.__opts.tag_host else None
+        return self.__opts.tag_host_topic[0] if self.__opts.tag_host_topic else None
 
 
     @property
     def device_host_id(self):
-        return self.__opts.tag_host[1] if self.__opts.tag_host else None
+        return self.__opts.tag_host_topic[1] if self.__opts.tag_host_topic else None
 
 
     @property
     def topic(self):
-        return self.__opts.topic
+        return self.__opts.tag_host_topic[2] if self.__opts.tag_host_topic else None
 
 
     @property
@@ -78,6 +78,11 @@ class CmdOSIOMQTTControl(object):
     @property
     def interactive(self):
         return self.__opts.interactive
+
+
+    @property
+    def timeout(self):
+        return self.__opts.timeout
 
 
     @property
@@ -97,7 +102,7 @@ class CmdOSIOMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, " \
+        return "CmdOSIOMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
                "verbose:%s, args:%s}" % \
-               (self.__opts.tag_host, self.topic, self.cmd_tokens, self.receipt, self.interactive,
+               (self.__opts.tag_host_topic, self.topic, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
                 self.verbose, self.args)
