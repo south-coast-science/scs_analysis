@@ -16,7 +16,7 @@ class CmdOSIOMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC [-r] [{ -i | CMD }] [-t] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC { -i | [-r] CMD } [-t TIMEOUT] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -42,6 +42,9 @@ class CmdOSIOMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.interactive == self.receipt:
+            return False
+
         if self.interactive and self.cmd_tokens is not None:
             return False
 
