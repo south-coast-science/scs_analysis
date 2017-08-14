@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit()
+        exit(2)
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
         if api_auth is None:
             print("APIAuth not available.", file=sys.stderr)
-            exit()
+            exit(1)
 
         if cmd.verbose:
             print(api_auth, file=sys.stderr)
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
         if client_auth is None:
             print("ClientAuth not available.", file=sys.stderr)
-            exit()
+            exit(1)
 
         if cmd.verbose:
             print(client_auth, file=sys.stderr)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         # check topic...
         if not manager.find(cmd.topic):
             print("Topic not available: %s" % cmd.topic, file=sys.stderr)
-            exit()
+            exit(1)
 
         if cmd.verbose:
             print(datum, file=sys.stderr)
