@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_interval: KeyboardInterrupt", file=sys.stderr)
 

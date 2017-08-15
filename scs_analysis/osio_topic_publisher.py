@@ -102,7 +102,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
             print("osio_topic_publisher: KeyboardInterrupt", file=sys.stderr)
 
