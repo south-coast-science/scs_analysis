@@ -12,14 +12,12 @@ command line example:
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_roll import CmdSampleRoll
+from scs_analysis.cmd.cmd_sample_smooth import CmdSampleSmooth
 
 from scs_core.data.path_dict import PathDict
 from scs_core.data.json import JSONify
 from scs_core.sys.exception_report import ExceptionReport
 
-
-# TODO: should deal with list of paths
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -30,14 +28,14 @@ class SampleRoll(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, tally, path):
+    def __init__(self, path, tally):
         """
         Constructor
         """
-        self.__tally = tally
         self.__path = path
+        self.__tally = tally
 
-        self.__points = [None] * tally
+        self.__points = [None] * tally if tally else []
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,21 +62,24 @@ class SampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __add_point(self, point):
-        del self.__points[0]
+        if self.__tally is not None:
+            del self.__points[0]
 
         self.__points.append(point)
 
 
     def __avg(self):
         total = 0
+        count = 0
 
-        for i in range(self.__tally):
-            if self.__points[i] is None:
+        for point in self.__points:
+            if point is None:
                 return None
 
-            total += self.__points[i]
+            total += point
+            count += 1
 
-        return total / self.__tally
+        return total / count
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ class SampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SampleRoll:{tally:%d, path:%s, aggregate:%s}" % (self.__tally, self.__path, self.points)
+        return "SampleRoll:{path:%s, tally:%d, points:%s}" % (self.__path, self.__tally, self.points)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleRoll()
+    cmd = CmdSampleSmooth()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -114,7 +115,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        roll = SampleRoll(cmd.tally, cmd.path)
+        roll = SampleRoll(cmd.path, cmd.tally)
 
         if cmd.verbose:
             print(roll, file=sys.stderr)

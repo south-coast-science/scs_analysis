@@ -1,5 +1,5 @@
 """
-Created on 14 Oct 2016
+Created on 22 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,20 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleRoll(object):
+class CmdSampleSmooth(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH -t TALLY [-v]", version="%prog 1.0")
-
-        # compulsory...
-        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
-                                 help="number of points to average")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-t TALLY] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+                                 help="regress TALLY number of data points (default all)")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -32,7 +31,7 @@ class CmdSampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None or self.tally is None:
+        if self.path is None:
             return False
 
         return True
@@ -67,5 +66,5 @@ class CmdSampleRoll(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRoll:{tally:%0.3f, verbose:%s, args:%s}" % \
-                    (self.tally, self.verbose, self.args)
+        return "CmdFilter:{path:%s, tally:%s, verbose:%s, args:%s}" % \
+                    (self.path, self.tally, self.verbose, self.args)
