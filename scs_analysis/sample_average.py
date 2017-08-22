@@ -15,8 +15,8 @@ import sys
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.average import Average
-from scs_core.data.path_dict import PathDict
 from scs_core.data.json import JSONify
+from scs_core.data.path_dict import PathDict
 
 from scs_core.sys.exception_report import ExceptionReport
 
