@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleSmooth(object):
+class CmdSampleAggregate(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -66,5 +66,5 @@ class CmdSampleSmooth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdFilter:{path:%s, tally:%s, verbose:%s, args:%s}" % \
+        return "CmdSampleAggregate:{path:%s, tally:%s, verbose:%s, args:%s}" % \
                     (self.path, self.tally, self.verbose, self.args)

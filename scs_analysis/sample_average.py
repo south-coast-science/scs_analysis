@@ -6,13 +6,13 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_roll.py val.sht.tmp -t 4
+./socket_receiver.py | ./sample_average.py val.sht.tmp -t 4
 """
 
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_smooth import CmdSampleSmooth
+from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.average import Average
 from scs_core.data.path_dict import PathDict
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleSmooth()
+    cmd = CmdSampleAggregate()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
