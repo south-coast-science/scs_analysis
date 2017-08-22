@@ -34,6 +34,9 @@ class CmdSampleAggregate(object):
         if self.path is None:
             return False
 
+        if self.tally is not None and self.tally < 1:
+            return False
+
         return True
 
 
