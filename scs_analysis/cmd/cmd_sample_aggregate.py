@@ -20,7 +20,7 @@ class CmdSampleAggregate(object):
 
         # optional...
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
-                                 help="regress TALLY number of data points (default all)")
+                                 help="generate a rolling aggregate for TALLY number of data points (default all)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
