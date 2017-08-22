@@ -6,7 +6,7 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_roll.py val.sht.tmp -c 4
+./socket_receiver.py | ./sample_roll.py val.sht.tmp -t 4
 """
 
 
@@ -30,14 +30,14 @@ class SampleRoll(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, count, path):
+    def __init__(self, tally, path):
         """
         Constructor
         """
-        self.__count = count
+        self.__tally = tally
         self.__path = path
 
-        self.__points = [None] * count
+        self.__points = [None] * tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class SampleRoll(object):
 
         target = PathDict()
 
-        target.copy('rec')
+        target.copy(datum, 'rec')
 
         target.append(self.__path + '.src', latest)
         target.append(self.__path + '.avg', round(avg, 6))
@@ -72,13 +72,13 @@ class SampleRoll(object):
     def __avg(self):
         total = 0
 
-        for i in range(self.__count):
+        for i in range(self.__tally):
             if self.__points[i] is None:
                 return None
 
             total += self.__points[i]
 
-        return total / self.__count
+        return total / self.__tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ class SampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SampleRoll:{count:%d, path:%s, aggregate:%s}" % (self.__count, self.__path, self.points)
+        return "SampleRoll:{tally:%d, path:%s, aggregate:%s}" % (self.__tally, self.__path, self.points)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        roll = SampleRoll(cmd.count, cmd.path)
+        roll = SampleRoll(cmd.tally, cmd.path)
 
         if cmd.verbose:
             print(roll, file=sys.stderr)

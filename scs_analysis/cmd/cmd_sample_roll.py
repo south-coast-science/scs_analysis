@@ -16,10 +16,10 @@ class CmdSampleRoll(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH -c COUNT [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH -t TALLY [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--count", "-c", type="int", nargs=1, action="store", dest="count",
+        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
                                  help="number of points to average")
 
         # optional...
@@ -32,7 +32,7 @@ class CmdSampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None or self.count is None:
+        if self.path is None or self.tally is None:
             return False
 
         return True
@@ -46,8 +46,8 @@ class CmdSampleRoll(object):
 
 
     @property
-    def count(self):
-        return self.__opts.count
+    def tally(self):
+        return self.__opts.tally
 
 
     @property
@@ -67,5 +67,5 @@ class CmdSampleRoll(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRoll:{count:%0.3f, verbose:%s, args:%s}" % \
-                    (self.count, self.verbose, self.args)
+        return "CmdSampleRoll:{tally:%0.3f, verbose:%s, args:%s}" % \
+                    (self.tally, self.verbose, self.args)

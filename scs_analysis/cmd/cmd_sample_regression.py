@@ -1,5 +1,5 @@
 """
-Created on 11 Jul 2016
+Created on 22 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,16 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleFilter(object):
+class CmdSampleRegression(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-t TALLY] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+                                 help="look back only up to TALLY number of data points (default all data)")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -42,6 +45,11 @@ class CmdSampleFilter(object):
 
 
     @property
+    def tally(self):
+        return self.__opts.tally
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -58,5 +66,5 @@ class CmdSampleFilter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdFilter:{verbose:%s, args:%s}" % \
-                    (self.verbose, self.args)
+        return "CmdFilter:{tally:%s, verbose:%s, args:%s}" % \
+                    (self.tally, self.verbose, self.args)
