@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit()
+        exit(2)
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_max: KeyboardInterrupt", file=sys.stderr)
 

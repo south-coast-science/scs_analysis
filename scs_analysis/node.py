@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit()
+        exit(2)
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -43,6 +43,9 @@ if __name__ == '__main__':
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
 
+            if datum is None:
+                continue
+
             if cmd.ignore and not datum.has_path(cmd.path):
                 continue
 
@@ -55,7 +58,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
             print("node: KeyboardInterrupt", file=sys.stderr)
 

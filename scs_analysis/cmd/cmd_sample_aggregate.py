@@ -1,5 +1,5 @@
 """
-Created on 14 Oct 2016
+Created on 22 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,20 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleRoll(object):
+class CmdSampleAggregate(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH -c COUNT [-v]", version="%prog 1.0")
-
-        # compulsory...
-        self.__parser.add_option("--count", "-c", type="int", nargs=1, action="store", dest="count",
-                                 help="number of points to average")
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-t TALLY] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+                                 help="generate a rolling aggregate for TALLY number of data points (default all)")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -32,7 +31,10 @@ class CmdSampleRoll(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None or self.count is None:
+        if self.path is None:
+            return False
+
+        if self.tally is not None and self.tally < 1:
             return False
 
         return True
@@ -46,8 +48,8 @@ class CmdSampleRoll(object):
 
 
     @property
-    def count(self):
-        return self.__opts.count
+    def tally(self):
+        return self.__opts.tally
 
 
     @property
@@ -67,5 +69,5 @@ class CmdSampleRoll(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRoll:{count:%0.3f, verbose:%s, args:%s}" % \
-                    (self.count, self.verbose, self.args)
+        return "CmdSampleAggregate:{path:%s, tally:%s, verbose:%s, args:%s}" % \
+                    (self.path, self.tally, self.verbose, self.args)

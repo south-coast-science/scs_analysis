@@ -6,56 +6,60 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_roll.py val.sht.tmp -c 4
+./socket_receiver.py | ./sample_average.py val.sht.tmp -t 4
 """
 
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_roll import CmdSampleRoll
+from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
-from scs_core.data.path_dict import PathDict
+from scs_core.data.average import Average
 from scs_core.data.json import JSONify
+from scs_core.data.path_dict import PathDict
+
 from scs_core.sys.exception_report import ExceptionReport
 
 
-# TODO: should deal with list of paths
-
 # --------------------------------------------------------------------------------------------------------------------
 
-class SampleRoll(object):
+class SampleAverage(object):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, count, path):
+    def __init__(self, path, tally):
         """
         Constructor
         """
-        self.__count = count
         self.__path = path
-
-        self.__points = [None] * count
+        self.__func = Average(tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def datum(self, datum):
-        latest = float(datum.node(self.__path))
+    def datum(self, sample):
+        if not sample.has_path(self.__path):
+            return None
 
-        self.__add_point(latest)
-        avg = self.__avg()
+        value = sample.node(self.__path)
+        self.__func.append(value)
+
+        if not self.__func.has_tally():
+            return None
+
+        avg = self.__func.compute()
 
         if avg is None:
             return None
 
         target = PathDict()
 
-        target.copy('rec')
+        target.copy(datum, 'rec')
 
-        target.append(self.__path + '.src', latest)
+        target.append(self.__path + '.src', value)
         target.append(self.__path + '.avg', round(avg, 6))
 
         return target.node()
@@ -63,35 +67,8 @@ class SampleRoll(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __add_point(self, point):
-        del self.__points[0]
-
-        self.__points.append(point)
-
-
-    def __avg(self):
-        total = 0
-
-        for i in range(self.__count):
-            if self.__points[i] is None:
-                return None
-
-            total += self.__points[i]
-
-        return total / self.__count
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def points(self):
-        return self.__points
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def __str__(self, *args, **kwargs):
-        return "SampleRoll:{count:%d, path:%s, aggregate:%s}" % (self.__count, self.__path, self.points)
+        return "SampleAverage:{path:%s, func:%s}" % (self.__path, self.__func)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -101,11 +78,11 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleRoll()
+    cmd = CmdSampleAggregate()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit()
+        exit(2)
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -114,10 +91,10 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        roll = SampleRoll(cmd.count, cmd.path)
+        sampler = SampleAverage(cmd.path, cmd.tally)
 
         if cmd.verbose:
-            print(roll, file=sys.stderr)
+            print(sampler, file=sys.stderr)
             sys.stderr.flush()
 
 
@@ -125,24 +102,24 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if sample_datum is None:
+            if datum is None:
                 break
 
-            avg_datum = roll.datum(sample_datum)
+            average = sampler.datum(datum)
 
-            if avg_datum is not None:
-                print(JSONify.dumps(avg_datum))
+            if average is not None:
+                print(JSONify.dumps(average))
                 sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_roll: KeyboardInterrupt", file=sys.stderr)
+            print("sample_average: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
