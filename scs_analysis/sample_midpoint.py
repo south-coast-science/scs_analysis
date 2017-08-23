@@ -36,7 +36,7 @@ class SampleMidpoint(object):
         Constructor
         """
         self.__path = path
-        self.__func = LinearRegression(False, tally)
+        self.__func = LinearRegression(tally, False)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_regression: KeyboardInterrupt", file=sys.stderr)
+            print("sample_midpoint: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

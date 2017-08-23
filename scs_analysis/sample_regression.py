@@ -36,7 +36,7 @@ class SampleRegression(object):
         Constructor
         """
         self.__path = path
-        self.__func = LinearRegression(True, tally)
+        self.__func = LinearRegression(tally, True)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class SampleRegression(object):
         target.copy(datum, 'rec')
 
         target.append(self.__path + '.src', value)
-        target.append(self.__path + '.slope', round(slope * 60 * 60, 6))
+        target.append(self.__path + '.slope', round(slope * 60 * 60, 6))        # x-scale is hours
         target.append(self.__path + '.intercept', round(intercept, 6))
 
         return target.node()
