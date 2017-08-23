@@ -16,9 +16,10 @@ from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
+from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
-from scs_core.sys.exception_report import ExceptionReport
+# from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ class SampleRegression(object):
         Constructor
         """
         self.__path = path
-        self.__func = LinearRegression(tally)
+        self.__func = LinearRegression(True, tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -44,15 +45,17 @@ class SampleRegression(object):
         if not sample.has_path(self.__path):
             return None
 
+        rec = LocalizedDatetime.construct_from_jdict(sample.node('rec'))
         value = sample.node(self.__path)
-        self.__func.append(value)
+
+        self.__func.append(rec, value)
 
         if not self.__func.has_tally():
             return None
 
-        avg = self.__func.compute()
+        slope, intercept = self.__func.compute()
 
-        if avg is None:
+        if slope is None:
             return None
 
         target = PathDict()
@@ -60,7 +63,8 @@ class SampleRegression(object):
         target.copy(datum, 'rec')
 
         target.append(self.__path + '.src', value)
-        target.append(self.__path + '.avg', round(avg, 6))
+        target.append(self.__path + '.slope', round(slope * 60 * 60, 6))
+        target.append(self.__path + '.intercept', round(intercept, 6))
 
         return target.node()
 
@@ -121,5 +125,5 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("sample_average: KeyboardInterrupt", file=sys.stderr)
 
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+    # except Exception as ex:
+    #     print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

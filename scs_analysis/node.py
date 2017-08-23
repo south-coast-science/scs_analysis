@@ -43,6 +43,9 @@ if __name__ == '__main__':
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
 
+            if datum is None:
+                continue
+
             if cmd.ignore and not datum.has_path(cmd.path):
                 continue
 
