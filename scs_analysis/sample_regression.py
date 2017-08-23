@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 """
-Created on 13 Oct 2016
+Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./socket_receiver.py | ./sample_average.py val.sht.tmp -t 4
+./socket_receiver.py | ./sample_regression.py val.sht.tmp -t 4
 """
 
 
@@ -19,7 +19,7 @@ from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
-# from scs_core.sys.exception_report import ExceptionReport
+from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_average: KeyboardInterrupt", file=sys.stderr)
+            print("sample_regression: KeyboardInterrupt", file=sys.stderr)
 
-    # except Exception as ex:
-    #     print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
+    except Exception as ex:
+        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
