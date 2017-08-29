@@ -159,6 +159,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        # TODO: test whether device present
+
         while True:
             # cmd...
             if cmd.interactive:
@@ -218,6 +220,7 @@ if __name__ == '__main__':
                         break
 
                     if cmd.interactive and time.time() > timeout:
+                        # TODO: report timeout
                         break
 
                     time.sleep(0.1)
