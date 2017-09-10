@@ -63,7 +63,7 @@ if __name__ == '__main__':
         topic_manager = TopicManager(HTTPClient(), api_auth.api_key)
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(), api_auth.api_key)
+        message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
 
         if cmd.verbose:
             print(message_manager, file=sys.stderr)
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # messages...
-        messages = message_manager.find_for_topic(cmd.path, start, end)
+        messages = message_manager.find_for_topic(cmd.path, start, end, cmd.pause)
 
         for message in messages:
             document = message if cmd.include_wrapping else message.payload.payload

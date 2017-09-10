@@ -233,10 +233,11 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
+        if cmd.interactive:
+            print("", file=sys.stderr)
+
         if cmd.verbose:
             print("osio_mqtt_control: KeyboardInterrupt", file=sys.stderr)
-        else:
-            print("", file=sys.stderr)
 
 
     except Exception as ex:
