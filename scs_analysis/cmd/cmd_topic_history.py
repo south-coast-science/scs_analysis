@@ -18,8 +18,8 @@ class CmdTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-w] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-p SECONDS] [-w] "
+                                                    "[-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
@@ -30,6 +30,9 @@ class CmdTopicHistory(object):
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="localised datetime end")
+
+        self.__parser.add_option("--pause", "-p", type="float", nargs=1, action="store", dest="pause", default=0.0,
+                                 help="pause for SECONDS between retrieved batches (prevents rate limit exceeded)")
 
         self.__parser.add_option("--wrapping", "-w", action="store_true", dest="include_wrapping", default=False,
                                  help="include message wrapper")
@@ -84,6 +87,10 @@ class CmdTopicHistory(object):
 
 
     @property
+    def pause(self):
+        return self.__opts.pause
+
+    @property
     def include_wrapping(self):
         return self.__opts.include_wrapping
 
@@ -105,7 +112,7 @@ class CmdTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicHistory:{path:%s, minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
+        return "CmdTopicHistory:{path:%s, minutes:%s, start:%s, end:%s, pause:%s, include_wrapping:%s, " \
                "verbose:%s, args:%s}" % \
-                    (self.path, self.minutes, self.start, self.end, self.include_wrapping,
+                    (self.path, self.minutes, self.start, self.end, self.pause, self.include_wrapping,
                      self.verbose, self.args)
