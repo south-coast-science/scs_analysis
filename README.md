@@ -3,7 +3,8 @@ Information management and analysis tools for South Coast Science data consumers
 
 **Required libraries:** 
 
-* Third party: matplotlib, python3-tk, paho-mqtt, pycurl, tzlocal
+* Third party (always required): paho-mqtt, pycurl, tzlocal
+* Third party (to enable charting): matplotlib, python3-tk
 * SCS root: scs_core
 * SCS host: scs_host_posix or scs_host_rpi
 
