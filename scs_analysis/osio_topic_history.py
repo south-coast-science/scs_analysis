@@ -26,6 +26,22 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
+# TODO: catch and report the following error:
+
+# ./osio_topic_history.py /orgs/south-coast-science-dev/alphasense/loc/303/gases -p 0.5 -v -s 2017-09-19T14:00:00+01:00 -e 2017-09-21T23:59:00+01:00
+
+# {"cls": "ClientException", "args": [null], "trace": [
+# {"loc": "File \"/Users/bruno/Documents/Development/Python/Mac/scs_core/scs_core/osio/client/rest_client.py\", line 57, in get", "stat": "response_jstr = self.__http_client.get(path, params, self.__headers)"},
+# {"loc": "File \"/Users/bruno/Documents/Development/Python/Mac/scs_host_posix/scs_host/client/http_client.py\", line 58, in get", "stat": "raise HTTPException.construct(response, data)"},
+# {"loc": "scs_core.sys.http_exception.HTTPException: HTTPException:{status:500, reason:Server Error, data:}", "stat": null},
+# {"loc": "The above exception was the direct cause of the following exception:", "stat": null},
+# {"loc": "Traceback (most recent call last):", "stat": null}, {"loc": "File \"./osio_topic_history.py\", line 94, in <module>", "stat": "messages = message_manager.find_for_topic(cmd.path, start, end, cmd.pause)"},
+# {"loc": "File \"/Users/bruno/Documents/Development/Python/Mac/scs_core/scs_core/osio/manager/message_manager.py\", line 50, in find_for_topic", "stat": "for batch in self.__find(request_path, start_date, end_date):"},
+# {"loc": "File \"/Users/bruno/Documents/Development/Python/Mac/scs_core/scs_core/osio/manager/message_manager.py\", line 76, in __find", "stat": "jdict = self.__rest_client.get(request_path, params)"},
+# {"loc": "File \"/Users/bruno/Documents/Development/Python/Mac/scs_core/scs_core/osio/client/rest_client.py\", line 62, in get", "stat": "raise ClientException.construct(exc) from exc"}],
+# "sum": "scs_core.osio.client.client_excepion.ClientException: ClientException:{error:None}"}
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
