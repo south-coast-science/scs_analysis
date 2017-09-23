@@ -22,7 +22,9 @@ from scs_analysis.cmd.cmd_topic_publisher import CmdTopicPublisher
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
+
 from scs_core.osio.config.project import Project
+
 from scs_core.sys.system_id import SystemID
 from scs_core.sys.exception_report import ExceptionReport
 
@@ -82,14 +84,17 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            datum = json.loads(line, object_pairs_hook=OrderedDict)
+            try:
+                jdict = json.loads(line, object_pairs_hook=OrderedDict)
+            except ValueError:
+                continue
 
             if cmd.override:
-                payload = OrderedDict({'__timestamp': datum['rec']})
-                payload.update(datum)
+                payload = OrderedDict({'__timestamp': jdict['rec']})
+                payload.update(jdict)
 
             else:
-                payload = datum
+                payload = jdict
 
             # time.sleep(1)
 
