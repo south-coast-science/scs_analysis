@@ -58,7 +58,7 @@ class OSIOTopicAgent(object):
 
     def subscribe(self):
         client = HTTPStreamingClient()
-        auth = APIAuth.load_from_host(Host)
+        auth = APIAuth.load(Host)
 
         self.__subscriber = MessageEventSubscriber(client)
         self.__subscriber.subscribe(self.__local_listener, auth, self.__path)
