@@ -10,25 +10,26 @@ WARNING: only one MQTT client should run at any one time, per a TCP/IP host.
 Requires APIAuth and ClientAuth documents.
 
 command line example:
-./osio_mqtt_client.py \
-/orgs/south-coast-science-dev/unep/loc/1/gases gases.uds \
-/orgs/south-coast-science-dev/unep/loc/1/particulates particulates.uds \
--p osio_mqtt_pub.uds -s -e
 """
 
-import json
+# import json
 import logging
 import sys
 import time
 
-from collections import OrderedDict
+# from collections import OrderedDict
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
+from scs_core.aws.client.client_id import ClientID
+from scs_core.aws.service.endpoint import Endpoint
+
 from scs_core.data.json import JSONify
-from scs_core.data.localized_datetime import LocalizedDatetime
+# from scs_core.data.localized_datetime import LocalizedDatetime
 
 from scs_core.sys.exception_report import ExceptionReport
+
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -87,23 +88,23 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    host = "asrfh6e5j5ecz.iot.us-west-2.amazonaws.com"
-    rootCAPath = "/home/pi/SCS/aws/root-CA.crt"
-    certificatePath = "/home/pi/SCS/aws/scs-rpi-006.cert.pem"  # 9f01402232-certificate.pem.crt
-    privateKeyPath = "/home/pi/SCS/aws/scs-rpi-006.private.key"  # 9f01402232-private.pem.key
-    clientId = "rpi-006"
     topic = "bruno/1"
-
-    # host = "asrfh6e5j5ecz.iot.us-west-2.amazonaws.com"
-    # rootCAPath = "/home/pi/SCS/aws/root-CA.crt"
-    # certificatePath = "/home/pi/SCS/aws/scs-rpi-006.cert.pem"  # 9f01402232-certificate.pem.crt
-    # privateKeyPath = "/home/pi/SCS/aws/scs-rpi-006.private.key"  # 9f01402232-private.pem.key
-    # clientId = "rpi-006"
-    # topic = "bruno/1"
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        endpoint = Endpoint.load(Host)
+
+        if endpoint is None:
+            print("Endpoint not available.", file=sys.stderr)
+            exit(1)
+
+        client_id = ClientID.load(Host)
+
+        if client_id is None:
+            print("ClientID not available.", file=sys.stderr)
+            exit(1)
 
         logger = logging.getLogger("AWSIoTPythonSDK.core")
         logger.setLevel(logging.DEBUG)
@@ -114,16 +115,16 @@ if __name__ == '__main__':
 
         logger.addHandler(streamHandler)
 
-        myAWSIoTMQTTClient = AWSIoTMQTTClient(clientId)
+        client = AWSIoTMQTTClient(client_id.name)
 
-        myAWSIoTMQTTClient.configureEndpoint(host, 8883)
-        myAWSIoTMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
+        client.configureEndpoint(endpoint.endpoint_host, 8883)
+        client.configureCredentials(client_id.root_ca_file_path, client_id.private_key_path, client_id.certificate_path)
 
-        myAWSIoTMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
-        myAWSIoTMQTTClient.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
-        myAWSIoTMQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
-        myAWSIoTMQTTClient.configureConnectDisconnectTimeout(30)  # 10 sec
-        myAWSIoTMQTTClient.configureMQTTOperationTimeout(30)  # 5 sec
+        client.configureAutoReconnectBackoffTime(1, 32, 20)
+        client.configureOfflinePublishQueueing(-1)              # Infinite offline Publish queueing
+        client.configureDrainingFrequency(2)                    # Draining: 2 Hz
+        client.configureConnectDisconnectTimeout(30)            # 10 sec
+        client.configureMQTTOperationTimeout(30)                # 5 sec
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -131,15 +132,20 @@ if __name__ == '__main__':
 
         handler = AWSMQTTHandler()
 
-        myAWSIoTMQTTClient.connect()
-        myAWSIoTMQTTClient.subscribe(topic, 1, handler.handle)
+        client.connect()
+        client.subscribe(topic, 1, handler.handle)
         time.sleep(2)
 
-        while True:
-            time.sleep(2)
+        for line in sys.stdin:
+            datum = line.strip()
+
+            if datum is None:
+                break
+
+            client.publish(topic, datum, 1)
 
 
-            # ----------------------------------------------------------------------------------------------------------------
+        # ----------------------------------------------------------------------------------------------------------------
         # end...
 
     except KeyboardInterrupt:
