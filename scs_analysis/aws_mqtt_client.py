@@ -89,10 +89,17 @@ if __name__ == '__main__':
 
     host = "asrfh6e5j5ecz.iot.us-west-2.amazonaws.com"
     rootCAPath = "/home/pi/SCS/aws/root-CA.crt"
-    certificatePath = "/home/pi/SCS/aws/scs-rpi-006.cert.pem"          # 9f01402232-certificate.pem.crt
-    privateKeyPath = "/home/pi/SCS/aws/scs-rpi-006.private.key"        # 9f01402232-private.pem.key
+    certificatePath = "/home/pi/SCS/aws/scs-rpi-006.cert.pem"  # 9f01402232-certificate.pem.crt
+    privateKeyPath = "/home/pi/SCS/aws/scs-rpi-006.private.key"  # 9f01402232-private.pem.key
     clientId = "rpi-006"
     topic = "bruno/1"
+
+    # host = "asrfh6e5j5ecz.iot.us-west-2.amazonaws.com"
+    # rootCAPath = "/home/pi/SCS/aws/root-CA.crt"
+    # certificatePath = "/home/pi/SCS/aws/scs-rpi-006.cert.pem"  # 9f01402232-certificate.pem.crt
+    # privateKeyPath = "/home/pi/SCS/aws/scs-rpi-006.private.key"  # 9f01402232-private.pem.key
+    # clientId = "rpi-006"
+    # topic = "bruno/1"
 
     try:
         # ------------------------------------------------------------------------------------------------------------
