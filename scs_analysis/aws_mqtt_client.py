@@ -17,19 +17,17 @@ import logging
 import sys
 import time
 
-# from collections import OrderedDict
-
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
-from scs_core.aws.client.client_id import ClientID
+from scs_core.aws.client.client_credentials import ClientCredentials
 from scs_core.aws.service.endpoint import Endpoint
-
 from scs_core.data.json import JSONify
-# from scs_core.data.localized_datetime import LocalizedDatetime
-
 from scs_core.sys.exception_report import ExceptionReport
-
 from scs_host.sys.host import Host
+
+
+# from collections import OrderedDict
+# from scs_core.data.localized_datetime import LocalizedDatetime
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -100,10 +98,10 @@ if __name__ == '__main__':
             print("Endpoint not available.", file=sys.stderr)
             exit(1)
 
-        client_id = ClientID.load(Host)
+        credentials = ClientCredentials.load(Host)
 
-        if client_id is None:
-            print("ClientID not available.", file=sys.stderr)
+        if credentials is None:
+            print("ClientCredentials not available.", file=sys.stderr)
             exit(1)
 
         logger = logging.getLogger("AWSIoTPythonSDK.core")
@@ -115,10 +113,12 @@ if __name__ == '__main__':
 
         logger.addHandler(streamHandler)
 
-        client = AWSIoTMQTTClient(client_id.name)
+        client = AWSIoTMQTTClient(credentials.name)
 
         client.configureEndpoint(endpoint.endpoint_host, 8883)
-        client.configureCredentials(client_id.root_ca_file_path, client_id.private_key_path, client_id.certificate_path)
+
+        client.configureCredentials(credentials.root_ca_file_path,
+                                    credentials.private_key_path, credentials.certificate_path)
 
         client.configureAutoReconnectBackoffTime(1, 32, 20)
         client.configureOfflinePublishQueueing(-1)              # Infinite offline Publish queueing
