@@ -11,20 +11,15 @@ command line example:
 
 import sys
 
-from scs_analysis.cmd.cmd_topic_history import CmdTopicHistory
-
+from scs_analysis.cmd.cmd_osio_topic_history import CmdOSIOTopicHistory
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
-
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.manager.topic_manager import TopicManager
 from scs_core.osio.manager.message_manager import MessageManager
-
 from scs_core.sys.exception_report import ExceptionReport
-
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -35,7 +30,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdTopicHistory()
+    cmd = CmdOSIOTopicHistory()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
