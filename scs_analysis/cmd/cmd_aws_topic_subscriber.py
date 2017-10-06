@@ -6,12 +6,12 @@ Created on 19 Nov 2016
 
 import optparse
 
-from scs_core.osio.config.project import Project
+from scs_core.osio.config.project import Project        # TODO: replace with AWS project
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOTopicSubscriber(object):
+class CmdAWSTopicSubscriber(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -76,5 +76,5 @@ class CmdOSIOTopicSubscriber(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
+        return "CmdAWSTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
                     (self.topic, self.channel, self.verbose, self.args)

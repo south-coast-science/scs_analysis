@@ -21,7 +21,7 @@ import random
 import sys
 import time
 
-from scs_analysis.cmd.cmd_osio_mqtt_control import CmdOSIOMQTTControl
+from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 
 from scs_core.control.control_datum import ControlDatum
 from scs_core.control.control_receipt import ControlReceipt
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOMQTTControl()
+    cmd = CmdMQTTControl()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)

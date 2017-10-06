@@ -23,7 +23,7 @@ import time
 
 from collections import OrderedDict
 
-from scs_analysis.cmd.cmd_osio_mqtt_client import CmdOSIOMQTTClient
+from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOMQTTClient()
+    cmd = CmdMQTTClient()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)

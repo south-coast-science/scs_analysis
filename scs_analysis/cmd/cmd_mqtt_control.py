@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOMQTTControl(object):
+class CmdMQTTControl(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -105,7 +105,7 @@ class CmdOSIOMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
+        return "CmdMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
                "verbose:%s, args:%s}" % \
                (self.__opts.tag_host_topic, self.topic, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
                 self.verbose, self.args)
