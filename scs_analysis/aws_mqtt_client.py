@@ -10,28 +10,24 @@ WARNING: only one MQTT client should run at any one time, per a TCP/IP host.
 Requires Endpoint and ClientCredentials documents.
 
 command line example:
-./aws_mqtt_client.py
+./gases_sampler.py -i2 | \
+    ./aws_topic_publisher.py -t south-coast-science-dev/development/loc/3/gases | \
+    ./aws_mqtt_client.py -s -e
 """
 
 import json
 import sys
-
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
-
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 from scs_core.aws.client.client_credentials import ClientCredentials
 from scs_core.aws.service.endpoint import Endpoint
-
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
-
 from scs_core.sys.exception_report import ExceptionReport
-
 from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
-
 from scs_host.sys.host import Host
 
 
