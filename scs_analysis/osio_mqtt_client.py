@@ -20,20 +20,27 @@ import json
 import random
 import sys
 import time
+
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
+
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
+
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.client.client_auth import ClientAuth
 from scs_core.osio.manager.topic_manager import TopicManager
+
 from scs_core.sys.exception_report import ExceptionReport
+
 from scs_host.client.http_client import HTTPClient
 from scs_host.client.mqtt_client import MQTTClient, MQTTSubscriber
+
 from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
+
 from scs_host.sys.host import Host
 
 

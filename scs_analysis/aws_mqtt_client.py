@@ -15,17 +15,23 @@ command line example:
 
 import json
 import sys
+
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
+
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 from scs_core.aws.client.client_credentials import ClientCredentials
 from scs_core.aws.service.endpoint import Endpoint
+
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
+
 from scs_core.sys.exception_report import ExceptionReport
+
 from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
+
 from scs_host.sys.host import Host
 
 
@@ -124,6 +130,9 @@ if __name__ == '__main__':
             print("ClientID not available.", file=sys.stderr)
             exit(1)
 
+        # comms...
+        pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
+
         # subscribers...
         subscribers = []
 
@@ -153,9 +162,11 @@ if __name__ == '__main__':
 
         client.connect(endpoint, credentials)
 
-        for line in sys.stdin:
+        pub_comms.connect()
+
+        for message in pub_comms.read():
             try:
-                jdict = json.loads(line, object_pairs_hook=OrderedDict)
+                jdict = json.loads(message, object_pairs_hook=OrderedDict)
             except ValueError:
                 continue
 
@@ -163,13 +174,17 @@ if __name__ == '__main__':
 
             client.publish(publication)
 
+            if cmd.echo:
+                print(message)
+                sys.stdout.flush()
+
 
         # ----------------------------------------------------------------------------------------------------------------
         # end...
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_mqtt_client: KeyboardInterrupt", file=sys.stderr)
+            print("aws_mqtt_client: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
