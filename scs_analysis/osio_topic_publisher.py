@@ -10,7 +10,7 @@ https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-informat
 Requires SystemID and Project documents.
 
 command line example:
-./status_sampler.py | ./osio_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
+./status_sampler.py -i 60 | ./osio_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
 """
 
 import json
@@ -33,6 +33,7 @@ if __name__ == '__main__':
     # cmd...
 
     cmd = CmdOSIOTopicPublisher()
+
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)

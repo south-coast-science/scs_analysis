@@ -10,26 +10,20 @@ https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-informat
 Requires SystemID and Project documents.
 
 command line example:
-./status_sampler.py | ./aws_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
+./status_sampler.py -i 60 | ./aws_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
 """
 
 import json
 import sys
-
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_aws_topic_publisher import CmdAWSTopicPublisher
-
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
-
 from scs_core.osio.config.project import Project
-
 from scs_core.sys.exception_report import ExceptionReport
 from scs_core.sys.system_id import SystemID
-
 from scs_host.sys.host import Host
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -39,6 +33,7 @@ if __name__ == '__main__':
     # cmd...
 
     cmd = CmdAWSTopicPublisher()
+
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
