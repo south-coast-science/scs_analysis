@@ -91,8 +91,10 @@ class CmdMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
+        subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
+
         return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
-               (self.subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
+               (subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
 
 
 # --------------------------------------------------------------------------------------------------------------------
