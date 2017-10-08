@@ -27,6 +27,7 @@ from scs_core.aws.client.client_credentials import ClientCredentials
 from scs_core.aws.service.endpoint import Endpoint
 
 from scs_core.data.json import JSONify
+from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
 from scs_core.sys.exception_report import ExceptionReport
@@ -175,6 +176,10 @@ if __name__ == '__main__':
             publication = Publication.construct_from_jdict(jdict)
 
             client.publish(publication)
+
+            if cmd.verbose:
+                print("%s:         mqtt: done" % LocalizedDatetime.now().as_iso8601(), file=sys.stderr)
+                sys.stderr.flush()
 
             if cmd.echo:
                 print(message)
