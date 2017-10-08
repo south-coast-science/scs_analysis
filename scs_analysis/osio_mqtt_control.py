@@ -12,9 +12,6 @@ Requires APIAuth and ClientAuth documents.
 command line examples:
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
  /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
-
-./osio_mqtt_control.py -d scs-be2-3 5016BBBK202F \
- /orgs/south-coast-science-dev/development/device/alpha-bb-eng-000003/control -r -v hello
 """
 
 import random
@@ -150,16 +147,16 @@ if __name__ == '__main__':
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
         client = MQTTClient(subscriber)
-        client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
 
         # tag...
         tag = Host.name()
 
+        # TODO: test whether device present
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # TODO: test whether device present
+        client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
 
         while True:
             # cmd...
@@ -220,7 +217,6 @@ if __name__ == '__main__':
                         break
 
                     if cmd.interactive and time.time() > timeout:
-                        # TODO: report timeout
                         break
 
                     time.sleep(0.1)
