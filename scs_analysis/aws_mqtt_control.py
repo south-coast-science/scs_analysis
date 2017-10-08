@@ -11,11 +11,14 @@ Requires Endpoint and ClientCredentials documents.
 
 command line examples:
 ./aws_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
- south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
+ south-coast-science-dev/development/device/alpha-pi-eng-000006/control -r afe_baseline
 """
 
+import json
 import sys
 import time
+
+from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 
@@ -64,7 +67,7 @@ class AWSMQTTControlHandler(object):
 
     # noinspection PyUnusedLocal,PyShadowingNames
     def handle(self, client, userdata, message):
-        payload = message.payload.decode()
+        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
 
         try:
             receipt = ControlReceipt.construct_from_jdict(payload)
@@ -126,10 +129,8 @@ if __name__ == '__main__':
             print("ClientCredentials not available.", file=sys.stderr)
             exit(1)
 
-        # handler...
+        # responder...
         handler = AWSMQTTControlHandler()
-
-        # client...
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
         # client...
@@ -205,6 +206,9 @@ if __name__ == '__main__':
         # end...
 
     except KeyboardInterrupt:
+        if cmd.interactive:
+            print("", file=sys.stderr)
+
         if cmd.verbose:
             print("aws_mqtt_control: KeyboardInterrupt", file=sys.stderr)
 

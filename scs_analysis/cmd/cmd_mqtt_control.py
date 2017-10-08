@@ -16,7 +16,7 @@ class CmdMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC { -i | [-r] CMD } [-t TIMEOUT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...

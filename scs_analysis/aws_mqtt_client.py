@@ -62,10 +62,9 @@ class AWSMQTTHandler(object):
 
     # noinspection PyUnusedLocal,PyShadowingNames
     def handle(self, client, userdata, message):
-        payload = message.payload.decode()
-        payload_jdict = json.loads(payload, object_pairs_hook=OrderedDict)
+        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
 
-        pub = Publication(message.topic, payload_jdict)
+        pub = Publication(message.topic, payload)
 
         try:
             self.__comms.connect()
@@ -199,3 +198,6 @@ if __name__ == '__main__':
     finally:
         if client:
             client.disconnect()
+
+        if pub_comms:
+            pub_comms.close()

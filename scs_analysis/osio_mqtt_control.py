@@ -142,11 +142,14 @@ if __name__ == '__main__':
 
         # responder...
         handler = OSIOMQTTControlHandler()
-
-        # client...
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
+        # client...
         client = MQTTClient(subscriber)
+
+        if cmd.verbose:
+            print(client, file=sys.stderr)
+            sys.stderr.flush()
 
         # tag...
         tag = Host.name()
