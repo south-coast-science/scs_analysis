@@ -1,42 +1,36 @@
 #!/usr/bin/env python3
 
 """
-Created on 23 Mar 2017
+Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 WARNING: only one MQTT client should run at any one time, per a TCP/IP host.
 
-Requires APIAuth and ClientAuth documents.
+Requires Endpoint and ClientCredentials documents.
 
 command line example:
-./osio_mqtt_client.py \
-/orgs/south-coast-science-dev/unep/loc/1/gases gases.uds \
-/orgs/south-coast-science-dev/unep/loc/1/particulates particulates.uds \
--p osio_mqtt_pub.uds -s -e
+./gases_sampler.py -i2 | \
+    ./aws_topic_publisher.py -t south-coast-science-dev/development/loc/3/gases | \
+    ./aws_mqtt_client.py -s -e
 """
 
 import json
-import random
 import sys
-import time
 
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 
+from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
+from scs_core.aws.client.client_credentials import ClientCredentials
+from scs_core.aws.service.endpoint import Endpoint
+
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
-from scs_core.osio.client.api_auth import APIAuth
-from scs_core.osio.client.client_auth import ClientAuth
-from scs_core.osio.manager.topic_manager import TopicManager
-
 from scs_core.sys.exception_report import ExceptionReport
-
-from scs_host.client.http_client import HTTPClient
-from scs_host.client.mqtt_client import MQTTClient, MQTTSubscriber
 
 from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
@@ -47,14 +41,14 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
-class OSIOMQTTHandler(object):
+class AWSMQTTHandler(object):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, comms, echo, verbose):
+    def __init__(self, comms=None, echo=False, verbose=False):
         """
         Constructor
         """
@@ -66,14 +60,19 @@ class OSIOMQTTHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def handle(self, pub):
+    # noinspection PyUnusedLocal,PyShadowingNames
+    def handle(self, client, userdata, message):
+        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
+
+        pub = Publication(message.topic, payload)
+
         try:
             self.__comms.connect()
             self.__comms.write(JSONify.dumps(pub), False)
 
         except ConnectionRefusedError:
             if self.__verbose:
-                print("OSIOMQTTHandler: connection refused for %s" % self.__comms.address, file=sys.stderr)
+                print("AWSMQTTHandler: connection refused for %s" % self.__comms.address, file=sys.stderr)
                 sys.stderr.flush()
 
         finally:
@@ -88,19 +87,10 @@ class OSIOMQTTHandler(object):
             sys.stderr.flush()
 
 
-    def print_status(self, status):
-        if not self.__verbose:
-            return
-
-        now = LocalizedDatetime.now()
-        print("%s:         mqtt: %s" % (now.as_iso8601(), status), file=sys.stderr)
-        sys.stderr.flush()
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOMQTTHandler:{comms:%s, echo:%s, verbose:%s}" % \
+        return "AWSMQTTHandler:{comms:%s, echo:%s, verbose:%s}" % \
                (self.__comms, self.__echo, self.__verbose)
 
 
@@ -128,41 +118,22 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # APIAuth...
-        api_auth = APIAuth.load(Host)
+        # endpoint...
+        endpoint = Endpoint.load(Host)
 
-        if api_auth is None:
-            print("APIAuth not available.", file=sys.stderr)
+        if endpoint is None:
+            print("Endpoint config not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose:
-            print(api_auth, file=sys.stderr)
+        # endpoint...
+        credentials = ClientCredentials.load(Host)
 
-        # ClientAuth...
-        client_auth = ClientAuth.load(Host)
-
-        if client_auth is None:
-            print("ClientAuth not available.", file=sys.stderr)
+        if credentials is None:
+            print("ClientCredentials not available.", file=sys.stderr)
             exit(1)
-
-        if cmd.verbose:
-            print(client_auth, file=sys.stderr)
 
         # comms...
         pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
-
-        # manager...
-        manager = TopicManager(HTTPClient(), api_auth.api_key)
-
-        # check topics...
-        unavailable = False
-        for subscription in cmd.subscriptions:
-            if not manager.find(subscription.topic):
-                print("Topic not available: %s" % subscription[0], file=sys.stderr)
-                unavailable = True
-
-        if unavailable:
-            exit(1)
 
         # subscribers...
         subscribers = []
@@ -171,66 +142,55 @@ if __name__ == '__main__':
             sub_comms = DomainSocket(subscription.address) if subscription.address else StdIO()
 
             # handler...
-            handler = OSIOMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
+            handler = AWSMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
 
             if cmd.verbose:
                 print(handler, file=sys.stderr)
-                sys.stderr.flush()
 
             subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
         # client...
         client = MQTTClient(*subscribers)
-        client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
+
+        if cmd.verbose:
+            print(client, file=sys.stderr)
+            sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # publish...
+        handler = AWSMQTTHandler()
+
+        client.connect(endpoint, credentials)
+
         pub_comms.connect()
 
         for message in pub_comms.read():
             try:
-                datum = json.loads(message, object_pairs_hook=OrderedDict)
+                jdict = json.loads(message, object_pairs_hook=OrderedDict)
             except ValueError:
-                handler.print_status("bad datum: %s" % message)
                 continue
 
-            success = False
+            publication = Publication.construct_from_jdict(jdict)
 
-            while True:
-                publication = Publication.construct_from_jdict(datum)
+            client.publish(publication)
 
-                try:
-                    success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
-
-                    if not success:
-                        handler.print_status("abandoned")
-
-                    break
-
-                except Exception as ex:
-                    if cmd.verbose:
-                        print(JSONify.dumps(ExceptionReport.construct(ex)))
-                        sys.stderr.flush()
-
-                time.sleep(random.uniform(1.0, 2.0))        # Don't hammer the client!
-
-            if success:
-                handler.print_status("done")
+            if cmd.verbose:
+                print("%s:         mqtt: done" % LocalizedDatetime.now().as_iso8601(), file=sys.stderr)
+                sys.stderr.flush()
 
             if cmd.echo:
                 print(message)
                 sys.stdout.flush()
 
 
-    # ----------------------------------------------------------------------------------------------------------------
-    # end...
+        # ----------------------------------------------------------------------------------------------------------------
+        # end...
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_mqtt_client: KeyboardInterrupt", file=sys.stderr)
+            print("aws_mqtt_client: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

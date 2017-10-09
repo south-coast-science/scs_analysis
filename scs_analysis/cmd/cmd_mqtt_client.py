@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOMQTTClient(object):
+class CmdMQTTClient(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -91,8 +91,10 @@ class CmdOSIOMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
-               (self.subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
+        subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
+
+        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
+               (subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
 
 
 # --------------------------------------------------------------------------------------------------------------------

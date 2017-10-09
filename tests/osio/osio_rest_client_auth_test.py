@@ -33,6 +33,6 @@ print("-")
 
 auth.save(Host)
 
-auth = APIAuth.load_from_host(Host)
+auth = APIAuth.load(Host)
 print(auth)
 print("-")

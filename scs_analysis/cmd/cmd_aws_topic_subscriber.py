@@ -2,25 +2,23 @@
 Created on 19 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-information-in-message-payload
 """
 
 import optparse
 
-from scs_core.osio.config.project import Project
+from scs_core.aws.config.project import Project
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTopicPublisher(object):
+class CmdAWSTopicSubscriber(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -t TOPIC | -c { C | G | P | S | X } } [-o] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -t TOPIC | -c { C | G | P | S | X } } [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -31,9 +29,6 @@ class CmdTopicPublisher(object):
                                  help="publication channel")
 
         # optional...
-        self.__parser.add_option("--override", "-o", action="store_true", dest="override", default=False,
-                                 help="override OSIO reception datetime")
-
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -65,11 +60,6 @@ class CmdTopicPublisher(object):
 
 
     @property
-    def override(self):
-        return self.__opts.override
-
-
-    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -86,5 +76,5 @@ class CmdTopicPublisher(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicPublisher:{topic:%s, channel:%s, override:%s, verbose:%s, args:%s}" % \
-                    (self.topic, self.channel, self.override, self.verbose, self.args)
+        return "CmdAWSTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
+                    (self.topic, self.channel, self.verbose, self.args)

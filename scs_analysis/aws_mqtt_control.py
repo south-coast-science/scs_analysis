@@ -1,50 +1,49 @@
 #!/usr/bin/env python3
 
 """
-Created on 9 May 2017
+Created on 8 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-Use this script as a stand-alone controller, when osio_mqtt_client is not running.
+Use this script as a stand-alone controller, when aws_mqtt_client is not running.
 
-Requires APIAuth and ClientAuth documents.
+Requires Endpoint and ClientCredentials documents.
 
 command line examples:
-./osio_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
- /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control shutdown now
+./aws_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
+ south-coast-science-dev/development/device/alpha-pi-eng-000006/control -r afe_baseline
 """
 
-import random
+import json
 import sys
 import time
+
+from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 
 from scs_core.control.control_datum import ControlDatum
 from scs_core.control.control_receipt import ControlReceipt
 
+from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
+from scs_core.aws.client.client_credentials import ClientCredentials
+from scs_core.aws.service.endpoint import Endpoint
+
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
-from scs_core.osio.client.api_auth import APIAuth
-from scs_core.osio.client.client_auth import ClientAuth
-from scs_core.osio.manager.topic_manager import TopicManager
-
 from scs_core.sys.exception_report import ExceptionReport
 
-from scs_host.client.http_client import HTTPClient
-from scs_host.client.mqtt_client import MQTTClient
-from scs_host.client.mqtt_client import MQTTSubscriber
-
 from scs_host.comms.stdio import StdIO
+
 from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
-class OSIOMQTTControlHandler(object):
+class AWSMQTTControlHandler(object):
     """
     classdocs
     """
@@ -66,9 +65,12 @@ class OSIOMQTTControlHandler(object):
         self.__receipt = None
 
 
-    def handle(self, pub):
+    # noinspection PyUnusedLocal,PyShadowingNames
+    def handle(self, client, userdata, message):
+        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
+
         try:
-            receipt = ControlReceipt.construct_from_jdict(pub.payload)
+            receipt = ControlReceipt.construct_from_jdict(payload)
         except TypeError:
             return
 
@@ -86,7 +88,7 @@ class OSIOMQTTControlHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "OSIOMQTTControlHandler:{outgoing_pub:%s, receipt:%s}" %  (self.__outgoing_pub, self.receipt)
+        return "AWSMQTTControlHandler:{outgoing_pub:%s, receipt:%s}" %  (self.__outgoing_pub, self.receipt)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -94,6 +96,8 @@ class OSIOMQTTControlHandler(object):
 if __name__ == '__main__':
 
     client = None
+    pub_comms = None
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -111,37 +115,22 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # APIAuth...
-        api_auth = APIAuth.load(Host)
+        # endpoint...
+        endpoint = Endpoint.load(Host)
 
-        if api_auth is None:
-            print("APIAuth not available.", file=sys.stderr)
+        if endpoint is None:
+            print("Endpoint config not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose:
-            print(api_auth, file=sys.stderr)
+        # endpoint...
+        credentials = ClientCredentials.load(Host)
 
-        # ClientAuth...
-        client_auth = ClientAuth.load(Host)
-
-        if client_auth is None:
-            print("ClientAuth not available.", file=sys.stderr)
-            exit(1)
-
-        if cmd.verbose:
-            print(client_auth, file=sys.stderr)
-            sys.stderr.flush()
-
-        # manager...
-        manager = TopicManager(HTTPClient(), api_auth.api_key)
-
-        # check topic...
-        if not manager.find(cmd.topic):
-            print("Topic not available: %s" % cmd.topic, file=sys.stderr)
+        if credentials is None:
+            print("ClientCredentials not available.", file=sys.stderr)
             exit(1)
 
         # responder...
-        handler = OSIOMQTTControlHandler()
+        handler = AWSMQTTControlHandler()
         subscriber = MQTTSubscriber(cmd.topic, handler.handle)
 
         # client...
@@ -154,12 +143,11 @@ if __name__ == '__main__':
         # tag...
         tag = Host.name()
 
-        # TODO: test whether device present
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        client.connect(ClientAuth.MQTT_HOST, client_auth.client_id, client_auth.user_id, client_auth.client_password)
+        client.connect(endpoint, credentials)
 
         while True:
             # cmd...
@@ -183,21 +171,7 @@ if __name__ == '__main__':
                 sys.stderr.flush()
 
             # publish...
-            while True:
-                try:
-                    success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
-
-                    if not success:
-                        print("abandoned", file=sys.stderr)
-                        sys.stderr.flush()
-
-                    break
-
-                except Exception as ex:
-                    print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
-                    sys.stderr.flush()
-
-                time.sleep(random.uniform(1.0, 2.0))
+            client.publish(publication)
 
             # subscribe...
             timeout = time.time() + cmd.timeout
@@ -228,15 +202,15 @@ if __name__ == '__main__':
                 break
 
 
-    # ----------------------------------------------------------------------------------------------------------------
-    # end...
+        # ----------------------------------------------------------------------------------------------------------------
+        # end...
 
     except KeyboardInterrupt:
         if cmd.interactive:
             print("", file=sys.stderr)
 
         if cmd.verbose:
-            print("osio_mqtt_control: KeyboardInterrupt", file=sys.stderr)
+            print("aws_mqtt_control: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

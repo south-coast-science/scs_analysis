@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 """
-Created on 18 Nov 2016
+Created on 7 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-information-in-message-payload
 
 Requires SystemID and Project documents.
 
 command line example:
-./status_sampler.py -i 60 | ./osio_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
+./aws_mqtt_client.py south-coast-science-dev/development/device/alpha-bb-eng-000003/control | \
+./aws_topic_subscriber.py -t south-coast-science-dev/development/device/alpha-bb-eng-000003/control
 """
 
 import json
@@ -18,12 +17,12 @@ import sys
 
 from collections import OrderedDict
 
-from scs_analysis.cmd.cmd_osio_topic_publisher import CmdOSIOTopicPublisher
+from scs_analysis.cmd.cmd_aws_topic_subscriber import CmdAWSTopicSubscriber
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
 
-from scs_core.osio.config.project import Project
+from scs_core.aws.config.project import Project
 
 from scs_core.sys.system_id import SystemID
 from scs_core.sys.exception_report import ExceptionReport
@@ -38,7 +37,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOTopicPublisher()
+    cmd = CmdAWSTopicSubscriber()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -63,6 +62,7 @@ if __name__ == '__main__':
             if cmd.verbose:
                 print(system_id, file=sys.stderr)
 
+            # Project...
             project = Project.load(Host)
 
             if project is None:
@@ -73,8 +73,6 @@ if __name__ == '__main__':
 
         else:
             topic = cmd.topic
-
-        # TODO: check if topic exists
 
         if cmd.verbose:
             print(topic, file=sys.stderr)
@@ -90,19 +88,11 @@ if __name__ == '__main__':
             except ValueError:
                 continue
 
-            if cmd.override:
-                payload = OrderedDict({'__timestamp': jdict['rec']})
-                payload.update(jdict)
+            publication = Publication.construct_from_jdict(jdict)
 
-            else:
-                payload = jdict
-
-            # time.sleep(1)
-
-            publication = Publication(topic, payload)
-
-            print(JSONify.dumps(publication))
-            sys.stdout.flush()
+            if publication.topic == topic:
+                print(JSONify.dumps(publication.payload))
+                sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -110,7 +100,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_topic_publisher: KeyboardInterrupt", file=sys.stderr)
+            print("aws_topic_subscriber: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

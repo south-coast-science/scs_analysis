@@ -2,8 +2,6 @@
 Created on 19 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-information-in-message-payload
 """
 
 import optparse
@@ -13,7 +11,7 @@ from scs_core.osio.config.project import Project
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTopicSubscriber(object):
+class CmdOSIOTopicSubscriber(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -78,5 +76,5 @@ class CmdTopicSubscriber(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
+        return "CmdOSIOTopicSubscriber:{topic:%s, channel:%s, verbose:%s, args:%s}" % \
                     (self.topic, self.channel, self.verbose, self.args)
