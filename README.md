@@ -19,7 +19,7 @@ PYTHONPATH=\~/SCS/scs_analysis:\~/SCS/scs_dev:\~/SCS/scs_osio:\~/SCS/scs_mfr:\~/
 
 **MacOS, in ~/.bash_profile:**
 
-PYTHONPATH="\~/SCS/scs_analysis:\~/SCS/scs_osio:\~/SCS/scs_host_posix:\~/SCS/scs_core:${PYTHONPATH}" \
+PYTHONPATH="\{$HOME}/SCS/scs_analysis:\{$HOME}/SCS/scs_osio:\{$HOME}/SCS/scs_host_posix:\{$HOME}/SCS/scs_core:${PYTHONPATH}" \
 export PYTHONPATH
 
 
