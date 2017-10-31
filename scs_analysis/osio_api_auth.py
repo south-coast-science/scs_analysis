@@ -31,7 +31,7 @@ from scs_core.osio.client.api_auth import APIAuth
 
 from scs_host.sys.host import Host
 
-from scs_mfr.cmd.cmd_osio_api_auth import CmdOSIOAPIAuth
+from scs_analysis.cmd.cmd_osio_api_auth import CmdOSIOAPIAuth
 
 
 # --------------------------------------------------------------------------------------------------------------------
