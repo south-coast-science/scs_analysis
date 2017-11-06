@@ -12,18 +12,18 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdOSIOAPIAuth(object):
+class CmdAWSAPIAuth(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-s ORG_ID API_KEY] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-s API_KEY] [-v]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--set", "-s", type="string", nargs=2, action="store", dest="org_key",
-                                 help="set org ID and API key")
+        self.__parser.add_option("--set", "-s", type="string", nargs=1, action="store", dest="api_key",
+                                 help="set API key")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -34,19 +34,14 @@ class CmdOSIOAPIAuth(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def set(self):
-        return self.__opts.org_key is not None
+        return self.__opts.api_key is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def org_id(self):
-        return self.__opts.org_key[0] if self.__opts.org_key else None
-
-
-    @property
     def api_key(self):
-        return self.__opts.org_key[1] if self.__opts.org_key else None
+        return self.__opts.api_key
 
 
     @property
@@ -62,5 +57,4 @@ class CmdOSIOAPIAuth(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOAPIAuth:{org_id:%s, api_key:%s, verbose:%s, args:%s}" % \
-               (self.org_id, self.api_key, self.verbose, self.args)
+        return "CmdAWSAPIAuth:{api_key:%s, verbose:%s, args:%s}" % (self.api_key, self.verbose, self.args)
