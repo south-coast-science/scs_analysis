@@ -16,7 +16,7 @@ class CmdMultiChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH_1 .. PATH_N [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] "
+        self.__parser = optparse.OptionParser(usage="%prog PATH_1 .. PATH_N [-b] [-x POINTS] [-y MIN MAX] [-e] "
                                                     "[-v]", version="%prog 1.0")
 
         # optional...
