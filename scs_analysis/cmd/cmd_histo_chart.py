@@ -18,7 +18,7 @@ class CmdHistoChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BINCOUNT] [-o FILENAME] [-e] "
+        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] "
                                                     "[-v]", version="%prog 1.0")
 
         # optional...

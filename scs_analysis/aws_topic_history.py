@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 
 """
-Created on 20 Feb 2017
+Created on 6 Nov 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./osio_topic_history.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
+./aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_osio_topic_history import CmdOSIOTopicHistory
+from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
+
+from scs_core.aws.client.api_auth import APIAuth
+from scs_core.aws.manager.message_manager import MessageManager
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
-
-from scs_core.osio.client.api_auth import APIAuth
-from scs_core.osio.manager.topic_manager import TopicManager
-from scs_core.osio.manager.message_manager import MessageManager
 
 from scs_core.sys.exception_report import ExceptionReport
 
@@ -35,7 +34,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdOSIOTopicHistory()
+    cmd = CmdAWSTopicHistory()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -59,9 +58,6 @@ if __name__ == '__main__':
             print(api_auth, file=sys.stderr)
             sys.stderr.flush()
 
-        # topic manager...
-        topic_manager = TopicManager(HTTPClient(), api_auth.api_key)
-
         # message manager...
         message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
 
@@ -71,11 +67,6 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-
-        # check topics...
-        if not topic_manager.find(cmd.path):
-            print("Topic not available: %s" % cmd.path, file=sys.stderr)
-            exit(1)
 
         # time...
         if cmd.use_offset():
@@ -91,10 +82,10 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # messages...
-        messages = message_manager.find_for_topic(cmd.path, start, end, cmd.pause)
+        messages = message_manager.find_for_topic(cmd.path, start, end)
 
         for message in messages:
-            document = message if cmd.include_wrapping else message.payload.content
+            document = message if cmd.include_wrapping else message.payload
             print(JSONify.dumps(document))
 
         if cmd.verbose:
@@ -106,7 +97,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("osio_topic_history: KeyboardInterrupt", file=sys.stderr)
+            print("aws_topic_history: KeyboardInterrupt", file=sys.stderr)
 
     except Exception as ex:
         print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
