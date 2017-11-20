@@ -9,6 +9,8 @@ try:
     from os import path
     here = path.abspath(path.dirname(__file__))
     long_description = pypandoc.convert(path.join(here, 'README.md'), 'rst'),
+except RuntimeError:
+    long_description = ""
 except ImportError:
     long_description = ""
 
