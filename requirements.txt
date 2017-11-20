@@ -1,2 +1,3 @@
-AWSIoTPythonSDK
-matplotlib
+AWSIoTPythonSDK>=1.2.0,<1.3
+matplotlib>=2.1.0,<2.2
+scs_core==0.1.8
