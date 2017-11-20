@@ -16,7 +16,7 @@ except ImportError:
 
 setup(
     name='scs_analysis',
-    version='0.1.1',
+    version='0.1.2',
     description='Information management and analysis tools for South Coast Science data consumers.',
     author='South Coast Science',
     author_email='contact@southcoastscience.com',
