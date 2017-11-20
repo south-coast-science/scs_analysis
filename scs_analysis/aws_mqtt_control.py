@@ -5,13 +5,28 @@ Created on 8 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-Use this script as a stand-alone controller, when aws_mqtt_client is not running.
+DESCRIPTION
+The aws_mqtt_control utility is used to interact with a remote host, using the device's control topic.
+A command / receipt message regime provides an interactive system over the messaging infrastructure.
 
-Requires Endpoint and ClientCredentials documents.
+For security reasons, the user must be in possession of the target device's unique tag and shared secret. In addition,
+the AWS endpoint specification and client credentials must be installed on the user's host.
 
-command line examples:
+EXAMPLES
 ./aws_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
- south-coast-science-dev/development/device/alpha-pi-eng-000006/control -r afe_baseline
+ south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
+
+FILES
+~/SCS/aws/client_credentials.json
+~/SCS/aws/endpoint.json
+
+~/SCS/aws/certs/XXX-certificate.pem.crt
+~/SCS/aws/certs/XXX-private.pem.key
+~/SCS/aws/certs/XXX-public.pem.key
+~/SCS/aws/certs/root-CA.crt
+
+SEE ALSO
+scs_analysis/aws_mqtt_client
 """
 
 import json

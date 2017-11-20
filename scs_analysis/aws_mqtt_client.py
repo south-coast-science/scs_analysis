@@ -14,6 +14,9 @@ to operate.
 
 Only one MQTT client should run at any one time, per TCP/IP host.
 
+Note that there are currently no utilities to manage AWS configuration documents - these must be installed or edited
+by hand. This situation will change.
+
 EXAMPLES
 ./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
 
@@ -28,9 +31,7 @@ FILES
 
 SEE ALSO
 scs_analysis/aws_mqtt_control
-
-BUGS
-There are currently no utilities to manage AWS configuration documents. This situation will change.
+scs_analysis/aws_topic_publisher
 """
 
 import json
