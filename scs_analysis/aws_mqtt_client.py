@@ -32,6 +32,9 @@ FILES
 SEE ALSO
 scs_analysis/aws_mqtt_control
 scs_analysis/aws_topic_publisher
+
+BUGS
+When run as a background process, aws_mqtt_client will exit if it has no stdin stream.
 """
 
 import json
@@ -179,7 +182,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        handler = AWSMQTTHandler()
+        handler = AWSMQTTHandler()      # TODO: WTF?
 
         client.connect(endpoint, credentials)
 
