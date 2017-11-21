@@ -5,13 +5,21 @@ Created on 18 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-Creates APIAuth document.
+DESCRIPTION
+The aws_api_auth utility is used to store or read the API key required by the South Coast Science / AWS historic data
+retrieval system.
 
-document example:
+EXAMPLES
+./aws_api_auth.py -v -s de92c5ff-b47a-4cc4-a04c-62d684d74a1f
+
+FILES
+~/SCS/aws/aws_api_auth.json
+
+DOCUMENT EXAMPLE
 {"api-key": "de92c5ff-b47a-4cc4-a04c-62d684d74a1f"}
 
-command line example:
-./aws_api_auth.py -v -s de92c5ff-b47a-4cc4-a04c-62d684d74a1f
+SEE ALSO
+scs_analysis/aws_topic_history
 """
 
 import sys

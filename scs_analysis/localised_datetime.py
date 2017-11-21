@@ -5,8 +5,17 @@ Created on 20 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-command line example:
-./localised_datetime.py -m -10
+DESCRIPTION
+The localised_datetime utility is used to report the localised date and time, as understood by the host operating
+system, in ISO 8601 format. It can also report date / time offset by a given number of hours, minutes and seconds.
+
+The utility is useful when composing topic history data requests.
+
+EXAMPLES
+./localised_datetime.py -o 1
+
+RESOURCES
+https://en.wikipedia.org/wiki/ISO_8601
 """
 
 import sys

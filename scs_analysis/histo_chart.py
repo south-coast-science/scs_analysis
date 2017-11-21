@@ -5,10 +5,22 @@ Created on 3 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-command line example:
-./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 | ./sample_error.py val.afe.sns.CO.conv | \
-./multi_chart.py val.afe.sns.CO.conv.src val.afe.sns.CO.conv.agr -e | \
-./histo_chart.py val.afe.sns.CO.conv.err -x -10 10 -e -o err.csv
+DESCRIPTION
+The histo_chart utility is used to create Matplotlib histogram charts and comma-separated value (CSV) histogram files.
+The utility analyses a given path to a leaf node of the input JSON data stream.
+
+Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
+back-end graphics system.
+
+EXAMPLES
+./socket_receiver.py | ./histo_chart.py val.CO2.cnc -x -10 10 -e -o CO.csv
+
+FILES
+~/SCS/scs_analysis/scs_analysis/matplotlibrc
+
+SEE ALSO
+scs_analysis/multi_chart
+scs_analysis/single_chart
 """
 
 import sys

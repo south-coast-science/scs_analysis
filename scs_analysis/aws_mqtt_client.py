@@ -5,14 +5,36 @@ Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-WARNING: only one MQTT client should run at any one time, per a TCP/IP host.
+DESCRIPTION
+The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
+infrastructure.
 
-Requires Endpoint and ClientCredentials documents.
+Note that AWS endpoint specification and client credentials must be installed on the host for the aws_mqtt_client
+to operate.
 
-command line example:
-./gases_sampler.py -i2 | \
-    ./aws_topic_publisher.py -t south-coast-science-dev/development/loc/3/gases | \
-    ./aws_mqtt_client.py -s -e
+Only one MQTT client should run at any one time, per TCP/IP host.
+
+Note that there are currently no utilities to manage AWS configuration documents - these must be installed or edited
+by hand. This situation will change.
+
+EXAMPLES
+./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
+
+FILES
+~/SCS/aws/client_credentials.json
+~/SCS/aws/endpoint.json
+
+~/SCS/aws/certs/XXX-certificate.pem.crt
+~/SCS/aws/certs/XXX-private.pem.key
+~/SCS/aws/certs/XXX-public.pem.key
+~/SCS/aws/certs/root-CA.crt
+
+SEE ALSO
+scs_analysis/aws_mqtt_control
+scs_analysis/aws_topic_publisher
+
+BUGS
+When run as a background process, aws_mqtt_client will exit if it has no stdin stream.
 """
 
 import json
@@ -160,7 +182,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        handler = AWSMQTTHandler()
+        handler = AWSMQTTHandler()      # TODO: WTF?
 
         client.connect(endpoint, credentials)
 
