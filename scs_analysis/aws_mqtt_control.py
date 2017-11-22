@@ -13,7 +13,7 @@ For security reasons, the user must be in possession of the target device's uniq
 the AWS endpoint specification and client credentials must be installed on the user's host.
 
 EXAMPLES
-./aws_mqtt_control.py -r -d scs-ap1-6 00000000cda1f8b9 \
+./aws_mqtt_control.py -r -d scs-ap1-6 00000000ada2f8a9 \
  south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
 
 FILES

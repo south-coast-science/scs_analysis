@@ -5,8 +5,15 @@ Created on 11 Apr 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-command line example:
-./socket_receiver.py | ./node.py -s val.afe.sns.CO
+DESCRIPTION
+The node utility is used to extract a node within a JSON document. Data is presented as a sequence of documents on
+stdin; the node is passed to stdout. The extracted node may be a leaf node or an internal node.
+
+The node utility may be set to either ignore documents that do not contain the specified node, or to terminate when the
+node is not present.
+
+EXAMPLES
+./socket_receiver.py | ./node.py -i val.afe.sns.CO
 """
 
 import sys

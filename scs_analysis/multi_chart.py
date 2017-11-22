@@ -5,8 +5,17 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-command line example:
+DESCRIPTION
+The multi_chart utility is used to display a Matplotlib timeline chart for one or more data sources. The data sources
+share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting source is
+specified by a path to a leaf node in the JSON document.
+
+EXAMPLES
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
+
+SEE ALSO
+scs_analysis/histo_chart
+scs_analysis/single_chart
 """
 
 import sys

@@ -5,12 +5,23 @@ Created on 18 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+DESCRIPTION
+The osio_topic_publisher utility is used to prepare data for publication by the osio_mqtt_client script. The
+osio_topic_publisher works by taking data from stdin, wrapping it in a JSON document whose only field has the name of
+the given topic, and presenting the result on stdout.
+
+Note that the osio_topic_publisher in scs_analysis necessarily works differently to the osio_topic_publisher in scs_dev.
+This is because scs_dev version has access to a device project specification, and therefore can find the topic path
+automatically. For the scs_analysis version, the full topic path should be given explicitly.
+
+EXAMPLES
+./osio_topic_publisher.py -t /users/southcoastscience-dev/test/json
+
+SEE ALSO
+scs_analysis/osio_mqtt_client
+
+RESOURCES
 https://opensensorsio.helpscoutdocs.com/article/84-overriding-timestamp-information-in-message-payload
-
-Requires SystemID and Project documents.
-
-command line example:
-./status_sampler.py -i 60 | ./osio_topic_publisher.py -e -t /users/southcoastscience-dev/test/json
 """
 
 import json

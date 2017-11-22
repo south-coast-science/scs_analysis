@@ -5,8 +5,18 @@ Created on 20 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-command line example:
+DESCRIPTION
+The osio_topic_history utility is used to retrieve stored data from the OpenSensors.io data infrastructure.
+Data can be retrieved by start or start + end localised date / times, or by minutes backwards from now.
+
+An OpenSensors.io API auth document must be installed on the host for the osio_mqtt_client
+to operate. A specification should be obtained from the user's OpenSensors.io account.
+
+EXAMPLES
 ./osio_topic_history.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
+
+SEE ALSO
+scs_analysis/osio_api_auth
 """
 
 import sys
