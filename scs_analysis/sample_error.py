@@ -5,6 +5,24 @@ Created on 19 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+DESCRIPTION
+The XX utility is used to .
+
+EXAMPLES
+xx
+
+FILES
+~/SCS/aws/
+
+DOCUMENT EXAMPLE
+xx
+
+SEE ALSO
+scs_analysis/
+
+
+
+
 command line example:
 ./socket_receiver.py | ./sample_conv.py val.afe.sns.CO -s 0.321 \
 | ./sample_error.py val.afe.sns.CO.conv

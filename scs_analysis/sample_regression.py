@@ -5,6 +5,24 @@ Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+DESCRIPTION
+The XX utility is used to .
+
+EXAMPLES
+xx
+
+FILES
+~/SCS/aws/
+
+DOCUMENT EXAMPLE
+xx
+
+SEE ALSO
+scs_analysis/
+
+
+
+
 command line example:
 ./socket_receiver.py | ./sample_regression.py val.sht.tmp -t 4
 """
