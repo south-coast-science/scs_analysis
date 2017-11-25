@@ -5,15 +5,34 @@ Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-WARNING: only one MQTT client should run at any one time, per TCP/IP host.
+DESCRIPTION
+The osio_mqtt_client utility is used to subscribe or publish using the OpenSensors.io messaging
+infrastructure.
 
-Requires APIAuth and ClientAuth documents.
+OpenSensors.io API auth and client specifications must be installed on the host for the osio_mqtt_client
+to operate. A specification should be obtained from the user's OpenSensors.io account.
 
-command line example:
-./osio_mqtt_client.py \
-/orgs/south-coast-science-dev/unep/loc/1/gases gases.uds \
-/orgs/south-coast-science-dev/unep/loc/1/particulates particulates.uds \
--p osio_mqtt_pub.uds -s -e
+Only one MQTT client should run at any one time, per TCP/IP host.
+
+Note that there are currently no utilities to manage the OpenSensors client specification document - this
+must be installed or edited by hand. This situation will change. Document example:
+
+{"user_id": "southcoastscience-dev", "client-id": "5403", "client-password": "rtySrK1f"}
+
+EXAMPLES
+./osio_mqtt_client.py /orgs/south-coast-science-dev/production-test/loc/1/gases
+
+FILES
+~/SCS/osio/osio_api_auth.json
+~/SCS/osio/osio_client_auth.json
+
+SEE ALSO
+scs_analysis/osio_api_auth
+scs_analysis/osio_mqtt_control
+scs_analysis/osio_topic_publisher
+
+BUGS
+When run as a background process, osio_mqtt_client will exit if it has no stdin stream.
 """
 
 import json
