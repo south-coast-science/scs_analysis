@@ -29,8 +29,6 @@ scs_analysis/osio_api_auth
 
 import sys
 
-import scs_analysis.cmd.your_cmd
-
 from scs_analysis.cmd.cmd_osio_client_auth import CmdOSIOClientAuth
 
 from scs_core.data.json import JSONify
