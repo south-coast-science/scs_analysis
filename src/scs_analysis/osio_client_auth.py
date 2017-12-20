@@ -5,18 +5,33 @@ Created on 19 Dec 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-Requires APIAuth document.
+DESCRIPTION
+The osio_client_auth utility is used to store or read the client ID and client password required by the OpenSensors.io
+messaging system. This client authentication is required to both subscribe to and publish on any messaging topic.
 
-Creates ClientAuth document.
+When setting the client authentication, the osio_client_auth utility requests a new device identity from the
+OpenSensors.io system, then stores the generated tokens on the client. The name of the device is taken to be the
+name of the host on which the script is executed. Names (unlike client IDs) are not required to be unique on the
+OpenSensors system.
 
-document example:
+EXAMPLES
+./osio_client_auth.py -u south-coast-science-test-user -v
+
+FILES
+~/SCS/osio/osio_client_auth.json
+
+DOCUMENT EXAMPLE
 {"user_id": "south-coast-science-test-user", "client-id": "5403", "client-password": "rtxSrK2f"}
 
-command line examples:
-./osio_client_auth.py -u south-coast-science-test-user -v
+SEE ALSO
+scs_analysis/osio_api_auth
 """
 
 import sys
+
+import scs_analysis.cmd.your_cmd
+
+from scs_analysis.cmd.cmd_osio_client_auth import CmdOSIOClientAuth
 
 from scs_core.data.json import JSONify
 
@@ -28,8 +43,6 @@ from scs_core.osio.manager.user_manager import UserManager
 
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
-
-from scs_analysis.cmd.cmd_osio_client_auth import CmdOSIOClientAuth
 
 
 # --------------------------------------------------------------------------------------------------------------------
