@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # clean non-matching records...
+    # remove non-matching record...
 
     if device and client_auth:
         if device.client_id != client_auth.client_id:
