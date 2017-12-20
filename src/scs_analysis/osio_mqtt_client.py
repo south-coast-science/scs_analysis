@@ -17,8 +17,6 @@ Only one MQTT client should run at any one time, per TCP/IP host.
 Note that there are currently no utilities to manage the OpenSensors client specification document - this
 must be installed or edited by hand. This situation will change. Document example:
 
-{"user_id": "southcoastscience-dev", "client-id": "5403", "client-password": "rtySrK1f"}
-
 EXAMPLES
 ./osio_mqtt_client.py /orgs/south-coast-science-dev/production-test/loc/1/gases
 
