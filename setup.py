@@ -5,7 +5,9 @@ with open('requirements.txt') as req_txt:
     required = [line for line in req_txt.read().splitlines() if line]
 
 try:
+    # noinspection PyUnresolvedReferences
     import pypandoc
+    # noinspection PyUnresolvedReferences
     from os import path
     here = path.abspath(path.dirname(__file__))
     long_description = pypandoc.convert(path.join(here, 'README.md'), 'rst'),
@@ -21,7 +23,7 @@ setup(
     author='South Coast Science',
     author_email='contact@southcoastscience.com',
     url='https://github.com/south-coast-science/scs_analysis',
-    package_dir={'':'src'},
+    package_dir={'': 'src'},
     packages=find_packages('src'),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -35,7 +37,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    scripts = [
+    scripts=[
         'src/scs_analysis/aws_api_auth.py',
         'src/scs_analysis/aws_mqtt_client.py',
         'src/scs_analysis/aws_mqtt_control.py',
