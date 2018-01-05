@@ -11,19 +11,17 @@ Information management and analysis tools for South Coast Science data consumers
 
 **Example PYTHONPATH:**
 
-**Raspberry Pi, in /home/pi/.bashrc:**
+macOS, in ~/.bash_profile:
 
-export \\
-PYTHONPATH=\~/SCS/scs_analysis:\~/SCS/scs_dev:\~/SCS/scs_osio:\~/SCS/scs_mfr:\~/SCS/scs_dfe_eng:\~/SCS/scs_host_rpi:\~/SCS/scs_core:$PYTHONPATH
-
-
-**MacOS, in ~/.bash_profile:**
-
-PYTHONPATH="\{$HOME}/SCS/scs_analysis:\{$HOME}/SCS/scs_osio:\{$HOME}/SCS/scs_host_posix:\{$HOME}/SCS/scs_core:${PYTHONPATH}" \
-export PYTHONPATH
+    PYTHONPATH="\{$HOME}/SCS/scs_analysis/src:\{$HOME}/SCS/scs_osio/src:\{$HOME}/SCS/scs_host_posix/src:\{$HOME}/SCS/scs_core/src:${PYTHONPATH}" 
+    export PYTHONPATH
 
 
-**Ubuntu, in ~/.bashrc:**
+Raspberry Pi, in /home/pi/.bashrc:
 
-export \\
-PYTHONPATH="\~/SCS/scs_analysis:\~/SCS/scs_osio:\~/SCS/scs_host_posix:\~/SCS/scs_core:$PYTHONPATH"
+    export  PYTHONPATH=\~/SCS/scs_analysis/src:\~/SCS/scs_dev/src:\~/SCS/scs_osio/src:\~/SCS/scs_mfr/src:\~/SCS/scs_dfe_eng/src:\~/SCS/scs_host_rpi/src:\~/SCS/scs_core/src:$PYTHONPATH
+
+
+Ubuntu, in ~/.bashrc:
+
+    export PYTHONPATH="\~/SCS/scs_analysis/src:\~/SCS/scs_osio/src:\~/SCS/scs_host_posix/src:\~/SCS/scs_core/src:$PYTHONPATH"
