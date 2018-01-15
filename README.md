@@ -1,7 +1,7 @@
 # scs_analysis
 Information management and analysis tools for South Coast Science data consumers.
 
-_Contains command line utilities and library classes_
+_Contains command line utilities and library classes._
 
 **Required libraries:** 
 
