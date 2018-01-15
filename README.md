@@ -1,5 +1,5 @@
 # scs_analysis
-_South Coast Science command line utilities and library classes_
+_command line utilities and library classes_
 
 Information management and analysis tools for South Coast Science data consumers.
 
