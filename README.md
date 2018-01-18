@@ -5,7 +5,7 @@ _Contains command line utilities and library classes._
 
 **Required libraries:** 
 
-* Third party (always required): paho-mqtt, pycurl, tzlocal
+* Third party (always required): AWSIoTPythonSDK, paho-mqtt, pycurl, tzlocal
 * Third party (to enable charting): matplotlib, python3-tk
 * SCS root: scs_core
 * SCS host: scs_host_posix or scs_host_rpi
