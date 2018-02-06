@@ -84,7 +84,7 @@ if __name__ == '__main__':
             target.copy(datum, 'rec')
 
             target.append(cmd.path + '.src', value)
-            target.append(cmd.path + '.low', lpf.compute(value))
+            target.append(cmd.path + '.lpf', lpf.compute(value))
 
             print(JSONify.dumps(target.node()))
             sys.stdout.flush()
