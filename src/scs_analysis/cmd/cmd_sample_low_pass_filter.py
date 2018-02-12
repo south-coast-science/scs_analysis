@@ -18,7 +18,8 @@ class CmdLowPassFilter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] PATH",
+                                              version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--delta", "-d", type="float", nargs=1, action="store", dest="delta",
