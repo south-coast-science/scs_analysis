@@ -41,12 +41,12 @@ class CmdOSIOAPIAuth(object):
 
     @property
     def org_id(self):
-        return self.__opts.org_key[0] if self.__opts.org_key else None
+        return None if self.__opts.org_key is None else self.__opts.org_key[0]
 
 
     @property
     def api_key(self):
-        return self.__opts.org_key[1] if self.__opts.org_key else None
+        return None if self.__opts.org_key is None else self.__opts.org_key[1]
 
 
     @property

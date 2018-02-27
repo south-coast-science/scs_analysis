@@ -75,12 +75,12 @@ class CmdAWSTopicHistory(object):
 
     @property
     def start(self):
-        return LocalizedDatetime.construct_from_iso8601(self.__opts.start) if self.__opts.start else None
+        return None if self.__opts.start is None else LocalizedDatetime.construct_from_iso8601(self.__opts.start)
 
 
     @property
     def end(self):
-        return LocalizedDatetime.construct_from_iso8601(self.__opts.end) if self.__opts.end else None
+        return None if self.__opts.end is None else LocalizedDatetime.construct_from_iso8601(self.__opts.end)
 
 
     @property
