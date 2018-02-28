@@ -65,9 +65,6 @@ class SampleAverage(object):
         value = sample.node(self.__path)
         self.__func.append(value)
 
-        if not self.__func.has_tally():
-            return None
-
         avg = self.__func.compute()
 
         if avg is None:
@@ -75,7 +72,8 @@ class SampleAverage(object):
 
         target = PathDict()
 
-        target.copy(datum, 'rec')
+        if sample.has_path('rec'):
+            target.copy(sample, 'rec')
 
         target.append(self.__path + '.src', value)
         target.append(self.__path + '.avg', round(avg, 6))

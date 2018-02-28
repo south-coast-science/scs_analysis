@@ -78,7 +78,8 @@ class SampleRegression(object):
 
         target = PathDict()
 
-        target.copy(datum, 'rec')
+        if sample.has_path('rec'):
+            target.copy(sample, 'rec')
 
         target.append(self.__path + '.src', value)
         target.append(self.__path + '.slope', round(slope * 60 * 60, 6))        # x-scale is hours

@@ -69,19 +69,20 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            datum = PathDict.construct_from_jstr(line)
+            sample = PathDict.construct_from_jstr(line)
 
-            if datum is None:
+            if sample is None:
                 break
 
-            value = datum.node(cmd.path)
+            value = sample.node(cmd.path)
 
             if value is None:
                 break
 
             target = PathDict()
 
-            target.copy(datum, 'rec')
+            if sample.has_path('rec'):
+                target.copy(sample, 'rec')
 
             target.append(cmd.path + '.src', value)
             target.append(cmd.path + '.lpf', round(lpf.compute(value), cmd.precision))
