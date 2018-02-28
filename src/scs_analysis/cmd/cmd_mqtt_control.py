@@ -55,17 +55,17 @@ class CmdMQTTControl(object):
 
     @property
     def device_tag(self):
-        return self.__opts.tag_host_topic[0] if self.__opts.tag_host_topic else None
+        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[0]
 
 
     @property
     def device_host_id(self):
-        return self.__opts.tag_host_topic[1] if self.__opts.tag_host_topic else None
+        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[1]
 
 
     @property
     def topic(self):
-        return self.__opts.tag_host_topic[2] if self.__opts.tag_host_topic else None
+        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[2]
 
 
     @property

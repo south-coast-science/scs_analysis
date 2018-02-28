@@ -58,8 +58,8 @@ class SampleError(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def datum(self, datum):
-        latest = float(datum.node(self.__path))
+    def datum(self, sample):
+        latest = float(sample.node(self.__path))
 
         if self.__aggregate is None:
             self.__aggregate = latest
@@ -70,7 +70,8 @@ class SampleError(object):
 
         target = PathDict()
 
-        target.copy(datum, 'rec')
+        if sample.has_path('rec'):
+            target.copy(sample, 'rec')
 
         target.append(self.__path + '.src', latest)
         target.append(self.__path + '.agr', round(self.__aggregate, 6))
