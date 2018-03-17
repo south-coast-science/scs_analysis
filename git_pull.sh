@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# An example git pull script, normally copied to ~/SCS and incorporating all repos
+# An example git pull script, normally copied to ~/SCS and incorporating all relevant repos
 
 GIT_PATH=~/SCS/scs_analysis/
 echo ${GIT_PATH}
