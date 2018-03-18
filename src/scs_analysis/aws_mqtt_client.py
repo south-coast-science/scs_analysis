@@ -144,14 +144,14 @@ if __name__ == '__main__':
         endpoint = Endpoint.load(Host)
 
         if endpoint is None:
-            print("Endpoint config not available.", file=sys.stderr)
+            print("aws_mqtt_client: Endpoint config not available.", file=sys.stderr)
             exit(1)
 
         # endpoint...
         credentials = ClientCredentials.load(Host)
 
         if credentials is None:
-            print("ClientCredentials not available.", file=sys.stderr)
+            print("aws_mqtt_client: ClientCredentials not available.", file=sys.stderr)
             exit(1)
 
         # comms...

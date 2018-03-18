@@ -63,7 +63,7 @@ if __name__ == '__main__':
     api_auth = APIAuth.load(Host)
 
     if api_auth is None:
-        print("APIAuth not available.", file=sys.stderr)
+        print("osio_client_auth: APIAuth not available.", file=sys.stderr)
         exit(1)
 
     if cmd.verbose:
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     if device is None or client_auth is None:
         if cmd.set() and not cmd.is_complete():
-            print("No device is registered. osio_host_client must therefore set a user:", file=sys.stderr)
+            print("osio_client_auth: no device is registered. You must therefore set a user:", file=sys.stderr)
             cmd.print_help(sys.stderr)
             exit(1)
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             user = user_manager.find_public(cmd.user_id)
 
             if user is None:
-                print("User not available.", file=sys.stderr)
+                print("osio_client_auth: User not available.", file=sys.stderr)
                 exit(1)
 
         # tags...
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
         if device and client_auth:
             if cmd.user_id:
-                print("Device owner-id cannot be updated.", file=sys.stderr)
+                print("osio_client_auth: Device owner-id cannot be updated.", file=sys.stderr)
                 exit(1)
 
             # update Device...

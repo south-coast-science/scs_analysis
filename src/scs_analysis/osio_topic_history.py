@@ -62,7 +62,7 @@ if __name__ == '__main__':
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
-            print("APIAuth not available.", file=sys.stderr)
+            print("osio_topic_history: APIAuth not available.", file=sys.stderr)
             exit(1)
 
         if cmd.verbose:
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         # check topics...
         if not topic_manager.find(cmd.path):
-            print("Topic not available: %s" % cmd.path, file=sys.stderr)
+            print("osio_topic_history: Topic not available: %s" % cmd.path, file=sys.stderr)
             exit(1)
 
         # time...

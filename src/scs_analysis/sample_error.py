@@ -37,8 +37,6 @@ from scs_core.data.path_dict import PathDict
 from scs_core.sys.exception_report import ExceptionReport
 
 
-# TODO: should deal with list of paths
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleError(object):
