@@ -149,7 +149,7 @@ if __name__ == '__main__':
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
-            print("APIAuth not available.", file=sys.stderr)
+            print("osio_mqtt_client: APIAuth not available.", file=sys.stderr)
             exit(1)
 
         if cmd.verbose:
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         client_auth = ClientAuth.load(Host)
 
         if client_auth is None:
-            print("ClientAuth not available.", file=sys.stderr)
+            print("osio_mqtt_client: ClientAuth not available.", file=sys.stderr)
             exit(1)
 
         if cmd.verbose:
@@ -175,7 +175,7 @@ if __name__ == '__main__':
         unavailable = False
         for subscription in cmd.subscriptions:
             if not manager.find(subscription.topic):
-                print("Topic not available: %s" % subscription[0], file=sys.stderr)
+                print("osio_mqtt_client: Topic not available: %s" % subscription[0], file=sys.stderr)
                 unavailable = True
 
         if unavailable:
@@ -211,7 +211,7 @@ if __name__ == '__main__':
             try:
                 datum = json.loads(message, object_pairs_hook=OrderedDict)
             except ValueError:
-                handler.print_status("bad datum: %s" % message)
+                handler.print_status("osio_mqtt_client: bad datum: %s" % message)
                 continue
 
             success = False
@@ -223,7 +223,7 @@ if __name__ == '__main__':
                     success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
                     if not success:
-                        handler.print_status("abandoned")
+                        handler.print_status("osio_mqtt_client: abandoned")
 
                     break
 

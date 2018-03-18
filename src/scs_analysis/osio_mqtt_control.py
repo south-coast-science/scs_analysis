@@ -133,7 +133,7 @@ if __name__ == '__main__':
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
-            print("APIAuth not available.", file=sys.stderr)
+            print("osio_mqtt_control: APIAuth not available.", file=sys.stderr)
             exit(1)
 
         if cmd.verbose:
@@ -143,7 +143,7 @@ if __name__ == '__main__':
         client_auth = ClientAuth.load(Host)
 
         if client_auth is None:
-            print("ClientAuth not available.", file=sys.stderr)
+            print("osio_mqtt_control: ClientAuth not available.", file=sys.stderr)
             exit(1)
 
         if cmd.verbose:
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
         # check topic...
         if not manager.find(cmd.topic):
-            print("Topic not available: %s" % cmd.topic, file=sys.stderr)
+            print("osio_mqtt_control: Topic not available: %s" % cmd.topic, file=sys.stderr)
             exit(1)
 
         # responder...
@@ -206,7 +206,7 @@ if __name__ == '__main__':
                     success = client.publish(publication, ClientAuth.MQTT_TIMEOUT)
 
                     if not success:
-                        print("abandoned", file=sys.stderr)
+                        print("osio_mqtt_control: abandoned", file=sys.stderr)
                         sys.stderr.flush()
 
                     break
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                 while True:
                     if handler.receipt:
                         if not handler.receipt.is_valid(cmd.device_host_id):
-                            raise ValueError("invalid digest: %s" % handler.receipt)
+                            raise ValueError("osio_mqtt_control: invalid digest: %s" % handler.receipt)
 
                         if cmd.verbose:
                             print(handler.receipt, file=sys.stderr)
