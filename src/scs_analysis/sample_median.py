@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Created on 24 Mar 2017
+Created on 20 Mar 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -19,8 +19,6 @@ xx
 
 SEE ALSO
 scs_analysis/
-
-
 
 
 command line example:
