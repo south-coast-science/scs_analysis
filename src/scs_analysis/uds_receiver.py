@@ -9,23 +9,6 @@ DESCRIPTION
 The XX utility is used to .
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-Writes socket stream to stdout.
-
-command line example:
 ./uds_receiver.py particulates.uds
 """
 

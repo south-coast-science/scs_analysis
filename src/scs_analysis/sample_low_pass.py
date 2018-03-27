@@ -8,23 +8,14 @@ Created on 24 Mar 2017
 DESCRIPTION
 The XX utility is used to .
 
+Ten Little Algorithms, Part 2: The Single-Pole Low-Pass Filter
+https://www.embeddedrelated.com/showarticle/779.php
+
 EXAMPLES
-xx
+./sample_low_pass.py -d 10 -c 0.01 val.NO2.cnc
 
 FILES
 ~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py | ./sample_low_pass.py -d 10 -c 0.01 val.NO2.cnc
 """
 
 import sys

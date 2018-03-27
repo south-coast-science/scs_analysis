@@ -9,22 +9,7 @@ DESCRIPTION
 The XX utility is used to .
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
+./single_chart.py -r val.afe.sns.CO.cnc
 """
 
 import sys

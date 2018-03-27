@@ -9,22 +9,10 @@ DESCRIPTION
 The XX utility is used to .
 
 EXAMPLES
-xx
+./sample_interval.py rec
 
 FILES
 ~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py | ./sample_interval.py rec
 """
 
 import sys

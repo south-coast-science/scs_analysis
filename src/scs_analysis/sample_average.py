@@ -6,25 +6,19 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The sample_average utility is used to compute an average value for a stream of data delivered on stdin. This can be an
+average of all values, or a rolling average for a given number of values.
+
+Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
+the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
+sample_average utility includes the source value, and the average value.
 
 EXAMPLES
-xx
+./sample_average.py -t 4 val.sht.tmp
 
-FILES
-~/SCS/aws/
+DOCUMENT EXAMPLE: INPUT
 
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py | ./sample_average.py val.sht.tmp -t 4
+DOCUMENT EXAMPLE: OUTPUT
 """
 
 

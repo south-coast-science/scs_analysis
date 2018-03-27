@@ -9,22 +9,7 @@ DESCRIPTION
 The XX utility is used to .
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py -v
+./socket_receiver.py -p 2002
 """
 
 import sys
