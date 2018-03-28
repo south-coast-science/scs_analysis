@@ -18,8 +18,8 @@ class CmdOSIOTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-p SECONDS] [-w] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -m MINUTES | -s START [-e END] } [-p SECONDS] [-w] "
+                                                    "[-v] PATH", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
@@ -67,11 +67,6 @@ class CmdOSIOTopicHistory(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def minutes(self):
         return self.__opts.minutes
 
@@ -101,6 +96,11 @@ class CmdOSIOTopicHistory(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -112,7 +112,7 @@ class CmdOSIOTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopicHistory:{path:%s, minutes:%s, start:%s, end:%s, pause:%s, include_wrapping:%s, " \
-               "verbose:%s, args:%s}" % \
-                    (self.path, self.minutes, self.start, self.end, self.pause, self.include_wrapping,
-                     self.verbose, self.args)
+        return "CmdOSIOTopicHistory:{minutes:%s, start:%s, end:%s, pause:%s, include_wrapping:%s, " \
+               "verbose:%s, path:%s, args:%s}" % \
+                    (self.minutes, self.start, self.end, self.pause, self.include_wrapping,
+                     self.verbose, self.path, self.args)

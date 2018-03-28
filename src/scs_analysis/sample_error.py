@@ -6,13 +6,27 @@ Created on 19 Aug 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The sample_error utility is typically used in a setting where data has a gaussian distribution around a fixed or
+slow-moving value. The error analysis shows the difference between the current value, and an exponential
+average.
+
+Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
+the document that is to be examined. The node is typically a leaf node integer or float. The output of the
+sample_error utility includes the source value, aggregate, and the error.
 
 EXAMPLES
-./sample_error.py val.afe.sns.CO.conv
+./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_error.py -p3 val.CO.cnc
 
-FILES
-~/SCS/aws/
+DOCUMENT EXAMPLE - INPUT
+{"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
+"NO2": {"weV": 0.29563, "aeV": 0.280879, "weC": 0.009569, "cnc": 61.0},
+"Ox": {"weV": 0.406819, "aeV": 0.387443, "weC": -0.010706, "cnc": 34.7},
+"NO": {"weV": 0.319692, "aeV": 0.292129, "weC": 0.028952, "cnc": 165.5},
+"CO": {"weV": 0.395819, "aeV": 0.289317, "weC": 0.113108, "cnc": 311.3},
+"sht": {"hmd": 82.4, "tmp": 12.6}}}
+
+DOCUMENT EXAMPLE - OUTPUT
+{"rec": "2018-03-27T10:07:11.033+00:00", "val": {"CO": {"cnc": {"src": 263.0, "agr": 194.69, "err": 68.31}}}}
 """
 
 import sys
@@ -21,7 +35,6 @@ from scs_analysis.cmd.cmd_sample_filter import CmdSampleFilter
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
-from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -33,11 +46,13 @@ class SampleError(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, path):
+    def __init__(self, path, precision):
         """
         Constructor
         """
         self.__path = path
+        self.__precision = precision
+
         self.__aggregate = None
 
 
@@ -59,8 +74,8 @@ class SampleError(object):
             target.copy(sample, 'rec')
 
         target.append(self.__path + '.src', latest)
-        target.append(self.__path + '.agr', round(self.__aggregate, 6))
-        target.append(self.__path + '.err', round(error, 6))
+        target.append(self.__path + '.agr', round(self.__aggregate, self.__precision))
+        target.append(self.__path + '.err', round(error, self.__precision))
 
         return target.node()
 
@@ -75,9 +90,9 @@ class SampleError(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        aggregate_fmt = "None" if self.__aggregate is None else format(self.__aggregate, '.6f')
+        aggregate = "None" if self.__aggregate is None else format(self.__aggregate, '.6f')
 
-        return "SampleError:{path:%s, aggregate:%s}" % (self.__path, aggregate_fmt)
+        return "SampleError:{path:%s, precision:%s, aggregate:%s}" % (self.__path, self.__precision, aggregate)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -89,10 +104,6 @@ if __name__ == '__main__':
 
     cmd = CmdSampleFilter()
 
-    if not cmd.is_valid():
-        cmd.print_help(sys.stderr)
-        exit(2)
-
     if cmd.verbose:
         print(cmd, file=sys.stderr)
 
@@ -100,7 +111,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        err = SampleError(cmd.path)
+        err = SampleError(cmd.path, cmd.precision)
 
         if cmd.verbose:
             print(err, file=sys.stderr)
@@ -132,6 +143,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_error: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

@@ -52,8 +52,6 @@ from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
-from scs_core.sys.exception_report import ExceptionReport
-
 from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
 
@@ -213,9 +211,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("aws_mqtt_client: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
     finally:
         if client:

@@ -26,8 +26,6 @@ import sys
 from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 
 from scs_core.csv.csv_reader import CSVReader
-from scs_core.data.json import JSONify
-from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -71,9 +69,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("csv_reader: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

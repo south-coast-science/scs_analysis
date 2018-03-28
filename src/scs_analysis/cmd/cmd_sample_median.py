@@ -18,7 +18,7 @@ class CmdSampleMedian(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-w SIZE] [-p PRECISION] [-v] PATH",
+        self.__parser = optparse.OptionParser(usage="%prog [-w SIZE] [-p PRECISION] [-v] [PATH]",
                                               version="%prog 1.0")
 
         # optional...
@@ -46,11 +46,6 @@ class CmdSampleMedian(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def window(self):
         return self.__opts.window
 
@@ -66,6 +61,11 @@ class CmdSampleMedian(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -77,5 +77,5 @@ class CmdSampleMedian(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleMedian:{path:%s, window:%s, verbose:%s, precision:%s, args:%s}" % \
-               (self.path, self.window, self.verbose, self.precision, self.args)
+        return "CmdSampleMedian:{window:%s, verbose:%s, precision:%s, path:%s, args:%s}" % \
+               (self.window, self.verbose, self.precision, self.path, self.args)

@@ -16,7 +16,7 @@ class CmdOSIOTopic(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] PATH", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -37,13 +37,13 @@ class CmdOSIOTopic(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def verbose(self):
+        return self.__opts.verbose
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
@@ -58,5 +58,4 @@ class CmdOSIOTopic(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopic:{path:%s, verbose:%s, args:%s}" % \
-                    (self.path, self.verbose, self.args)
+        return "CmdOSIOTopic:{verbose:%s, path:%s, args:%s}" % (self.verbose, self.path, self.args)

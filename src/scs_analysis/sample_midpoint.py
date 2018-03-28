@@ -6,10 +6,28 @@ Created on 23 Aug 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The sample_midpoint utility computes a linear regression for a stream of data delivered on stdin, it then finds the
+midpoint y value. This is similar to an averaging function, but is independent of sampling jitter.
+
+Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
+the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
+sample_midpoint utility includes the source value, and the midpoint value.
 
 EXAMPLES
-./sample_midpoint.py
+./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
+./sample_midpoint.py -t360 -p1 val.CO.cnc
+
+DOCUMENT EXAMPLE - INPUT
+{"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
+"NO2": {"weV": 0.29563, "aeV": 0.280879, "weC": 0.009569, "cnc": 61.0},
+"Ox": {"weV": 0.406819, "aeV": 0.387443, "weC": -0.010706, "cnc": 34.7},
+"NO": {"weV": 0.319692, "aeV": 0.292129, "weC": 0.028952, "cnc": 165.5},
+"CO": {"weV": 0.395819, "aeV": 0.289317, "weC": 0.113108, "cnc": 311.3},
+"sht": {"hmd": 82.4, "tmp": 12.6}}}
+
+DOCUMENT EXAMPLE - OUTPUT
+{"rec": "2018-03-27T16:14:01.033+00:00", "mid-rec": "2018-03-27T15:44:06.000+00:00",
+"val": {"CO": {"cnc": {"src": 359.0, "mid": 296.5}}}}
 """
 
 
@@ -22,8 +40,6 @@ from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
-from scs_core.sys.exception_report import ExceptionReport
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -34,11 +50,13 @@ class SampleMidpoint(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, path, tally):
+    def __init__(self, path, tally, precision):
         """
         Constructor
         """
         self.__path = path
+        self.__precision = precision
+
         self.__func = LinearRegression(tally, False)
 
 
@@ -67,7 +85,7 @@ class SampleMidpoint(object):
         target.append('mid-rec', mid_rec)
 
         target.append(self.__path + '.src', value)
-        target.append(self.__path + '.mid', round(mid, 6))
+        target.append(self.__path + '.mid', round(mid, self.__precision))
 
         return target.node()
 
@@ -75,7 +93,7 @@ class SampleMidpoint(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SampleMidpoint:{path:%s, func:%s}" % (self.__path, self.__func)
+        return "SampleMidpoint:{path:%s, precision:%s, func:%s}" % (self.__path, self.__precision, self.__func)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -98,7 +116,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        sampler = SampleMidpoint(cmd.path, cmd.tally)
+        sampler = SampleMidpoint(cmd.path, cmd.tally, cmd.precision)
 
         if cmd.verbose:
             print(sampler, file=sys.stderr)
@@ -127,6 +145,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_midpoint: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

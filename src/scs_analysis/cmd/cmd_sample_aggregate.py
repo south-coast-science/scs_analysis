@@ -16,11 +16,14 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-t TALLY] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
                                  help="generate a rolling aggregate for TALLY number of data points (default all)")
+
+        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+                                 help="precision (default 0 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -31,9 +34,6 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None:
-            return False
-
         if self.tally is not None and self.tally < 1:
             return False
 
@@ -43,18 +43,23 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def tally(self):
         return self.__opts.tally
 
 
     @property
+    def precision(self):
+        return self.__opts.precision
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
@@ -69,5 +74,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{path:%s, tally:%s, verbose:%s, args:%s}" % \
-                    (self.path, self.tally, self.verbose, self.args)
+        return "CmdSampleAggregate:{tally:%s, tally:%s, verbose:%s, path:%s, args:%s}" % \
+                    (self.tally, self.precision, self.verbose, self.path, self.args)

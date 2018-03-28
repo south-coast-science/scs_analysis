@@ -18,7 +18,7 @@ class CmdSampleInterval(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
@@ -32,20 +32,6 @@ class CmdSampleInterval(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_valid(self):
-        if self.path is None:
-            return False
-
-        return True
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
     @property
     def precision(self):
         return self.__opts.precision
@@ -54,6 +40,11 @@ class CmdSampleInterval(object):
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
@@ -68,5 +59,5 @@ class CmdSampleInterval(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleInterval:{path:%s, precision:%s, verbose:%s, args:%s}" % \
-               (self.path, self.precision, self.verbose, self.args)
+        return "CmdSampleInterval:{precision:%s, verbose:%s, path:%s, args:%s}" % \
+               (self.precision, self.verbose, self.path, self.args)
