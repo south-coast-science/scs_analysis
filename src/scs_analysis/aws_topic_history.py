@@ -64,7 +64,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
+        message_manager = MessageManager(HTTPClient(), api_auth, cmd.verbose)
 
         if cmd.verbose:
             print(message_manager, file=sys.stderr)

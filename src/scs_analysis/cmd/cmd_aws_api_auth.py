@@ -19,11 +19,18 @@ class CmdAWSAPIAuth(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-s API_KEY] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]",
+                                              version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--set", "-s", type="string", nargs=1, action="store", dest="api_key",
+        self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
+                                 help="set API endpoint")
+
+        self.__parser.add_option("--api-key", "-a", type="string", nargs=1, action="store", dest="api_key",
                                  help="set API key")
+
+        self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
+                                 help="delete the API configuration")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -33,11 +40,30 @@ class CmdAWSAPIAuth(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self):
+        if self.set() and self.delete:
+            return False
+
+        return True
+
+
+    def is_complete(self):
+        if self.endpoint is None or self.api_key is None:
+            return False
+
+        return True
+
+
     def set(self):
-        return self.__opts.api_key is not None
+        return self.endpoint is not None or self.api_key is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def endpoint(self):
+        return self.__opts.endpoint
+
 
     @property
     def api_key(self):
@@ -50,11 +76,21 @@ class CmdAWSAPIAuth(object):
 
 
     @property
+    def delete(self):
+        return self.__opts.delete
+
+
+    @property
     def args(self):
         return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def print_help(self, file):
+        self.__parser.print_help(file)
+
+
     def __str__(self, *args, **kwargs):
-        return "CmdAWSAPIAuth:{api_key:%s, verbose:%s, args:%s}" % (self.api_key, self.verbose, self.args)
+        return "CmdAWSAPIAuth:{endpoint:%s, api_key:%s, delete:%s, verbose:%s, args:%s}" % \
+               (self.endpoint, self.api_key, self.delete, self.verbose, self.args)
