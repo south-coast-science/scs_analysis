@@ -14,15 +14,11 @@ to operate.
 
 Only one MQTT client should run at any one time, per TCP/IP host.
 
-Note that there are currently no utilities to manage AWS configuration documents - these must be installed or edited
-by hand. This situation will change.
-
 EXAMPLES
 ./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
 
 FILES
-~/SCS/aws/client_credentials.json
-~/SCS/aws/endpoint.json
+~/SCS/aws/aws_client_auth.json
 
 ~/SCS/aws/certs/XXX-certificate.pem.crt
 ~/SCS/aws/certs/XXX-private.pem.key
@@ -44,9 +40,8 @@ from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 
+from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
-from scs_core.aws.client.client_credentials import ClientCredentials
-from scs_core.aws.service.endpoint import Endpoint
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -138,19 +133,15 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # endpoint...
-        endpoint = Endpoint.load(Host)
+        # ClientAuth...
+        auth = ClientAuth.load(Host)
 
-        if endpoint is None:
-            print("aws_mqtt_client: Endpoint config not available.", file=sys.stderr)
+        if auth is None:
+            print("aws_mqtt_client: ClientAuth not available.", file=sys.stderr)
             exit(1)
 
-        # endpoint...
-        credentials = ClientCredentials.load(Host)
-
-        if credentials is None:
-            print("aws_mqtt_client: ClientCredentials not available.", file=sys.stderr)
-            exit(1)
+        if cmd.verbose:
+            print(auth, file=sys.stderr)
 
         # comms...
         pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
@@ -163,9 +154,6 @@ if __name__ == '__main__':
 
             # handler...
             handler = AWSMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
-
-            if cmd.verbose:
-                print(handler, file=sys.stderr)
 
             subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
@@ -180,9 +168,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        handler = AWSMQTTHandler()      # TODO: WTF?
+        handler = AWSMQTTHandler()
 
-        client.connect(endpoint, credentials)
+        client.connect(auth)
 
         pub_comms.connect()
 

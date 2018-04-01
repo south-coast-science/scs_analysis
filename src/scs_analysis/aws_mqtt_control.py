@@ -17,8 +17,7 @@ EXAMPLES
  south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
 
 FILES
-~/SCS/aws/client_credentials.json
-~/SCS/aws/endpoint.json
+~/SCS/aws/aws_client_auth.json
 
 ~/SCS/aws/certs/XXX-certificate.pem.crt
 ~/SCS/aws/certs/XXX-private.pem.key
@@ -40,9 +39,8 @@ from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 from scs_core.control.control_datum import ControlDatum
 from scs_core.control.control_receipt import ControlReceipt
 
+from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
-from scs_core.aws.client.client_credentials import ClientCredentials
-from scs_core.aws.service.endpoint import Endpoint
 
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
@@ -127,19 +125,15 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # endpoint...
-        endpoint = Endpoint.load(Host)
+        # ClientAuth...
+        auth = ClientAuth.load(Host)
 
-        if endpoint is None:
-            print("aws_mqtt_control: Endpoint config not available.", file=sys.stderr)
+        if auth is None:
+            print("aws_mqtt_control: ClientAuth not available.", file=sys.stderr)
             exit(1)
 
-        # endpoint...
-        credentials = ClientCredentials.load(Host)
-
-        if credentials is None:
-            print("aws_mqtt_control: ClientCredentials not available.", file=sys.stderr)
-            exit(1)
+        if cmd.verbose:
+            print(auth, file=sys.stderr)
 
         # responder...
         handler = AWSMQTTControlHandler()
@@ -159,7 +153,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        client.connect(endpoint, credentials)
+        client.connect(auth)
 
         while True:
             # cmd...
