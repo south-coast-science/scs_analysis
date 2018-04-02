@@ -70,10 +70,6 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("csv_reader: KeyboardInterrupt", file=sys.stderr)
 
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # close...
-
     finally:
         if csv is not None:
             csv.close()
