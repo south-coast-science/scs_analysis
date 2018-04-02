@@ -34,8 +34,6 @@ from scs_core.data.path_dict import PathDict
 
 from scs_core.sync.line_reader import LineReader
 
-from scs_core.sys.exception_report import ExceptionReport
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -107,9 +105,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("histo_chart: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -6,33 +6,24 @@ Created on 18 Aug 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The socket_receiver utility is used to accept data via a Unix socket, with data sourced from the same host, or
+another host on the same local area network. A socket_sender utility is provided for the purpose of sourcing data,
+as part of the scs_dev package.
+
+The socket_receiver utility should be started before socket_sender. When socket_sender terminates, socket_receiver
+will also terminate.
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
+./socket_receiver.py -p 2002
 
 SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py -v
+scs_analysis/uds_receiver
+scs_dev/socket_sender
 """
 
 import sys
 
 from scs_analysis.cmd.cmd_socket_receiver import CmdSocketReceiver
-
-from scs_core.data.json import JSONify
-from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.comms.network_socket import NetworkSocket
 
@@ -78,9 +69,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("socket_receiver: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

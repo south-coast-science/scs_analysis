@@ -16,9 +16,12 @@ class CmdSampleFilter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+                                 help="precision (default 0 decimal places)")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -27,23 +30,19 @@ class CmdSampleFilter(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_valid(self):
-        if self.path is None:
-            return False
-
-        return True
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def precision(self):
+        return self.__opts.precision
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
@@ -58,5 +57,5 @@ class CmdSampleFilter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdFilter:{verbose:%s, args:%s}" % \
-                    (self.verbose, self.args)
+        return "CmdSampleFilter:{precision:%s, verbose:%s, path:%s, args:%s}" % \
+                    (self.precision, self.verbose, self.path, self.args)

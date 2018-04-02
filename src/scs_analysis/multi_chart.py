@@ -6,9 +6,12 @@ Created on 13 Oct 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The multi_chart utility is used to display a Matplotlib timeline chart for one or more data sources. The data sources
-share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting source is
-specified by a path to a leaf node in the JSON document.
+The multi_chart utility is used to display a Matplotlib categorical chart for one or more data sources. The
+data sources share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting
+source is specified by a path to a leaf node in the JSON document.
+
+Note that the chart is a simple approximation to a timeline chart - values are plotted successively, with no account
+taken of the interval between samples.
 
 EXAMPLES
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
@@ -28,8 +31,6 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 from scs_core.sync.line_reader import LineReader
-
-from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -102,9 +103,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("multi_chart: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

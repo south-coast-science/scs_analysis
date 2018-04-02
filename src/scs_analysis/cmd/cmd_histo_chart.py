@@ -18,8 +18,8 @@ class CmdHistoChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] "
+                                                    "[-v] PATH", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
@@ -55,11 +55,6 @@ class CmdHistoChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def batch_mode(self):
         return self.__opts.batch_mode
 
@@ -90,6 +85,11 @@ class CmdHistoChart(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -101,5 +101,7 @@ class CmdHistoChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, args:%s}" % \
-                    (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.args)
+        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, path:%s, " \
+               "args:%s}" % \
+                    (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.path,
+                     self.args)

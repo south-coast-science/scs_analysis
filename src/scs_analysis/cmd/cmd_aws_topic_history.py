@@ -18,7 +18,7 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH { -m MINUTES | -s START [-e END] } [-w] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -m MINUTES | -s START [-e END] } [-w] [-v] PATH",
                                               version="%prog 1.0")
 
         # optional...
@@ -64,11 +64,6 @@ class CmdAWSTopicHistory(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def minutes(self):
         return self.__opts.minutes
 
@@ -94,6 +89,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -105,7 +105,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{path:%s, minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
-               "verbose:%s, args:%s}" % \
-                    (self.path, self.minutes, self.start, self.end, self.include_wrapping,
-                     self.verbose, self.args)
+        return "CmdAWSTopicHistory:{minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
+               "verbose:%s, path:%s, args:%s}" % \
+                    (self.minutes, self.start, self.end, self.include_wrapping,
+                     self.verbose, self.path, self.args)

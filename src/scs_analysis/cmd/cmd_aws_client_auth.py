@@ -12,25 +12,28 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAWSAPIAuth(object):
+class CmdAWSClientAuth(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]",
                                               version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
-                                 help="set API endpoint")
+                                 help="set broker endpoint")
 
-        self.__parser.add_option("--api-key", "-a", type="string", nargs=1, action="store", dest="api_key",
-                                 help="set API key")
+        self.__parser.add_option("--client", "-c", type="string", nargs=1, action="store", dest="client_id",
+                                 help="set client ID")
+
+        self.__parser.add_option("--cert", "-i", type="string", nargs=1, action="store", dest="cert_id",
+                                 help="set certificate ID")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
-                                 help="delete the API configuration")
+                                 help="delete the client authentication")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -48,14 +51,17 @@ class CmdAWSAPIAuth(object):
 
 
     def is_complete(self):
-        if self.endpoint is None or self.api_key is None:
+        if self.endpoint is None or self.client_id is None or self.cert_id is None:
             return False
 
         return True
 
 
     def set(self):
-        return self.endpoint is not None or self.api_key is not None
+        if self.endpoint is None and self.client_id is None and self.cert_id is None:
+            return False
+
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -66,18 +72,23 @@ class CmdAWSAPIAuth(object):
 
 
     @property
-    def api_key(self):
-        return self.__opts.api_key
+    def client_id(self):
+        return self.__opts.client_id
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def cert_id(self):
+        return self.__opts.cert_id
 
 
     @property
     def delete(self):
         return self.__opts.delete
+
+
+    @property
+    def verbose(self):
+        return self.__opts.verbose
 
 
     @property
@@ -92,5 +103,5 @@ class CmdAWSAPIAuth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSAPIAuth:{endpoint:%s, api_key:%s, delete:%s, verbose:%s, args:%s}" % \
-               (self.endpoint, self.api_key, self.delete, self.verbose, self.args)
+        return "CmdAWSClientAuth:{endpoint:%s, client_id:%s, cert_id:%s, delete:%s, verbose:%s, args:%s}" % \
+               (self.endpoint, self.client_id, self.cert_id, self.delete, self.verbose, self.args)

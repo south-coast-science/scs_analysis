@@ -61,6 +61,8 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: handler undefined if there are no subscriptions!
+
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
 
@@ -248,9 +250,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("osio_mqtt_client: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)
 
     finally:
         if client:

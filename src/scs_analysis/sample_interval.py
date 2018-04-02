@@ -6,25 +6,26 @@ Created on 16 Mar 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The sample_interval utility is used to discover the jitter present in a data stream.
+
+Input data must in the form of a JSON document. A command parameter specifies the path to the node within
+the document that is to be measured. The node must represent time as an ISO 8601 localised date / time. The output of
+the sample_interval utility includes the date / time value, and the time difference from the preceding value
+in seconds.
 
 EXAMPLES
-xx
+./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_interval.py -p3 rec
 
-FILES
-~/SCS/aws/
+DOCUMENT EXAMPLE - INPUT
+{"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
+"NO2": {"weV": 0.29563, "aeV": 0.280879, "weC": 0.009569, "cnc": 61.0},
+"Ox": {"weV": 0.406819, "aeV": 0.387443, "weC": -0.010706, "cnc": 34.7},
+"NO": {"weV": 0.319692, "aeV": 0.292129, "weC": 0.028952, "cnc": 165.5},
+"CO": {"weV": 0.395819, "aeV": 0.289317, "weC": 0.113108, "cnc": 311.3},
+"sht": {"hmd": 82.4, "tmp": 12.6}}}
 
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_analysis/
-
-
-
-
-command line example:
-./socket_receiver.py | ./sample_interval.py rec
+DOCUMENT EXAMPLE - OUTPUT
+{"time": "2018-03-27T10:14:51.028+00:00", "diff": 9.987}
 """
 
 import sys
@@ -35,7 +36,6 @@ from scs_core.data.interval import Interval
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
-from scs_core.sys.exception_report import ExceptionReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -46,10 +46,6 @@ if __name__ == '__main__':
     # cmd...
 
     cmd = CmdSampleInterval()
-
-    if not cmd.is_valid():
-        cmd.print_help(sys.stderr)
-        exit(2)
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -85,6 +81,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_interval: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

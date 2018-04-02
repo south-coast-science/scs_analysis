@@ -5,36 +5,21 @@ Created on 11 Apr 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+
 DESCRIPTION
-The XX utility is used to .
+The uds_receiver utility is used to accept data via a Unix domain socket, with data sourced from the same host, or
+another host on the same local area network.
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
+./uds_receiver.py scs-particulates.uds
 
 SEE ALSO
-scs_analysis/
-
-
-
-
-Writes socket stream to stdout.
-
-command line example:
-./uds_receiver.py particulates.uds
+scs_analysis/socket_receiver
 """
 
 import sys
 
 from scs_analysis.cmd.cmd_uds import CmdUDS
-
-from scs_core.data.json import JSONify
-from scs_core.sys.exception_report import ExceptionReport
 
 from scs_host.comms.domain_socket import DomainSocket
 
@@ -82,6 +67,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("uds_reader: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

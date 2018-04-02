@@ -16,8 +16,8 @@ class CmdMultiChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH_1 .. PATH_N [-b] [-x POINTS] [-y MIN MAX] [-e] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
@@ -50,11 +50,6 @@ class CmdMultiChart(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def paths(self):
-        return self.__args
-
-
-    @property
     def batch_mode(self):
         return self.__opts.batch_mode
 
@@ -80,6 +75,11 @@ class CmdMultiChart(object):
 
 
     @property
+    def paths(self):
+        return self.__args
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -91,5 +91,5 @@ class CmdMultiChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
-                    (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.args)
+        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, paths:%s, args:%s}" % \
+                    (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.paths, self.args)

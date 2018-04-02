@@ -18,7 +18,7 @@ class CmdLowPass(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] PATH",
+        self.__parser = optparse.OptionParser(usage="%prog -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] [PATH]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -50,11 +50,6 @@ class CmdLowPass(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def delta(self):
         return self.__opts.delta
 
@@ -75,6 +70,11 @@ class CmdLowPass(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -86,5 +86,5 @@ class CmdLowPass(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdLowPassFilter:{path:%s, delta:%s, cut_off:%s, verbose:%s, precision:%s, args:%s}" % \
-               (self.path, self.delta, self.cut_off, self.verbose, self.precision, self.args)
+        return "CmdLowPassFilter:{delta:%s, cut_off:%s, precision:%s, verbose:%s, path:%s, args:%s}" % \
+               (self.delta, self.cut_off, self.precision, self.verbose, self.path, self.args)

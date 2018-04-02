@@ -26,8 +26,6 @@ from scs_core.aws.manager.message_manager import MessageManager
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 
-from scs_core.sys.exception_report import ExceptionReport
-
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
@@ -66,7 +64,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
+        message_manager = MessageManager(HTTPClient(), api_auth, cmd.verbose)
 
         if cmd.verbose:
             print(message_manager, file=sys.stderr)
@@ -105,6 +103,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("aws_topic_history: KeyboardInterrupt", file=sys.stderr)
-
-    except Exception as ex:
-        print(JSONify.dumps(ExceptionReport.construct(ex)), file=sys.stderr)

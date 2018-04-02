@@ -16,7 +16,7 @@ class CmdSingleChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog PATH [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v] [PATH]",
                                               version="%prog 1.0")
 
         # optional...
@@ -42,20 +42,6 @@ class CmdSingleChart(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    def is_valid(self):
-        if self.path is None:
-            return False
-
-        return True
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
 
     @property
     def batch_mode(self):
@@ -88,6 +74,11 @@ class CmdSingleChart(object):
 
 
     @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -99,5 +90,5 @@ class CmdSingleChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, args:%s}" % \
-                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.verbose, self.args)
+        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, path:%s, args:%s}" % \
+                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.verbose, self.path, self.args)
