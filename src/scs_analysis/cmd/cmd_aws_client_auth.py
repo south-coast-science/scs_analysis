@@ -58,7 +58,10 @@ class CmdAWSClientAuth(object):
 
 
     def set(self):
-        return self.endpoint is not None or self.client_id is not None or self.cert_id is not None
+        if self.endpoint is None and self.client_id is None and self.cert_id is None:
+            return False
+
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -79,13 +82,13 @@ class CmdAWSClientAuth(object):
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def delete(self):
+        return self.__opts.delete
 
 
     @property
-    def delete(self):
-        return self.__opts.delete
+    def verbose(self):
+        return self.__opts.verbose
 
 
     @property

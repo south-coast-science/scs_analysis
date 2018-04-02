@@ -73,7 +73,6 @@ if __name__ == '__main__':
             exit(1)
 
         endpoint = cmd.endpoint if cmd.endpoint else auth.endpoint
-
         client_id = cmd.client_id if cmd.client_id else auth.client_id
         cert_id = cmd.cert_id if cmd.cert_id else auth.cert_id
 
