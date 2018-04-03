@@ -5,6 +5,9 @@ Created on 18 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+osio_api_auth.py [-s ORG_ID API_KEY] [-v]
+
 DESCRIPTION
 The osio_api_auth utility is used to store or read the API key required by the OpenSensors.io historic data
 retrieval system.

@@ -5,6 +5,9 @@ Created on 18 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+socket_receiver.py [-p PORT] [-v]
+
 DESCRIPTION
 The socket_receiver utility is used to accept data via a Unix socket, with data sourced from the same host, or
 another host on the same local area network. A socket_sender utility is provided for the purpose of sourcing data,

@@ -5,6 +5,9 @@ Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+sample_midpoint.py [-t TALLY] [-p PRECISION] [-v] [PATH]
+
 DESCRIPTION
 The sample_midpoint utility computes a linear regression for a stream of data delivered on stdin, it then finds the
 midpoint y value. This is similar to an averaging function, but is independent of sampling jitter.

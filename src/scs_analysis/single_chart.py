@@ -5,16 +5,25 @@ Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+single_chart.py [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v] [PATH]
+
 DESCRIPTION
 The single_chart utility is used to display a Matplotlib categorical chart for one or more data sources. Data is
 provided by a sequence of JSON documents on stdin. The charting source is specified by a path to a leaf node in the
 JSON document.
+
+An optional "batch" ("-b") flag can be set, causing the plotting only to take place when all data points have been
+received.
 
 A "relative" ("-r") option ploys the first data point at y position zero, and all subsequent points relative to the
 first point. This is useful when examining noise on a signal whose absolute values may be far from zero.
 
 Note that the chart is a simple approximation to a timeline chart - values are plotted successively, with no account
 taken of the interval between samples.
+
+Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
+back-end graphics system.
 
 EXAMPLES
 ./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc

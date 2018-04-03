@@ -5,6 +5,9 @@ Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+aws_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
+
 DESCRIPTION
 The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
 infrastructure.

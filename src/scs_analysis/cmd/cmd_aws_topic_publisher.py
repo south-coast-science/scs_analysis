@@ -18,7 +18,7 @@ class CmdAWSTopicPublisher(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC  [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]",
                                               version="%prog 1.0")
 
         # compulsory...

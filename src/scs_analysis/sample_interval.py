@@ -5,6 +5,9 @@ Created on 16 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+sample_interval.py [-p PRECISION] [-v] [PATH]
+
 DESCRIPTION
 The sample_interval utility is used to discover the jitter present in a data stream.
 

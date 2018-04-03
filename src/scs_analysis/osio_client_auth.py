@@ -5,6 +5,9 @@ Created on 19 Dec 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+osio_client_auth.py [-u USER_ID] [-d DESCRIPTION] [-v]
+
 DESCRIPTION
 The osio_client_auth utility is used to store or read the client ID and client password required by the OpenSensors.io
 messaging system. This client authentication is required to both subscribe to and publish on any messaging topic.

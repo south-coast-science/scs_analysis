@@ -5,6 +5,9 @@ Created on 18 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+osio_topic_publisher.py -t TOPIC [-o] [-v]
+
 DESCRIPTION
 The osio_topic_publisher utility is used to prepare data for publication by the osio_mqtt_client script. The
 osio_topic_publisher works by taking data from stdin, wrapping it in a JSON document whose only field has the name of
@@ -40,6 +43,8 @@ from scs_core.sys.system_id import SystemID
 
 from scs_host.sys.host import Host
 
+
+# TODO: remove channel handling
 
 # --------------------------------------------------------------------------------------------------------------------
 

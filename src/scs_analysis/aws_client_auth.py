@@ -5,6 +5,9 @@ Created on 2 Apr 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+aws_client_auth.py [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]
+
 DESCRIPTION
 The aws_api_auth utility is used to store or read the endpoint host name, client ID and client certificate ID
 required by the South Coast Science / AWS messaging infrastructure.

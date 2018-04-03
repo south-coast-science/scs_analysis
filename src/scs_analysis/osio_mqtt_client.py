@@ -5,6 +5,9 @@ Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+osio_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
+
 DESCRIPTION
 The osio_mqtt_client utility is used to subscribe or publish using the OpenSensors.io messaging
 infrastructure.

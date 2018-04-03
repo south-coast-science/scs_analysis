@@ -5,7 +5,9 @@ Created on 25 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-DESCRIPTION
+SYNOPSIS
+sample_min.py [-v] [PATH]
+
 The sample_min utility is used to find the record with the lowest value for the given node.
 
 Input data is typically in the form of a sequence of JSON documents. A command parameter specifies the path to the node

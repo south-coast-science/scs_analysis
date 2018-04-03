@@ -5,6 +5,9 @@ Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+sample_regression.py [-t TALLY] [-p PRECISION] [-v] [PATH]
+
 DESCRIPTION
 The sample_regression utility computes a linear regression for a stream of data delivered on stdin.
 

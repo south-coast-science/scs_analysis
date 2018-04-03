@@ -5,6 +5,9 @@ Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+osio_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
+
 DESCRIPTION
 The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic.
 A command / receipt message regime provides an interactive system over the messaging infrastructure.

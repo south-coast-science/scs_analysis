@@ -5,9 +5,15 @@ Created on 3 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] [-v] PATH
+
 DESCRIPTION
 The histo_chart utility is used to create Matplotlib histogram charts and comma-separated value (CSV) histogram files.
 The utility analyses a given path to a leaf node of the input JSON data stream.
+
+An optional "batch" ("-b") flag can be set, causing the plotting only to take place when all data points have been
+received.
 
 Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.

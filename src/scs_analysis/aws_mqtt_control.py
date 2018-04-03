@@ -5,6 +5,9 @@ Created on 8 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+aws_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
+
 DESCRIPTION
 The aws_mqtt_control utility is used to interact with a remote host, using the device's control topic.
 A command / receipt message regime provides an interactive system over the messaging infrastructure.

@@ -5,6 +5,9 @@ Created on 24 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+SYNOPSIS
+sample_max.py [-v] [PATH]
+
 DESCRIPTION
 The sample_max utility is used to find the record with the highest value for the given node.
 
