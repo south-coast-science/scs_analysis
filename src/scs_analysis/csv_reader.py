@@ -8,7 +8,7 @@ Created on 4 Aug 2016
 DESCRIPTION
 The csv_reader utility is used to convert data from comma-separated value (CSV) format to JSON format.
 
-The names of columns given in the header row indicate paths into the JSON document, with nodes separated by a period
+The names of columns given in the CSV header row indicate paths into the JSON document, with nodes separated by a period
 ('.') character. The period character cannot be used within the name of a node.
 
 The first row of the CSV file (or stdin input) is assumed to be a header row. If there are more columns in the body of

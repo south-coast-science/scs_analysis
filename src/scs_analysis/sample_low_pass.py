@@ -13,9 +13,6 @@ Input data is typically in the form of a JSON document. A command parameter spec
 the document that is to be filtered. The node is typically a leaf node integer or float. The output of the
 sample_low_pass utility includes the source value, and the smoothed value.
 
-Ten Little Algorithms, Part 2: The Single-Pole Low-Pass Filter
-https://www.embeddedrelated.com/showarticle/779.php
-
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 ./sample_low_pass.py -d 10.0 -c 0.02 -p 1 val.CO.cnc
@@ -30,6 +27,10 @@ DOCUMENT EXAMPLE - INPUT
 
 DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-03-27T10:55:11.033+00:00", "val": {"CO": {"cnc": {"src": 121.3, "lpf": 131.3}}}}
+
+RESOURCES
+Ten Little Algorithms, Part 2: The Single-Pole Low-Pass Filter
+https://www.embeddedrelated.com/showarticle/779.php
 """
 
 import sys

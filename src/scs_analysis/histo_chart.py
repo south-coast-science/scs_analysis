@@ -13,7 +13,7 @@ Depending on operating system, it may be necessary to edit the matplotlibrc file
 back-end graphics system.
 
 EXAMPLES
-./socket_receiver.py | ./histo_chart.py val.CO2.cnc -x -10 10 -e -o CO.csv
+./socket_receiver.py | ./histo_chart.py val.CO2.cnc -x -10 10 -e -o CO2.csv
 
 FILES
 ~/SCS/scs_analysis/scs_analysis/matplotlibrc

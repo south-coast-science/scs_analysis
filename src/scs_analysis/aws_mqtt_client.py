@@ -9,23 +9,13 @@ DESCRIPTION
 The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
 infrastructure.
 
-Note that AWS endpoint specification and client credentials must be installed on the host for the aws_mqtt_client
-to operate.
-
 Only one MQTT client should run at any one time, per TCP/IP host.
 
 EXAMPLES
 ./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
 
-FILES
-~/SCS/aws/aws_client_auth.json
-
-~/SCS/aws/certs/XXX-certificate.pem.crt
-~/SCS/aws/certs/XXX-private.pem.key
-~/SCS/aws/certs/XXX-public.pem.key
-~/SCS/aws/certs/root-CA.crt
-
 SEE ALSO
+scs_analysis/aws_client_auth
 scs_analysis/aws_mqtt_control
 scs_analysis/aws_topic_publisher
 

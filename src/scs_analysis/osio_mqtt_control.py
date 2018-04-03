@@ -14,11 +14,6 @@ For security reasons, the user must be in possession of the target device's uniq
 OpenSensors.io API auth and client specifications must be installed on the host for the osio_mqtt_client
 to operate. A specification should be obtained from the user's OpenSensors.io account.
 
-Note that there are currently no utilities to manage the OpenSensors client specification document - this
-must be installed or edited by hand. This situation will change. Document example:
-
-{"user_id": "southcoastscience-dev", "client-id": "5403", "client-password": "rtySrK1f"}
-
 EXAMPLES
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \
  /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
@@ -29,6 +24,7 @@ FILES
 
 SEE ALSO
 scs_analysis/osio_api_auth
+scs_analysis/osio_client_auth
 scs_analysis/osio_mqtt_client
 """
 

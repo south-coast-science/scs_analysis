@@ -6,8 +6,9 @@ Created on 6 Nov 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS data infrastructure.
-Data can be retrieved by start or start + end localised date / times, or by minutes backwards from now.
+The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
+retrieval system. Data can be retrieved by start or start + end localised date / times, or by minutes backwards
+from now.
 
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.

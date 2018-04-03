@@ -14,9 +14,6 @@ Input data is typically in the form of a JSON document. A command parameter spec
 the document that is to be filtered. The node is typically a leaf node integer or float. The output of the
 sample_median utility includes the source value, and the smoothed value.
 
-Median filter
-https://en.wikipedia.org/wiki/Median_filter
-
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 ./sample_median.py -w 3 -p 1 val.CO.cnc
@@ -31,6 +28,10 @@ DOCUMENT EXAMPLE - INPUT
 
 DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-03-27T12:11:21.028+00:00", "val": {"CO": {"cnc": {"src": 262.1, "med": 368.0}}}}
+
+RESOURCES
+Median filter
+https://en.wikipedia.org/wiki/Median_filter
 """
 
 import sys
