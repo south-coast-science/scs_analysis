@@ -5,9 +5,6 @@ Created on 18 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-osio_topic_publisher.py -t TOPIC [-o] [-v]
-
 DESCRIPTION
 The osio_topic_publisher utility is used to prepare data for publication by the osio_mqtt_client script. The
 osio_topic_publisher works by taking data from stdin, wrapping it in a JSON document whose only field has the name of
@@ -16,6 +13,9 @@ the given topic, and presenting the result on stdout.
 Note that the osio_topic_publisher in scs_analysis necessarily works differently to the osio_topic_publisher in scs_dev.
 This is because scs_dev version has access to a device project specification, and therefore can find the topic path
 automatically. For the scs_analysis version, the full topic path should be given explicitly.
+
+SYNOPSIS
+osio_topic_publisher.py -t TOPIC [-o] [-v]
 
 EXAMPLES
 ./osio_topic_publisher.py -t /users/southcoastscience-dev/test/json

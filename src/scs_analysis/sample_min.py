@@ -5,14 +5,15 @@ Created on 25 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_min.py [-v] [PATH]
-
+DESCRIPTION
 The sample_min utility is used to find the record with the lowest value for the given node.
 
 Input data is typically in the form of a sequence of JSON documents. A command parameter specifies the path to the node
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_min utility includes the whole input document.
+
+SYNOPSIS
+sample_min.py [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_min.py val.CO.cnc

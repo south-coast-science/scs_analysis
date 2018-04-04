@@ -5,9 +5,6 @@ Created on 19 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_error.py [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_error utility is typically used in a setting where data has a gaussian distribution around a fixed or
 slow-moving value. The error analysis shows the difference between the current value, and an exponential
@@ -16,6 +13,9 @@ average.
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be examined. The node is typically a leaf node integer or float. The output of the
 sample_error utility includes the source value, aggregate, and the error.
+
+SYNOPSIS
+sample_error.py [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_error.py -p3 val.CO.cnc

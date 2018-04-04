@@ -5,9 +5,6 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-[-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N
-
 DESCRIPTION
 The multi_chart utility is used to display a Matplotlib categorical chart for one or more data sources. The
 data sources share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting
@@ -22,8 +19,14 @@ taken of the interval between samples.
 Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.
 
+SYNOPSIS
+multi_chart.py [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N
+
 EXAMPLES
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
+
+FILES
+~/SCS/scs_analysis/src/scs_analysis/matplotlibrc
 
 SEE ALSO
 scs_analysis/histo_chart

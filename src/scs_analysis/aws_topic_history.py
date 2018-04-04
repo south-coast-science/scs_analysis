@@ -5,9 +5,6 @@ Created on 6 Nov 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-aws_topic_history.py { -m MINUTES | -s START [-e END] } [-w] [-v] PATH
-
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
 retrieval system. Data can be retrieved by start or start + end localised date / times, or by minutes backwards
@@ -16,8 +13,18 @@ from now.
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
 
+SYNOPSIS
+aws_topic_history.py { -m MINUTES | -s START [-e END] } [-w] [-v] PATH
+
 EXAMPLES
 ./aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
+
+FILES
+~/SCS/aws/aws_api_auth.json
+
+SEE ALSO
+scs_analysis/aws_api_auth
+scs_analysis/localised_datetime
 """
 
 import sys

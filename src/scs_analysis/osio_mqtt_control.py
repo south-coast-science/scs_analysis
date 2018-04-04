@@ -5,9 +5,6 @@ Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-osio_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
-
 DESCRIPTION
 The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic.
 A command / receipt message regime provides an interactive system over the messaging infrastructure.
@@ -16,6 +13,9 @@ For security reasons, the user must be in possession of the target device's uniq
 
 OpenSensors.io API auth and client specifications must be installed on the host for the osio_mqtt_client
 to operate. A specification should be obtained from the user's OpenSensors.io account.
+
+SYNOPSIS
+osio_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \

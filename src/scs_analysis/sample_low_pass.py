@@ -5,9 +5,6 @@ Created on 24 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_low_pass.py -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_low_pass utility provides a rolling exponential average or low pass filter. The user must specify the
 sampling interval in seconds, together with the cut-off frequency.
@@ -15,6 +12,9 @@ sampling interval in seconds, together with the cut-off frequency.
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be filtered. The node is typically a leaf node integer or float. The output of the
 sample_low_pass utility includes the source value, and the smoothed value.
+
+SYNOPSIS
+sample_low_pass.py -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \

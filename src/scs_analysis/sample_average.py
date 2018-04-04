@@ -5,9 +5,6 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_average.py [-t TALLY] [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_average utility is used to compute an average value for a stream of data delivered on stdin. This can be an
 average of all values, or a rolling average for a given number of values.
@@ -15,6 +12,9 @@ average of all values, or a rolling average for a given number of values.
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
 sample_average utility includes the source value, and the average value.
+
+SYNOPSIS
+sample_average.py [-t TALLY] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_average.py -t3 -p1 val.CO.cnc

@@ -5,9 +5,6 @@ Created on 16 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_interval.py [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_interval utility is used to discover the jitter present in a data stream.
 
@@ -15,6 +12,9 @@ Input data must in the form of a JSON document. A command parameter specifies th
 the document that is to be measured. The node must represent time as an ISO 8601 localised date / time. The output of
 the sample_interval utility includes the date / time value, and the time difference from the preceding value
 in seconds.
+
+SYNOPSIS
+sample_interval.py [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_interval.py -p3 rec

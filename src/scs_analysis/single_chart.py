@@ -5,9 +5,6 @@ Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-single_chart.py [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v] [PATH]
-
 DESCRIPTION
 The single_chart utility is used to display a Matplotlib categorical chart for one or more data sources. Data is
 provided by a sequence of JSON documents on stdin. The charting source is specified by a path to a leaf node in the
@@ -25,8 +22,14 @@ taken of the interval between samples.
 Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.
 
+SYNOPSIS
+single_chart.py [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v] [PATH]
+
 EXAMPLES
 ./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
+
+FILES
+~/SCS/scs_analysis/src/scs_analysis/matplotlibrc
 
 SEE ALSO
 scs_analysis/histo_chart

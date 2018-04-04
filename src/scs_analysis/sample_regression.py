@@ -5,15 +5,15 @@ Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_regression.py [-t TALLY] [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_regression utility computes a linear regression for a stream of data delivered on stdin.
 
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
 sample_regression utility includes the last source value, slope and intercept.
+
+SYNOPSIS
+sample_regression.py [-t TALLY] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \

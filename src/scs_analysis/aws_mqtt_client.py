@@ -5,17 +5,23 @@ Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-aws_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
-
 DESCRIPTION
 The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
 infrastructure.
 
+Documents for publication are gained from stdin by default, otherwise from the specified Unix domain socket (UDS).
+Likewise, documents gained from subscription are written to stdout, or a specified UDS.
+
 Only one MQTT client should run at any one time, per TCP/IP host.
+
+SYNOPSIS
+aws_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
 
 EXAMPLES
 ./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
+
+FILES
+~/SCS/aws/aws_client_auth.json
 
 SEE ALSO
 scs_analysis/aws_client_auth

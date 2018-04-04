@@ -28,7 +28,7 @@ class CmdMQTTClient(object):
                                  help="write subscriptions to UDS instead of stdout")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo input to stdout (if writing subscriptions to DomainSocket)")
+                                 help="echo input to stdout (if writing subscriptions to UDS)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")

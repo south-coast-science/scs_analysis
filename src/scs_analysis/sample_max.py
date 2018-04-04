@@ -5,15 +5,15 @@ Created on 24 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_max.py [-v] [PATH]
-
 DESCRIPTION
 The sample_max utility is used to find the record with the highest value for the given node.
 
 Input data is typically in the form of a sequence of JSON documents. A command parameter specifies the path to the node
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_max utility includes the whole input document.
+
+SYNOPSIS
+sample_max.py [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_max.py val.CO.cnc

@@ -5,9 +5,6 @@ Created on 20 Mar 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-SYNOPSIS
-sample_median.py [-w SIZE] [-p PRECISION] [-v] [PATH]
-
 DESCRIPTION
 The sample_median utility provides a median filter - the filter maintains an odd-numbered window on the input
 data sequence, and outputs the middle item in the sorted list of items. The user can specify the
@@ -16,6 +13,9 @@ size of the window.
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be filtered. The node is typically a leaf node integer or float. The output of the
 sample_median utility includes the source value, and the smoothed value.
+
+SYNOPSIS
+sample_median.py [-w SIZE] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
