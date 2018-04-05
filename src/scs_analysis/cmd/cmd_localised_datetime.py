@@ -26,7 +26,7 @@ class CmdLocalizedDatetime(object):
                                  help="offset from now in minutes")
 
         self.__parser.add_option("--seconds", "-s", type="int", nargs=1, default=0, action="store", dest="seconds",
-                                 help="offset from now in minutes")
+                                 help="offset from now in seconds")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
