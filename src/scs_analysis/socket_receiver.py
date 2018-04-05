@@ -13,6 +13,8 @@ as part of the scs_dev package.
 The socket_receiver utility should be started before socket_sender. When socket_sender terminates, socket_receiver
 will also terminate.
 
+If a port number is not specified, then port 2000 is used.
+
 SYNOPSIS
 socket_receiver.py [-p PORT] [-v]
 
@@ -22,6 +24,10 @@ EXAMPLES
 SEE ALSO
 scs_analysis/uds_receiver
 scs_dev/socket_sender
+
+BUGS
+It is possible to create scenarios where a port becomes orphaned. Depending on host operating systems, orphaned ports
+may take time to be garbage collected.
 """
 
 import sys

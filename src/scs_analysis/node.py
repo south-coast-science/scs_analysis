@@ -17,7 +17,7 @@ SYNOPSIS
 node.py [-i] [-v] [PATH]
 
 EXAMPLES
-./socket_receiver.py | ./node.py -i val.afe.sns.CO
+./socket_receiver.py | ./node.py -i val.CO
 """
 
 import sys
