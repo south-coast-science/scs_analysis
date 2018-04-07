@@ -6,7 +6,7 @@ Created on 23 Mar 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The osio_mqtt_client utility is used to subscribe or publish using the OpenSensors.io messaging
+The osio_mqtt_client utility is used to subscribe or publish using the OpenSensors.io Community Edition messaging
 infrastructure.
 
 OpenSensors.io API auth and client specifications must be installed on the host for the osio_mqtt_client

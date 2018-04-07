@@ -6,8 +6,9 @@ Created on 9 May 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic.
-A command / receipt message regime provides an interactive system over the messaging infrastructure.
+The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic - its
+command / receipt message regime provides an interactive system over the OpenSensors.io Community Edition
+messaging infrastructure.
 
 For security reasons, the user must be in possession of the target device's unique tag and shared secret.
 
