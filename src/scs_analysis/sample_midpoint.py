@@ -13,6 +13,9 @@ Input data is typically in the form of a JSON document. A command parameter spec
 the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
 sample_midpoint utility includes the source value, and the midpoint value.
 
+SYNOPSIS
+sample_midpoint.py [-t TALLY] [-p PRECISION] [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 ./sample_midpoint.py -t360 -p1 val.CO.cnc

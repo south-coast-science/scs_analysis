@@ -9,23 +9,22 @@ DESCRIPTION
 The aws_mqtt_control utility is used to interact with a remote host, using the device's control topic.
 A command / receipt message regime provides an interactive system over the messaging infrastructure.
 
-For security reasons, the user must be in possession of the target device's unique tag and shared secret. In addition,
-the AWS endpoint specification and client credentials must be installed on the user's host.
+For security reasons, the user must be in possession of the target device's unique tag and shared secret.
+
+SYNOPSIS
+aws_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
-./aws_mqtt_control.py -r -d scs-ap1-6 00000000ada2f8a9 \
- south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
+./aws_mqtt_control.py -d scs-be2-2 5016BBBK202E \
+south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control -i
 
 FILES
 ~/SCS/aws/aws_client_auth.json
 
-~/SCS/aws/certs/XXX-certificate.pem.crt
-~/SCS/aws/certs/XXX-private.pem.key
-~/SCS/aws/certs/XXX-public.pem.key
-~/SCS/aws/certs/root-CA.crt
-
 SEE ALSO
+scs_analysis/aws_client_auth
 scs_analysis/aws_mqtt_client
+scs_mfr/shared_secret
 """
 
 import json

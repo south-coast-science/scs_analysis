@@ -13,6 +13,9 @@ the document that is to be measured. The node must represent time as an ISO 8601
 the sample_interval utility includes the date / time value, and the time difference from the preceding value
 in seconds.
 
+SYNOPSIS
+sample_interval.py [-p PRECISION] [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_interval.py -p3 rec
 

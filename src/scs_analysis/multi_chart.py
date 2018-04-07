@@ -10,11 +10,23 @@ The multi_chart utility is used to display a Matplotlib categorical chart for on
 data sources share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting
 source is specified by a path to a leaf node in the JSON document.
 
+An optional "batch" ("-b") flag can be set, causing the plotting only to take place when all data points have been
+received.
+
 Note that the chart is a simple approximation to a timeline chart - values are plotted successively, with no account
 taken of the interval between samples.
 
+Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
+back-end graphics system.
+
+SYNOPSIS
+multi_chart.py [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N
+
 EXAMPLES
 ./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
+
+FILES
+~/SCS/scs_analysis/src/scs_analysis/matplotlibrc
 
 SEE ALSO
 scs_analysis/histo_chart

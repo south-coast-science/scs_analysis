@@ -13,6 +13,9 @@ Input data is typically in the form of a JSON document. A command parameter spec
 the document that is to be averaged. The node is typically a leaf node integer or float. The output of the
 sample_average utility includes the source value, and the average value.
 
+SYNOPSIS
+sample_average.py [-t TALLY] [-p PRECISION] [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_average.py -t3 -p1 val.CO.cnc
 

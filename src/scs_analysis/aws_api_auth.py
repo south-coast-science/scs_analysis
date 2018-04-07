@@ -6,17 +6,20 @@ Created on 2 Apr 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The aws_api_auth utility is used to store or read the API key required by the South Coast Science / AWS historic data
-retrieval system.
+The aws_api_auth utility is used to store or read the endpoint host name and API key required by the South Coast
+Science / AWS historic data retrieval system.
+
+SYNOPSIS
+aws_api_auth.py [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]
 
 EXAMPLES
-./aws_api_auth.py -v -s de92c5ff-b47a-4cc4-a04c-62d684d74a1f
+./aws_api_auth.py -e xy1eszuu22.execute-api.us-west-2.amazonaws.com -a de92c5ff-b47a-4cc4-a04c-62d684d64a1f
 
 FILES
 ~/SCS/aws/aws_api_auth.json
 
 DOCUMENT EXAMPLE
-{"endpoint": "xy1eszuu23.execute-api.us-west-2.amazonaws.com", "api-key": "de92c5ff-b47a-4cc4-a04c-62d684d74a1f"}
+{"endpoint": "xy1eszuu22.execute-api.us-west-2.amazonaws.com", "api-key": "de92c5ff-b47a-4cc4-a04c-62d684d64a1f"}
 
 SEE ALSO
 scs_analysis/aws_topic_history

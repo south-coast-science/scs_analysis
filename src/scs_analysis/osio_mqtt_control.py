@@ -6,18 +6,17 @@ Created on 9 May 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic.
-A command / receipt message regime provides an interactive system over the messaging infrastructure.
+The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic - its
+command / receipt message regime provides an interactive system over the OpenSensors.io Community Edition
+messaging infrastructure.
 
 For security reasons, the user must be in possession of the target device's unique tag and shared secret.
 
 OpenSensors.io API auth and client specifications must be installed on the host for the osio_mqtt_client
 to operate. A specification should be obtained from the user's OpenSensors.io account.
 
-Note that there are currently no utilities to manage the OpenSensors client specification document - this
-must be installed or edited by hand. This situation will change. Document example:
-
-{"user_id": "southcoastscience-dev", "client-id": "5403", "client-password": "rtySrK1f"}
+SYNOPSIS
+osio_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \
@@ -29,6 +28,7 @@ FILES
 
 SEE ALSO
 scs_analysis/osio_api_auth
+scs_analysis/osio_client_auth
 scs_analysis/osio_mqtt_client
 """
 

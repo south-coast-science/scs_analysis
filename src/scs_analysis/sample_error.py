@@ -14,6 +14,9 @@ Input data is typically in the form of a JSON document. A command parameter spec
 the document that is to be examined. The node is typically a leaf node integer or float. The output of the
 sample_error utility includes the source value, aggregate, and the error.
 
+SYNOPSIS
+sample_error.py [-p PRECISION] [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_error.py -p3 val.CO.cnc
 

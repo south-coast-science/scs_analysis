@@ -14,6 +14,9 @@ Note that the osio_topic_publisher in scs_analysis necessarily works differently
 This is because scs_dev version has access to a device project specification, and therefore can find the topic path
 automatically. For the scs_analysis version, the full topic path should be given explicitly.
 
+SYNOPSIS
+osio_topic_publisher.py -t TOPIC [-o] [-v]
+
 EXAMPLES
 ./osio_topic_publisher.py -t /users/southcoastscience-dev/test/json
 
@@ -40,6 +43,8 @@ from scs_core.sys.system_id import SystemID
 
 from scs_host.sys.host import Host
 
+
+# TODO: remove channel handling
 
 # --------------------------------------------------------------------------------------------------------------------
 

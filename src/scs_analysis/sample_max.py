@@ -12,6 +12,9 @@ Input data is typically in the form of a sequence of JSON documents. A command p
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_max utility includes the whole input document.
 
+SYNOPSIS
+sample_max.py [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_max.py val.CO.cnc
 

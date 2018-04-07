@@ -7,12 +7,18 @@ Created on 20 Feb 2017
 
 DESCRIPTION
 The localised_datetime utility is used to report the localised date and time, as understood by the host operating
-system, in ISO 8601 format. It can also report date / time offset by a given number of hours, minutes and seconds.
+system, in ISO 8601 format. Optional offsets in hours, minutes and seconds can be supplied.
 
 The utility is useful when composing topic history data requests.
 
+SYNOPSIS
+localised_datetime.py [-o HOURS] [-m MINUTES] [-s SECONDS]
+
 EXAMPLES
 ./localised_datetime.py -o 1
+
+DOCUMENT EXAMPLE - OUTPUT
+2018-04-05T18:42:03.702+00:00
 
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601

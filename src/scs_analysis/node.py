@@ -7,14 +7,17 @@ Created on 11 Apr 2017
 
 DESCRIPTION
 The node utility is used to extract a node from within a JSON document. Data is presented as a sequence of documents on
-stdin; the extracted node is passed to stdout. The extracted node may be a leaf node or an internal node. If no node
-path is specified, the whole input document is passed to stdout.
+stdin, and the extracted node is passed to stdout. The extracted node may be a leaf node or an internal node. If no
+node path is specified, the whole input document is passed to stdout.
 
-The node utility may be set to either ignore documents that do not contain the specified node, or to terminate when the
+The node utility may be set to either ignore documents that do not contain the specified node, or to terminate if the
 node is not present.
 
+SYNOPSIS
+node.py [-i] [-v] [PATH]
+
 EXAMPLES
-./socket_receiver.py | ./node.py -i val.afe.sns.CO
+./socket_receiver.py | ./node.py -i val.CO
 """
 
 import sys

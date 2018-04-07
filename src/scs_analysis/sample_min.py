@@ -12,6 +12,9 @@ Input data is typically in the form of a sequence of JSON documents. A command p
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_min utility includes the whole input document.
 
+SYNOPSIS
+sample_min.py [-v] [PATH]
+
 EXAMPLES
 ./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_min.py val.CO.cnc
 
