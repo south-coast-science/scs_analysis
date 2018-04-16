@@ -16,12 +16,9 @@ class CmdCSVWriter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c] [-a] [-e] [-v] [FILENAME]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] [-e] [-v] [FILENAME]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--cache", "-c", action="store_true", dest="cache", default=False,
-                                 help="cache rows in heap space until exit")
-
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,
                                  help="append rows to existing file")
 
@@ -35,11 +32,6 @@ class CmdCSVWriter(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def cache(self):
-        return self.__opts.cache
-
 
     @property
     def append(self):
@@ -69,5 +61,5 @@ class CmdCSVWriter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVWriter:{cache:%s, append:%s, echo:%s, verbose:%s, filename:%s, args:%s}" % \
-                    (self.cache, self.append, self.echo, self.verbose, self.filename, self.args)
+        return "CmdCSVWriter:{append:%s, echo:%s, verbose:%s, filename:%s, args:%s}" % \
+                    (self.append, self.echo, self.verbose, self.filename, self.args)
