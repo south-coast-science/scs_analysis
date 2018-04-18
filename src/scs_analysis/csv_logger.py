@@ -38,7 +38,7 @@ from scs_analysis.cmd.cmd_csv_logger import CmdCSVLogger
 
 from scs_core.csv.csv_log import CSVLog
 from scs_core.csv.csv_logger import CSVLogger
-from scs_core.csv.csv_log_conf import CSVLogConf
+from scs_core.csv.csv_logger_conf import CSVLoggerConf
 
 from scs_host.sys.host import Host
 
@@ -67,8 +67,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # CSVLogConf...
-        conf = CSVLogConf.load(Host)
+        # CSVLoggerConf...
+        conf = CSVLoggerConf.load(Host)
 
         if cmd.verbose:
             print(conf, file=sys.stderr)
