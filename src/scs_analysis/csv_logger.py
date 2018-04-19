@@ -43,6 +43,8 @@ from scs_core.csv.csv_logger_conf import CSVLoggerConf
 from scs_host.sys.host import Host
 
 
+# TODO: fix "tag"
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -70,19 +72,19 @@ if __name__ == '__main__':
         # CSVLoggerConf...
         conf = CSVLoggerConf.load(Host)
 
-        if cmd.verbose:
+        if conf and cmd.verbose:
             print(conf, file=sys.stderr)
 
         # CSVLog...
-        log = CSVLog(conf.root_path, 'tag', cmd.topic, )
+        log = None if conf is None else CSVLog(conf.root_path, 'tag', cmd.topic)
 
-        if cmd.verbose:
+        if log and cmd.verbose:
             print(log, file=sys.stderr)
 
         # CSVLogger...
-        logger = CSVLogger(log)
+        logger = None if log is None else CSVLogger(Host, log)
 
-        if cmd.verbose:
+        if logger and cmd.verbose:
             print(logger, file=sys.stderr)
             sys.stderr.flush()
 
@@ -96,7 +98,13 @@ if __name__ == '__main__':
             if datum is None:
                 break
 
-            logger.write(datum)         # TODO: protect from exceptions / empty log conf
+            if logger:
+                try:
+                    logger.write(datum)
+
+                except OSError as ex:
+                    print("csv_logger: %s" % ex, file=sys.stderr)
+                    sys.stderr.flush()
 
             # echo...
             if cmd.echo:
