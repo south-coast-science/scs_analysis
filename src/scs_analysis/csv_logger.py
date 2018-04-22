@@ -100,7 +100,7 @@ if __name__ == '__main__':
             print(log, file=sys.stderr)
 
         # CSVLogger...
-        logger = None if log is None else CSVLogger(Host, log)
+        logger = None if log is None else CSVLogger(Host, log, conf.delete_oldest)
 
         if logger and cmd.verbose:
             print(logger, file=sys.stderr)
