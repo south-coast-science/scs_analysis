@@ -6,13 +6,30 @@ Created on 16 Apr 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The csv_logger utility is used to convert from JSON format to comma-separated value (CSV) format.
+The csv_logger utility is used to provide continuous logging of data. For devices that are not internet-connected, this
+can be used as the method of data capture. For always-connected devices, it is recommended that the utility is used to
+provide a backup facility. This is because, in normal operations, data that is queued for publishing is held in
+volatile memory.
 
+The operation of the csv_logger is specified using the csv_logger_conf utility - this specifies the filesystem location
+for logging, together with the logging mode of operation.
+
+The csv_logger receives JSON data on stdin and writes this to the log file. The log file is named for its topic and the
+date / time of the first JSON document reception. Log files are closed - and a new log file opened - each day after
+00:00 UTC. All logging date / times are UTC, irrespective of the system or application timezone. Log files are stored in
+directories named for the year and month. Files are flushed on every write - this immunises the logging system from
+power failures or un-managed reboots.
+
+Like the csv_writer utility, the csv_logger converts data from JSON format to comma-separated value (CSV) format.
 The path into the JSON document is used to name the column in the header row, with JSON nodes separated by a period
 ('.') character.
 
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
 contain fields that were not in this first document, these extra fields are ignored.
+
+If the "echo" (-e) flag is used, then the csv_logger utility writes the received data to stdout. The csv_logger will
+write to stdout irrespective of whether a csv_logger_conf is specified, or whether logging can continue (for example,
+because of a filesystem problem).
 
 SYNOPSIS
 csv_logger.py [-e] [-v] TOPIC
@@ -23,11 +40,12 @@ EXAMPLES
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-ap1-6", "rec": "2018-04-04T14:50:27.641+00:00", "val": {"hmd": 59.6, "tmp": 23.8}}
 
-DOCUMENT EXAMPLE - OUTPUT
+DOCUMENT EXAMPLE - FILE CONTENTS
 tag,rec,val.hmd,val.tmp
 scs-ap1-6,2018-04-04T14:50:38.394+00:00,59.7,23.8
 
 SEE ALSO
+scs_analysis/csv_logger_conf
 scs_analysis/csv_reader
 scs_analysis/csv_writer
 """

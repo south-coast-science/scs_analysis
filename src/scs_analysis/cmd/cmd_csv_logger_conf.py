@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdLoggerConf(object):
+class CmdCSVLoggerConf(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -77,5 +77,5 @@ class CmdLoggerConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdLoggerConf:{root_path:%s, delete_oldest:%s, verbose:%s, args:%s}" % \
+        return "CmdCSVLoggerConf:{root_path:%s, delete_oldest:%s, verbose:%s, args:%s}" % \
                (self.root_path, self.delete_oldest, self.verbose, self.args)
