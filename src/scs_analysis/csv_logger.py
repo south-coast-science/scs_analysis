@@ -20,6 +20,9 @@ date / time of the first JSON document reception. Log files are closed - and a n
 directories named for the year and month. Files are flushed on every write - this immunises the logging system from
 power failures or un-managed reboots.
 
+If a tag is specified on the command line, then log files are prepended with the device tag. Otherwise, the log file
+name begins with the date / time.
+
 Like the csv_writer utility, the csv_logger converts data from JSON format to comma-separated value (CSV) format.
 The path into the JSON document is used to name the column in the header row, with JSON nodes separated by a period
 ('.') character.
@@ -32,7 +35,7 @@ write to stdout irrespective of whether a csv_logger_conf is specified, or wheth
 because of a filesystem problem).
 
 SYNOPSIS
-csv_logger.py [-e] [-v] TOPIC
+csv_logger.py [-t TAG] [-e] [-v] TOPIC
 
 EXAMPLES
 ./socket_receiver.py | ./csv_logger.py -e climate
@@ -81,7 +84,7 @@ if __name__ == '__main__':
             exit(2)
 
         if cmd.verbose:
-            print(cmd, file=sys.stderr)
+            print("csv_logger: %s" % cmd, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -91,19 +94,19 @@ if __name__ == '__main__':
         conf = CSVLoggerConf.load(Host)
 
         if conf and cmd.verbose:
-            print(conf, file=sys.stderr)
+            print("csv_logger: %s" % conf, file=sys.stderr)
 
         # CSVLog...
-        log = None if conf is None else CSVLog(conf.root_path, 'tag', cmd.topic)
+        log = None if conf is None else CSVLog(conf.root_path, cmd.topic, cmd.tag)
 
         if log and cmd.verbose:
-            print(log, file=sys.stderr)
+            print("csv_logger: %s" % log, file=sys.stderr)
 
         # CSVLogger...
         logger = None if log is None else CSVLogger(Host, log, conf.delete_oldest)
 
         if logger and cmd.verbose:
-            print(logger, file=sys.stderr)
+            print("csv_logger: %s" % logger, file=sys.stderr)
             sys.stderr.flush()
 
 

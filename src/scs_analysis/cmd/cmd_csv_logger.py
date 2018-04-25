@@ -16,9 +16,12 @@ class CmdCSVLogger(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-e] [-v] SUBJECT", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-e] [-v] TOPIC", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--tag", "-t", type="string", nargs=1, action="store", dest="tag",
+                                 help="file prefix (default is the tag on the first document)")
+
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
 
@@ -38,6 +41,11 @@ class CmdCSVLogger(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def tag(self):
+        return self.__opts.tag
+
 
     @property
     def echo(self):
@@ -66,5 +74,5 @@ class CmdCSVLogger(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVLogger:{echo:%s, verbose:%s, topic:%s, args:%s}" % \
-                    (self.echo, self.verbose, self.topic, self.args)
+        return "CmdCSVLogger:{tag:%s, echo:%s, verbose:%s, topic:%s, args:%s}" % \
+                    (self.tag, self.echo, self.verbose, self.topic, self.args)
