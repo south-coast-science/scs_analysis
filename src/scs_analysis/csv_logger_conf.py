@@ -13,17 +13,13 @@ removed to make space, if false, then logging stops.
 Note that the logging process(es) must be restarted for changes to take effect.
 
 SYNOPSIS
-csv_logger_conf.py [-r ROOT_PATH] [-o DELETE_OLDEST] [-v]
+csv_logger_conf.py [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] [-v]
 
 EXAMPLES
-./csv_logger_conf.py -r /Users/bruno/SCS/logs -o 1
+./csv_logger_conf.py -r /Users/bruno/SCS/logs -o 1 -i 0
 
-DOCUMENT EXAMPLE - INPUT
-{"tag": "scs-ap1-6", "rec": "2018-04-04T14:50:27.641+00:00", "val": {"hmd": 59.6, "tmp": 23.8}}
-
-DOCUMENT EXAMPLE - OUTPUT
-tag,rec,val.hmd,val.tmp
-scs-ap1-6,2018-04-04T14:50:38.394+00:00,59.7,23.8
+DOCUMENT EXAMPLE
+{"root-path": "/home/pi/SCS/logs", "delete-oldest": true, "write-interval": 0}
 
 SEE ALSO
 scs_dev/csv_logger
@@ -49,6 +45,10 @@ if __name__ == '__main__':
 
     cmd = CmdCSVLoggerConf()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print(cmd, file=sys.stderr)
         sys.stderr.flush()
@@ -72,6 +72,7 @@ if __name__ == '__main__':
 
         root_path = conf.root_path if cmd.root_path is None else cmd.root_path
         delete_oldest = conf.delete_oldest if cmd.delete_oldest is None else cmd.delete_oldest
+        write_interval = conf.write_interval if cmd.write_interval is None else cmd.write_interval
 
         try:
             Filesystem.mkdir(root_path)
@@ -79,8 +80,7 @@ if __name__ == '__main__':
             print("csv_logger_conf: You do not have permission to create that directory.", file=sys.stderr)
             exit(1)
 
-
-        conf = CSVLoggerConf(root_path, delete_oldest)
+        conf = CSVLoggerConf(root_path, delete_oldest, write_interval)
         conf.save(Host)
 
     if conf:
