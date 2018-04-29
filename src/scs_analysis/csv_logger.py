@@ -64,8 +64,6 @@ from scs_core.csv.csv_logger_conf import CSVLoggerConf
 from scs_host.sys.host import Host
 
 
-# TODO: fix "tag"
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

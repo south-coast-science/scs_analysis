@@ -19,6 +19,9 @@ csv_logger_conf.py [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] [-v]
 EXAMPLES
 ./csv_logger_conf.py -r /Users/bruno/SCS/logs -o 1 -i 0
 
+FILES
+~/SCS/conf/csv_logger_conf.json
+
 DOCUMENT EXAMPLE
 {"root-path": "/home/pi/SCS/logs", "delete-oldest": true, "write-interval": 0}
 
