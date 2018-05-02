@@ -51,6 +51,10 @@ SEE ALSO
 scs_analysis/csv_logger_conf
 scs_analysis/csv_reader
 scs_analysis/csv_writer
+
+BUGS
+If any filesystem problem is encountered then logging is inhibited, and no further attempt is made to re-establish
+access to the storage medium.
 """
 
 import sys
@@ -122,6 +126,8 @@ if __name__ == '__main__':
                     logger.write(datum)
 
                 except OSError as ex:
+                    logger.writing_inhibited = True
+
                     print("csv_logger: %s" % ex, file=sys.stderr)
                     sys.stderr.flush()
 
