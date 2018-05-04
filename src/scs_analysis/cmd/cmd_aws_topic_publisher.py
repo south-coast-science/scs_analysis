@@ -6,8 +6,6 @@ Created on 6 Oct 2017
 
 import optparse
 
-from scs_core.aws.config.project import Project
-
 
 # --------------------------------------------------------------------------------------------------------------------
 

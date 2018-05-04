@@ -15,7 +15,7 @@ All the leaf nodes of the first JSON document are included in the CSV. If subseq
 contain fields that were not in this first document, these extra fields are ignored.
 
 SYNOPSIS
-csv_writer.py [-c] [-a] [-e] [-v] [FILENAME]
+csv_writer.py [-a] [-e] [-v] [FILENAME]
 
 EXAMPLES
 ./socket_receiver.py | ./csv_writer.py temp.csv -e
@@ -28,6 +28,7 @@ tag,rec,val.hmd,val.tmp
 scs-ap1-6,2018-04-04T14:50:38.394+00:00,59.7,23.8
 
 SEE ALSO
+scs_analysis/csv_logger
 scs_analysis/csv_reader
 """
 
@@ -43,7 +44,7 @@ from scs_core.csv.csv_writer import CSVWriter
 if __name__ == '__main__':
 
     cmd = None
-    csv = None
+    writer = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -59,10 +60,10 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        csv = CSVWriter(cmd.filename, cmd.cache, cmd.append)
+        writer = CSVWriter(cmd.filename, cmd.append)
 
         if cmd.verbose:
-            print(csv, file=sys.stderr)
+            print(writer, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -74,7 +75,7 @@ if __name__ == '__main__':
             if datum is None:
                 break
 
-            csv.write(datum)
+            writer.write(datum)
 
             # echo...
             if cmd.echo:
@@ -90,5 +91,5 @@ if __name__ == '__main__':
             print("csv_writer: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-        if csv is not None:
-            csv.close()
+        if writer is not None:
+            writer.close()
