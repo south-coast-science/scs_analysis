@@ -57,7 +57,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("histo_chart: %s" % cmd, file=sys.stderr)
 
     chart = None
     proc = None
@@ -70,13 +70,13 @@ if __name__ == '__main__':
         reader = LineReader(sys.stdin.fileno())
 
         if cmd.verbose:
-            print(reader, file=sys.stderr)
+            print("histo_chart: %s" % reader, file=sys.stderr)
 
         # chart...
         chart = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.path, cmd.outfile)
 
         if cmd.verbose:
-            print(chart, file=sys.stderr)
+            print("histo_chart: %s" % chart, file=sys.stderr)
             sys.stderr.flush()
 
 

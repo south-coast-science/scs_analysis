@@ -56,7 +56,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("osio_topic_history: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(api_auth, file=sys.stderr)
+            print("osio_topic_history: %s" % api_auth, file=sys.stderr)
             sys.stderr.flush()
 
         # topic manager...
@@ -80,7 +80,8 @@ if __name__ == '__main__':
         message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
 
         if cmd.verbose:
-            print(message_manager, file=sys.stderr)
+            print("osio_topic_history: %s" % message_manager, file=sys.stderr)
+            sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------

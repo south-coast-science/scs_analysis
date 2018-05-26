@@ -47,7 +47,7 @@ if __name__ == '__main__':
     cmd = CmdSocketReceiver()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("socket_receiver: %s" % cmd, file=sys.stderr)
 
     receiver = None
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         receiver = NetworkSocket('', cmd.port)
 
         if cmd.verbose:
-            print(receiver, file=sys.stderr)
+            print("socket_receiver: %s" % receiver, file=sys.stderr)
             sys.stderr.flush()
 
 

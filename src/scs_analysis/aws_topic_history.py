@@ -57,7 +57,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("aws_topic_history: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -71,14 +71,14 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(api_auth, file=sys.stderr)
+            print("aws_topic_history: %s" % api_auth, file=sys.stderr)
             sys.stderr.flush()
 
         # message manager...
         message_manager = MessageManager(HTTPClient(), api_auth, cmd.verbose)
 
         if cmd.verbose:
-            print(message_manager, file=sys.stderr)
+            print("aws_topic_history: %s" % message_manager, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------

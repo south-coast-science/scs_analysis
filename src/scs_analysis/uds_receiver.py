@@ -40,7 +40,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("uds_reader: %s" % cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     uds = DomainSocket(cmd.path)
 
     if cmd.verbose:
-        print(uds, file=sys.stderr)
+        print("uds_reader: %s" % uds, file=sys.stderr)
         sys.stderr.flush()
 
     try:

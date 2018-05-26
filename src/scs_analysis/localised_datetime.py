@@ -41,7 +41,7 @@ if __name__ == '__main__':
     cmd = CmdLocalizedDatetime()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("localised_datetime: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

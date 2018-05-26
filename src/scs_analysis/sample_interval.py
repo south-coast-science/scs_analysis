@@ -51,7 +51,7 @@ if __name__ == '__main__':
     cmd = CmdSampleInterval()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_interval: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

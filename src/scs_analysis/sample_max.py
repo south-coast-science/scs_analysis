@@ -57,7 +57,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_max: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

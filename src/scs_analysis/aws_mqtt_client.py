@@ -126,7 +126,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("aws_mqtt_client: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(auth, file=sys.stderr)
+            print("aws_mqtt_client: %s" % auth, file=sys.stderr)
 
         # comms...
         pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         client = MQTTClient(*subscribers)
 
         if cmd.verbose:
-            print(client, file=sys.stderr)
+            print("aws_mqtt_client: %s" % client, file=sys.stderr)
             sys.stderr.flush()
 
 
