@@ -45,7 +45,7 @@ if __name__ == '__main__':
     cmd = CmdAWSTopicPublisher()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("aws_topic_publisher: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------

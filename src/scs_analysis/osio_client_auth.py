@@ -59,7 +59,7 @@ if __name__ == '__main__':
     cmd = CmdOSIOClientAuth()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("osio_client_auth: %s" % cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         exit(1)
 
     if cmd.verbose:
-        print(api_auth, file=sys.stderr)
+        print("osio_client_auth: %s" % api_auth, file=sys.stderr)
 
     # User manager...
     user_manager = UserManager(HTTPClient(), api_auth.api_key)

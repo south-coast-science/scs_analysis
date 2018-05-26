@@ -123,7 +123,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("osio_mqtt_control: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(api_auth, file=sys.stderr)
+            print("osio_mqtt_control: %s" % api_auth, file=sys.stderr)
 
         # ClientAuth...
         client_auth = ClientAuth.load(Host)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(client_auth, file=sys.stderr)
+            print("osio_mqtt_control: %s" % client_auth, file=sys.stderr)
             sys.stderr.flush()
 
         # manager...
@@ -166,7 +166,7 @@ if __name__ == '__main__':
         client = MQTTClient(subscriber)
 
         if cmd.verbose:
-            print(client, file=sys.stderr)
+            print("osio_mqtt_control: %s" % client, file=sys.stderr)
             sys.stderr.flush()
 
         # tag...

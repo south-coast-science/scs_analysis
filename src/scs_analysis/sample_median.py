@@ -60,7 +60,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_median: %s" % cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     median_filter = MedianFilter(cmd.window)
 
     if cmd.verbose:
-        print(median_filter, file=sys.stderr)
+        print("sample_median: %s" % median_filter, file=sys.stderr)
         sys.stderr.flush()
 
     try:

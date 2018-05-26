@@ -108,7 +108,7 @@ if __name__ == '__main__':
     cmd = CmdSampleFilter()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_error: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         err = SampleError(cmd.path, cmd.precision)
 
         if cmd.verbose:
-            print(err, file=sys.stderr)
+            print("sample_error: %s" % err, file=sys.stderr)
             sys.stderr.flush()
 
 

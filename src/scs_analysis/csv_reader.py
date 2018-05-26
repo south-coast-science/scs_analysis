@@ -52,7 +52,7 @@ if __name__ == '__main__':
         cmd = CmdCSVReader()
 
         if cmd.verbose:
-            print(cmd, file=sys.stderr)
+            print("csv_reader: %s" % cmd, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         reader = CSVReader(cmd.filename)
 
         if cmd.verbose:
-            print(reader, file=sys.stderr)
+            print("csv_reader: %s" % reader, file=sys.stderr)
             sys.stderr.flush()
 
 

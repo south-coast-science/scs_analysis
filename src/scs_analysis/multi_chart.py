@@ -61,7 +61,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("multi_chart: %s" % cmd, file=sys.stderr)
 
     chart = None
     proc = None
@@ -74,13 +74,13 @@ if __name__ == '__main__':
         reader = LineReader(sys.stdin.fileno())
 
         if cmd.verbose:
-            print(reader, file=sys.stderr)
+            print("multi_chart: %s" % reader, file=sys.stderr)
 
         # chart...
         chart = MultiChart(cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], *cmd.paths)
 
         if cmd.verbose:
-            print(chart, file=sys.stderr)
+            print("multi_chart: %s" % chart, file=sys.stderr)
             sys.stderr.flush()
 
 

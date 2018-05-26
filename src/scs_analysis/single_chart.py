@@ -60,7 +60,7 @@ if __name__ == '__main__':
     cmd = CmdSingleChart()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("single_chart: %s" % cmd, file=sys.stderr)
 
     chart = None
     proc = None
@@ -73,13 +73,13 @@ if __name__ == '__main__':
         reader = LineReader(sys.stdin.fileno())
 
         if cmd.verbose:
-            print(reader, file=sys.stderr)
+            print("single_chart: %s" % reader, file=sys.stderr)
 
         # chart...
         chart = SingleChart(cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], cmd.relative, cmd.path)
 
         if cmd.verbose:
-            print(chart, file=sys.stderr)
+            print("single_chart: %s" % chart, file=sys.stderr)
             sys.stderr.flush()
 
 

@@ -47,7 +47,7 @@ if __name__ == '__main__':
     cmd = CmdOSIOAPIAuth()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("osio_api_auth: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

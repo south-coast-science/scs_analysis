@@ -118,7 +118,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("aws_mqtt_control: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ if __name__ == '__main__':
             exit(1)
 
         if cmd.verbose:
-            print(auth, file=sys.stderr)
+            print("aws_mqtt_control: %s" % auth, file=sys.stderr)
 
         # responder...
         handler = AWSMQTTControlHandler()
@@ -142,7 +142,7 @@ if __name__ == '__main__':
         client = MQTTClient(subscriber)
 
         if cmd.verbose:
-            print(client, file=sys.stderr)
+            print("aws_mqtt_control: %s" % client, file=sys.stderr)
             sys.stderr.flush()
 
         # tag...

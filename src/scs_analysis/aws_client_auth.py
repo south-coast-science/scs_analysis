@@ -57,7 +57,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("aws_client_auth: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

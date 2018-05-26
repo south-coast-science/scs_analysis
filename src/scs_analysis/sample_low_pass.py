@@ -59,7 +59,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_low_pass: %s" % cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     lpf = LowPassFilter.construct(cmd.delta, cmd.cut_off)
 
     if cmd.verbose:
-        print(lpf, file=sys.stderr)
+        print("sample_low_pass: %s" % lpf, file=sys.stderr)
         sys.stderr.flush()
 
     try:

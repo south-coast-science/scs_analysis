@@ -112,7 +112,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("sample_regression: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ if __name__ == '__main__':
         sampler = SampleRegression(cmd.path, cmd.tally, cmd.precision)
 
         if cmd.verbose:
-            print(sampler, file=sys.stderr)
+            print("sample_regression: %s" % sampler, file=sys.stderr)
             sys.stderr.flush()
 
 

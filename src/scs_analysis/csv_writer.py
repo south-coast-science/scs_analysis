@@ -53,7 +53,7 @@ if __name__ == '__main__':
         cmd = CmdCSVWriter()
 
         if cmd.verbose:
-            print(cmd, file=sys.stderr)
+            print("csv_writer: %s" % cmd, file=sys.stderr)
             sys.stderr.flush()
 
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         writer = CSVWriter(cmd.filename, cmd.append)
 
         if cmd.verbose:
-            print(writer, file=sys.stderr)
+            print("csv_writer: %s" % writer, file=sys.stderr)
 
 
         # ------------------------------------------------------------------------------------------------------------
