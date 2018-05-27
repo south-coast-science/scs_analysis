@@ -31,13 +31,13 @@ scs_dev/csv_logger
 
 import sys
 
+from scs_analysis.cmd.cmd_csv_logger_conf import CmdCSVLoggerConf
+
 from scs_core.csv.csv_logger_conf import CSVLoggerConf
 from scs_core.data.json import JSONify
 from scs_core.sys.filesystem import Filesystem
 
 from scs_host.sys.host import Host
-
-from scs_mfr.cmd.cmd_csv_logger_conf import CmdCSVLoggerConf
 
 
 # --------------------------------------------------------------------------------------------------------------------
