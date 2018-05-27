@@ -16,8 +16,8 @@ class CmdCSVLoggerConf(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] | "
+                                                    "-d } [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--root", "-r", type="string", nargs=1, action="store", dest="root_path",
@@ -29,16 +29,21 @@ class CmdCSVLoggerConf(object):
         self.__parser.add_option("--write-int", "-i", type="int", nargs=1, action="store", dest="write_interval",
                                  help="write interval in seconds (0 for immediate writes)")
 
+        self.__parser.add_option("--delete", "-d", action="store_true", dest="delete",
+                                 help="delete the logger configuration")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
 
 
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.set() and self.delete is not None:
+            return False
+
         if self.write_interval is not None and self.write_interval < 0:
             return False
 
@@ -77,6 +82,11 @@ class CmdCSVLoggerConf(object):
 
 
     @property
+    def delete(self):
+        return self.__opts.delete
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -93,5 +103,7 @@ class CmdCSVLoggerConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVLoggerConf:{root_path:%s, delete_oldest:%s, write_interval:%s, verbose:%s, args:%s}" % \
-               (self.root_path, self.delete_oldest, self.write_interval, self.verbose, self.args)
+        return "CmdCSVLoggerConf:{root_path:%s, delete_oldest:%s, write_interval:%s, delete:%s, " \
+               "verbose:%s, args:%s}" % \
+               (self.root_path, self.delete_oldest, self.write_interval, self.delete,
+                self.verbose, self.args)

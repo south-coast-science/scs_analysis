@@ -14,19 +14,18 @@ flushes, in order to extend the life of SD cards.
 Note that the logging process(es) must be restarted for changes to take effect.
 
 SYNOPSIS
-csv_logger_conf.py [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] [-v]
+csv_logger_conf.py { [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] | -d } [-v]
 
 EXAMPLES
-./csv_logger_conf.py -r /Users/bruno/SCS/logs -o 1 -i 0
+./csv_logger_conf.py -r /srv/removable_data_storage -o 1 -i 0
 
 FILES
 ~/SCS/conf/csv_logger_conf.json
 
 DOCUMENT EXAMPLE
-{"root-path": "/home/pi/SCS/logs", "delete-oldest": true, "write-interval": 0}
+{"root-path": "/srv/removable_data_storage", "delete-oldest": true, "write-interval": 0}
 
 SEE ALSO
-scs_analysis/csv_logger
 scs_dev/csv_logger
 """
 
@@ -82,11 +81,15 @@ if __name__ == '__main__':
         try:
             Filesystem.mkdir(root_path)
         except PermissionError:
-            print("csv_logger_conf: You do not have permission to create that directory.", file=sys.stderr)
+            print("csv_logger_conf: You do not have permission to write in that directory.", file=sys.stderr)
             exit(1)
 
         conf = CSVLoggerConf(root_path, delete_oldest, write_interval)
         conf.save(Host)
+
+    elif cmd.delete:
+        conf.delete(Host)
+        conf = None
 
     if conf:
         print(JSONify.dumps(conf))
