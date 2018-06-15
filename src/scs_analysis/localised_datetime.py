@@ -26,9 +26,9 @@ https://en.wikipedia.org/wiki/ISO_8601
 
 import sys
 
-from scs_core.data.localized_datetime import LocalizedDatetime
-
 from scs_analysis.cmd.cmd_localised_datetime import CmdLocalizedDatetime
+
+from scs_core.data.localized_datetime import LocalizedDatetime
 
 
 # --------------------------------------------------------------------------------------------------------------------
