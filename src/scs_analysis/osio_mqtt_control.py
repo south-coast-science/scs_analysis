@@ -16,7 +16,7 @@ OpenSensors.io API auth and client specifications must be installed on the host 
 to operate. A specification should be obtained from the user's OpenSensors.io account.
 
 SYNOPSIS
-osio_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
+osio_mqtt_control.py -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
 ./osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \

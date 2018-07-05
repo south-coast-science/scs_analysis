@@ -16,12 +16,12 @@ class CmdMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] "
+                                                    "[-v]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--device", "-d", type="string", nargs=3, action="store", dest="tag_host_topic",
-                                 help="tag and host ID of target device")
+                                 help="tag, shared secret and topic for device")
 
         # optional...
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,

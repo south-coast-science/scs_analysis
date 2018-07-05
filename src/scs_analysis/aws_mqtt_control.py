@@ -12,7 +12,7 @@ A command / receipt message regime provides an interactive system over the messa
 For security reasons, the user must be in possession of the target device's unique tag and shared secret.
 
 SYNOPSIS
-aws_mqtt_control.py -d TAG HOST_ID TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
+aws_mqtt_control.py -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
 ./aws_mqtt_control.py -d scs-be2-2 5016BBBK202E \
