@@ -38,12 +38,12 @@ import sys
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
+from scs_analysis.reporter.mqtt_reporter import MQTTReporter
 
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 
 from scs_core.data.json import JSONify
-from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
 from scs_host.comms.domain_socket import DomainSocket
@@ -62,32 +62,31 @@ class AWSMQTTHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, comms=None, echo=False, verbose=False):
+    def __init__(self, mqtt_reporter, comms=None, echo=False):
         """
         Constructor
         """
+        self.__reporter = mqtt_reporter
         self.__comms = comms
-
         self.__echo = echo
-        self.__verbose = verbose
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # noinspection PyUnusedLocal,PyShadowingNames
-    def handle(self, client, userdata, message):
-        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
+    # noinspection PyShadowingNames,PyUnusedLocal
 
-        pub = Publication(message.topic, payload)
+    def handle(self, client, userdata, message):
+        payload = message.payload.decode()
+        payload_jdict = json.loads(payload, object_pairs_hook=OrderedDict)
+
+        pub = Publication(message.topic, payload_jdict)
 
         try:
             self.__comms.connect()
             self.__comms.write(JSONify.dumps(pub), False)
 
         except ConnectionRefusedError:
-            if self.__verbose:
-                print("AWSMQTTHandler: connection refused for %s" % self.__comms.address, file=sys.stderr)
-                sys.stderr.flush()
+            self.__reporter.print("connection refused for %s" % self.__comms.address)
 
         finally:
             self.__comms.close()
@@ -96,16 +95,14 @@ class AWSMQTTHandler(object):
             print(JSONify.dumps(pub))
             sys.stdout.flush()
 
-        if self.__verbose:
-            print("received: %s" % JSONify.dumps(pub), file=sys.stderr)
-            sys.stderr.flush()
+        self.__reporter.print("received: %s" % JSONify.dumps(pub))
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTHandler:{comms:%s, echo:%s, verbose:%s}" % \
-               (self.__comms, self.__echo, self.__verbose)
+        return "AWSMQTTHandler:{reporter:%s, comms:%s, echo:%s}" % \
+               (self.__reporter, self.__comms, self.__echo)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -145,6 +142,9 @@ if __name__ == '__main__':
         # comms...
         pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
 
+        # reporter...
+        reporter = MQTTReporter(cmd.verbose)
+
         # subscribers...
         subscribers = []
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
             sub_comms = DomainSocket(subscription.address) if subscription.address else StdIO()
 
             # handler...
-            handler = AWSMQTTHandler(sub_comms, cmd.echo, cmd.verbose)
+            handler = AWSMQTTHandler(reporter, sub_comms, cmd.echo)
 
             subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
@@ -175,15 +175,14 @@ if __name__ == '__main__':
             try:
                 jdict = json.loads(message, object_pairs_hook=OrderedDict)
             except ValueError:
+                reporter.print("bad datum: %s" % message)
                 continue
 
             publication = Publication.construct_from_jdict(jdict)
 
-            client.publish(publication)     # TODO: handle return value of False
+            success = client.publish(publication)
 
-            if cmd.verbose:
-                print("%s:         mqtt: done" % LocalizedDatetime.now().as_iso8601(), file=sys.stderr)
-                sys.stderr.flush()
+            reporter.print("done" if success else "abandoned")
 
             if cmd.echo:
                 print(message)
