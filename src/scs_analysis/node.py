@@ -13,8 +13,11 @@ node path is specified, the whole input document is passed to stdout.
 The node utility may be set to either ignore documents that do not contain the specified node, or to terminate if the
 node is not present.
 
+If the node is an array or other iterable type, then it may be output as a sequence (a list of items separated by
+newline characters) according to the -s flag.
+
 SYNOPSIS
-node.py [-i] [-v] [PATH]
+node.py [-i] [-s] [-v] [PATH]
 
 EXAMPLES
 ./gases_sampler.py -i10 | ./node.py val
@@ -63,8 +66,17 @@ if __name__ == '__main__':
 
             node = datum.node(cmd.path)
 
-            print(JSONify.dumps(node))
-            sys.stdout.flush()
+            if cmd.sequence:
+                try:
+                    for item in node:
+                        print(JSONify.dumps(item))
+                except TypeError:
+                    print(JSONify.dumps(node))
+
+            else:
+                print(JSONify.dumps(node))
+
+                sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
