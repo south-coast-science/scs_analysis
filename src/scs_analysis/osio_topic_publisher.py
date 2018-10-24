@@ -18,7 +18,7 @@ SYNOPSIS
 osio_topic_publisher.py -t TOPIC [-o] [-v]
 
 EXAMPLES
-./osio_topic_publisher.py -t /users/southcoastscience-dev/test/json
+osio_topic_publisher.py -t /users/southcoastscience-dev/test/json
 
 SEE ALSO
 scs_analysis/osio_mqtt_client

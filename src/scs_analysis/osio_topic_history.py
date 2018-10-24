@@ -16,7 +16,7 @@ SYNOPSIS
 osio_topic_history.py { -m MINUTES | -s START [-e END] } [-p SECONDS] [-w] [-v] PATH
 
 EXAMPLES
-./osio_topic_history.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
+osio_topic_history.py -v /orgs/south-coast-science-dev/exhibition/loc/1/particulates -m1
 
 FILES
 ~/SCS/osio/osio_api_auth.json

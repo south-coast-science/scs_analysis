@@ -15,7 +15,7 @@ SYNOPSIS
 localised_datetime.py [-o HOURS] [-m MINUTES] [-s SECONDS]
 
 EXAMPLES
-./localised_datetime.py -o 1
+localised_datetime.py -o 1
 
 DOCUMENT EXAMPLE - OUTPUT
 2018-04-05T18:42:03.702+00:00

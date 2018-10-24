@@ -15,7 +15,7 @@ SYNOPSIS
 aws_mqtt_control.py -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
-./aws_mqtt_control.py -d scs-be2-2 5016BBBK202E \
+aws_mqtt_control.py -d scs-be2-2 5016BBBK202E \
 south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control -i
 
 FILES

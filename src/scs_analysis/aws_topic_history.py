@@ -17,7 +17,7 @@ SYNOPSIS
 aws_topic_history.py { -m MINUTES | -s START [-e END] } [-w] [-v] PATH
 
 EXAMPLES
-./aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
+aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
 
 FILES
 ~/SCS/aws/aws_api_auth.json

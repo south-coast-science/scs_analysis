@@ -13,7 +13,7 @@ SYNOPSIS
 uds_receiver.py [-v] UDS_SUB
 
 EXAMPLES
-./uds_receiver.py scs-particulates.uds
+uds_receiver.py scs-particulates.uds
 
 SEE ALSO
 scs_analysis/socket_receiver

@@ -19,7 +19,7 @@ SYNOPSIS
 socket_receiver.py [-p PORT] [-v]
 
 EXAMPLES
-./socket_receiver.py -p 2002
+socket_receiver.py -p 2002
 
 SEE ALSO
 scs_analysis/uds_receiver

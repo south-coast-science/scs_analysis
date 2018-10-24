@@ -13,7 +13,7 @@ SYNOPSIS
 osio_api_auth.py [-s ORG_ID API_KEY] [-v]
 
 EXAMPLES
-./osio_api_auth.py -v -s south-coast-science-demo 099add97-6e89-4801-8d12-dd617797cd3b
+osio_api_auth.py -v -s south-coast-science-demo 099add97-6e89-4801-8d12-dd617797cd3b
 
 FILES
 ~/SCS/osio/osio_api_auth.json

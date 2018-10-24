@@ -13,7 +13,7 @@ SYNOPSIS
 aws_api_auth.py [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]
 
 EXAMPLES
-./aws_api_auth.py -e xy1eszuu22.execute-api.us-west-2.amazonaws.com -a de92c5ff-b47a-4cc4-a04c-62d684d64a1f
+aws_api_auth.py -e xy1eszuu22.execute-api.us-west-2.amazonaws.com -a de92c5ff-b47a-4cc4-a04c-62d684d64a1f
 
 FILES
 ~/SCS/aws/aws_api_auth.json

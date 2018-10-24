@@ -18,7 +18,7 @@ SYNOPSIS
 csv_reader.py [-v] [FILENAME]
 
 EXAMPLES
-./csv_reader.py temp.csv
+csv_reader.py temp.csv
 
 DOCUMENT EXAMPLE - INPUT
 tag,rec,val.hmd,val.tmp

@@ -19,7 +19,7 @@ SYNOPSIS
 osio_client_auth.py [-u USER_ID] [-d DESCRIPTION] [-v]
 
 EXAMPLES
-./osio_client_auth.py -u south-coast-science-test-user -v
+osio_client_auth.py -u south-coast-science-test-user -v
 
 FILES
 ~/SCS/osio/osio_client_auth.json

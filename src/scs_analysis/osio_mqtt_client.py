@@ -18,7 +18,7 @@ SYNOPSIS
 osio_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
 
 EXAMPLES
-./osio_mqtt_client.py /orgs/south-coast-science-dev/production-test/loc/1/gases
+osio_mqtt_client.py /orgs/south-coast-science-dev/production-test/loc/1/gases
 
 FILES
 ~/SCS/osio/osio_api_auth.json

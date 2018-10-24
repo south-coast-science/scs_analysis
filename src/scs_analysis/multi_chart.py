@@ -23,7 +23,7 @@ SYNOPSIS
 multi_chart.py [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N
 
 EXAMPLES
-./socket_receiver.py | ./multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
+socket_receiver.py | multi_chart.py val.opc.pm10 val.opc.pm2p5 val.opc.pm1 -x 120 -e
 
 FILES
 ~/SCS/scs_analysis/src/scs_analysis/matplotlibrc

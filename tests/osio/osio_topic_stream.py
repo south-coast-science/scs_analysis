@@ -6,7 +6,7 @@ Created on 20 Nov 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 command line example:
-./osio_topic_stream.py /users/southcoastscience-dev/test/status
+osio_topic_stream.py /users/southcoastscience-dev/test/status
 """
 
 import sys

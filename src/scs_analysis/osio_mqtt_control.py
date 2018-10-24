@@ -19,7 +19,7 @@ SYNOPSIS
 osio_mqtt_control.py -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
 
 EXAMPLES
-./osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \
+osio_mqtt_control.py -r -d scs-ap1-6 00000000eda1f8a9 \
  /orgs/south-coast-science-dev/development/device/alpha-pi-eng-000006/control -i
 
 FILES
