@@ -26,7 +26,7 @@ SYNOPSIS
 single_chart.py [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-v] [PATH]
 
 EXAMPLES
-./socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
+socket_receiver.py | ./single_chart.py -r val.afe.sns.CO.cnc
 
 FILES
 ~/SCS/scs_analysis/src/scs_analysis/matplotlibrc

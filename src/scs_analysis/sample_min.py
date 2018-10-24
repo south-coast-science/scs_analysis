@@ -16,7 +16,7 @@ SYNOPSIS
 sample_min.py [-v] [PATH]
 
 EXAMPLES
-./osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | ./sample_min.py val.CO.cnc
+osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_min.py val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {

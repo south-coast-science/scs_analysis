@@ -18,7 +18,7 @@ SYNOPSIS
 aws_topic_publisher.py -t TOPIC [-v]
 
 EXAMPLES
-./aws_topic_publisher.py -t /users/southcoastscience-dev/test/json
+aws_topic_publisher.py -t /users/southcoastscience-dev/test/json
 
 SEE ALSO
 scs_analysis/aws_mqtt_client

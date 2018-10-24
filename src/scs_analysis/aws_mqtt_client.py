@@ -18,7 +18,7 @@ SYNOPSIS
 aws_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-e] [-v]
 
 EXAMPLES
-./aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
+aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
 
 FILES
 ~/SCS/aws/aws_client_auth.json

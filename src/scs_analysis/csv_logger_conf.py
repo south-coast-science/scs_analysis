@@ -17,7 +17,7 @@ SYNOPSIS
 csv_logger_conf.py { [-r ROOT_PATH] [-o DELETE_OLDEST] [-i WRITE_INTERVAL] | -d } [-v]
 
 EXAMPLES
-./csv_logger_conf.py -r /srv/removable_data_storage -o 1 -i 0
+csv_logger_conf.py -r /srv/removable_data_storage -o 1 -i 0
 
 FILES
 ~/SCS/conf/csv_logger_conf.json

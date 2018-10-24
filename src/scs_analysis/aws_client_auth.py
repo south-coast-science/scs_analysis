@@ -15,7 +15,7 @@ SYNOPSIS
 aws_client_auth.py [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]
 
 EXAMPLES
-./aws_client_auth.py -e asrft7e5j5ecz.iot.us-west-2.amazonaws.com -c bruno -i 9f08402232
+aws_client_auth.py -e asrft7e5j5ecz.iot.us-west-2.amazonaws.com -c bruno -i 9f08402232
 
 FILES
 ~/SCS/aws/aws_client_auth.json
