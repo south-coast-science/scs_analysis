@@ -36,7 +36,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
+from scs_analysis.cmd.cmd_sample_tally import CmdSampleTally
 
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleAggregate()
+    cmd = CmdSampleTally()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)

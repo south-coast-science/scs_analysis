@@ -1,5 +1,5 @@
 """
-Created on 24 Aug 2018
+Created on 22 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,18 +9,21 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleAggregate(object):
+class CmdSampleTally(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c HH:MM:SS] [-v] [PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
-                                 help="a string such as **:/15:00")
+        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+                                 help="generate a rolling aggregate for TALLY number of data points (default all)")
+
+        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+                                 help="precision (default 0 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -31,7 +34,7 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.checkpoint is None:
+        if self.tally is not None and self.tally < 1:
             return False
 
         return True
@@ -40,13 +43,23 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def checkpoint(self):
-        return self.__opts.checkpoint
+    def tally(self):
+        return self.__opts.tally
+
+
+    @property
+    def precision(self):
+        return self.__opts.precision
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
@@ -61,4 +74,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, args:%s}" %  (self.checkpoint, self.verbose, self.args)
+        return "CmdSampleTally:{tally:%s, tally:%s, verbose:%s, path:%s, args:%s}" % \
+                    (self.tally, self.precision, self.verbose, self.path, self.args)
