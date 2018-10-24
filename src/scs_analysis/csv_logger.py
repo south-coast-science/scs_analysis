@@ -38,7 +38,7 @@ SYNOPSIS
 csv_logger.py [-t TAG] [-e] [-v] TOPIC
 
 EXAMPLES
-socket_receiver.py | ./csv_logger.py -e climate
+socket_receiver.py | csv_logger.py -e climate
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-ap1-6", "rec": "2018-04-04T14:50:27.641+00:00", "val": {"hmd": 59.6, "tmp": 23.8}}

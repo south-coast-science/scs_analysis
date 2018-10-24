@@ -19,7 +19,7 @@ SYNOPSIS
 histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] [-v] PATH
 
 EXAMPLES
-socket_receiver.py | ./histo_chart.py val.CO2.cnc -x -10 10 -e -o CO2.csv
+socket_receiver.py | histo_chart.py val.CO2.cnc -x -10 10 -e -o CO2.csv
 
 FILES
 ~/SCS/scs_analysis/src/scs_analysis/matplotlibrc

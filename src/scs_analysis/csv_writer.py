@@ -18,7 +18,7 @@ SYNOPSIS
 csv_writer.py [-a] [-e] [-v] [FILENAME]
 
 EXAMPLES
-socket_receiver.py | ./csv_writer.py temp.csv -e
+socket_receiver.py | csv_writer.py temp.csv -e
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-ap1-6", "rec": "2018-04-04T14:50:27.641+00:00", "val": {"hmd": 59.6, "tmp": 23.8}}
