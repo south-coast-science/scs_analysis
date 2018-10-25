@@ -6,6 +6,8 @@ Created on 24 Aug 2018
 
 import optparse
 
+from scs_core.data.checkpoint_generator import CheckpointGenerator
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c HH:MM:SS] [-v] [PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] -c HH:MM:SS PATH_1 .. PATH_N", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
@@ -31,7 +33,10 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.checkpoint is None:
+        if self.checkpoint_generator is None:
+            return False
+
+        if len(self.paths) < 1:
             return False
 
         return True
@@ -40,13 +45,21 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def checkpoint(self):
-        return self.__opts.checkpoint
+    def checkpoint_generator(self):
+        try:
+            return CheckpointGenerator.construct(self.__opts.checkpoint)
+        except ValueError:
+            return None
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def paths(self):
+        return self.__args
 
 
     @property
@@ -61,4 +74,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, args:%s}" %  (self.checkpoint, self.verbose, self.args)
+        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, paths:%s, args:%s}" %  \
+               (self.__opts.checkpoint, self.verbose, self.paths, self.args)

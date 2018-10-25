@@ -17,10 +17,78 @@ sample_aggregate.py
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_record import CmdSampleRecord
+from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.json import JSONify
+from scs_core.data.linear_regression import LinearRegression
+from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class SampleAggregate(object):
+    """
+    classdocs
+    """
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, paths):
+        """
+        Constructor
+        """
+        self.__paths = paths
+
+        self.__regressions = {}
+
+        for path in self.__paths:
+            self.__regressions[path] = LinearRegression()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_populated(self):
+        for regression in self.__regressions.values():
+            if regression.is_populated():
+                return True
+
+        return False
+
+
+    def append(self, sample):
+        for path in self.__paths:
+            value = sample.node(path)
+
+            if value is not None:
+                self.__regressions[path].append(rec, value)
+
+
+    def reset(self):
+        for path in self.__regressions.keys():
+            self.__regressions[path].reset()
+
+
+    def report(self, localised_datetime):
+        aggregate = PathDict()
+
+        aggregate.append('rec', localised_datetime.as_iso8601())
+
+        for path, regression in self.__regressions.items():
+            if regression.is_populated():
+                _, midpoint_val = regression.midpoint()
+
+                aggregate.append(path, round(midpoint_val, 1))
+
+        return aggregate
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        regressions = '[' + ', '.join(path + ':' + str(reg) for path, reg in self.__regressions.items()) + ']'
+
+        return "SampleAggregate:{regressions:%s}" % regressions
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -30,31 +98,62 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleRecord()
+    cmd = CmdSampleAggregate()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("sample_min: %s" % cmd, file=sys.stderr)
-        sys.stderr.flush()
+        print("sample_aggregate: %s" % cmd, file=sys.stderr)
 
 
     try:
         # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        generator = cmd.checkpoint_generator
+
+        sampler = SampleAggregate(cmd.paths)
+
+        if cmd.verbose:
+            print("sample_aggregate: %s" % sampler, file=sys.stderr)
+            sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        min_datum = None
+        checkpoint = None
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            # sample...
+            datum = PathDict.construct_from_jstr(line)
 
-            if min_datum is None or sample_datum.node(cmd.path) < min_datum.node(cmd.path):
-                min_datum = sample_datum
+            if datum is None:
+                continue
 
-        if min_datum:
-            print(JSONify.dumps(min_datum.node()))
+            # set checkpoint...
+            rec = LocalizedDatetime.construct_from_iso8601(datum.node('rec'))
+
+            if checkpoint is None:
+                checkpoint = generator.next_localised_datetime(rec)
+
+            # report & reset...
+            if rec.datetime > checkpoint.datetime:
+                if sampler.is_populated():
+                    print(JSONify.dumps(sampler.report(checkpoint)))
+                    sys.stdout.flush()
+
+                sampler.reset()
+                checkpoint = generator.next_localised_datetime(rec)
+
+            # append sample...
+            sampler.append(datum)
+
+        # report remainder...
+        if sampler.is_populated():
+            print(JSONify.dumps(sampler.report(checkpoint)))
 
 
     # ----------------------------------------------------------------------------------------------------------------
