@@ -9,10 +9,10 @@ DESCRIPTION
 The sample_aggregate utility is used to
 
 SYNOPSIS
-sample_aggregate.py [-v] [PATH]
+sample_aggregate.py [-v] -c HH:MM:SS PATH_1 .. PATH_N
 
 EXAMPLES
-sample_aggregate.py
+sample_aggregate.py -c **:**:00 val.CO.cnc
 """
 
 import sys
@@ -24,6 +24,8 @@ from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
+
+# TODO: add precision control
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -48,9 +50,9 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_populated(self):
+    def has_midpoint(self):
         for regression in self.__regressions.values():
-            if regression.is_populated():
+            if regression.has_midpoint():
                 return True
 
         return False
@@ -75,10 +77,10 @@ class SampleAggregate(object):
         aggregate.append('rec', localised_datetime.as_iso8601())
 
         for path, regression in self.__regressions.items():
-            if regression.is_populated():
+            if regression.has_midpoint():
                 _, midpoint_val = regression.midpoint()
 
-                aggregate.append(path, round(midpoint_val, 1))
+                aggregate.append(path, round(midpoint_val, 6))
 
         return aggregate
 
@@ -141,18 +143,19 @@ if __name__ == '__main__':
 
             # report & reset...
             if rec.datetime > checkpoint.datetime:
-                if sampler.is_populated():
+                if sampler.has_midpoint():
                     print(JSONify.dumps(sampler.report(checkpoint)))
                     sys.stdout.flush()
 
-                sampler.reset()
+                    sampler.reset()
+
                 checkpoint = generator.next_localised_datetime(rec)
 
             # append sample...
             sampler.append(datum)
 
         # report remainder...
-        if sampler.is_populated():
+        if sampler.has_midpoint():
             print(JSONify.dumps(sampler.report(checkpoint)))
 
 
