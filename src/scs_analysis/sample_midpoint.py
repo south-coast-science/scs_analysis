@@ -69,7 +69,12 @@ class SampleMidpoint(object):
         if not sample.has_path(self.__path):
             return None
 
-        rec = LocalizedDatetime.construct_from_jdict(sample.node('rec'))
+        try:
+            rec_node = sample.node('rec')
+        except KeyError:
+            return None
+
+        rec = LocalizedDatetime.construct_from_jdict(rec_node)
         value = sample.node(self.__path)
 
         self.__func.append(rec, value)

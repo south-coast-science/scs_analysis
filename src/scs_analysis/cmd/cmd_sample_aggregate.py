@@ -18,7 +18,8 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] -c HH:MM:SS PATH_1 .. PATH_N", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
@@ -36,7 +37,7 @@ class CmdSampleAggregate(object):
         if self.checkpoint_generator is None:
             return False
 
-        if len(self.paths) < 1:
+        if self.topics is None:
             return False
 
         return True
@@ -58,8 +59,19 @@ class CmdSampleAggregate(object):
 
 
     @property
-    def paths(self):
-        return self.__args
+    def topics(self):
+        if len(self.__args) == 0 or len(self.args) % 2 == 1:
+            return None
+
+        try:
+            topics = {}
+            for i in range(0, len(self.args), 2):
+                topics[self.args[i]] = int(self.args[i + 1])
+
+            return topics
+
+        except ValueError:
+            return None
 
 
     @property
@@ -74,5 +86,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, paths:%s, args:%s}" %  \
-               (self.__opts.checkpoint, self.verbose, self.paths, self.args)
+        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, topics:%s, args:%s}" %  \
+               (self.__opts.checkpoint, self.verbose, self.topics, self.args)

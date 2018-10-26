@@ -9,10 +9,10 @@ DESCRIPTION
 The sample_aggregate utility is used to
 
 SYNOPSIS
-sample_aggregate.py [-v] -c HH:MM:SS PATH_1 .. PATH_N
+sample_aggregate.py [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
 
 EXAMPLES
-sample_aggregate.py -c **:**:00 val.CO.cnc
+sample_aggregate.py -c **:**:00 val.CO.cnc 1
 """
 
 import sys
@@ -25,8 +25,6 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: add precision control
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleAggregate(object):
@@ -36,21 +34,21 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, paths):
+    def __init__(self, topics):
         """
         Constructor
         """
-        self.__paths = paths
+        self.__topics = topics
 
         self.__regressions = {}
 
-        for path in self.__paths:
+        for path in self.__topics.keys():
             self.__regressions[path] = LinearRegression()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def has_midpoint(self):
+    def has_value(self):
         for regression in self.__regressions.values():
             if regression.has_midpoint():
                 return True
@@ -58,12 +56,15 @@ class SampleAggregate(object):
         return False
 
 
-    def append(self, sample):
-        for path in self.__paths:
-            value = sample.node(path)
+    def append(self, datetime, sample):
+        for path in self.__topics.keys():
+            try:
+                value = sample.node(path)
+            except KeyError:
+                continue
 
             if value is not None:
-                self.__regressions[path].append(rec, value)
+                self.__regressions[path].append(datetime, value)
 
 
     def reset(self):
@@ -72,23 +73,23 @@ class SampleAggregate(object):
 
 
     def report(self, localised_datetime):
-        aggregate = PathDict()
+        report = PathDict()
 
-        aggregate.append('rec', localised_datetime.as_iso8601())
+        report.append('rec', localised_datetime.as_iso8601())
 
-        for path, regression in self.__regressions.items():
-            if regression.has_midpoint():
-                _, midpoint_val = regression.midpoint()
+        for path, precision in self.__topics.items():
+            if self.__regressions[path].has_midpoint():
+                _, midpoint_val = self.__regressions[path].midpoint()
 
-                aggregate.append(path, round(midpoint_val, 6))
+                report.append(path, round(midpoint_val, precision))
 
-        return aggregate
+        return report
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        regressions = '[' + ', '.join(path + ':' + str(reg) for path, reg in self.__regressions.items()) + ']'
+        regressions = '[' + ', '.join(topic + ':' + str(reg) for topic, reg in self.__regressions.items()) + ']'
 
         return "SampleAggregate:{regressions:%s}" % regressions
 
@@ -116,10 +117,10 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        sampler = SampleAggregate(cmd.paths)
+        aggregate = SampleAggregate(cmd.topics)
 
         if cmd.verbose:
-            print("sample_aggregate: %s" % sampler, file=sys.stderr)
+            print("sample_aggregate: %s" % aggregate, file=sys.stderr)
             sys.stderr.flush()
 
 
@@ -135,28 +136,33 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
-            # set checkpoint...
-            rec = LocalizedDatetime.construct_from_iso8601(datum.node('rec'))
+            try:
+                rec_node = datum.node('rec')
+            except KeyError:
+                continue
 
+            rec = LocalizedDatetime.construct_from_iso8601(rec_node)
+
+            # set checkpoint...
             if checkpoint is None:
                 checkpoint = generator.next_localised_datetime(rec)
 
             # report & reset...
             if rec.datetime > checkpoint.datetime:
-                if sampler.has_midpoint():
-                    print(JSONify.dumps(sampler.report(checkpoint)))
+                if aggregate.has_value():
+                    print(JSONify.dumps(aggregate.report(checkpoint)))
                     sys.stdout.flush()
 
-                    sampler.reset()
+                    aggregate.reset()
 
                 checkpoint = generator.next_localised_datetime(rec)
 
             # append sample...
-            sampler.append(datum)
+            aggregate.append(rec, datum)
 
         # report remainder...
-        if sampler.has_midpoint():
-            print(JSONify.dumps(sampler.report(checkpoint)))
+        if aggregate.has_value():
+            print(JSONify.dumps(aggregate.report(checkpoint)))
 
 
     # ----------------------------------------------------------------------------------------------------------------
