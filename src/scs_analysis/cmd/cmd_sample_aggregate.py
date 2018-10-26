@@ -23,7 +23,7 @@ class CmdSampleAggregate(object):
 
         # optional...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
-                                 help="a string such as **:/15:00")
+                                 help="a string such as **:/5:00")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")

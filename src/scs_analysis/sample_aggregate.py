@@ -6,7 +6,31 @@ Created on 24 Oct 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_aggregate utility is used to
+The sample_aggregate utility provides linear regression midpoints for data delivered on stdin, over specified units of
+time. It can perform this operation for one or many nodes of the input documents.
+
+When each time checkpoint is encountered in the input stream, the midpoint values are computed and reported. These
+values are marked with the datetime indicating the end of that period. When the input stream is closed, any remaining
+values are reported and marked with the following checkpoint.
+
+Checkpoints are specified in the form HH:MM:SS, in a format similar to that for crontab:
+
+** - all values
+NN - exactly matching NN
+/NN - every match of NN
+
+For example, **:/5:30 indicates 30 seconds past the minute, every 5 minutes, during every hour.
+
+Data sources are specified as a path into the input JSON document in the same format as the node command. Any number of
+paths can be specified. For each path, a positive integer must also be supplied, indicating the precision to which the
+midpoint result should be reported.
+
+The input JSON document must contain a field labelled 'rec', providing an ISO 8601 localised datetime. If this field
+is not present then the document is skipped. If the document does not contain a specified path - or if the value is
+null - then the value is ignored. Aside from null, values must be integers or floats.
+
+At each checkpoint, if there are no values for a given path, then that path is not included in the output report.
+If there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
 sample_aggregate.py [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
