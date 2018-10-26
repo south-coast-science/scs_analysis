@@ -49,7 +49,7 @@ class CmdSampleAggregate(object):
     def checkpoint_generator(self):
         try:
             return CheckpointGenerator.construct(self.__opts.checkpoint)
-        except ValueError:
+        except (AttributeError, ValueError):
             return None
 
 
