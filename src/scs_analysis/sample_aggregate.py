@@ -26,11 +26,14 @@ paths can be specified. For each path, a positive integer must also be supplied,
 midpoint result should be reported.
 
 The input JSON document must contain a field labelled 'rec', providing an ISO 8601 localised datetime. If this field
-is not present then the document is skipped. If the document does not contain a specified path - or if the value is
-null - then the value is ignored. Aside from null, values must be integers or floats.
+is not present then the document is skipped. Note that the timezone of the output rec datetimes is the same as the
+input rec values.
 
-At each checkpoint, if there are no values for a given path, then that path is not included in the output report.
-If there are no values for any path, then no report is written to stdout.
+If the input document does not contain a specified path - or if the value is null - then the value is ignored. Aside
+from null, values must be integers or floats.
+
+At each checkpoint, if there are no values for a given path, then that path is not included in the output report. If
+there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
 sample_aggregate.py [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
