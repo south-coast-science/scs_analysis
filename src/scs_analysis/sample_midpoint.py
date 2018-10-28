@@ -36,7 +36,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
+from scs_analysis.cmd.cmd_sample_tally import CmdSampleTally
 
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
@@ -69,12 +69,17 @@ class SampleMidpoint(object):
         if not sample.has_path(self.__path):
             return None
 
-        rec = LocalizedDatetime.construct_from_jdict(sample.node('rec'))
+        try:
+            rec_node = sample.node('rec')
+        except KeyError:
+            return None
+
+        rec = LocalizedDatetime.construct_from_jdict(rec_node)
         value = sample.node(self.__path)
 
         self.__func.append(rec, value)
 
-        if not self.__func.has_tally():
+        if not self.__func.has_midpoint():
             return None
 
         mid_rec, mid = self.__func.midpoint()
@@ -106,7 +111,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleAggregate()
+    cmd = CmdSampleTally()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
