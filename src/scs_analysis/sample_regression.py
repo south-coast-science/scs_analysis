@@ -77,7 +77,7 @@ class SampleRegression(object):
 
         self.__func.append(rec, value)
 
-        if not self.__func.has_tally():
+        if not self.__func.has_regression():
             return None
 
         slope, intercept = self.__func.compute()

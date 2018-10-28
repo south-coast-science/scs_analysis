@@ -79,7 +79,7 @@ class SampleMidpoint(object):
 
         self.__func.append(rec, value)
 
-        if not self.__func.has_tally():
+        if not self.__func.has_midpoint():
             return None
 
         mid_rec, mid = self.__func.midpoint()
