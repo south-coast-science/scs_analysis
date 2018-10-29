@@ -39,7 +39,7 @@ SYNOPSIS
 sample_aggregate.py [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
 
 EXAMPLES
-sample_aggregate.py -c **:**:00 val.CO.cnc 1
+csv_reader.py gases.csv | sample_aggregate.py -c **:**:00 val.CO.cnc 1
 """
 
 import sys
