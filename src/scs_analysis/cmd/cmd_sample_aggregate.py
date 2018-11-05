@@ -18,10 +18,13 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. "
+                                                    "PATH_N PRECISION_N", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
+                                 help="report min and max in addition to midpoint")
+
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
                                  help="a time specification as **:/5:00")
 
@@ -54,11 +57,6 @@ class CmdSampleAggregate(object):
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
-
-
-    @property
     def topics(self):
         if len(self.__args) == 0 or len(self.args) % 2 == 1:
             return None
@@ -75,6 +73,16 @@ class CmdSampleAggregate(object):
 
 
     @property
+    def min_max(self):
+        return self.__opts.min_max
+
+
+    @property
+    def verbose(self):
+        return self.__opts.verbose
+
+
+    @property
     def args(self):
         return self.__args
 
@@ -86,5 +94,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, verbose:%s, topics:%s, args:%s}" %  \
-               (self.__opts.checkpoint, self.verbose, self.topics, self.args)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, verbose:%s, topics:%s, args:%s}" %  \
+               (self.__opts.checkpoint, self.min_max, self.verbose, self.topics, self.args)

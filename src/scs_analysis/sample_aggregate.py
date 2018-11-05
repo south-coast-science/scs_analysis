@@ -9,15 +9,15 @@ DESCRIPTION
 The sample_aggregate utility provides linear regression midpoints for data delivered on stdin, over specified units of
 time. It can perform this operation for one or many nodes of the input documents.
 
-When each time checkpoint is encountered in the input stream, the midpoint values are computed and reported. These
-values are marked with the datetime indicating the end of that period. When the input stream is closed, any remaining
-values are reported and marked with the following checkpoint.
+When each time checkpoint is encountered in the input stream, the midpoint values - together with min and max, if
+requested -  are computed and reported. These values are marked with the datetime indicating the end of that period.
+When the input stream is closed, any remaining values are reported and marked with the following checkpoint.
 
 Checkpoints are specified in the form HH:MM:SS, in a format similar to that for crontab:
 
 ** - all values
 NN - exactly matching NN
-/NN - every match of NN
+/N - every match of N
 
 For example, **:/5:30 indicates 30 seconds past the minute, every 5 minutes, during every hour.
 
@@ -36,10 +36,10 @@ At each checkpoint, if there are no values for a given path, then that path is n
 there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
-sample_aggregate.py [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
+sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
 
 EXAMPLES
-sample_aggregate.py -c **:**:00 val.CO.cnc 1
+csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val.CO.cnc 1
 """
 
 import sys
@@ -61,10 +61,11 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, topics):
+    def __init__(self, min_max, topics):
         """
         Constructor
         """
+        self.__min_max = min_max
         self.__topics = topics
 
         self.__regressions = {}
@@ -105,10 +106,18 @@ class SampleAggregate(object):
         report.append('rec', localised_datetime.as_iso8601())
 
         for path, precision in self.__topics.items():
-            if self.__regressions[path].has_midpoint():
-                _, midpoint_val = self.__regressions[path].midpoint()
+            regression = self.__regressions[path]
 
-                report.append(path, round(midpoint_val, precision))
+            if self.__regressions[path].has_midpoint():
+                _, midpoint = regression.midpoint()
+
+                if self.__min_max:
+                    report.append(path + '.min', round(regression.min(), precision))
+                    report.append(path + '.mid', round(midpoint, precision))
+                    report.append(path + '.max', round(regression.max(), precision))
+
+                else:
+                    report.append(path, round(midpoint, precision))
 
         return report
 
@@ -118,7 +127,7 @@ class SampleAggregate(object):
     def __str__(self, *args, **kwargs):
         regressions = '[' + ', '.join(topic + ':' + str(reg) for topic, reg in self.__regressions.items()) + ']'
 
-        return "SampleAggregate:{regressions:%s}" % regressions
+        return "SampleAggregate:{min_max:%s, regressions:%s}" % (self.__min_max, regressions)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -144,7 +153,7 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        aggregate = SampleAggregate(cmd.topics)
+        aggregate = SampleAggregate(cmd.min_max, cmd.topics)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
