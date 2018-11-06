@@ -28,7 +28,8 @@ The path into the JSON document is used to name the column in the header row, wi
 ('.') character.
 
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
-contain fields that were not in this first document, these extra fields are ignored.
+contain fields that were not in this first document, these extra fields are ignored. If subsequent JSON documents
+do not contain a field in the header, then this field is given the null value.
 
 If the "echo" (-e) flag is used, then the csv_logger utility writes the received data to stdout. The csv_logger will
 write to stdout irrespective of whether a csv_logger_conf is specified, or whether logging can continue (for example,
