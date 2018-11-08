@@ -43,7 +43,7 @@ class MultiChart(Chart):
 
         fig = plt.figure()
 
-        fig.canvas.set_window_title(self.__paths)
+        fig.canvas.set_window_title(', '.join(self.__paths))
 
         fig.canvas.mpl_connect('close_event', self.close)
 
