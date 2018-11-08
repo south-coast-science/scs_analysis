@@ -101,8 +101,8 @@ if __name__ == '__main__':
             start = cmd.start
 
         if cmd.verbose:
-            print("start: %s" % start, file=sys.stderr)
-            print("end: %s" % end, file=sys.stderr)
+            print("osio_topic_history: start: %s" % start, file=sys.stderr)
+            print("osio_topic_history: end: %s" % end, file=sys.stderr)
             sys.stderr.flush()
 
         # messages...
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(document))
 
         if cmd.verbose:
-            print("total: %d" % len(messages), file=sys.stderr)
+            print("osio_topic_history: total: %d" % len(messages), file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
