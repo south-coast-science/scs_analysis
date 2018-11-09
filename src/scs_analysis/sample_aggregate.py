@@ -52,6 +52,11 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
+# TODO: detect precision automatically
+# TODO: if no paths are specified, use all
+
+# TODO: do the above for some other utilities ... ?
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleAggregate(object):
