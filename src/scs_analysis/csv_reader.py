@@ -108,7 +108,7 @@ if __name__ == '__main__':
     finally:
 
         if reader is not None:
-            if cmd and cmd.array:
+            if cmd is not None and cmd.array:
                 print(']')
 
             reader.close()
