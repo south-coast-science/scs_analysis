@@ -106,8 +106,9 @@ if __name__ == '__main__':
             print("csv_reader: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-        if cmd and cmd.array:
-            print(']')
 
         if reader is not None:
+            if cmd and cmd.array:
+                print(']')
+
             reader.close()
