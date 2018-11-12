@@ -78,18 +78,19 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        if cmd.array:
+            print('[', end='')
+
         first = True
 
         for datum in reader.rows:
             if cmd.array:
                 if first:
-                    prefix = '['
+                    print(datum, end='')
                     first = False
 
                 else:
-                    prefix = ','
-
-                print("%s%s" % (prefix, datum), end='')
+                    print(",%s" % datum, end='')
 
             else:
                 print(datum)
