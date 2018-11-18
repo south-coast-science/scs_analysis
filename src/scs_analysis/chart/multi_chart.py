@@ -114,13 +114,13 @@ class MultiChart(Chart):
 
 
     def __plot_data(self, x_data):
-        coords = []
+        coordinates = []
 
         for i in range(len(self.__y_data)):
-            coords.append(x_data)
-            coords.append(self.__y_data[i])
+            coordinates.append(x_data)
+            coordinates.append(self.__y_data[i])
 
-        return coords
+        return coordinates
 
 
     @property
