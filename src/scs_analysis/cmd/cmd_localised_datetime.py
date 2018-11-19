@@ -7,6 +7,9 @@ Created on 20 Feb 2017
 import optparse
 
 
+# TODO: handle timezone offset names and +NN:NN formats
+# TODO: use this for both localised_datetime and sample_timezone
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdLocalizedDatetime(object):

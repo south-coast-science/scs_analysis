@@ -46,14 +46,22 @@ if __name__ == '__main__':
 
     cmd = CmdNode()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print("node: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
-
     try:
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        if cmd.array:
+            print('[', end='')
+
+        first = True
 
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
@@ -65,18 +73,28 @@ if __name__ == '__main__':
                 continue
 
             node = datum.node(cmd.path)
+            document = JSONify.dumps(node)
 
             if cmd.sequence:
                 try:
                     for item in node:
                         print(JSONify.dumps(item))
                 except TypeError:
-                    print(JSONify.dumps(node))
+                    print(document)
 
             else:
-                print(JSONify.dumps(node))
+                if cmd.array:
+                    if first:
+                        print(document, end='')
+                        first = False
 
-                sys.stdout.flush()
+                    else:
+                        print(", %s" % document, end='')
+
+                else:
+                    print(document)
+
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,3 +103,8 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("node: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.array:
+            print(']')
+
