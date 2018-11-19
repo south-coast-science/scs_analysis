@@ -117,4 +117,3 @@ if __name__ == '__main__':
     finally:
         if cmd.array:
             print(']')
-
