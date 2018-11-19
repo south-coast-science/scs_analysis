@@ -29,8 +29,8 @@ SYNOPSIS
 sample_timezone.py { -z | TIMEZONE_NAME }
 
 EXAMPLES
-./aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
--e 2018-10-28T03:00:00+00:00 | ./sample_timezone.py -n Europe/Paris
+aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
+-e 2018-10-28T03:00:00+00:00 | sample_timezone.py -n Europe/Paris
 
 DOCUMENT EXAMPLE - INPUT
 {"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T00:00:46.037+00:00", "tag": "scs-be2-2"}
