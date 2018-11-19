@@ -19,6 +19,10 @@ date / time value. Thus, UTC offsets are not the same thing as timezones! It is 
 timezone, but sifting to a subsequent timezone can have unexpected results, particularly on daylight saving time
 boundaries.
 
+The sample_timezone utility silently ignores input lines which have:
+* A malformed JSON document
+* No 'rec' field, or a 'rec' field with a malformed ISO 8601 datetime
+
 Note that the timezone of a South Coast Science device is normally reported on its status topic.
 
 SYNOPSIS
