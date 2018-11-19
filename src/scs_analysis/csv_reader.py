@@ -54,19 +54,17 @@ from scs_core.csv.csv_reader import CSVReader
 
 if __name__ == '__main__':
 
-    cmd = None
     reader = None
 
+    # ----------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdCSVReader()
+
+    if cmd.verbose:
+        print("csv_reader: %s" % cmd, file=sys.stderr)
+
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # cmd...
-
-        cmd = CmdCSVReader()
-
-        if cmd.verbose:
-            print("csv_reader: %s" % cmd, file=sys.stderr)
-
-
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
@@ -92,7 +90,7 @@ if __name__ == '__main__':
                     first = False
 
                 else:
-                    print(",%s" % datum, end='')
+                    print(", %s" % datum, end='')
 
             else:
                 print(datum)
@@ -108,9 +106,8 @@ if __name__ == '__main__':
             print("csv_reader: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-
         if reader is not None:
-            if cmd is not None and cmd.array:
+            if cmd.array:
                 print(']')
 
             reader.close()
