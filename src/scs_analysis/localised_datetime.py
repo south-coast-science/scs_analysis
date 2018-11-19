@@ -12,10 +12,11 @@ system, in ISO 8601 format. Optional offsets in hours, minutes and seconds can b
 The utility is useful when composing topic history data requests.
 
 SYNOPSIS
-localised_datetime.py [-o HOURS] [-m MINUTES] [-s SECONDS]
+localised_datetime.py { -n TIMEZONE_NAME | -o TIMEZONE_OFFSET }
 
 EXAMPLES
-localised_datetime.py -o 1
+localised_datetime.py -n Europe/Athens
+localised_datetime.py -o +02:00
 
 DOCUMENT EXAMPLE - OUTPUT
 2018-04-05T18:42:03.702+00:00
