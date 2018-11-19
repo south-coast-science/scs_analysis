@@ -1,26 +1,133 @@
 #!/usr/bin/env python3
 
 """
-Created on 14 Nov 2018
+Created on 19 Nov 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_timezone utility is used to shift the rec datetime field from the given UTC offset to the specified offset.
+The sample_timezone utility is used to shift the rec datetime field of each input document from its current offset to
+the offset determined by the given timezone. This is particularly useful when using data visualisation systems that are
+not localisation-aware.
 
-Not easy...
+When the transform is applied, the the date / time is shifted, and the UTC offset field is altered accordingly. Thus,
+the resulting localised datetime represents the same point in global history, presented for a alternative UTC offset.
+
+In most cases, the UTC offset of a timezone is dependent on daylight saving time. The sample_timezone utility is
+sensitive to this - the adjustment to the UTC offset of each document's rec field is dependent on its specific
+date / time value. Thus, UTC offsets are not the same thing as timezones! It is always safe to shift from UTC to a
+timezone, but sifting to a subsequent timezone can have unexpected results, particularly on daylight saving time
+boundaries.
+
+Note that the timezone of a South Coast Science device is normally reported on its status topic.
 
 SYNOPSIS
-sample_timezone.py { -n TIMEZONE_NAME | -o TIMEZONE_OFFSET }
+sample_timezone.py { -z | TIMEZONE_NAME }
 
 EXAMPLES
-sample_timezone.py -n Europe/Athens
-sample_timezone.py -o +02:00
+./aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
+-e 2018-10-28T03:00:00+00:00 | ./sample_timezone.py -n Europe/Paris
+
+DOCUMENT EXAMPLE - INPUT
+{"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T00:00:46.037+00:00", "tag": "scs-be2-2"}
 
 DOCUMENT EXAMPLE - OUTPUT
-2018-04-05T18:42:03.702+00:00
+{"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T01:00:46.037+01:00", "tag": "scs-be2-2"}
 
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
+http://pytz.sourceforge.net
+
+BUGS
+Because the sample_timezone utility is based on the pytz library, offset errors may occur when using the Etc/GMT+/-N
+pseudo-timezones.
 """
 
+import json
+import sys
+
+from collections import OrderedDict
+
+from scs_analysis.cmd.cmd_sample_timezone import CmdSampleTimezone
+
+from scs_core.data.json import JSONify
+from scs_core.data.localized_datetime import LocalizedDatetime
+
+from scs_core.location.timezone import Timezone
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+
+    timezone = None
+    zone = None
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdSampleTimezone()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
+    if cmd.verbose:
+        print("sample_timezone: %s" % cmd, file=sys.stderr)
+
+    try:
+        # ------------------------------------------------------------------------------------------------------------
+        # resouces...
+
+        if cmd.name:
+            try:
+                timezone = Timezone(cmd.name)
+                zone = timezone.zone
+
+            except ValueError:
+                print("sample_timezone: unrecognised name:%s" % cmd.name, file=sys.stderr)
+                exit(2)
+
+            if cmd.verbose:
+                print("sample_timezone: %s" % timezone, file=sys.stderr)
+                sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # run...
+
+        if cmd.list:
+            for zone in Timezone.zones():
+                print(zone, file=sys.stderr)
+            exit(0)
+
+        for line in sys.stdin:
+            try:
+                jdict = json.loads(line, object_pairs_hook=OrderedDict)
+            except ValueError:
+                continue
+
+            try:
+                rec = jdict['rec']
+            except KeyError:
+                continue
+
+            # zone shift...
+            datetime = LocalizedDatetime.construct_from_iso8601(rec)
+
+            if datetime is None:
+                continue
+
+            jdict['rec'] = datetime.localize(zone)
+
+            # report...
+            print(JSONify.dumps(jdict))
+            sys.stdout.flush()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # end...
+
+    except KeyboardInterrupt:
+        if cmd.verbose:
+            print("sample_timezone: KeyboardInterrupt", file=sys.stderr)
