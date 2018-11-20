@@ -103,6 +103,7 @@ if __name__ == '__main__':
         for message in messages:
             document = message if cmd.include_wrapping else message.payload
             print(JSONify.dumps(document))
+            sys.stdout.flush()
 
         if cmd.verbose:
             print("aws_topic_history: total: %d" % len(messages), file=sys.stderr)

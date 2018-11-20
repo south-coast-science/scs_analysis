@@ -19,14 +19,18 @@ date / time value. Thus, UTC offsets are not the same thing as timezones! It is 
 timezone, but sifting to a subsequent timezone can have unexpected results, particularly on daylight saving time
 boundaries.
 
+The sample_timezone utility silently ignores input lines which have:
+* A malformed JSON document
+* No 'rec' field, or a 'rec' field with a malformed ISO 8601 datetime
+
 Note that the timezone of a South Coast Science device is normally reported on its status topic.
 
 SYNOPSIS
 sample_timezone.py { -z | TIMEZONE_NAME }
 
 EXAMPLES
-./aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
--e 2018-10-28T03:00:00+00:00 | ./sample_timezone.py -n Europe/Paris
+aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
+-e 2018-10-28T03:00:00+00:00 | sample_timezone.py -n Europe/Paris
 
 DOCUMENT EXAMPLE - INPUT
 {"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T00:00:46.037+00:00", "tag": "scs-be2-2"}

@@ -20,7 +20,7 @@ class CmdSampleTimezone(object):
 
         # optional...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
-                                 help="list available timezone names to stderr")
+                                 help="list the available timezone names to stderr")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
