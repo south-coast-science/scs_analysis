@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
             interval = Interval.construct(prev_time, time, cmd.precision)
             print(JSONify.dumps(interval))
+            sys.stdout.flush()
 
             prev_time = time
 
