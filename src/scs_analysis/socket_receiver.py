@@ -37,6 +37,8 @@ from scs_analysis.cmd.cmd_socket_receiver import CmdSocketReceiver
 from scs_host.comms.network_socket import NetworkSocket
 
 
+# TODO: does this work on Windows? Does it need a fixed IP address?
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
