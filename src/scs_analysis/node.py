@@ -74,7 +74,10 @@ if __name__ == '__main__':
         first = True
 
         for line in sys.stdin:
+            print("node: line:[%s]" % line)
+
             datum = PathDict.construct_from_jstr(line)
+            print("node: datum:[%s]" % datum)
 
             if datum is None:
                 continue
