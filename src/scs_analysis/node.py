@@ -77,7 +77,7 @@ if __name__ == '__main__':
             print("node: line:[%s]" % line)
 
             datum = PathDict.construct_from_jstr(line)
-            print("node: datum:[%s]" % datum)
+            # print("node: datum:[%s]" % datum)
 
             if datum is None:
                 continue
