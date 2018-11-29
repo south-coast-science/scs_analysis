@@ -52,7 +52,8 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: detect precision automatically
+# TODO: detect precision automatically - with Datum.precision(value)
+
 # TODO: if no paths are specified, use all
 
 # TODO: do the above for some other utilities ... ?
