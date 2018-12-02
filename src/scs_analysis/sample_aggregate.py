@@ -11,7 +11,7 @@ time. It can perform this operation for one or many nodes of the input documents
 
 When each time checkpoint is encountered in the input stream, the midpoint values - together with min and max, if
 requested -  are computed and reported. These values are marked with the datetime indicating the end of that period.
-When the input stream is closed, any remaining values are reported and marked with the following checkpoint.
+When the input stream is closed, any remaining values are reported and marked with the next checkpoint.
 
 Checkpoints are specified in the form HH:MM:SS, in a format similar to that for crontab:
 
@@ -52,7 +52,8 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: detect precision automatically
+# TODO: detect precision automatically - with Datum.precision(value)
+
 # TODO: if no paths are specified, use all
 
 # TODO: do the above for some other utilities ... ?
