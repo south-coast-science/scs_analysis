@@ -42,8 +42,9 @@ EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val.CO.cnc 1
 """
 
-import decimal
 import sys
+
+from decimal import InvalidOperation
 
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
@@ -100,7 +101,7 @@ class SampleAggregate(object):
                     self.__regressions[topic.path].append(datetime, value)
                     topic.widen_precision(value)
 
-                except decimal.InvalidOperation:
+                except InvalidOperation:
                     print("sample_aggregate: invalid value: %s" % str(value), file=sys.stderr)
                     exit(1)
 
