@@ -7,7 +7,7 @@ Created on 24 Oct 2018
 import optparse
 
 from scs_core.data.checkpoint_generator import CheckpointGenerator
-from scs_core.data.topic import Topic
+from scs_core.data.leaf import Leaf
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 .. PATH_N",
+        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]",
                                               version="%prog 1.0")
 
         # optional...
@@ -41,7 +41,7 @@ class CmdSampleAggregate(object):
         if self.checkpoint_generator is None:
             return False
 
-        if self.topics is None:
+        if self.nodes is None:
             return False
 
         return True
@@ -53,17 +53,18 @@ class CmdSampleAggregate(object):
     def checkpoint_generator(self):
         try:
             return CheckpointGenerator.construct(self.__opts.checkpoint)
+
         except (AttributeError, ValueError):
             return None
 
 
     @property
-    def topics(self):
+    def nodes(self):
         if len(self.__args) == 0:
             return None
 
         try:
-            return [Topic(path) for path in self.args]
+            return [Leaf(path) for path in self.args]
 
         except ValueError:
             return None
@@ -91,5 +92,7 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, verbose:%s, topics:%s, args:%s}" %  \
-               (self.__opts.checkpoint, self.min_max, self.verbose, self.topics, self.args)
+        nodes = '[' + ', '.join(str(node) for node in self.nodes) + ']'
+
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, verbose:%s, nodes:%s, args:%s}" %  \
+               (self.__opts.checkpoint, self.min_max, self.verbose, nodes, self.args)
