@@ -97,14 +97,16 @@ class SampleAggregate(object):
             except KeyError:
                 continue
 
-            if value is not None:
-                try:
-                    self.__regressions[node.path].append(datetime, value)
-                    node.widen_precision(value)
+            if value is None:
+                continue
 
-                except InvalidOperation:
-                    print("sample_aggregate: non-numeric value for %s: %s" % (node.path, str(value)), file=sys.stderr)
-                    exit(1)
+            try:
+                self.__regressions[node.path].append(datetime, value)
+                node.widen_precision(value)
+
+            except InvalidOperation:
+                print("sample_aggregate: non-numeric value for %s: %s" % (node.path, str(value)), file=sys.stderr)
+                exit(1)
 
 
     def reset(self):
