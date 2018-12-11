@@ -36,7 +36,7 @@ At each checkpoint, if there are no values for a given path, then that path is n
 there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
-sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 .. PATH_N
+sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]
 
 EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val.CO.cnc 1
@@ -54,8 +54,8 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: if no paths are specified, use all
-# TODO: do the above for some other utilities ... ?
+# TODO: if no paths are specified, use all - do this for some other utilities...
+# TODO: CmdSampleAggregate supplies the nodes, we then use the stdin document to provide the leaf nodes
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -66,17 +66,17 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, min_max, topics):
+    def __init__(self, min_max, nodes):
         """
         Constructor
         """
         self.__min_max = min_max
-        self.__topics = topics
+        self.__nodes = nodes
 
         self.__regressions = {}
 
-        for topic in self.__topics:
-            self.__regressions[topic.path] = LinearRegression()
+        for node in self.__nodes:
+            self.__regressions[node.path] = LinearRegression()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -90,20 +90,24 @@ class SampleAggregate(object):
 
 
     def append(self, datetime, sample):
-        for topic in self.__topics:
+        for node in self.__nodes:
             try:
-                value = sample.node(topic.path)
+                value = sample.node(node.path)
+
             except KeyError:
                 continue
 
-            if value is not None:
-                try:
-                    self.__regressions[topic.path].append(datetime, value)
-                    topic.widen_precision(value)
+            if value is None:
+                continue
 
-                except InvalidOperation:
-                    print("sample_aggregate: invalid value: %s" % str(value), file=sys.stderr)
-                    exit(1)
+            try:
+                self.__regressions[node.path].append(datetime, value)
+                node.widen_precision(value)
+
+            except InvalidOperation:
+                print("sample_aggregate: non-numeric value for %s: %s" % (node.path, str(value)), file=sys.stderr)
+                exit(1)
+
 
     def reset(self):
         for path in self.__regressions.keys():
@@ -115,19 +119,22 @@ class SampleAggregate(object):
 
         report.append('rec', localised_datetime.as_iso8601())
 
-        for topic in self.__topics:
-            regression = self.__regressions[topic.path]
+        for node in self.__nodes:
+            path = node.path
+            precision = node.precision
 
-            if self.__regressions[topic.path].has_midpoint():
+            regression = self.__regressions[path]
+
+            if self.__regressions[path].has_midpoint():
                 _, midpoint = regression.midpoint()
 
                 if self.__min_max:
-                    report.append(topic.path + '.min', round(regression.min(), topic.precision))
-                    report.append(topic.path + '.mid', round(midpoint, topic.precision))
-                    report.append(topic.path + '.max', round(regression.max(), topic.precision))
+                    report.append(path + '.min', round(regression.min(), precision))
+                    report.append(path + '.mid', round(midpoint, precision))
+                    report.append(path + '.max', round(regression.max(), precision))
 
                 else:
-                    report.append(topic.path, round(midpoint, topic.precision))
+                    report.append(path, round(midpoint, precision))
 
         return report
 
@@ -163,7 +170,7 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.topics)
+        aggregate = SampleAggregate(cmd.min_max, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
