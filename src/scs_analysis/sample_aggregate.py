@@ -36,13 +36,15 @@ At each checkpoint, if there are no values for a given path, then that path is n
 there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
-sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. PATH_N PRECISION_N
+sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 .. PATH_N
 
 EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val.CO.cnc 1
 """
 
 import sys
+
+from decimal import InvalidOperation
 
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
@@ -52,10 +54,7 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: detect precision automatically - with Datum.precision(value)
-
 # TODO: if no paths are specified, use all
-
 # TODO: do the above for some other utilities ... ?
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -76,8 +75,8 @@ class SampleAggregate(object):
 
         self.__regressions = {}
 
-        for path in self.__topics.keys():
-            self.__regressions[path] = LinearRegression()
+        for topic in self.__topics:
+            self.__regressions[topic.path] = LinearRegression()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -91,15 +90,20 @@ class SampleAggregate(object):
 
 
     def append(self, datetime, sample):
-        for path in self.__topics.keys():
+        for topic in self.__topics:
             try:
-                value = sample.node(path)
+                value = sample.node(topic.path)
             except KeyError:
                 continue
 
             if value is not None:
-                self.__regressions[path].append(datetime, value)
+                try:
+                    self.__regressions[topic.path].append(datetime, value)
+                    topic.widen_precision(value)
 
+                except InvalidOperation:
+                    print("sample_aggregate: invalid value: %s" % str(value), file=sys.stderr)
+                    exit(1)
 
     def reset(self):
         for path in self.__regressions.keys():
@@ -111,19 +115,19 @@ class SampleAggregate(object):
 
         report.append('rec', localised_datetime.as_iso8601())
 
-        for path, precision in self.__topics.items():
-            regression = self.__regressions[path]
+        for topic in self.__topics:
+            regression = self.__regressions[topic.path]
 
-            if self.__regressions[path].has_midpoint():
+            if self.__regressions[topic.path].has_midpoint():
                 _, midpoint = regression.midpoint()
 
                 if self.__min_max:
-                    report.append(path + '.min', round(regression.min(), precision))
-                    report.append(path + '.mid', round(midpoint, precision))
-                    report.append(path + '.max', round(regression.max(), precision))
+                    report.append(topic.path + '.min', round(regression.min(), topic.precision))
+                    report.append(topic.path + '.mid', round(midpoint, topic.precision))
+                    report.append(topic.path + '.max', round(regression.max(), topic.precision))
 
                 else:
-                    report.append(path, round(midpoint, precision))
+                    report.append(topic.path, round(midpoint, topic.precision))
 
         return report
 

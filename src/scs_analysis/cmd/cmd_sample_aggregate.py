@@ -7,6 +7,7 @@ Created on 24 Oct 2018
 import optparse
 
 from scs_core.data.checkpoint_generator import CheckpointGenerator
+from scs_core.data.topic import Topic
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -18,8 +19,8 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 PRECISION_1 .. "
-                                                    "PATH_N PRECISION_N", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 .. PATH_N",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
@@ -58,15 +59,11 @@ class CmdSampleAggregate(object):
 
     @property
     def topics(self):
-        if len(self.__args) == 0 or len(self.args) % 2 == 1:
+        if len(self.__args) == 0:
             return None
 
         try:
-            topics = {}
-            for i in range(0, len(self.args), 2):
-                topics[self.args[i]] = int(self.args[i + 1])
-
-            return topics
+            return [Topic(path) for path in self.args]
 
         except ValueError:
             return None
