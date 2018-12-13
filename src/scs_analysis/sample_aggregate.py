@@ -52,10 +52,10 @@ from decimal import InvalidOperation
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.json import JSONify
-from scs_core.data.precision import Precision
 from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
+from scs_core.data.precision import Precision
 
 
 # --------------------------------------------------------------------------------------------------------------------
