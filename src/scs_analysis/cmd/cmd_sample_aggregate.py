@@ -7,7 +7,6 @@ Created on 24 Oct 2018
 import optparse
 
 from scs_core.data.checkpoint_generator import CheckpointGenerator
-from scs_core.data.leaf import Leaf
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -19,7 +18,7 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]",
+        self.__parser = optparse.OptionParser(usage="%prog -c [-m] [-t] [-v] HH:MM:SS PATH_1 [.. PATH_N]",
                                               version="%prog 1.0")
 
         # optional...
@@ -28,6 +27,9 @@ class CmdSampleAggregate(object):
 
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
                                  help="a time specification as **:/5:00")
+
+        self.__parser.add_option("--include-tag", "-t", action="store_true", dest="include_tag", default=False,
+                                 help="include tag field, if present")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -41,7 +43,7 @@ class CmdSampleAggregate(object):
         if self.checkpoint_generator is None:
             return False
 
-        if self.nodes is None:
+        if len(self.nodes) == 0:
             return False
 
         return True
@@ -60,19 +62,17 @@ class CmdSampleAggregate(object):
 
     @property
     def nodes(self):
-        if len(self.__args) == 0:
-            return None
-
-        try:
-            return [Leaf(path) for path in self.args]
-
-        except ValueError:
-            return None
+        return self.args
 
 
     @property
     def min_max(self):
         return self.__opts.min_max
+
+
+    @property
+    def include_tag(self):
+        return self.__opts.include_tag
 
 
     @property
@@ -92,7 +92,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        nodes = '[' + ', '.join(str(node) for node in self.nodes) + ']'
-
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, verbose:%s, nodes:%s, args:%s}" %  \
-               (self.__opts.checkpoint, self.min_max, self.verbose, nodes, self.args)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, include_tag:%s, verbose:%s, nodes:%s, args:%s}" %  \
+               (self.__opts.checkpoint, self.min_max, self.include_tag, self.verbose, self.nodes, self.args)
