@@ -22,8 +22,8 @@ NN - exactly matching NN
 For example, **:/5:30 indicates 30 seconds past the minute, every 5 minutes, during every hour.
 
 Data sources are specified as a path into the input JSON document in the same format as the node command. Any number of
-paths can be specified. For each path, a positive integer must also be supplied, indicating the precision to which the
-midpoint result should be reported.
+paths can be specified. If a path to an internal node in the JSON document is specified, then all of the
+descendants of that node will be processed.
 
 The input JSON document must contain a field labelled 'rec', providing an ISO 8601 localised datetime. If this field
 is not present then the document is skipped. Note that the timezone of the output rec datetimes is the same as the
@@ -36,10 +36,10 @@ At each checkpoint, if there are no values for a given path, then that path is n
 there are no values for any path, then no report is written to stdout.
 
 SYNOPSIS
-sample_aggregate.py [-m] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]
+sample_aggregate.py -c HH:MM:SS [-m] [-t] [-v] PATH_1 [.. PATH_N]
 
 EXAMPLES
-csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val.CO.cnc 1
+csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val
 """
 
 import sys
@@ -49,13 +49,11 @@ from decimal import InvalidOperation
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 
 from scs_core.data.json import JSONify
+from scs_core.data.precision import Precision
 from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
-
-# TODO: if no paths are specified, use all - do this for some other utilities...
-# TODO: CmdSampleAggregate supplies the nodes, we then use the stdin document to provide the leaf nodes
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -66,17 +64,20 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, min_max, nodes):
+    def __init__(self, min_max, include_tag, nodes):
         """
         Constructor
         """
         self.__min_max = min_max
         self.__nodes = nodes
 
+        self.__precisions = {}
         self.__regressions = {}
 
-        for node in self.__nodes:
-            self.__regressions[node.path] = LinearRegression()
+        self.__initialised = False
+
+        self.__include_tag = include_tag
+        self.__tag = None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -89,10 +90,25 @@ class SampleAggregate(object):
         return False
 
 
-    def append(self, datetime, sample):
-        for node in self.__nodes:
+    def append(self, datetime: LocalizedDatetime, sample: PathDict):
+        # initialise...
+        if not self.__initialised:
+            for node in self.__nodes:
+                for path in sample.paths(node):
+                    self.__precisions[path] = Precision()
+                    self.__regressions[path] = LinearRegression()
+
+            self.__initialised = True
+
+        # tag...
+        if self.__include_tag:
+            if sample.has_path('tag'):
+                self.__tag = sample.node('tag')
+
+        # process data...
+        for path in self.__precisions.keys():
             try:
-                value = sample.node(node.path)
+                value = sample.node(path)
 
             except KeyError:
                 continue
@@ -101,11 +117,11 @@ class SampleAggregate(object):
                 continue
 
             try:
-                self.__regressions[node.path].append(datetime, value)
-                node.widen_precision(value)
+                self.__precisions[path].widen(value)
+                self.__regressions[path].append(datetime, value)
 
             except InvalidOperation:
-                print("sample_aggregate: non-numeric value for %s: %s" % (node.path, str(value)), file=sys.stderr)
+                print("sample_aggregate: non-numeric value for %s: %s" % (path, str(value)), file=sys.stderr)
                 exit(1)
 
 
@@ -117,24 +133,24 @@ class SampleAggregate(object):
     def report(self, localised_datetime):
         report = PathDict()
 
+        if self.__tag:
+            report.append('tag', self.__tag)
+
         report.append('rec', localised_datetime.as_iso8601())
 
-        for node in self.__nodes:
-            path = node.path
-            precision = node.precision
-
+        for path, precision in self.__precisions.items():
             regression = self.__regressions[path]
 
             if self.__regressions[path].has_midpoint():
                 _, midpoint = regression.midpoint()
 
                 if self.__min_max:
-                    report.append(path + '.min', round(regression.min(), precision))
-                    report.append(path + '.mid', round(midpoint, precision))
-                    report.append(path + '.max', round(regression.max(), precision))
+                    report.append(path + '.min', round(regression.min(), precision.digits))
+                    report.append(path + '.mid', round(midpoint, precision.digits))
+                    report.append(path + '.max', round(regression.max(), precision.digits))
 
                 else:
-                    report.append(path, round(midpoint, precision))
+                    report.append(path, round(midpoint, precision.digits))
 
         return report
 
@@ -170,7 +186,7 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.nodes)
+        aggregate = SampleAggregate(cmd.min_max, cmd.include_tag, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)

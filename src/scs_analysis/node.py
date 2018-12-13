@@ -79,7 +79,7 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
-            if cmd.ignore and not datum.has_path(cmd.path):
+            if cmd.ignore and not datum.has_sub_path(cmd.path):
                 continue
 
             node = datum.node(cmd.path)
