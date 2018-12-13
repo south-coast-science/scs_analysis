@@ -25,6 +25,9 @@ Data sources are specified as a path into the input JSON document in the same fo
 paths can be specified. If a path to an internal node in the JSON document is specified, then all of the
 descendants of that node will be processed.
 
+Note that the leaf node paths to be processed are obtained from the sub-paths provided on the command line, and the
+actual paths found in the first JSON document. Paths that do not exist in the first document are ignored.
+
 The input JSON document must contain a field labelled 'rec', providing an ISO 8601 localised datetime. If this field
 is not present then the document is skipped. Note that the timezone of the output rec datetimes is the same as the
 input rec values.
