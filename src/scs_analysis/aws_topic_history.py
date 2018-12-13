@@ -33,7 +33,7 @@ import time
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 
 from scs_core.aws.client.api_auth import APIAuth
-from scs_core.aws.manager.ec2_message_manager import MessageManager
+from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
