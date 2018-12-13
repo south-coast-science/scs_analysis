@@ -117,7 +117,7 @@ class SampleAggregate(object):
             if sample.has_path('tag'):
                 self.__tag = sample.node('tag')
 
-        # process data...
+        # values...
         for path in self.__precisions.keys():
             try:
                 value = sample.node(path)
@@ -146,11 +146,14 @@ class SampleAggregate(object):
     def report(self, localised_datetime):
         report = PathDict()
 
+        # tag...
         if self.__tag:
             report.append('tag', self.__tag)
 
+        # rec...
         report.append('rec', localised_datetime.as_iso8601())
 
+        # values...
         for path, precision in self.__precisions.items():
             regression = self.__regressions[path]
 
