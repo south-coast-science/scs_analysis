@@ -94,7 +94,16 @@ class SampleAggregate(object):
         # initialise...
         if not self.__initialised:
             for node in self.__nodes:
-                for path in sample.paths(node):
+                try:
+                    paths = sample.paths(node)
+
+                except IndexError as ex:
+                    paths = None
+                    print("sample_aggregate: %s: %s" % (node, ex), file=sys.stderr)
+                    sys.stderr.flush()
+                    exit(1)
+
+                for path in paths:
                     self.__precisions[path] = Precision()
                     self.__regressions[path] = LinearRegression()
 
@@ -122,6 +131,7 @@ class SampleAggregate(object):
 
             except InvalidOperation:
                 print("sample_aggregate: non-numeric value for %s: %s" % (path, str(value)), file=sys.stderr)
+                sys.stderr.flush()
                 exit(1)
 
 
