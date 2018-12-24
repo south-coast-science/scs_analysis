@@ -12,12 +12,12 @@ ingested by the data storage system.
 
 The aws_upload_interval utility relies on the data format provided by the aws_topic_history utility - when invoked with
 its -w ("wrapper") flag, the aws_topic_history output includes an "upload" field, indicating the date / time at which
-the document was processed. The sense document itself is provided in the "payload" field. The aws_upload_interval
+the document was processed. The sense document itself is provided in the "payload.rec" field. The aws_upload_interval
 utility reports on the difference between the two date / times in seconds.
 
 The utility accepts input from stdin. If an input document is empty or is not well-formed JSON, the document is
 ignored. If the document is well-formed JSON, but does not contain the required "upload" and "payload.rec" fields or
-the fields are not ISO 8601 date / times, then an error is reported, and the aws_upload_interval utility terminates.
+the fields are not in ISO 8601 format, then an error is reported, and the aws_upload_interval utility terminates.
 
 SYNOPSIS
 aws_upload_interval.py
