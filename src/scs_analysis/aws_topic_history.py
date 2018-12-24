@@ -149,7 +149,7 @@ if __name__ == '__main__':
         try:
             # messages...
             for message in message_manager.find_for_topic(cmd.path, start, end):
-                document = message if cmd.include_wrapping else message.payload
+                document = message if cmd.include_wrapper else message.payload
 
                 print(JSONify.dumps(document))
                 sys.stdout.flush()
