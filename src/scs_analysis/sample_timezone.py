@@ -122,7 +122,7 @@ if __name__ == '__main__':
             if datetime is None:
                 continue
 
-            jdict['rec'] = datetime.localize(zone)
+            jdict['rec'] = datetime.localize(zone).as_iso8601()
 
             # report...
             print(JSONify.dumps(jdict))
