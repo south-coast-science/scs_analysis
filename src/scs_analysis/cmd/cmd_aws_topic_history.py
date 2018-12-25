@@ -31,7 +31,7 @@ class CmdAWSTopicHistory(object):
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="localised datetime end")
 
-        self.__parser.add_option("--wrapping", "-w", action="store_true", dest="include_wrapping", default=False,
+        self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include message wrapper")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -79,8 +79,8 @@ class CmdAWSTopicHistory(object):
 
 
     @property
-    def include_wrapping(self):
-        return self.__opts.include_wrapping
+    def include_wrapper(self):
+        return self.__opts.include_wrapper
 
 
     @property
@@ -105,7 +105,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{minutes:%s, start:%s, end:%s, include_wrapping:%s, " \
+        return "CmdAWSTopicHistory:{minutes:%s, start:%s, end:%s, include_wrapper:%s, " \
                "verbose:%s, path:%s, args:%s}" % \
-                    (self.minutes, self.start, self.end, self.include_wrapping,
+                    (self.minutes, self.start, self.end, self.include_wrapper,
                      self.verbose, self.path, self.args)

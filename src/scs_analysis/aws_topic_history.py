@@ -38,6 +38,8 @@ from scs_core.aws.manager.lambda_message_manager import MessageManager
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
 
+from scs_core.sys.http_exception import HTTPException
+
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
@@ -144,12 +146,17 @@ if __name__ == '__main__':
             print("aws_topic_history: end: %s" % end, file=sys.stderr)
             sys.stderr.flush()
 
-        # messages...
-        for message in message_manager.find_for_topic(cmd.path, start, end):
-            document = message if cmd.include_wrapping else message.payload
+        try:
+            # messages...
+            for message in message_manager.find_for_topic(cmd.path, start, end):
+                document = message if cmd.include_wrapper else message.payload
 
-            print(JSONify.dumps(document))
-            sys.stdout.flush()
+                print(JSONify.dumps(document))
+                sys.stdout.flush()
+
+        except HTTPException as ex:
+            print("aws_topic_history: %s" % ex, file=sys.stderr)
+            exit(1)
 
 
     # ----------------------------------------------------------------------------------------------------------------
