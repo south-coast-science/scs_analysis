@@ -7,10 +7,11 @@ Created on 25 Dec 2018
 
 DESCRIPTION
 The aws_byline utility is used to find the date / time of the most-recently published message for a given topic
-or device. The use may specify a topic path or a device tag, but not both.
+or device. The user may specify a topic path (find all devices that have published to the given topic), or a device tag
+(find all topics which the given device has published to), but not both.
 
-Output is in the form of zero or more JSON documents, indicating device, topic and localised date / time for each
-latest-publication event.
+Output is in the form of zero or more JSON documents, indicating the device, topic and localised date / time for each
+latest sense event.
 
 SYNOPSIS
 aws_byline.py { -d DEVICE | -t TOPIC } [-v]
@@ -19,8 +20,7 @@ EXAMPLES
 aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
 
 DOCUMENT EXAMPLE - OUTPUT
-{"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/device/praxis-000401/control",
-"latest-rec": "2018-07-25T09:53:57Z"}
+{"device": "scs-be2-3", "topic": "south-coast-science-dev/development/loc/1/gases", "rec": "2018-12-25T20:31:04Z"}
 
 SEE ALSO
 scs_analysis/aws_topic_history
