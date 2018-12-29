@@ -18,10 +18,13 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m MINUTES | -s START [-e END] } [-w] [-v] PATH",
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -m MINUTES | -s START [-e END] } [-w] [-v] TOPIC",
                                               version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
+                                 help="the most recent document only")
+
         self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
                                  help="starting minutes ago")
 
@@ -43,7 +46,21 @@ class CmdAWSTopicHistory(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None or (self.__opts.start is None and self.minutes is None):
+        if self.topic is None:
+            return False
+
+        count = 0
+
+        if self.latest:
+            count += 1
+
+        if self.minutes is not None:
+            count += 1
+
+        if self.start is not None:
+            count += 1
+
+        if count != 1:
             return False
 
         if self.__opts.start is not None and LocalizedDatetime.construct_from_iso8601(self.__opts.start) is None:
@@ -62,6 +79,11 @@ class CmdAWSTopicHistory(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def latest(self):
+        return self.__opts.latest
+
 
     @property
     def minutes(self):
@@ -89,7 +111,7 @@ class CmdAWSTopicHistory(object):
 
 
     @property
-    def path(self):
+    def topic(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
@@ -105,7 +127,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{minutes:%s, start:%s, end:%s, include_wrapper:%s, " \
-               "verbose:%s, path:%s, args:%s}" % \
-                    (self.minutes, self.start, self.end, self.include_wrapper,
-                     self.verbose, self.path, self.args)
+        return "CmdAWSTopicHistory:{latest:%s, minutes:%s, start:%s, end:%s, include_wrapper:%s, " \
+               "verbose:%s, topic:%s, args:%s}" % \
+                    (self.latest, self.minutes, self.start, self.end, self.include_wrapper,
+                     self.verbose, self.topic, self.args)
