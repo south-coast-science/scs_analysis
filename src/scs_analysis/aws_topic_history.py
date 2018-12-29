@@ -8,13 +8,14 @@ Created on 6 Nov 2017
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
 retrieval system. Data can be retrieved by start or start + end localised date / times, or by minutes backwards
-in time from now.
+in time from now. A further "latest" mode returns the most recent document, or none if the topic has never
+received a publication.
 
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
 
 SYNOPSIS
-aws_topic_history.py { -m MINUTES | -s START [-e END] } [-w] [-v] PATH
+aws_topic_history.py { -l | -m MINUTES | -s START [-e END] } [-w] [-v] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
@@ -33,6 +34,7 @@ import time
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 
 from scs_core.aws.client.api_auth import APIAuth
+from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.data.json import JSONify
@@ -121,6 +123,9 @@ if __name__ == '__main__':
         # reporter...
         reporter = AWSTopicHistoryReporter(cmd.verbose)
 
+        # byline manager...
+        byline_manager = BylineManager(HTTPClient(), api_auth)
+
         # message manager...
         message_manager = MessageManager(HTTPClient(), api_auth, reporter)
 
@@ -132,8 +137,17 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # time...
-        if cmd.use_offset():
+        # start / end times...
+        if cmd.latest:
+            byline = byline_manager.find_latest_byline_for_topic(cmd.topic)
+
+            if byline is None:
+                exit(0)
+
+            end = byline.rec
+            start = byline.rec.timedelta(seconds=-0.1)
+
+        elif cmd.use_offset():
             end = LocalizedDatetime.now()
             start = end.timedelta(minutes=-cmd.minutes)
 
@@ -146,9 +160,9 @@ if __name__ == '__main__':
             print("aws_topic_history: end: %s" % end, file=sys.stderr)
             sys.stderr.flush()
 
+        # messages...
         try:
-            # messages...
-            for message in message_manager.find_for_topic(cmd.path, start, end):
+            for message in message_manager.find_for_topic(cmd.topic, start, end):
                 document = message if cmd.include_wrapper else message.payload
 
                 print(JSONify.dumps(document))
