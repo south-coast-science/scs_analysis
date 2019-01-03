@@ -62,11 +62,6 @@ class CmdSampleTally(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -74,5 +69,5 @@ class CmdSampleTally(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTally:{tally:%s, tally:%s, verbose:%s, path:%s, args:%s}" % \
-                    (self.tally, self.precision, self.verbose, self.path, self.args)
+        return "CmdSampleTally:{tally:%s, tally:%s, verbose:%s, path:%s}" % \
+                    (self.tally, self.precision, self.verbose, self.path)

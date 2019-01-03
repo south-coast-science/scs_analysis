@@ -46,11 +46,6 @@ class CmdOSIOTopic(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -58,4 +53,4 @@ class CmdOSIOTopic(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOTopic:{verbose:%s, path:%s, args:%s}" % (self.verbose, self.path, self.args)
+        return "CmdOSIOTopic:{verbose:%s, path:%s}" % (self.verbose, self.path)

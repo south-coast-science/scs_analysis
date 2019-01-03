@@ -91,11 +91,6 @@ class CmdAWSClientAuth(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -103,5 +98,5 @@ class CmdAWSClientAuth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSClientAuth:{endpoint:%s, client_id:%s, cert_id:%s, delete:%s, verbose:%s, args:%s}" % \
-               (self.endpoint, self.client_id, self.cert_id, self.delete, self.verbose, self.args)
+        return "CmdAWSClientAuth:{endpoint:%s, client_id:%s, cert_id:%s, delete:%s, verbose:%s}" % \
+               (self.endpoint, self.client_id, self.cert_id, self.delete, self.verbose)

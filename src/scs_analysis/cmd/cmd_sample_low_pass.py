@@ -74,11 +74,6 @@ class CmdLowPass(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -86,5 +81,5 @@ class CmdLowPass(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdLowPassFilter:{delta:%s, cut_off:%s, precision:%s, verbose:%s, path:%s, args:%s}" % \
-               (self.delta, self.cut_off, self.precision, self.verbose, self.path, self.args)
+        return "CmdLowPassFilter:{delta:%s, cut_off:%s, precision:%s, verbose:%s, path:%s}" % \
+               (self.delta, self.cut_off, self.precision, self.verbose, self.path)

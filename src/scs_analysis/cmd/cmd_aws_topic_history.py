@@ -115,11 +115,6 @@ class CmdAWSTopicHistory(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -128,6 +123,6 @@ class CmdAWSTopicHistory(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, minutes:%s, start:%s, end:%s, include_wrapper:%s, " \
-               "verbose:%s, topic:%s, args:%s}" % \
+               "verbose:%s, topic:%s}" % \
                     (self.latest, self.minutes, self.start, self.end, self.include_wrapper,
-                     self.verbose, self.topic, self.args)
+                     self.verbose, self.topic)

@@ -47,11 +47,6 @@ class CmdSampleInterval(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -59,5 +54,4 @@ class CmdSampleInterval(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleInterval:{precision:%s, verbose:%s, path:%s, args:%s}" % \
-               (self.precision, self.verbose, self.path, self.args)
+        return "CmdSampleInterval:{precision:%s, verbose:%s, path:%s}" % (self.precision, self.verbose, self.path)

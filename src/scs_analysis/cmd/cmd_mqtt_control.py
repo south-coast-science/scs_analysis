@@ -93,11 +93,6 @@ class CmdMQTTControl(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -106,6 +101,6 @@ class CmdMQTTControl(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
-               "verbose:%s, args:%s}" % \
+               "verbose:%s}" % \
                (self.__opts.tag_host_topic, self.topic, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
-                self.verbose, self.args)
+                self.verbose)

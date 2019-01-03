@@ -79,11 +79,6 @@ class CmdMultiChart(object):
         return self.__args
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -91,5 +86,5 @@ class CmdMultiChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, paths:%s, args:%s}" % \
-                    (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.paths, self.args)
+        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, paths:%s}" % \
+                    (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.paths)

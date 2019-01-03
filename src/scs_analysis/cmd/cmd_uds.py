@@ -46,11 +46,6 @@ class CmdUDS(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -58,4 +53,4 @@ class CmdUDS(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdUDS:{verbose:%s, args:%s}" %  (self.verbose, self.args)
+        return "CmdUDS:{verbose:%s}" % self.verbose

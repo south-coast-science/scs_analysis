@@ -66,11 +66,6 @@ class CmdOSIOClientAuth(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -78,5 +73,5 @@ class CmdOSIOClientAuth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOClientAuth:{user_id:%s, description:%s, verbose:%s, args:%s}" % \
-               (self.user_id, self.description, self.verbose, self.args)
+        return "CmdOSIOClientAuth:{user_id:%s, description:%s, verbose:%s}" % \
+               (self.user_id, self.description, self.verbose)

@@ -80,11 +80,6 @@ class CmdAWSAPIAuth(object):
         return self.__opts.delete
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -92,5 +87,5 @@ class CmdAWSAPIAuth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSAPIAuth:{endpoint:%s, api_key:%s, delete:%s, verbose:%s, args:%s}" % \
-               (self.endpoint, self.api_key, self.delete, self.verbose, self.args)
+        return "CmdAWSAPIAuth:{endpoint:%s, api_key:%s, delete:%s, verbose:%s}" % \
+               (self.endpoint, self.api_key, self.delete, self.verbose)

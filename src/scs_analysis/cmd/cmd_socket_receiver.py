@@ -40,13 +40,7 @@ class CmdSocketReceiver(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdSocketReceiver:{port:%d, verbose:%s, args:%s}" % \
-                    (self.port, self.verbose, self.args)
+        return "CmdSocketReceiver:{port:%d, verbose:%s}" % (self.port, self.verbose)
