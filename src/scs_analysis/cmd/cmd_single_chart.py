@@ -78,11 +78,6 @@ class CmdSingleChart(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -90,5 +85,5 @@ class CmdSingleChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, path:%s, args:%s}" % \
-                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.verbose, self.path, self.args)
+        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, verbose:%s, path:%s}" % \
+                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.verbose, self.path)

@@ -58,11 +58,6 @@ class CmdAWSByline(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -70,5 +65,4 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, verbose:%s, args:%s}" % \
-               (self.device, self.topic, self.verbose, self.args)
+        return "CmdAWSByline:{device:%s, topic:%s, verbose:%s}" % (self.device, self.topic, self.verbose)

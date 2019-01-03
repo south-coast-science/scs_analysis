@@ -54,13 +54,7 @@ class CmdOSIOAPIAuth(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdOSIOAPIAuth:{org_id:%s, api_key:%s, verbose:%s, args:%s}" % \
-               (self.org_id, self.api_key, self.verbose, self.args)
+        return "CmdOSIOAPIAuth:{org_id:%s, api_key:%s, verbose:%s}" % (self.org_id, self.api_key, self.verbose)

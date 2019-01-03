@@ -45,11 +45,6 @@ class CmdSampleFilter(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -57,5 +52,4 @@ class CmdSampleFilter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleFilter:{precision:%s, verbose:%s, path:%s, args:%s}" % \
-                    (self.precision, self.verbose, self.path, self.args)
+        return "CmdSampleFilter:{precision:%s, verbose:%s, path:%s}" % (self.precision, self.verbose, self.path)

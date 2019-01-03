@@ -46,11 +46,6 @@ class CmdSampleRecord(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -58,4 +53,4 @@ class CmdSampleRecord(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRecord:{verbose:%s, path:%s, args:%s}" % (self.verbose, self.path, self.args)
+        return "CmdSampleRecord:{verbose:%s, path:%s}" % (self.verbose, self.path)

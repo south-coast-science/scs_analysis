@@ -101,8 +101,7 @@ class AWSMQTTHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTHandler:{reporter:%s, comms:%s, echo:%s}" % \
-               (self.__reporter, self.__comms, self.__echo)
+        return "AWSMQTTHandler:{reporter:%s, comms:%s, echo:%s}" % (self.__reporter, self.__comms, self.__echo)
 
 
 # --------------------------------------------------------------------------------------------------------------------

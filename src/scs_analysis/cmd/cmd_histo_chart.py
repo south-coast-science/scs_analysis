@@ -89,11 +89,6 @@ class CmdHistoChart(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -101,7 +96,5 @@ class CmdHistoChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, path:%s, " \
-               "args:%s}" % \
-                    (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.path,
-                     self.args)
+        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, path:%s}" % \
+                    (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.path)

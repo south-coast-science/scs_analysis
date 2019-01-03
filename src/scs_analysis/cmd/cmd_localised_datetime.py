@@ -56,13 +56,8 @@ class CmdLocalizedDatetime(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdLocalizedDatetime:{hours:%s, minutes:%s, seconds:%s, verbose:%s, args:%s}" % \
-               (self.hours, self.minutes, self.seconds, self.verbose, self.args)
+        return "CmdLocalizedDatetime:{hours:%s, minutes:%s, seconds:%s, verbose:%s}" % \
+               (self.hours, self.minutes, self.seconds, self.verbose)

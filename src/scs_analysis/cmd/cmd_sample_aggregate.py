@@ -62,7 +62,7 @@ class CmdSampleAggregate(object):
 
     @property
     def nodes(self):
-        return self.args
+        return self.__args
 
 
     @property
@@ -80,11 +80,6 @@ class CmdSampleAggregate(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -92,5 +87,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, include_tag:%s, verbose:%s, nodes:%s, args:%s}" %  \
-               (self.__opts.checkpoint, self.min_max, self.include_tag, self.verbose, self.nodes, self.args)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, include_tag:%s, verbose:%s, nodes:%s}" %  \
+               (self.__opts.checkpoint, self.min_max, self.include_tag, self.verbose, self.nodes)

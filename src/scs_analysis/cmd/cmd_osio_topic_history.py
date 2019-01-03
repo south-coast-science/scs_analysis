@@ -100,11 +100,6 @@ class CmdOSIOTopicHistory(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -113,6 +108,6 @@ class CmdOSIOTopicHistory(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdOSIOTopicHistory:{minutes:%s, start:%s, end:%s, pause:%s, include_wrapping:%s, " \
-               "verbose:%s, path:%s, args:%s}" % \
+               "verbose:%s, path:%s}" % \
                     (self.minutes, self.start, self.end, self.pause, self.include_wrapping,
-                     self.verbose, self.path, self.args)
+                     self.verbose, self.path)

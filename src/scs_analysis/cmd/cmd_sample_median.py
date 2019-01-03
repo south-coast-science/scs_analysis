@@ -65,11 +65,6 @@ class CmdSampleMedian(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -77,5 +72,5 @@ class CmdSampleMedian(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleMedian:{window:%s, verbose:%s, precision:%s, path:%s, args:%s}" % \
-               (self.window, self.verbose, self.precision, self.path, self.args)
+        return "CmdSampleMedian:{window:%s, verbose:%s, precision:%s, path:%s}" % \
+               (self.window, self.verbose, self.precision, self.path)

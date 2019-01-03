@@ -79,11 +79,6 @@ class CmdMQTTClient(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -93,8 +88,8 @@ class CmdMQTTClient(object):
     def __str__(self, *args, **kwargs):
         subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
 
-        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s, args:%s}" % \
-               (subscriptions, self.uds_pub_addr, self.echo, self.verbose, self.args)
+        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s}" % \
+               (subscriptions, self.uds_pub_addr, self.echo, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------
