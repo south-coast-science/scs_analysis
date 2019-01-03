@@ -8,7 +8,9 @@ Created on 24 Dec 2018
 DESCRIPTION
 The aws_upload_interval utility is used to determine the end-to-end health of the data infrastructure. Specifically, it
 reports on the time difference between a sense document being created on a device, and the same document being
-ingested by the data storage system.
+ingested by the data storage system. Time difference is represented as:
+
+DAYS-HOURS:MINUTES:SECONDS
 
 The aws_upload_interval utility relies on the data format provided by the aws_topic_history utility - when invoked with
 its -w ("wrapper") flag, the aws_topic_history output includes an "upload" field, indicating the date / time at which
@@ -30,7 +32,7 @@ DOCUMENT EXAMPLE - INPUT
 "payload": {"val": {"hmd": 36.5, "tmp": 25.5}, "rec": "2018-12-24T13:07:01Z", "tag": "scs-bgx-501"}}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"upload": "2018-12-24T13:07:03Z", "rec": "2018-12-24T13:07:01Z", "offset": 2}
+{"upload": "2018-12-24T13:07:03Z", "rec": "2018-12-24T13:07:01Z", "offset": "00-00:00:01"}
 
 SEE ALSO
 scs_analysis/aws_topic_history
@@ -42,8 +44,11 @@ https://en.wikipedia.org/wiki/ISO_8601
 import sys
 
 from scs_core.data.json import JSONify
+
 from scs_core.aws.data.upload_interval import UploadInterval
 
+
+# TODO: include a timedelta option
 
 # --------------------------------------------------------------------------------------------------------------------
 
