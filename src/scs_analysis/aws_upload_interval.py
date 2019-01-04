@@ -48,8 +48,6 @@ from scs_core.data.json import JSONify
 from scs_core.aws.data.upload_interval import UploadInterval
 
 
-# TODO: include a timedelta option
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
