@@ -100,9 +100,9 @@ class SampleAggregate(object):
                 try:
                     paths = sample.paths(node)
 
-                except IndexError as ex:
+                except (IndexError, KeyError) as ex:
                     paths = None
-                    print("sample_aggregate: %s: %s" % (node, ex), file=sys.stderr)
+                    print("sample_aggregate: %s: %s: %s" % (node, ex.__class__.__name__, ex), file=sys.stderr)
                     sys.stderr.flush()
                     exit(1)
 
