@@ -100,9 +100,12 @@ class SampleAggregate(object):
                 try:
                     paths = sample.paths(node)
 
-                except (IndexError, KeyError) as ex:
+                except KeyError:
+                    continue
+
+                except IndexError as ex:
                     paths = None
-                    print("sample_aggregate: %s: %s: %s" % (node, ex.__class__.__name__, ex), file=sys.stderr)
+                    print("sample_aggregate: %s: IndexError: %s" % (node, ex), file=sys.stderr)
                     sys.stderr.flush()
                     exit(1)
 
@@ -133,10 +136,7 @@ class SampleAggregate(object):
                 self.__regressions[path].append(datetime, value)
 
             except InvalidOperation:
-                print("sample_aggregate: non-numeric value for %s: %s" % (path, str(value)), file=sys.stderr)
-                sys.stderr.flush()
-                exit(1)
-
+                continue
 
     def reset(self):
         for path in self.__regressions.keys():
