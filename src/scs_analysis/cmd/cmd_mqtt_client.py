@@ -18,7 +18,7 @@ class CmdMQTTClient(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-p UDS_PUB] "
                                                     "[-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] "
-                                                    "[-e] [-v]", version="%prog 1.0")
+                                                    "[-w] [-e] [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--pub-addr", "-p", type="string", nargs=1, action="store", dest="uds_pub_addr",
@@ -26,6 +26,9 @@ class CmdMQTTClient(object):
 
         self.__parser.add_option("--sub", "-s", action="store_true", dest="uds_sub",
                                  help="write subscriptions to UDS instead of stdout")
+
+        self.__parser.add_option("--wrapper", "-w", action="store_false", dest="include_wrapper", default=True,
+                                 help="do not include topic wrapper")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo input to stdout (if writing subscriptions to UDS)")
@@ -70,6 +73,11 @@ class CmdMQTTClient(object):
 
 
     @property
+    def include_wrapper(self):
+        return self.__opts.include_wrapper
+
+
+    @property
     def echo(self):
         return self.__opts.echo
 
@@ -88,8 +96,8 @@ class CmdMQTTClient(object):
     def __str__(self, *args, **kwargs):
         subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
 
-        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, echo:%s, verbose:%s}" % \
-               (subscriptions, self.uds_pub_addr, self.echo, self.verbose)
+        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, include_wrapper:%s, echo:%s, verbose:%s}" % \
+               (subscriptions, self.uds_pub_addr, self.include_wrapper, self.echo, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ class CmdAWSTopicHistory(object):
                                  help="localised datetime end")
 
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
-                                 help="include message wrapper")
+                                 help="include storage wrapper")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
