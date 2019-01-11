@@ -37,9 +37,9 @@ import sys
 import time
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
+from scs_analysis.handler.osio_mqtt_control_handler import OSIOMQTTControlHandler
 
 from scs_core.control.control_datum import ControlDatum
-from scs_core.control.control_receipt import ControlReceipt
 
 from scs_core.data.json import JSONify
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -57,54 +57,6 @@ from scs_host.client.mqtt_client import MQTTSubscriber
 
 from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
-
-
-# --------------------------------------------------------------------------------------------------------------------
-# subscription handler...
-
-class OSIOMQTTControlHandler(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self):
-        """
-        Constructor
-        """
-        self.__outgoing_pub = None
-        self.__receipt = None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def set(self, outgoing_pub):
-        self.__outgoing_pub = outgoing_pub
-        self.__receipt = None
-
-
-    def handle(self, pub):
-        try:
-            receipt = ControlReceipt.construct_from_jdict(pub.payload)
-        except TypeError:
-            return
-
-        if receipt.tag == self.__outgoing_pub.payload.attn and receipt.omd == self.__outgoing_pub.payload.digest:
-            self.__receipt = receipt
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def receipt(self):
-        return self.__receipt
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "OSIOMQTTControlHandler:{outgoing_pub:%s, receipt:%s}" %  (self.__outgoing_pub, self.receipt)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -172,7 +124,6 @@ if __name__ == '__main__':
         # tag...
         tag = Host.name()
 
-        # TODO: test whether device present
 
         # ------------------------------------------------------------------------------------------------------------
         # run...

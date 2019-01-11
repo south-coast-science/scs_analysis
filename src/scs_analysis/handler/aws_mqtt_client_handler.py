@@ -15,7 +15,7 @@ from scs_core.data.publication import Publication
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class AWSMQTTHandler(object):
+class AWSMQTTClientHandler(object):
     """
     classdocs
     """
@@ -62,5 +62,5 @@ class AWSMQTTHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTHandler:{reporter:%s, comms:%s, include_wrapper:%s, echo:%s}" % \
+        return "AWSMQTTClientHandler:{reporter:%s, comms:%s, include_wrapper:%s, echo:%s}" % \
                (self.__reporter, self.__comms, self.__include_wrapper, self.__echo)

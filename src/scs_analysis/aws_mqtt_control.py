@@ -27,16 +27,13 @@ scs_analysis/aws_mqtt_client
 scs_mfr/shared_secret
 """
 
-import json
 import sys
 import time
 
-from collections import OrderedDict
-
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
+from scs_analysis.handler.aws_mqtt_control_handler import AWSMQTTControlHandler
 
 from scs_core.control.control_datum import ControlDatum
-from scs_core.control.control_receipt import ControlReceipt
 
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
@@ -51,53 +48,6 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 # subscription handler...
-
-class AWSMQTTControlHandler(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self):
-        """
-        Constructor
-        """
-        self.__outgoing_pub = None
-        self.__receipt = None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def set(self, outgoing_pub):
-        self.__outgoing_pub = outgoing_pub
-        self.__receipt = None
-
-
-    # noinspection PyUnusedLocal,PyShadowingNames
-    def handle(self, client, userdata, message):
-        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
-
-        try:
-            receipt = ControlReceipt.construct_from_jdict(payload)
-        except TypeError:
-            return
-
-        if receipt.tag == self.__outgoing_pub.payload.attn and receipt.omd == self.__outgoing_pub.payload.digest:
-            self.__receipt = receipt
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def receipt(self):
-        return self.__receipt
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "AWSMQTTControlHandler:{outgoing_pub:%s, receipt:%s}" %  (self.__outgoing_pub, self.receipt)
 
 
 # --------------------------------------------------------------------------------------------------------------------

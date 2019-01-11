@@ -44,7 +44,7 @@ import sys
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
-from scs_analysis.handler.aws_mqtt_handler import AWSMQTTHandler
+from scs_analysis.handler.aws_mqtt_client_handler import AWSMQTTClientHandler
 from scs_analysis.handler.mqtt_reporter import MQTTReporter
 
 from scs_core.aws.client.client_auth import ClientAuth
@@ -105,7 +105,7 @@ if __name__ == '__main__':
             sub_comms = DomainSocket(subscription.address) if subscription.address else StdIO()
 
             # handler...
-            handler = AWSMQTTHandler(reporter, sub_comms, cmd.include_wrapper, cmd.echo)
+            handler = AWSMQTTClientHandler(reporter, sub_comms, cmd.include_wrapper, cmd.echo)
 
             subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
