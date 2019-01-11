@@ -41,7 +41,8 @@ import time
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
-from scs_analysis.reporter.mqtt_reporter import MQTTReporter
+from scs_analysis.handler.osio_mqtt_client_handler import OSIOMQTTHandler
+from scs_analysis.handler.mqtt_reporter import MQTTReporter
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
@@ -59,51 +60,6 @@ from scs_host.comms.domain_socket import DomainSocket
 from scs_host.comms.stdio import StdIO
 
 from scs_host.sys.host import Host
-
-
-# --------------------------------------------------------------------------------------------------------------------
-# subscription handler...
-
-class OSIOMQTTHandler(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, mqtt_reporter, comms=None, echo=False):
-        """
-        Constructor
-        """
-        self.__reporter = mqtt_reporter
-        self.__comms = comms
-        self.__echo = echo
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def handle(self, pub):
-        try:
-            self.__comms.connect()
-            self.__comms.write(JSONify.dumps(pub), False)
-
-        except ConnectionRefusedError:
-            self.__reporter.print("connection refused for %s" % self.__comms.address)
-
-        finally:
-            self.__comms.close()
-
-        if self.__echo:
-            print(JSONify.dumps(pub))
-            sys.stdout.flush()
-
-        self.__reporter.print("received: %s" % JSONify.dumps(pub))
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "OSIOMQTTHandler:{reporter:%s, comms:%s, echo:%s}" % (self.__reporter, self.__comms, self.__echo)
 
 
 # --------------------------------------------------------------------------------------------------------------------
