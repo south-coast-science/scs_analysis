@@ -5,6 +5,7 @@ Created on 20 Feb 2017
 """
 
 import optparse
+import re
 
 from scs_core.data.localized_datetime import LocalizedDatetime
 
@@ -18,15 +19,15 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -m MINUTES | -s START [-e END] } [-w] [-v] TOPIC",
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -t [HH:]MM | -s START [-e END] } [-w] [-v] TOPIC",
                                               version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="the most recent document only")
 
-        self.__parser.add_option("--minutes", "-m", type="int", nargs=1, action="store", dest="minutes",
-                                 help="starting minutes ago")
+        self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
+                                 help="starting hours / minutes ago and ending now")
 
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
                                  help="localised datetime start")
@@ -47,6 +48,9 @@ class CmdAWSTopicHistory(object):
 
     def is_valid(self):
         if self.topic is None:
+            return False
+
+        if self.__opts.timedelta is not None and self.minutes is None:
             return False
 
         count = 0
@@ -75,7 +79,7 @@ class CmdAWSTopicHistory(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def use_offset(self):
-        return self.minutes is not None
+        return self.__opts.timedelta is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -87,7 +91,17 @@ class CmdAWSTopicHistory(object):
 
     @property
     def minutes(self):
-        return self.__opts.minutes
+        match = re.match('((\d+):)?(\d+)', self.__opts.timedelta)
+
+        if match is None:
+            return None
+
+        fields = match.groups()
+
+        hours = 0 if fields[1] is None else int(fields[1])
+        minutes = (hours * 60) + int(fields[2])
+
+        return minutes
 
 
     @property
@@ -122,7 +136,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{latest:%s, minutes:%s, start:%s, end:%s, include_wrapper:%s, " \
+        return "CmdAWSTopicHistory:{latest:%s, timedelta:%s, start:%s, end:%s, include_wrapper:%s, " \
                "verbose:%s, topic:%s}" % \
-                    (self.latest, self.minutes, self.start, self.end, self.include_wrapper,
+                    (self.latest, self.__opts.timedelta, self.start, self.end, self.include_wrapper,
                      self.verbose, self.topic)

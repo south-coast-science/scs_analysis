@@ -7,15 +7,15 @@ Created on 6 Nov 2017
 
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
-retrieval system. Data can be retrieved by start or start + end localised date / times, or by minutes backwards
-in time from now. A further "latest" mode returns the most recent document, or none if the topic has never
+retrieval system. Data can be retrieved by start or start + end localised date / times, or by an hours / minutes
+timedelta from now. A further "latest" mode returns the most recent document, or none if the topic has never
 received a publication.
 
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
 
 SYNOPSIS
-aws_topic_history.py { -l | -m MINUTES | -s START [-e END] } [-w] [-v] TOPIC
+aws_topic_history.py { -l | -t [HH:]MM | -s START [-e END] } [-w] [-v] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
@@ -51,6 +51,8 @@ from scs_core.sys.http_exception import HTTPException
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
+
+# TODO: move Reporter to handler package
 
 # --------------------------------------------------------------------------------------------------------------------
 # reporter...
