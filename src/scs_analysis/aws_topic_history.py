@@ -18,7 +18,7 @@ SYNOPSIS
 aws_topic_history.py { -l | -t [HH:]MM | -s START [-e END] } [-w] [-v] TOPIC
 
 EXAMPLES
-aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -m1 -v -w
+aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
 
 DOCUMENT EXAMPLE - OUTPUT
 {"device": "scs-bbe-401", "topic": "south-coast-science-demo/brighton/loc/1/climate", "upload": "2019-01-11T12:15:36Z",
