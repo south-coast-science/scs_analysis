@@ -8,11 +8,15 @@ Created on 6 Nov 2017
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
 retrieval system. Data can be retrieved by start or start + end localised date / times, or by a days / hours / minutes
-timedelta from now. A further "latest" mode returns the most recent document, or none if the topic has never
-received a publication.
+timedelta back in time from now. A further "latest" mode returns the most recent document, or none if the topic has
+never received a publication.
 
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
+
+Equivalent to cURL:
+curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-dev/production-test/loc/1/gases
+&startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
 aws_topic_history.py { -l | -t [[DD-]HH:]MM  | -s START [-e END] } [-w] [-v] TOPIC
@@ -32,6 +36,9 @@ FILES
 SEE ALSO
 scs_analysis/aws_api_auth
 scs_analysis/localised_datetime
+
+RESOURCES
+https://github.com/curl/curl
 """
 
 import sys
