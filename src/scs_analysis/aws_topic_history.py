@@ -15,7 +15,7 @@ Note that no check is made for the existence of the topic - if the topic does no
 no data is returned.
 
 SYNOPSIS
-aws_topic_history.py { -l | -t [HH:]MM | -s START [-e END] } [-w] [-v] TOPIC
+aws_topic_history.py { -l | -t [[DD-]HH:]MM  | -s START [-e END] } [-w] [-v] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -155,9 +155,9 @@ if __name__ == '__main__':
             end = byline.rec
             start = byline.rec.timedelta(seconds=-0.1)
 
-        elif cmd.use_offset():
+        elif cmd.timedelta:
             end = LocalizedDatetime.now()
-            start = end.timedelta(minutes=-cmd.minutes)
+            start = end - cmd.timedelta
 
         else:
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end

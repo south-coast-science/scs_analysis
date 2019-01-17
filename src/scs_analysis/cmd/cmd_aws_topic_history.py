@@ -5,9 +5,9 @@ Created on 20 Feb 2017
 """
 
 import optparse
-import re
 
 from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.timedelta import Timedelta
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -19,15 +19,15 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -t [HH:]MM | -s START [-e END] } [-w] [-v] TOPIC",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -t [[DD-]HH:]MM | -s START [-e END] } [-w] [-v] "
+                                                    "TOPIC", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="the most recent document only")
 
         self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
-                                 help="starting hours / minutes ago and ending now")
+                                 help="starting days / hours / minutes ago, and ending now")
 
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
                                  help="localised datetime start")
@@ -50,7 +50,7 @@ class CmdAWSTopicHistory(object):
         if self.topic is None:
             return False
 
-        if self.__opts.timedelta is not None and self.minutes is None:
+        if self.__opts.timedelta is not None and self.timedelta is None:
             return False
 
         count = 0
@@ -58,7 +58,7 @@ class CmdAWSTopicHistory(object):
         if self.latest:
             count += 1
 
-        if self.minutes is not None:
+        if self.timedelta is not None:
             count += 1
 
         if self.start is not None:
@@ -78,30 +78,14 @@ class CmdAWSTopicHistory(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def use_offset(self):
-        return self.__opts.timedelta is not None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     @property
     def latest(self):
         return self.__opts.latest
 
 
     @property
-    def minutes(self):
-        match = re.match('((\d+):)?(\d+)', self.__opts.timedelta)
-
-        if match is None:
-            return None
-
-        fields = match.groups()
-
-        hours = 0 if fields[1] is None else int(fields[1])
-        minutes = (hours * 60) + int(fields[2])
-
-        return minutes
+    def timedelta(self):
+        return Timedelta.construct_from_flag(self.__opts.timedelta)
 
 
     @property
