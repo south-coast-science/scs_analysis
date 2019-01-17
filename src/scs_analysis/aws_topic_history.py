@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
         elif cmd.timedelta:
             end = LocalizedDatetime.now()
-            start = end - cmd.timedelta
+            start = LocalizedDatetime(end - cmd.timedelta)
 
         else:
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end
