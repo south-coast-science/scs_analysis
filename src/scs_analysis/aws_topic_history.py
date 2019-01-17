@@ -7,7 +7,7 @@ Created on 6 Nov 2017
 
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
-retrieval system. Data can be retrieved by start or start + end localised date / times, or by an hours / minutes
+retrieval system. Data can be retrieved by start or start + end localised date / times, or by a days / hours / minutes
 timedelta from now. A further "latest" mode returns the most recent document, or none if the topic has never
 received a publication.
 
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
         elif cmd.timedelta:
             end = LocalizedDatetime.now()
-            start = end - cmd.timedelta
+            start = LocalizedDatetime(end - cmd.timedelta)
 
         else:
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end
