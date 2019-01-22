@@ -8,11 +8,15 @@ Created on 6 Nov 2017
 DESCRIPTION
 The aws_topic_history utility is used to retrieve stored data from the South Coast Science / AWS historic data
 retrieval system. Data can be retrieved by start or start + end localised date / times, or by a days / hours / minutes
-timedelta from now. A further "latest" mode returns the most recent document, or none if the topic has never
-received a publication.
+timedelta back in time from now. A further "latest" mode returns the most recent document, or none if the topic has
+never received a publication.
 
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
+
+Equivalent to cURL:
+curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-dev/production-test/loc/1/gases
+&startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
 aws_topic_history.py { -l | -t [[DD-]HH:]MM  | -s START [-e END] } [-w] [-v] TOPIC
@@ -32,12 +36,15 @@ FILES
 SEE ALSO
 scs_analysis/aws_api_auth
 scs_analysis/localised_datetime
+
+RESOURCES
+https://github.com/curl/curl
 """
 
 import sys
-import time
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
+from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
 
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
@@ -50,50 +57,6 @@ from scs_core.sys.http_exception import HTTPException
 
 from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
-
-
-# TODO: move Reporter to handler package
-
-# --------------------------------------------------------------------------------------------------------------------
-# reporter...
-
-class AWSTopicHistoryReporter(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, verbose):
-        """
-        Constructor
-        """
-        self.__verbose = verbose
-
-        self.__document_count = 0
-        self.__start_time = time.time()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def print(self, block_start, block_length):
-        if not self.__verbose:
-            return
-
-        self.__document_count += block_length
-        elapsed_time = round(time.time() - self.__start_time, 1)
-
-        print("aws_topic_history: block start:%s docs:%d elapsed:%0.1f" %
-              (block_start, self.__document_count, elapsed_time), file=sys.stderr)
-
-        sys.stderr.flush()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "AWSTopicHistoryReporter:{verbose:%s, document_count:%d, start_time:%d}" % \
-               (self.__verbose, self.__document_count, self.__start_time)
 
 
 # --------------------------------------------------------------------------------------------------------------------
