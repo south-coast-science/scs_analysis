@@ -76,9 +76,6 @@ if __name__ == '__main__':
             if datum is None:
                 break
 
-            print("datum len: %d" % len(datum))
-            sys.stdout.flush()
-
             writer.write(datum)
 
             # echo...
