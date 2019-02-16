@@ -12,10 +12,10 @@ Dates must be in the format YYY-MM-DD and times in the 24-hour format HH:MM or H
 may be YYY-MM-DD HH:MM or YYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing from the
 input document or are malformed, execution will terminate.
 
-Output localised datetimes are always presented as UTC. If the input datetimes are not UTC, then the timezone of the
+Output localised datetimes are always presented in UTC. If the input datetimes are not UTC, then the timezone of the
 input data should be specified.
 
-All fields in the input document are presented in the output document, with the exception of the date, time or
+All fields in the input document are presented in the output document, with the exception of the selected date, time or
 datetime fields. The default name for the ISO 8601 datetime output field is 'rec' but an alternate name may be
 specified.
 
@@ -37,8 +37,6 @@ https://en.wikipedia.org/wiki/ISO_8601
 """
 
 import sys
-
-from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_sample_iso_8601 import CmdSampleISO8601
 
@@ -138,13 +136,13 @@ if __name__ == '__main__':
             if cmd.timezone is not None:
                 iso = iso.utc()
 
-            target = OrderedDict()
-            target[cmd.iso] = iso.as_iso8601()
+            target = PathDict()
+            target.append(cmd.iso, iso.as_iso8601())
 
             # copy...
             for path in datum.paths():
                 if path not in cmd.excluded_paths():
-                    target[path] = datum.node(path)
+                    target.append(path, datum.node(path))
 
             # report...
             print(JSONify.dumps(target))
