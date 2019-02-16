@@ -47,7 +47,7 @@ class CmdSampleISO8601(object):
         return True
 
 
-    def excluded_paths(self):
+    def datetime_paths(self):
         if self.uses_datetime():
             return {self.datetime_path}
 
@@ -109,7 +109,5 @@ class CmdSampleISO8601(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleISO8601:{zones:%s, timezone:%s, iso:%s, verbose:%s, " \
-               "datetime_path:%s, date_path:%s, time_path:%s}" % \
-               (self.zones, self.timezone, self.iso, self.verbose,
-                self.datetime_path, self.date_path, self.time_path)
+        return "CmdSampleISO8601:{zones:%s, timezone:%s, iso:%s, verbose:%s, datetime_paths:%s}" % \
+               (self.zones, self.timezone, self.iso, self.verbose, self.datetime_paths())

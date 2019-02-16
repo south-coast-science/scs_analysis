@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
             # copy...
             for path in datum.paths():
-                if path not in cmd.excluded_paths():
+                if path not in cmd.datetime_paths():
                     target.append(path, datum.node(path))
 
             # report...
