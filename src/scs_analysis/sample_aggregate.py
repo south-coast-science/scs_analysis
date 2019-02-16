@@ -234,13 +234,14 @@ if __name__ == '__main__':
 
             # report & reset...
             if rec.datetime > checkpoint.datetime:
-                if aggregate.has_value():
-                    print(JSONify.dumps(aggregate.report(checkpoint)))
-                    sys.stdout.flush()
+                # if aggregate.has_value():
 
-                    aggregate.reset()
+                print(JSONify.dumps(aggregate.report(checkpoint)))          # TODO: check empty aggregates
+                sys.stdout.flush()
 
-                checkpoint = generator.next_localised_datetime(rec)
+                aggregate.reset()
+
+                checkpoint = generator.next_localised_datetime(rec)         # TODO: get all missing checkpoints
 
             # append sample...
             aggregate.append(rec, datum)

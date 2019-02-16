@@ -19,7 +19,7 @@ class CmdSampleTimezone(object):
         self.__parser = optparse.OptionParser(usage="%prog { -z | TIMEZONE_NAME }", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
+        self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -31,7 +31,7 @@ class CmdSampleTimezone(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if bool(self.name) == bool(self.__opts.list):
+        if bool(self.timezone) == bool(self.__opts.zones):
             return False
 
         return True
@@ -40,13 +40,13 @@ class CmdSampleTimezone(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def name(self):
+    def timezone(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
-    def list(self):
-        return self.__opts.list
+    def zones(self):
+        return self.__opts.zones
 
 
     @property
@@ -61,4 +61,4 @@ class CmdSampleTimezone(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTimezone:{name:%s, list:%s, verbose:%s}" % (self.name, self.list, self.verbose)
+        return "CmdSampleTimezone:{timezone:%s, zones:%s, verbose:%s}" % (self.timezone, self.zones, self.verbose)
