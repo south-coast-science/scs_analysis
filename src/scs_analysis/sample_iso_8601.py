@@ -30,7 +30,7 @@ DOCUMENT EXAMPLE - INPUT
 "NO": {"dns": 54, "Status": "P ugm-3"}}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"rec": "2019-01-31T22:00:00Z", "NO2": {"Status": "P ugm-3", "dns": 29}, "NO": {"dns": 54, "Status": "P ugm-3"}}
+{"rec": "2019-02-01T00:00:00Z", "NO2": {"dns": 29, "Status": "P ugm-3"}, "NO": {"dns": 54, "Status": "P ugm-3"}}
 
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
