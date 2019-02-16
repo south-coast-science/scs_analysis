@@ -1,98 +1,104 @@
 #!/usr/bin/env python3
 
 """
-Created on 11 Feb 2019
+Created on 16 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_airwatch utility is used to
+The sample_ah utility may be used to inject an absolute humidity (aH) value into any JSON document that contains
+relative humidity (rH) and temperature (t) fields.
+
+rH must be presented as a percentage, and t as degrees Centigrade. The generated aH value is presented in
+grammes per cubic metre. If fields are missing from the input document or are malformed, execution will terminate.
+
+All fields in the input document are presented in the output document, with the exception of the rH field - the rH
+leaf node is recreated as the dictionary {rh: RH_VALUE, ah: AH_VALUE} - see example below.
+
+The conversion equation used by sample_ah does not take account of atmospheric pressure.
 
 SYNOPSIS
-sample_airwatch.py { -z | TIMEZONE_NAME }
+sample_ah.py [-v] RH_PATH T_PATH
 
 EXAMPLES
-aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
--e 2018-10-28T03:00:00+00:00 | sample_airwatch.py -n Europe/Paris
+csv_reader.py climate.csv | sample_ah.py val.hmd val.tmp
 
 DOCUMENT EXAMPLE - INPUT
-{"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T00:00:46.037+00:00", "tag": "scs-be2-2"}
+{"val": {"hmd": 54.5, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
+"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"hmd": 49.7, "tmp": 17.5}, "rec": "2018-10-28T01:00:46.037+01:00", "tag": "scs-be2-2"}
+{"val": {"hmd": {"rH": 54.5, "aH": 11.6}, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
+"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
 
 RESOURCES
-https://en.wikipedia.org/wiki/ISO_8601
-http://pytz.sourceforge.net
+https://www.aqua-calc.com/calculate/humidity
 """
 
-import json
 import sys
 
-from collections import OrderedDict
-
-from scs_analysis.cmd.cmd_sample_airwatch import CmdSampleAirwatch
-
-from scs_core.data.airwatch import AirwatchRecord
-from scs_core.data.json import JSONify
-from scs_core.data.path_dict import PathDict
+from scs_analysis.cmd.cmd_sample_ah import CmdSampleAH
 
 from scs_core.climate.absolute_humidity import AbsoluteHumidity
 
-from scs_core.location.timezone import Timezone
+from scs_core.data.json import JSONify
+from scs_core.data.path_dict import PathDict
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    timezone = None
-    zone = None
-
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleAirwatch()
+    cmd = CmdSampleAH()
 
-    # if not cmd.is_valid():
-    #     cmd.print_help(sys.stderr)
-    #     exit(2)
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
 
     if cmd.verbose:
         print("sample_ah: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
-
-        path = 'val.sht'
-
-
-        # ------------------------------------------------------------------------------------------------------------
         # run...
 
         for line in sys.stdin:
-            datum = PathDict.construct_from_jstr(line)
+            jstr = line.strip()
+            datum = PathDict.construct_from_jstr(jstr)
 
             if datum is None:
-                break
+                continue
+
+            paths = datum.paths()
+
+            # rH / t...
+            if cmd.rh_path not in paths:
+                print("sample_ah: rH path '%s' not in %s" % (cmd.rh_path, jstr), file=sys.stderr)
+                exit(1)
+
+            if cmd.t_path not in paths:
+                print("sample_ah: t path '%s' not in %s" % (cmd.t_path, jstr), file=sys.stderr)
+                exit(1)
+
+            rh = datum.node(cmd.rh_path)
+            t = datum.node(cmd.t_path)
+
+            # aH...
+            ah = AbsoluteHumidity.from_rh_t(rh, t)
 
             target = PathDict()
 
-            if datum.has_path('rec'):
-                target.copy(datum, 'rec')
+            # copy...
+            for path in paths:
+                if path == cmd.rh_path:
+                    target.append(path + '.rH', rh)
+                    target.append(path + '.aH', round(ah, 1))
 
-            target.copy(datum, path)
-
-            rh = datum.node(path + '.hmd')
-            t = datum.node(path + '.tmp')
-
-            ah = AbsoluteHumidity.from_rh_t(rh, t)
-
-            target.append(path + '.ah', round(ah, 1))
-
-            # target.append(path + '.src', value)
-            # target.append(self.__path + '.avg', round(avg, self.__precision))
+                else:
+                    target.append(path, datum.node(path))
 
             # report...
             print(JSONify.dumps(target.node()))
