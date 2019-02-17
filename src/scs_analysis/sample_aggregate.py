@@ -35,8 +35,8 @@ input rec values.
 If the input document does not contain a specified path - or if the value is null - then the value is ignored. Aside
 from null, values must be integers or floats.
 
-At each checkpoint, if there are no values for a given path, then that path is not included in the output report. If
-there are no values for any path, then no report is written to stdout.
+At each checkpoint, if there are no values for a given path, then only the rec field is reported. if the fill flag is
+set, then any checkpoints missing in the input data are written to stdout in sequence.
 
 SYNOPSIS
 sample_aggregate.py [-m] [-t] [-f] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]
