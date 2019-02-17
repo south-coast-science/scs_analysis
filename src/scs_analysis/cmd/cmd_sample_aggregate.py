@@ -18,7 +18,7 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -c [-m] [-t] [-f] [-v] HH:MM:SS PATH_1 [.. PATH_N]",
+        self.__parser = optparse.OptionParser(usage="%prog [-m] [-t] [-f] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]",
                                               version="%prog 1.0")
 
         # optional...
