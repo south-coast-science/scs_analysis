@@ -232,16 +232,24 @@ if __name__ == '__main__':
             if checkpoint is None:
                 checkpoint = generator.next_localised_datetime(rec)
 
-            # report & reset...
+            # report checkpoint and reset...
             if rec.datetime > checkpoint.datetime:
-                # if aggregate.has_value():
-
-                print(JSONify.dumps(aggregate.report(checkpoint)))          # TODO: check empty aggregates
-                sys.stdout.flush()
-
+                print(JSONify.dumps(aggregate.report(checkpoint)))
                 aggregate.reset()
 
-                checkpoint = generator.next_localised_datetime(rec)         # TODO: get all missing checkpoints
+                fill = checkpoint
+                checkpoint = generator.next_localised_datetime(rec)
+
+                # missing checkpoints...
+                while cmd.fill:
+                    fill = generator.next_localised_datetime(fill)
+
+                    if fill == checkpoint:
+                        break
+
+                    print(JSONify.dumps(aggregate.report(fill)))
+
+            sys.stdout.flush()
 
             # append sample...
             aggregate.append(rec, datum)

@@ -31,9 +31,8 @@ import sys
 
 from collections import OrderedDict
 
-from scs_analysis.cmd.cmd_sample_airwatch import CmdSampleAirwatch
+from scs_analysis.cmd.cmd_sample_collation import CmdSampleCollation
 
-from scs_core.data.airwatch import AirwatchRecord
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
@@ -52,59 +51,51 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleAirwatch()
+    cmd = CmdSampleCollation()
 
-    # if not cmd.is_valid():
-    #     cmd.print_help(sys.stderr)
-    #     exit(2)
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
 
     if cmd.verbose:
-        print("sample_ah_step: %s" % cmd, file=sys.stderr)
+        print("sample_collation: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        path = 'val.sht.ah'
+        bins = []
 
-        dataset_min = 3.7
-        dataset_max = 9.3
-        step = 0.5
+        lower = cmd.lower
 
-        low = dataset_min
+        while True:
+            upper = round(lower + cmd.step, 1)
+            bins.append((lower, upper))
+            lower = upper
 
-        steps = []
+            if lower >= cmd.upper:
+                break
 
-        while low < dataset_max:
-            high = low + step
-            steps.append((low, high))
-
-            low = high
-
-        print(steps)
-
-        bounds = steps[12]
-        lower_bound = bounds[0]
-        upper_bound = bounds[1]
+        print("len: %d bins: %s" % (len(bins), bins))
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        for line in sys.stdin:
-            datum = PathDict.construct_from_jstr(line)
-
-            if datum is None:
-                break
-
-            target = PathDict()
-
-            ah = datum.node(path)
-
-            if lower_bound <= ah < upper_bound:
-                # report...
-                print(JSONify.dumps(datum.node()))
-                sys.stdout.flush()
+        # for line in sys.stdin:
+        #     datum = PathDict.construct_from_jstr(line)
+        #
+        #     if datum is None:
+        #         break
+        #
+        #     target = PathDict()
+        #
+        #     ah = datum.node(path)
+        #
+        #     if lower_bound <= ah < upper_bound:
+        #         report...
+                # print(JSONify.dumps(datum.node()))
+                # sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -112,4 +103,4 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_ah_step: KeyboardInterrupt", file=sys.stderr)
+            print("sample_collation: KeyboardInterrupt", file=sys.stderr)
