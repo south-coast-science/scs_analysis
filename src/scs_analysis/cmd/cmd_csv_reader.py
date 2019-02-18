@@ -52,4 +52,4 @@ class CmdCSVReader(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVReader:{array:%s, verbose:%s, filename:%s}" % (self.array, self.verbose, self.filenames)
+        return "CmdCSVReader:{array:%s, verbose:%s, filenames:%s}" % (self.array, self.verbose, self.filenames)
