@@ -6,24 +6,39 @@ Created on 16 Feb 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_wec_sens utility may be used to
+The sample_wec_sens utility is used to inject a non-baselined, simple data interpretation into any JSON document that
+contains a temperature-corrected working electrode voltage (weC) field.
+
+Simple data interpretation takes the form:
+
+concentration [ppb] = (weC [Volts] / sensitivity [Volts / ppb]) - baseline [ppb]
+
+The utility is intended to be used in settings where baseline offsets may have been altered over a period of time. In
+this context, the baseline factor should be stripped from the historic data, enabling a consistent analysis.
+
+The appropriate gas is specified in a form such as val.NO2 - in this case, the field val.NO2.weC is read, and the field
+val.NO2.weC_sens is injected into the output document. The sensitivity [mV / ppb] should be provided on the
+command line. The value is normally found from the calibration sheet for the sensor.
+
+If fields are missing from the input document, then the document is ignored. If values are
+malformed, execution will terminate.
 
 SYNOPSIS
-sample_wec_sens.py [-v] RH_PATH T_PATH
+sample_wec_sens.py -s SENS PATH [-v]
 
 EXAMPLES
-csv_reader.py climate.csv | sample_wec_sens.py val.hmd val.tmp
+csv_reader.py gases.csv | sample_wec_sens.py -s 0.255 val.NO2
 
 DOCUMENT EXAMPLE - INPUT
-{"val": {"hmd": 54.5, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
-"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
+{"val": {"NO2": {"weV": 0.315317, "cnc": 21.4, "aeV": 0.309942, "weC": 0.002767},
+"sht": {"hmd": 51.9, "tmp": 22.8}, "rec": "2019-02-18T14:37:07Z", "tag": "scs-be2-2"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"hmd": {"rH": 54.5, "aH": 11.6}, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
-"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
+{"val": {"NO2": {"weV": 0.315317, "cnc": 21.4, "aeV": 0.309942, "weC": 0.002767, "weC_sens": 10.9},
+"sht": {"hmd": 51.9, "tmp": 22.8}, "rec": "2019-02-18T14:37:07Z", "tag": "scs-be2-2"}
 
 RESOURCES
-https://www.aqua-calc.com/calculate/humidity
+https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
 """
 
 import sys

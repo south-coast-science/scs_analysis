@@ -50,6 +50,8 @@ from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 from scs_core.csv.csv_reader import CSVReader
 
 
+# TODO: implement multiple files across the system
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

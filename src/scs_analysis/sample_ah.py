@@ -6,7 +6,7 @@ Created on 16 Feb 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_ah utility may be used to inject an absolute humidity (aH) value into any JSON document that contains
+The sample_ah utility is used to inject an absolute humidity (aH) value into any JSON document that contains
 relative humidity (rH) and temperature (t) fields.
 
 rH must be presented as a percentage, and t as degrees Centigrade. The generated aH value is presented in
@@ -33,6 +33,7 @@ DOCUMENT EXAMPLE - OUTPUT
 "rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
 
 RESOURCES
+https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
 https://www.aqua-calc.com/calculate/humidity
 """
 

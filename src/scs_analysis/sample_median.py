@@ -77,20 +77,20 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            sample = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if sample is None:
-                break
+            if datum is None:
+                continue
 
-            value = sample.node(cmd.path)
+            value = datum.node(cmd.path)
 
             if value is None:
-                break
+                continue
 
             target = PathDict()
 
-            if sample.has_path('rec'):
-                target.copy(sample, 'rec')
+            if datum.has_path('rec'):
+                target.copy(datum, 'rec')
 
             target.append(cmd.path + '.src', value)
             target.append(cmd.path + '.med', round(median_filter.compute(value), cmd.precision))

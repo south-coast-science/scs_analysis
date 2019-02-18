@@ -89,8 +89,8 @@ class SampleMidpoint(object):
 
         target = PathDict()
 
-        target.append('rec', rec)
-        target.append('mid-rec', mid_rec)
+        target.append('rec', rec.as_iso8601())
+        target.append('mid-rec', mid_rec.as_iso8601())
 
         target.append(self.__path + '.src', value)
         target.append(self.__path + '.mid', round(mid, self.__precision))
@@ -138,7 +138,7 @@ if __name__ == '__main__':
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
-                break
+                continue
 
             min_avg_max = sampler.datum(datum)
 
