@@ -86,14 +86,14 @@ if __name__ == '__main__':
                 continue
 
             try:
-                rh = float()
+                rh = float(rh_node)
             except ValueError:
                 rh = None
                 print("sample_ah: invalid value for rH in %s" % jstr, file=sys.stderr)
                 exit(1)
 
             try:
-                t = float()
+                t = float(t_node)
             except ValueError:
                 t = None
                 print("sample_ah: invalid value for t in %s" % jstr, file=sys.stderr)
