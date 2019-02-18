@@ -35,14 +35,14 @@ input rec values.
 If the input document does not contain a specified path - or if the value is null - then the value is ignored. Aside
 from null, values must be integers or floats.
 
-At each checkpoint, if there are no values for a given path, then that path is not included in the output report. If
-there are no values for any path, then no report is written to stdout.
+At each checkpoint, if there are no values for a given path, then only the rec field is reported. If the fill flag is
+set, then any checkpoints missing in the input data are written to stdout in sequence.
 
 SYNOPSIS
-sample_aggregate.py -c HH:MM:SS [-m] [-t] [-v] PATH_1 [.. PATH_N]
+sample_aggregate.py [-m] [-t] [-f] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]
 
 EXAMPLES
-csv_reader.py gases.csv | sample_aggregate.py -c **:/5:00 val
+csv_reader.py gases.csv | sample_aggregate.py -f -c **:/5:00 val
 """
 
 import sys
@@ -230,17 +230,26 @@ if __name__ == '__main__':
 
             # set checkpoint...
             if checkpoint is None:
-                checkpoint = generator.next_localised_datetime(rec)
+                checkpoint = generator.enclosing_localised_datetime(rec)
 
-            # report & reset...
+            # report and reset...
             if rec.datetime > checkpoint.datetime:
-                if aggregate.has_value():
-                    print(JSONify.dumps(aggregate.report(checkpoint)))
-                    sys.stdout.flush()
+                print(JSONify.dumps(aggregate.report(checkpoint)))
+                aggregate.reset()
 
-                    aggregate.reset()
+                filler = checkpoint
+                checkpoint = generator.enclosing_localised_datetime(rec)
 
-                checkpoint = generator.next_localised_datetime(rec)
+                # fill missing...
+                while cmd.fill:
+                    filler = generator.next_localised_datetime(filler)
+
+                    if filler == checkpoint:
+                        break
+
+                    print(JSONify.dumps(aggregate.report(filler)))
+
+            sys.stdout.flush()
 
             # append sample...
             aggregate.append(rec, datum)

@@ -1,5 +1,5 @@
 """
-Created on 19 Nov 2018
+Created on 16 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,19 +9,16 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleTimezone(object):
+class CmdSampleAH(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -z | TIMEZONE_NAME }", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] RH_PATH T_PATH", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
-                                 help="list the available timezone names to stderr")
-
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -31,7 +28,7 @@ class CmdSampleTimezone(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if bool(self.timezone) == bool(self.__opts.zones):
+        if len(self.__args) != 2:
             return False
 
         return True
@@ -40,18 +37,18 @@ class CmdSampleTimezone(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def timezone(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
-    def zones(self):
-        return self.__opts.zones
-
-
-    @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def rh_path(self):
+        return self.__args[0] if len(self.__args) > 1 else None
+
+
+    @property
+    def t_path(self):
+        return self.__args[1] if len(self.__args) > 1 else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -61,4 +58,4 @@ class CmdSampleTimezone(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTimezone:{timezone:%s, zones:%s, verbose:%s}" % (self.timezone, self.zones, self.verbose)
+        return "CmdSampleAH:{verbose:%s, rh_path:%s, t_path:%s}" % (self.verbose, self.rh_path, self.t_path)

@@ -83,13 +83,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if cmd.name:
+        if cmd.timezone is not None:
             try:
-                timezone = Timezone(cmd.name)
+                timezone = Timezone(cmd.timezone)
                 zone = timezone.zone
 
             except ValueError:
-                print("sample_timezone: unrecognised name:%s" % cmd.name, file=sys.stderr)
+                print("sample_timezone: unrecognised name:%s" % cmd.timezone, file=sys.stderr)
                 exit(2)
 
             if cmd.verbose:
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.list:
+        if cmd.zones:
             for zone in Timezone.zones():
                 print(zone, file=sys.stderr)
             exit(0)
