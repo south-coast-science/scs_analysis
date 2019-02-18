@@ -12,6 +12,8 @@ Input data is typically in the form of a sequence of JSON documents. A command p
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_min utility includes the whole input document.
 
+If there are multiple input documents with the same maximum value, the first document only is written to stdout.
+
 SYNOPSIS
 sample_min.py [-v] [PATH]
 
@@ -68,10 +70,21 @@ if __name__ == '__main__':
         min_datum = None
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if min_datum is None or sample_datum.node(cmd.path) < min_datum.node(cmd.path):
-                min_datum = sample_datum
+            if datum is None:
+                continue
+
+            if cmd.path not in datum.paths():
+                continue
+
+            value = datum.node(cmd.path)
+
+            if value is None:
+                continue
+
+            if min_datum is None or value < min_datum.node(cmd.path):
+                min_datum = datum
 
         if min_datum:
             print(JSONify.dumps(min_datum.node()))

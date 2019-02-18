@@ -12,6 +12,8 @@ Input data is typically in the form of a sequence of JSON documents. A command p
 within the document that is to be tested. The node is typically a leaf node integer or float. The output of the
 sample_max utility includes the whole input document.
 
+If there are multiple input documents with the same maximum value, the first document only is written to stdout.
+
 SYNOPSIS
 sample_max.py [-v] [PATH]
 
@@ -68,10 +70,21 @@ if __name__ == '__main__':
         max_datum = None
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if max_datum is None or sample_datum.node(cmd.path) > max_datum.node(cmd.path):
-                max_datum = sample_datum
+            if datum is None:
+                continue
+
+            if cmd.path not in datum.paths():
+                continue
+
+            value = datum.node(cmd.path)
+
+            if value is None:
+                continue
+
+            if max_datum is None or value > max_datum.node(cmd.path):
+                max_datum = datum
 
         if max_datum:
             print(JSONify.dumps(max_datum.node()))

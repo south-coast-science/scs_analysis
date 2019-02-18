@@ -69,5 +69,5 @@ class CmdSampleTally(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTally:{tally:%s, tally:%s, verbose:%s, path:%s}" % \
+        return "CmdSampleTally:{tally:%s, precision:%s, verbose:%s, path:%s}" % \
                     (self.tally, self.precision, self.verbose, self.path)
