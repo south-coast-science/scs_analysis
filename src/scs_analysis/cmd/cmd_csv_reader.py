@@ -16,7 +16,7 @@ class CmdCSVReader(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-a] [-v] [FILENAME]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] [-v] [FILENAME_1 .. FILENAME_N]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
@@ -41,8 +41,8 @@ class CmdCSVReader(object):
 
 
     @property
-    def filename(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def filenames(self):
+        return self.__args if len(self.__args) > 0 else [None]
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -52,4 +52,4 @@ class CmdCSVReader(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVReader:{array:%s, verbose:%s, filename:%s}" % (self.array, self.verbose, self.filename)
+        return "CmdCSVReader:{array:%s, verbose:%s, filename:%s}" % (self.array, self.verbose, self.filenames)

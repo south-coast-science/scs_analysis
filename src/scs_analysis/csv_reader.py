@@ -20,7 +20,7 @@ selected, output is in the form of a JSON array - the output opens with a '[' ch
 the ',' character, and the output is terminated by a ']' character.
 
 SYNOPSIS
-csv_reader.py [-a] [-v] [FILENAME]
+csv_reader.py [-a] [-v] [FILENAME_1 ... FILENAME_N]
 
 EXAMPLES
 csv_reader.py sht.csv
@@ -64,39 +64,44 @@ if __name__ == '__main__':
     if cmd.verbose:
         print("csv_reader: %s" % cmd, file=sys.stderr)
 
+    if cmd.array:
+        print('[', end='')
+
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # resources...
+        for filename in cmd.filenames:
 
-        reader = CSVReader(cmd.filename)
+            # --------------------------------------------------------------------------------------------------------
+            # resources...
 
-        if cmd.verbose:
-            print("csv_reader: %s" % reader, file=sys.stderr)
-            sys.stderr.flush()
+            reader = CSVReader(filename)
+
+            if cmd.verbose:
+                print("csv_reader: %s" % reader, file=sys.stderr)
+                sys.stderr.flush()
 
 
-        # ------------------------------------------------------------------------------------------------------------
-        # run...
+            # --------------------------------------------------------------------------------------------------------
+            # run...
 
-        if cmd.array:
-            print('[', end='')
+            first = True
 
-        first = True
+            for datum in reader.rows:
+                if cmd.array:
+                    if first:
+                        print(datum, end='')
+                        first = False
 
-        for datum in reader.rows:
-            if cmd.array:
-                if first:
-                    print(datum, end='')
-                    first = False
+                    else:
+                        print(", %s" % datum, end='')
 
                 else:
-                    print(", %s" % datum, end='')
+                    print(datum)
 
-            else:
-                print(datum)
+                sys.stdout.flush()
 
-            sys.stdout.flush()
-
+            # close...
+            if reader is not None:
+                reader.close()
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -106,8 +111,5 @@ if __name__ == '__main__':
             print("csv_reader: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-        if reader is not None:
-            if cmd.array:
-                print(']')
-
-            reader.close()
+        if cmd.array:
+            print(']')
