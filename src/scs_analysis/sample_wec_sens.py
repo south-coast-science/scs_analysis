@@ -14,7 +14,10 @@ Simple data interpretation takes the form:
 concentration [ppb] = (weC [Volts] / sensitivity [Volts / ppb]) - baseline [ppb]
 
 The utility is intended to be used in settings where baseline offsets may have been altered over a period of time. In
-this context, the baseline factor should be stripped from the historic data, enabling a consistent analysis.
+this context, the baseline factor should be stripped from the historic data, enabling a consistent analysis. The
+equation applies by the sample_wec_sens utility is simply:
+
+concentration [ppb] = weC [Volts] / sensitivity [Volts / ppb]
 
 The appropriate gas is specified in a form such as val.NO2 - in this case, the field val.NO2.weC is read, and the field
 val.NO2.weC_sens is injected into the output document. The sensitivity [mV / ppb] should be provided on the
