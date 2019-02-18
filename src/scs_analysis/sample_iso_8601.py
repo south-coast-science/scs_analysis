@@ -21,7 +21,7 @@ datetime fields. The default name for the ISO 8601 datetime output field is 'rec
 specified.
 
 SYNOPSIS
-sample_iso_8601.py [-v] { -z | [-i ISO_PATH] [-t TIMEZONE_NAME] { DATETIME_PATH | DATE_PATH TIME_PATH } }
+sample_iso_8601.py { -z | [-i ISO_PATH] [-t TIMEZONE_NAME] [-v] { DATETIME_PATH | DATE_PATH TIME_PATH } }
 
 EXAMPLES
 csv_reader.py lhr_airwatch.csv | sample_iso_8601.py -t Europe/London Date Time
@@ -35,6 +35,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
+https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
 """
 
 import sys
