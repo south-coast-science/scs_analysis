@@ -48,8 +48,6 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_wec_sens import CmdSampleWeCSens
 
-from scs_core.climate.absolute_humidity import AbsoluteHumidity
-
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
@@ -104,7 +102,6 @@ if __name__ == '__main__':
             try:
                 wec = float(wec_node)
             except ValueError:
-                rh = None
                 print("sample_wec_sens: invalid value for %s in %s" % (wec_path, jstr), file=sys.stderr)
                 exit(1)
 
