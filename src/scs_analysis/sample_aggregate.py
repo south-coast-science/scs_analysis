@@ -244,7 +244,7 @@ if __name__ == '__main__':
                 while cmd.fill:
                     filler = generator.next_localised_datetime(filler)
 
-                    if filler == checkpoint:
+                    if filler >= checkpoint:
                         break
 
                     print(JSONify.dumps(aggregate.report(filler)))
