@@ -10,7 +10,8 @@ The sample_ah utility may be used to inject an absolute humidity (aH) value into
 relative humidity (rH) and temperature (t) fields.
 
 rH must be presented as a percentage, and t as degrees Centigrade. The generated aH value is presented in
-grammes per cubic metre. If fields are missing from the input document or are malformed, execution will terminate.
+grammes per cubic metre. If fields are missing from the input document, then the document is ignored. If values are
+malformed, execution will terminate.
 
 All fields in the input document are presented in the output document, with the exception of the rH field - the rH
 leaf node is recreated as the dictionary {rh: RH_VALUE, ah: AH_VALUE} - see example below.
@@ -75,19 +76,30 @@ if __name__ == '__main__':
             paths = datum.paths()
 
             # rH / t...
-            if cmd.rh_path not in paths:
-                print("sample_ah: rH path '%s' not in %s" % (cmd.rh_path, jstr), file=sys.stderr)
+            if cmd.rh_path not in paths or cmd.t_path not in paths:
+                continue
+
+            rh_node = datum.node(cmd.rh_path)
+            t_node = datum.node(cmd.t_path)
+
+            if rh_node == '' or t_node == '':
+                continue
+
+            try:
+                rh = float()
+            except ValueError:
+                rh = None
+                print("sample_ah: invalid value for rH in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            if cmd.t_path not in paths:
-                print("sample_ah: t path '%s' not in %s" % (cmd.t_path, jstr), file=sys.stderr)
+            try:
+                t = float()
+            except ValueError:
+                t = None
+                print("sample_ah: invalid value for t in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            rh = datum.node(cmd.rh_path)
-            t = datum.node(cmd.t_path)
-
-            # aH...
-            ah = AbsoluteHumidity.from_rh_t(rh, t)
+            ah = round(AbsoluteHumidity.from_rh_t(rh, t), 1)
 
             target = PathDict()
 
@@ -95,7 +107,7 @@ if __name__ == '__main__':
             for path in paths:
                 if path == cmd.rh_path:
                     target.append(path + '.rH', rh)
-                    target.append(path + '.aH', round(ah, 1))
+                    target.append(path + '.aH', ah)
 
                 else:
                     target.append(path, datum.node(path))
