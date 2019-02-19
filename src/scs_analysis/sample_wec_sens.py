@@ -14,7 +14,10 @@ Simple data interpretation takes the form:
 concentration [ppb] = (weC [Volts] / sensitivity [Volts / ppb]) - baseline [ppb]
 
 The utility is intended to be used in settings where baseline offsets may have been altered over a period of time. In
-this context, the baseline factor should be stripped from the historic data, enabling a consistent analysis.
+this context, the baseline factor should be stripped from the historic data, enabling a consistent analysis. The
+equation applies by the sample_wec_sens utility is simply:
+
+concentration [ppb] = weC [Volts] / sensitivity [Volts / ppb]
 
 The appropriate gas is specified in a form such as val.NO2 - in this case, the field val.NO2.weC is read, and the field
 val.NO2.weC_sens is injected into the output document. The sensitivity [mV / ppb] should be provided on the
@@ -44,8 +47,6 @@ https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
 import sys
 
 from scs_analysis.cmd.cmd_sample_wec_sens import CmdSampleWeCSens
-
-from scs_core.climate.absolute_humidity import AbsoluteHumidity
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -101,7 +102,6 @@ if __name__ == '__main__':
             try:
                 wec = float(wec_node)
             except ValueError:
-                rh = None
                 print("sample_wec_sens: invalid value for %s in %s" % (wec_path, jstr), file=sys.stderr)
                 exit(1)
 
