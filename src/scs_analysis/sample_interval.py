@@ -45,6 +45,9 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -65,18 +68,22 @@ if __name__ == '__main__':
             if cmd.verbose:
                 print(line, file=sys.stderr)
 
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if sample_datum is None:
+            if datum is None:
                 break
 
-            time = LocalizedDatetime.construct_from_iso8601(sample_datum.node(cmd.path))
+            document_count += 1
+
+            time = LocalizedDatetime.construct_from_iso8601(datum.node(cmd.path))
 
             interval = Interval.construct(prev_time, time, cmd.precision)
             print(JSONify.dumps(interval))
             sys.stdout.flush()
 
             prev_time = time
+
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,3 +92,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_interval: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_interval: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

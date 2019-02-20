@@ -108,6 +108,9 @@ class SampleMidpoint(object):
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -140,11 +143,15 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
+            document_count += 1
+
             min_avg_max = sampler.datum(datum)
 
             if min_avg_max is not None:
                 print(JSONify.dumps(min_avg_max))
                 sys.stdout.flush()
+
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -153,3 +160,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_midpoint: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_midpoint: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

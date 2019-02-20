@@ -94,6 +94,9 @@ class SampleAverage(object):
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -124,13 +127,17 @@ if __name__ == '__main__':
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
-                break
+                continue
+
+            document_count += 1
 
             average = sampler.datum(datum)
 
             if average is not None:
                 print(JSONify.dumps(average))
                 sys.stdout.flush()
+
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -139,3 +146,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_average: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_average: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

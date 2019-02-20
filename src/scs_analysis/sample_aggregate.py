@@ -183,6 +183,10 @@ class SampleAggregate(object):
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -221,6 +225,8 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
+            document_count += 1
+
             try:
                 rec_node = datum.node('rec')
             except KeyError:
@@ -254,6 +260,8 @@ if __name__ == '__main__':
             # append sample...
             aggregate.append(rec, datum)
 
+            processed_count += 1
+
         # report remainder...
         if aggregate.has_value():
             print(JSONify.dumps(aggregate.report(checkpoint)))
@@ -265,3 +273,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_aggregate: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_aggregate: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

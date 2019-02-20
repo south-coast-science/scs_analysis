@@ -50,6 +50,9 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -82,6 +85,8 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
+            document_count += 1
+
             value = datum.node(cmd.path)
 
             if value is None:
@@ -98,6 +103,8 @@ if __name__ == '__main__':
             print(JSONify.dumps(target.node()))
             sys.stdout.flush()
 
+            processed_count += 1
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -105,3 +112,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_median: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_median: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
