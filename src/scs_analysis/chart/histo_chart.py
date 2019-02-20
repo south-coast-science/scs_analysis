@@ -82,9 +82,9 @@ class HistoChart(Chart):
         if value is None:
             return
 
-        datum = float(value)
-
         try:
+            datum = float(value)
+
             # compute...
             index, count = self.__histogram.append(datum)
             max_count = self.__histogram.max_count
