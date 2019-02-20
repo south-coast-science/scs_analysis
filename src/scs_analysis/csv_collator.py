@@ -25,7 +25,7 @@ csv_collator.py -l LOWER_BOUND -u UPPER_BOUND -d DELTA -f FILE_PREFIX [-v] PATH
 
 EXAMPLES
 csv_reader.py alphasense_303_2018-08.csv |
-csv_collator.py -l 5.0 -u 21.0 -d 1.0 -f collation/alphasense_303_2018-08 val.sht.hmd.aH -v
+csv_collator.py -l 5.0 -u 21.0 -d 1.0 -f collation/alphasense_303_2018-08 -v val.sht.hmd.aH
 """
 
 import sys
