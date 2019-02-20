@@ -6,13 +6,13 @@ Created on 20 Feb 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The csv_collator utility is used to separate documents according to the upper and lower bounds of a sequence of bins.
-For each bin, assignment follows the rule:
+The csv_collator utility is used to separate the input JSON documents according to the upper and lower bounds of a
+sequence of bins. For each bin, assignment follows the rule:
 
 lower bound <= value < upper bound
 
 The upper and lower bounds for the data set should be specified, along with a step size. The number of bins required
-to service this domain is calculated automatically. Additionally, the file (and path) prefix for the generated CSV files
+to service this domain is calculated automatically. Additionally, a file (and path) prefix for the generated CSV files
 must be specified, along with the path identifying the leaf node in the input document where the value is to be found.
 
 Documents that do not contain a field at the specified path, or have values that cannot be evaluated as a float, are
