@@ -22,8 +22,8 @@ NN - exactly matching NN
 For example, **:/5:30 indicates 30 seconds past the minute, every 5 minutes, during every hour.
 
 Data sources are specified as a path into the input JSON document in the same format as the node command. Any number of
-paths can be specified. If a path to an internal node in the JSON document is specified, then all of the leaf-node
-descendants of that node will be processed.
+paths can be specified, including none (process all paths). If a path to an internal node in the JSON document is
+specified, then all of the leaf-node descendants of that node will be processed.
 
 Note that the leaf-node paths to be processed are obtained from the paths provided on the command line, and the
 actual paths found in the first JSON document. Paths that do not exist in the first document are ignored.

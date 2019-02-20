@@ -18,7 +18,7 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m] [-t] [-f] [-v] -c HH:MM:SS PATH_1 [.. PATH_N]",
+        self.__parser = optparse.OptionParser(usage="%prog [-m] [-t] [-f] [-v] -c HH:MM:SS [PATH_1..PATH_N]",
                                               version="%prog 1.0")
 
         # optional...
@@ -46,9 +46,6 @@ class CmdSampleAggregate(object):
         if self.checkpoint_generator is None:
             return False
 
-        if len(self.nodes) == 0:
-            return False
-
         return True
 
 
@@ -65,7 +62,7 @@ class CmdSampleAggregate(object):
 
     @property
     def nodes(self):
-        return self.__args
+        return self.__args if len(self.__args) > 0 else [None]
 
 
     @property
