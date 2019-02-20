@@ -96,7 +96,7 @@ if __name__ == '__main__':
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
-                break
+                continue
 
             if cmd.echo:
                 print(JSONify.dumps(datum.node()))

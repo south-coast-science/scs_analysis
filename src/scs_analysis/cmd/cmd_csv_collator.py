@@ -1,5 +1,5 @@
 """
-Created on 16 Feb 2019
+Created on 20 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,28 +9,28 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleCollation(object):
+class CmdCSVCollator(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -l LOWER_BOUND -u UPPER_BOUND -s STEP -f FILE_PREFIX "
+        self.__parser = optparse.OptionParser(usage="%prog -l LOWER_BOUND -u UPPER_BOUND -d DELTA -f FILE_PREFIX "
                                                     "[-v] PATH", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", default=None, dest="lower",
-                                 help="lower bound")
+        self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", dest="lower",
+                                 help="lower bound of dataset")
 
-        self.__parser.add_option("--upper", "-u", type="float", nargs=1, action="store", default=None, dest="upper",
-                                 help="upper bound")
+        self.__parser.add_option("--upper", "-u", type="float", nargs=1, action="store", dest="upper",
+                                 help="upper bound of dataset")
 
-        self.__parser.add_option("--step", "-s", type="float", nargs=1, action="store", default=None, dest="step",
-                                 help="step")
+        self.__parser.add_option("--delta", "-d", type="float", nargs=1, action="store", dest="delta",
+                                 help="width of bin")
 
-        self.__parser.add_option("--file", "-f", type="string", nargs=1, action="store", default=None, dest="file",
-                                 help="file prefix")
+        self.__parser.add_option("--file-prefix", "-f", type="string", nargs=1, action="store", dest="file_prefix",
+                                 help="file prefix for collated CSVs")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -42,7 +42,8 @@ class CmdSampleCollation(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.lower is None or self.upper is None or self.step is None or self.file is None or self.path is None:
+        if self.lower is None or self.upper is None or self.delta is None or self.file_prefix is None or \
+                self.path is None:
             return False
 
         return True
@@ -61,13 +62,13 @@ class CmdSampleCollation(object):
 
 
     @property
-    def step(self):
-        return self.__opts.step
+    def delta(self):
+        return self.__opts.delta
 
 
     @property
-    def file(self):
-        return self.__opts.file
+    def file_prefix(self):
+        return self.__opts.file_prefix
 
 
     @property
@@ -87,5 +88,5 @@ class CmdSampleCollation(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleCollation:{lower:%s, upper:%s, step:%s, file:%s, verbose:%s, path:%s}" % \
-               (self.lower, self.upper, self.step, self.file, self.verbose, self.path)
+        return "CmdCSVCollator:{lower:%s, upper:%s, delta:%s, file_prefix:%s, verbose:%s, path:%s}" % \
+               (self.lower, self.upper, self.delta, self.file_prefix, self.verbose, self.path)
