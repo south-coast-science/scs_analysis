@@ -76,7 +76,8 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            datum = PathDict.construct_from_jstr(line)
+            jstr = line.strip()
+            datum = PathDict.construct_from_jstr(jstr)
 
             if datum is None:
                 break
@@ -96,7 +97,7 @@ if __name__ == '__main__':
             if index < 0 or index > max_bin_index:
                 continue
 
-            bins[index].write(line.strip())
+            bins[index].write(jstr)
 
             processed_count += 1
 
