@@ -49,6 +49,9 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -76,26 +79,30 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            sample = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if sample is None:
+            if datum is None:
                 break
 
-            value = sample.node(cmd.path)
+            document_count += 1
+
+            value = datum.node(cmd.path)
 
             if value is None:
                 break
 
             target = PathDict()
 
-            if sample.has_path('rec'):
-                target.copy(sample, 'rec')
+            if datum.has_path('rec'):
+                target.copy(datum, 'rec')
 
             target.append(cmd.path + '.src', value)
             target.append(cmd.path + '.lpf', round(lpf.compute(value), cmd.precision))
 
             print(JSONify.dumps(target.node()))
             sys.stdout.flush()
+
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -104,3 +111,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_low_pass: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_low_pass: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

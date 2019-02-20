@@ -67,6 +67,9 @@ if __name__ == '__main__':
     timezone = None
     zone = None
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -111,6 +114,8 @@ if __name__ == '__main__':
             except ValueError:
                 continue
 
+            document_count += 1
+
             try:
                 rec = jdict['rec']
             except KeyError:
@@ -128,6 +133,8 @@ if __name__ == '__main__':
             print(JSONify.dumps(jdict))
             sys.stdout.flush()
 
+            processed_count += 1
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -135,3 +142,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_timezone: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_timezone: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

@@ -49,6 +49,9 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -67,9 +70,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        row_count = 0
-        processed_count = 0
-
         max_datum = None
 
         for line in sys.stdin:
@@ -78,7 +78,7 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
-            row_count += 1
+            document_count += 1
 
             if cmd.path not in datum.paths():
                 continue
@@ -88,13 +88,10 @@ if __name__ == '__main__':
             except (TypeError, ValueError):
                 continue
 
-            processed_count += 1
-
             if max_datum is None or value > max_datum.node(cmd.path):
                 max_datum = datum
 
-        if cmd.verbose:
-            print("sample_max: rows: %d processed: %d" % (row_count, processed_count), file=sys.stderr)
+            processed_count += 1
 
         if max_datum:
             print(JSONify.dumps(max_datum.node()))
@@ -106,3 +103,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_max: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_max: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

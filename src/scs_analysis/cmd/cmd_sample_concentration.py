@@ -1,0 +1,78 @@
+"""
+Created on 15 Feb 2019
+
+@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+"""
+
+import optparse
+
+from scs_core.gas.gas import Gas
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class CmdSampleConcentration(object):
+    """unix command line handler"""
+
+    def __init__(self):
+        """
+        Constructor
+        """
+        self.__parser = optparse.OptionParser(usage="%prog [-p PRESSURE] [-v] GAS DENSITY_PATH T_PATH",
+                                              version="%prog 1.0")
+
+        # optional...
+        self.__parser.add_option("--pressure", "-p", type="float", nargs=1, action="store", dest="pressure",
+                                 default=Gas.STP_PRESSURE, help="atmospheric pressure in kPA (default 101.3)")
+
+        self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
+                                 help="report narrative to stderr")
+
+        self.__opts, self.__args = self.__parser.parse_args()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_valid(self):
+        if len(self.__args) != 3:
+            return False
+
+        return True
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def pressure(self):
+        return self.__opts.pressure
+
+
+    @property
+    def verbose(self):
+        return self.__opts.verbose
+
+
+    @property
+    def gas(self):
+        return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
+    def density_path(self):
+        return self.__args[1] if len(self.__args) > 1 else None
+
+
+    @property
+    def t_path(self):
+        return self.__args[2] if len(self.__args) > 2 else None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def print_help(self, file):
+        self.__parser.print_help(file)
+
+
+    def __str__(self, *args, **kwargs):
+        return "CmdSampleConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s}" % \
+               (self.pressure, self.verbose, self.gas, self.density_path, self.t_path)

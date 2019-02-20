@@ -102,6 +102,9 @@ class SampleError(object):
 
 if __name__ == '__main__':
 
+    document_count = 0
+    processed_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -125,16 +128,20 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            sample_datum = PathDict.construct_from_jstr(line)
+            datum = PathDict.construct_from_jstr(line)
 
-            if sample_datum is None:
-                break
+            if datum is None:
+                continue
 
-            error_datum = err.datum(sample_datum)
+            document_count += 1
+
+            error_datum = err.datum(datum)
 
             if error_datum is not None:
                 print(JSONify.dumps(error_datum))
                 sys.stdout.flush()
+
+            processed_count += 1
 
         if cmd.verbose:
             print(err, file=sys.stderr)
@@ -146,3 +153,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_error: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose:
+            print("sample_error: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
