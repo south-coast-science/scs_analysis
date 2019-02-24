@@ -13,7 +13,8 @@ All four join types are supported: inner, left outer, right outer and full outer
 should only contain rows that match on their primary key.
 
 Output is in the form of a sequence of JSON documents containing three fields: rec, left table contents (labelled for
-the left PREFIX) and right table contents (labelled for the right PREFIX). For outer joins, content nodes may be null.
+the left PREFIX) and right table contents (labelled for the right PREFIX). The left and right contents do not contain
+their primary key fields. For outer joins, content nodes may be null.
 
 The --iso8601 flag is provided to indicate that the primary key should be interpreted as a ISO 8601 datetime. This is
 useful where data sets use alternate datetime formats such as 2019-02-22T01:00:00Z and 2019-02-22T01:00:00+00:00.
