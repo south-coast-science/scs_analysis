@@ -15,7 +15,7 @@ should be indicated in kilopascals (kPa). If no pressure value is supplied, the 
 
 The path for the node in the output document indicating concentration is based on the path for the node in the
 input document indicating density. For example, if the input path is SUB-PATH.dns, the output path is SUB-PATH.cnc. If
-a SUB-PATH.cnc field exists in the input document, it is over-written.
+a SUB-PATH.cnc field exists in the input document, it is overwritten.
 
 SYNOPSIS
 sample_concentration.py [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]
@@ -118,6 +118,7 @@ if __name__ == '__main__':
                 print("sample_concentration: invalid value for t in %s" % jstr, file=sys.stderr)
                 exit(1)
 
+            # p...
             if cmd.p_path:
                 p_node = datum.node(cmd.p_path)
 
