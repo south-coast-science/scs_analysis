@@ -1,47 +1,45 @@
 #!/usr/bin/env python3
 
 """
-Created on 16 Feb 2019
+Created on 15 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_concentration utility is used to inject an absolute humidity (aH) value into any JSON document that contains
-relative humidity (rH) and temperature (t) fields.
+The sample_concentration utility is used to inject a gas concentration value, based on a given density (microgrammes
+per cubic metre), temperature and pressure. The reported value is in parts per billion.
 
-rH must be presented as a percentage, and t as degrees Centigrade. The generated aH value is presented in
-grammes per cubic metre. If fields are missing from the input document, then the document is ignored. If values are
-malformed, execution will terminate.
+Density and temperature must be supplied from the input JSON document. Atmospheric pressure may be supplied from the
+input JSON document. Alternatively, a pressure estimate may be supplied on the command line. In both cases, pressure
+should be indicated in kilopascals (kPa). If no pressure value is supplied, the standard pressure of 101.3 kPa is used.
 
-All fields in the input document are presented in the output document, with the exception of the rH field - the rH
-leaf node is recreated as the dictionary {rh: RH_VALUE, ah: AH_VALUE} - see example below.
-
-The conversion equation used by sample_concentration does not take account of atmospheric pressure.
+The path for the node in the output document indicating concentration is based on the path for the node in the
+input document indicating density. For example, if the input path is SUB-PATH.dns, the output path is SUB-PATH.cnc. If
+a SUB-PATH.cnc field exists in the input document, it is over-written.
 
 SYNOPSIS
-sample_concentration.py [-p PRESSURE] [-v] GAS DENSITY_PATH T_PATH [P_PATH]
+sample_concentration.py [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]
 
 EXAMPLES
-csv_reader.py reference_gases.csv | sample_concentration.py val.hmd val.tmp
+csv_reader.py joined_2019-02.csv | sample_concentration.py -v NO2 ref.val.NO2.dns praxis.val.sht.tmp
 
 DOCUMENT EXAMPLE - INPUT
-{"val": {"hmd": 54.5, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
-"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
+{"rec": "2019-02-12T13:00:00Z", "praxis": {"val":
+{"NO2": {"weV": 0.300059, "cnc": 23.4, "aeV": 0.302339, "weC": -0.002793},
+"sht": {"hmd": 67.6, "tmp": 13.1}}}, "ref": {"val": {"NO2": {"units": "ugm-3", "dns": 51}}}}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"hmd": {"rH": 54.5, "aH": 11.6}, "tmp": 23.6, "bar": {"p0": 103.2, "pA": 102, "tmp": 23.3}},
-"rec": "2019-02-16T13:53:52Z", "tag": "scs-ap1-6"}
+{"rec": "2019-02-12T13:00:00Z", "praxis": {"val":
+{"NO2": {"weV": 0.300059, "cnc": 23.4, "aeV": 0.302339, "weC": -0.002793},
+"sht": {"hmd": 67.6, "tmp": 13.1}}}, "ref": {"val": {"NO2": {"units": "ugm-3", "dns": 51, "cnc": 26.0}}}}
 
 RESOURCES
-https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
-https://www.aqua-calc.com/calculate/humidity
+http://www.apis.ac.uk/unit-conversion
 """
 
 import sys
 
 from scs_analysis.cmd.cmd_sample_concentration import CmdSampleConcentration
-
-from scs_core.climate.absolute_humidity import AbsoluteHumidity
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -52,6 +50,10 @@ from scs_core.gas.gas import Gas
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+
+    density = None
+    t = None
+    p = None
 
     document_count = 0
     processed_count = 0
@@ -73,6 +75,13 @@ if __name__ == '__main__':
         print("sample_concentration: %s" % cmd, file=sys.stderr)
 
     try:
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        density_nodes = cmd.density_path.split('.')
+        concentration_path = '.'.join(density_nodes[:-1] + ['cnc'])
+
+
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
@@ -100,32 +109,46 @@ if __name__ == '__main__':
             try:
                 density = float(density_node)
             except ValueError:
-                rh = None
                 print("sample_concentration: invalid value for density in %s" % jstr, file=sys.stderr)
                 exit(1)
 
             try:
                 t = float(t_node)
             except ValueError:
-                t = None
                 print("sample_concentration: invalid value for t in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            # ah = round(AbsoluteHumidity.from_rh_t(rh, t), 1)
+            if cmd.p_path:
+                p_node = datum.node(cmd.p_path)
+
+                if p_node == '':
+                    continue
+
+                try:
+                    p = float(p_node)
+                except ValueError:
+                    print("sample_concentration: invalid value for p in %s" % jstr, file=sys.stderr)
+                    exit(1)
+
+            else:
+                p = cmd.pressure
+
+            cnc = round(Gas.concentration(cmd.gas, density, t, p), 1)
 
             target = PathDict()
 
             # copy...
             for path in paths:
-                if path == cmd.rh_path:
-                    target.append(path + '.rH', rh)
-                    target.append(path + '.aH', ah)
+                if path == concentration_path:
+                    continue
 
-                else:
-                    target.append(path, datum.node(path))
+                target.append(path, datum.node(path))
+
+                if path == cmd.density_path:
+                    target.append(concentration_path, cnc)
 
             # report...
-            print(JSONify.dumps(target.node()))
+            print(JSONify.dumps(target))
             sys.stdout.flush()
 
             processed_count += 1
