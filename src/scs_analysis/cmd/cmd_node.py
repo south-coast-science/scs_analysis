@@ -7,6 +7,8 @@ Created on 25 Apr 2017
 import optparse
 
 
+# TODO: support multiple nodes
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdNode(object):

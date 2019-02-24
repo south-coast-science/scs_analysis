@@ -18,12 +18,12 @@ class CmdSampleConcentration(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-p PRESSURE] [-v] GAS DENSITY_PATH T_PATH",
+        self.__parser = optparse.OptionParser(usage="%prog [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]",
                                               version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--pressure", "-p", type="float", nargs=1, action="store", dest="pressure",
-                                 default=Gas.STP_PRESSURE, help="atmospheric pressure in kPA (default 101.3)")
+                                 default=Gas.STP_PRESSURE, help="constant atmospheric pressure in kPA (default 101.3)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -34,7 +34,10 @@ class CmdSampleConcentration(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 3:
+        if len(self.__args) < 3:
+            return False
+
+        if self.pressure is not None and self.p_path is not None:
             return False
 
         return True
@@ -67,6 +70,11 @@ class CmdSampleConcentration(object):
         return self.__args[2] if len(self.__args) > 2 else None
 
 
+    @property
+    def p_path(self):
+        return self.__args[3] if len(self.__args) > 3 else None
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -74,5 +82,5 @@ class CmdSampleConcentration(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s}" % \
-               (self.pressure, self.verbose, self.gas, self.density_path, self.t_path)
+        return "CmdSampleConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s, p_path:%s}" % \
+               (self.pressure, self.verbose, self.gas, self.density_path, self.t_path, self.p_path)
