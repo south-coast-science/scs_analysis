@@ -164,23 +164,19 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.type == 'INNER':
-            result = join.inner()
-
-        elif cmd.type == 'LEFT':
-            result = join.left()
+        if cmd.type == 'LEFT':
+            operation = join.left
 
         elif cmd.type == 'RIGHT':
-            result = join.right()
+            operation = join.right
 
         elif cmd.type == 'FULL':
-            result = join.full()
+            operation = join.full
 
         else:
-            print("csv_join: unknown type: %s" % cmd.type, file=sys.stderr)
-            exit(1)
+            operation = join.inner
 
-        for datum in result:
+        for datum in operation():
             print(JSONify.dumps(datum))
             sys.stdout.flush()
 
