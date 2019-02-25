@@ -22,10 +22,10 @@ useful where data sets use alternate datetime formats such as 2019-02-22T01:00:0
 If the --verbose flag is used, a summary of the join operation is written to stderr.
 
 SYNOPSIS
-csv_join.py -t TYPE -l PREFIX PK FILENAME -r PREFIX PK FILENAME [-i] [-v]
+csv_join.py [-t TYPE] -l PREFIX PK FILENAME -r PREFIX PK FILENAME [-i] [-v]
 
 EXAMPLES
-csv_join.py-t INNER -i -l praxis rec praxis_301/praxis_301_2018-08.csv -r ref rec ref/ref_2018-08.csv -v
+csv_join.py -i -l -v praxis rec praxis_301/praxis_301_2018-08.csv -r ref rec ref/ref_2018-08.csv
 
 DOCUMENT EXAMPLE - INPUT
 left:

@@ -16,13 +16,10 @@ class CmdCSVJoin(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -t TYPE -l PREFIX PK FILENAME -r PREFIX PK FILENAME "
-                                                    "[-i] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TYPE] [-i] [-v] -l PREFIX PK FILENAME "
+                                                    "-r PREFIX PK FILENAME", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--type", "-t", type="string", nargs=1, action="store", dest="type",
-                                 help="{ 'INNER' | 'LEFT' | 'RIGHT' | 'FULL' }")
-
         self.__parser.add_option("--left", "-l", type="string", nargs=3, action="store", dest="left",
                                  help="output path prefix, primary key and filename for left-hand set")
 
@@ -30,6 +27,9 @@ class CmdCSVJoin(object):
                                  help="output path prefix, primary key and filename for right-hand set")
 
         # optional...
+        self.__parser.add_option("--type", "-t", type="string", nargs=1, action="store", dest="type", default='INNER',
+                                 help="{ 'INNER' | 'LEFT' | 'RIGHT' | 'FULL' } (default 'INNER')")
+
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,
                                  help="interpret the primary key as an ISO 8601 datetime")
 
@@ -42,7 +42,7 @@ class CmdCSVJoin(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.type is None or self.__opts.left is None or self.__opts.right is None:
+        if self.__opts.left is None or self.__opts.right is None:
             return False
 
         return True
