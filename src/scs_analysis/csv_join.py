@@ -25,7 +25,7 @@ SYNOPSIS
 csv_join.py [-t TYPE] -l PREFIX PK FILENAME -r PREFIX PK FILENAME [-i] [-v]
 
 EXAMPLES
-csv_join.py -i -l -v praxis rec praxis_301/praxis_301_2018-08.csv -r ref rec ref/ref_2018-08.csv
+csv_join.py -i -v -l praxis rec praxis_301/praxis_301_2018-08.csv -r ref rec ref/ref_2018-08.csv
 
 DOCUMENT EXAMPLE - INPUT
 left:
