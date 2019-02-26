@@ -44,20 +44,19 @@ from scs_core.csv.csv_writer import CSVWriter
 
 if __name__ == '__main__':
 
-    cmd = None
     writer = None
+    count = 0
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdCSVWriter()
+
+    if cmd.verbose:
+        print("csv_writer: %s" % cmd, file=sys.stderr)
+        sys.stderr.flush()
 
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # cmd...
-
-        cmd = CmdCSVWriter()
-
-        if cmd.verbose:
-            print("csv_writer: %s" % cmd, file=sys.stderr)
-            sys.stderr.flush()
-
-
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
@@ -83,6 +82,8 @@ if __name__ == '__main__':
                 print(datum)
                 sys.stdout.flush()
 
+            count += 1
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -94,3 +95,6 @@ if __name__ == '__main__':
     finally:
         if writer is not None:
             writer.close()
+
+        if cmd.verbose:
+            print("csv_writer: rows: %d" % count, file=sys.stderr)
