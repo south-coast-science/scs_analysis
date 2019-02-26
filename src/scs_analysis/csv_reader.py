@@ -20,7 +20,7 @@ selected, output is in the form of a JSON array - the output opens with a '[' ch
 the ',' character, and the output is terminated by a ']' character.
 
 SYNOPSIS
-csv_reader.py [-a] [-v] [FILENAME_1 ... FILENAME_N]
+csv_reader.py [-l LIMIT] [-a] [-v] [FILENAME_1 ... FILENAME_N]
 
 EXAMPLES
 csv_reader.py sht.csv
@@ -50,13 +50,12 @@ from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 from scs_core.csv.csv_reader import CSVReader
 
 
-# TODO: implement multiple files across the system
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
     reader = None
+    count = 0
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -89,13 +88,13 @@ if __name__ == '__main__':
             # --------------------------------------------------------------------------------------------------------
             # run...
 
-            first = True
-
             for datum in reader.rows:
+                if cmd.limit is not None and count >= cmd.limit:
+                    break
+
                 if cmd.array:
-                    if first:
+                    if count == 0:
                         print(datum, end='')
-                        first = False
 
                     else:
                         print(", %s" % datum, end='')
@@ -104,6 +103,8 @@ if __name__ == '__main__':
                     print(datum)
 
                 sys.stdout.flush()
+
+                count += 1
 
             # close...
             if reader is not None:
@@ -119,3 +120,6 @@ if __name__ == '__main__':
     finally:
         if cmd.array:
             print(']')
+
+        if cmd.verbose:
+            print("csv_reader: rows: %d" % count, file=sys.stderr)

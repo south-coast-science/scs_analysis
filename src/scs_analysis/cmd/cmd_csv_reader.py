@@ -16,9 +16,13 @@ class CmdCSVReader(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-a] [-v] [FILENAME_1 .. FILENAME_N]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]",
+                                              version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--limit", "-l", type="int", nargs=1, action="store", dest="limit",
+                                 help="output a maximum of LIMIT rows")
+
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
                                  help="output JSON documents as array instead of a sequence")
 
@@ -29,6 +33,11 @@ class CmdCSVReader(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def limit(self):
+        return self.__opts.limit
+
 
     @property
     def array(self):
@@ -52,4 +61,5 @@ class CmdCSVReader(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVReader:{array:%s, verbose:%s, filenames:%s}" % (self.array, self.verbose, self.filenames)
+        return "CmdCSVReader:{limit:%s, array:%s, verbose:%s, filenames:%s}" % \
+               (self.limit, self.array, self.verbose, self.filenames)
