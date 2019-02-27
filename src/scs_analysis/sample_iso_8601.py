@@ -9,9 +9,9 @@ DESCRIPTION
 The sample_iso_8601 utility is used to replace non-localised datetime fields with an ISO 8601 localised datetime field
 for JSON documents of any schema.
 
-Dates must be in the format YYY-MM-DD and times in the 24-hour format HH:MM or HH:MM:SS. For datetime fields, the format
-may be YYY-MM-DD HH:MM or YYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing from the
-input document or are malformed, execution will terminate.
+Dates must be in the format YYYY-MM-DD and times in the 24-hour format HH:MM or HH:MM:SS. For datetime fields, the
+format may be YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing
+from the input document or are malformed, execution will terminate.
 
 Output localised datetimes are always presented in UTC. If the input datetimes are not UTC, then the timezone of the
 input data should be specified.
