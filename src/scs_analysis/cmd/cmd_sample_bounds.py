@@ -26,7 +26,7 @@ class CmdSampleBounds(object):
                                  help="interpret the value as an ISO 8601 datetime")
 
         self.__parser.add_option("--numeric", "-n", action="store_true", dest="numeric", default=False,
-                                 help="interpret the value as numeric")
+                                 help="interpret the value as a number")
 
         # optional...
         self.__parser.add_option("--lower", "-l", type="string", nargs=1, action="store", dest="lower",
@@ -50,7 +50,7 @@ class CmdSampleBounds(object):
         if bool(self.iso8601) == bool(self.numeric):
             return False
 
-        if self.lower is not None and self.upper is not None and self.upper < self.lower:
+        if self.lower is not None and self.upper is not None and self.upper <= self.lower:
             return False
 
         if len(self.__args) != 1:
