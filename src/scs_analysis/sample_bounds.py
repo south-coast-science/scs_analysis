@@ -6,8 +6,8 @@ Created on 26 Feb 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The sample_bounds utility is used to find a subset of documents whose value for a specific field is lies either
-inside or outside a pair of bounding values.
+The sample_bounds utility is used to find a subset of documents whose value for a specified field lies either
+inside or outside one or two bounding values.
 
 Input is in the form of a stream of JSON documents. Documents are written to stdout if they match the specification,
 and discarded otherwise. Documents which do not have the specified field, or have an empty field value are also
@@ -16,18 +16,18 @@ terminates.
 
 The type of the field must be specified explicitly as either numeric or ISO 8601 datetime.
 
-Evaluation is based on greater than or equal to the lower bound and less than or equal to the upper bound. Both upper
+Evaluation is based on greater than or equal to the lower bound and less than the upper bound. Both upper
 and lower bounds are optional. If both are present, then the lower bound value must be less than the upper bound value.
 If neither are present, then the sample_bounds utility filers out documents with missing fields or empty values.
 
 If the --exclusions flag is used, the sample_bounds utility outputs only the documents that do not fit within the
-specified bounds.
+specified bounds. Note that, in this case, documents with missing or empty fields are still discarded.
 
 SYNOPSIS
 sample_bounds.py { -i | -n } [-l LOWER] [-u UPPER] [-x] [-v] PATH
 
 EXAMPLES
-csv_reader.py praxis_303.csv | sample_bounds.py -v -i -u 2018-09-26T18:05:00 rec
+csv_reader.py praxis_303.csv | sample_bounds.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
 """
 
 import sys
@@ -119,7 +119,7 @@ if __name__ == '__main__':
             processed_count += 1
 
             # bounds...
-            in_bounds = (lower_bound is None or value >= lower_bound) and (upper_bound is None or value <= upper_bound)
+            in_bounds = (lower_bound is None or value >= lower_bound) and (upper_bound is None or value < upper_bound)
 
             if (cmd.inclusions and not in_bounds) or (cmd.exclusions and in_bounds):
                 continue
