@@ -6,12 +6,13 @@ Created on 11 Apr 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The node utility is used to extract a node from within a JSON document. Data is presented as a sequence of documents on
-stdin, and the extracted node is passed to stdout. The extracted node may be a leaf node or an internal node. If no
-node path is specified, the whole input document is passed to stdout.
+The node utility is used to extract a node or nodes from within a JSON document. Data is presented as a sequence of
+documents on stdin, and the extracted node(s) are passed to stdout. The extracted node may be a leaf node or an internal
+node.
 
-The node utility may be set to either ignore documents that do not contain the specified node, or to terminate if the
-node is not present.
+By default, only the specified nodes are passed to the output. In the --exclude mode, all nodes are passed to stdout,
+with the exception of the specified nodes. In the default mode, if no node path is specified, the whole input document
+is passed to stdout. In the --exclude mode, if no node path is specified, then nothing is output.
 
 By default, output is in the form of a sequence of JSON documents, separated by newlines. If the array (-a) option is
 selected, output is in the form of a JSON array - the output opens with a '[' character, documents are separated by
@@ -21,22 +22,23 @@ Alternatively, if the node is an array or other iterable type, then it may be ou
 separated by newline characters) according to the -s flag.
 
 SYNOPSIS
-node.py [-i] [{ -a | -s }] [-v] [PATH]
+node.py [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]
 
 EXAMPLES
-climate_sampler.py -i5 | node.py val
+csv_reader.py climate.csv | node.py -x val.bar
 
 DOCUMENT EXAMPLE - INPUT
-{"tag": "scs-ap1-6", "rec": "2018-04-04T14:50:38.394+00:00", "val": {"hmd": 59.7, "tmp": 23.8}}
-{"tag": "scs-ap1-6", "rec": "2018-04-04T14:55:38.394+00:00", "val": {"hmd": 59.8, "tmp": 23.9}}
+{"val": {"hmd": 73.5, "tmp": 10.8, "bar": ""}, "rec": "2019-02-17T08:56:53Z"}
+{"val": {"hmd": 73.6, "tmp": 10.8, "bar": ""}, "rec": "2019-02-17T08:57:53Z"}
 
 DOCUMENT EXAMPLE - OUTPUT
-Default mode:
-{"hmd": 59.7, "tmp": 23.8}
-{"hmd": 59.8, "tmp": 23.9}
+default mode:
+{"val": {"hmd": 73.5, "tmp": 10.8}, "rec": "2019-02-17T08:56:53Z"}
+{"val": {"hmd": 73.6, "tmp": 10.8}, "rec": "2019-02-17T08:57:53Z"}
 
-Array mode:
-[{"hmd": 59.7, "tmp": 23.8}, {"hmd": 59.8, "tmp": 23.9}]
+array mode:
+[{"val": {"hmd": 73.5, "tmp": 10.8}, "rec": "2019-02-17T08:56:53Z"},
+{"val": {"hmd": 73.6, "tmp": 10.8}, "rec": "2019-02-17T08:57:53Z"}]
 """
 
 import sys
@@ -46,8 +48,6 @@ from scs_analysis.cmd.cmd_node import CmdNode
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-
-# TODO: handle multiple nodes
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -76,42 +76,52 @@ if __name__ == '__main__':
         node = None
         first = True
 
+        if cmd.exclude and not cmd.sub_paths:           # exclude everything
+            exit(0)
+
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
                 continue
 
-            if cmd.ignore and not datum.has_sub_path(cmd.path):
-                continue
+            # build...
+            if not cmd.sub_paths:
+                target = datum
 
-            try:
-                node = datum.node(cmd.path)
+            else:
+                target = PathDict()
 
-            except KeyError as ex:
-                print("node: KeyError: %s" % ex, file=sys.stderr)
-                exit(1)
+                for path in datum.paths():
+                    if cmd.includes(path):
+                        target.append(path, datum.node(path))
 
-            document = JSONify.dumps(node)
+            # report...
+            if not target:
+                continue                                # skip empty outputs
 
             if cmd.sequence:
-                try:
-                    for item in node:
-                        print(JSONify.dumps(item))
-                except TypeError:
-                    print(document)
+                for path in cmd.sub_paths:
+                    node = target.node(path)
+
+                    try:
+                        for item in node:
+                            print(JSONify.dumps(item))
+                    except TypeError as ex:
+                        print(ex)
+                        print(JSONify.dumps(node))
 
             else:
                 if cmd.array:
                     if first:
-                        print(document, end='')
+                        print(JSONify.dumps(target), end='')
                         first = False
 
                     else:
-                        print(", %s" % document, end='')
+                        print(", %s" % JSONify.dumps(target), end='')
 
                 else:
-                    print(document)
+                    print(JSONify.dumps(target))
 
             sys.stdout.flush()
 

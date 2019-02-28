@@ -76,7 +76,7 @@ class CmdMultiChart(object):
 
     @property
     def paths(self):
-        return self.__args
+        return set(self.__args)
 
 
     # ----------------------------------------------------------------------------------------------------------------
