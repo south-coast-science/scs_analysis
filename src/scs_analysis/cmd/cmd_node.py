@@ -16,7 +16,7 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]",
+        self.__parser = optparse.OptionParser(usage="%prog [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 .. SUB_PATH_N]",
                                               version="%prog 1.0")
 
         # optional...
@@ -50,9 +50,9 @@ class CmdNode(object):
     def includes(self, path):
         for sub_path in self.sub_paths:
             if path.startswith(sub_path):
-                return True
+                return not self.exclude
 
-        return False
+        return self.exclude
 
 
     # ----------------------------------------------------------------------------------------------------------------
