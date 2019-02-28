@@ -21,7 +21,7 @@ Alternatively, if the node is an array or other iterable type, then it may be ou
 separated by newline characters) according to the -s flag.
 
 SYNOPSIS
-node.py [-i] [{ -a | -s }] [-v] [PATH]
+node.py [-x] [-i] [{ -a | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]
 
 EXAMPLES
 climate_sampler.py -i5 | node.py val
@@ -46,8 +46,6 @@ from scs_analysis.cmd.cmd_node import CmdNode
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-
-# TODO: handle multiple nodes
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -76,42 +74,60 @@ if __name__ == '__main__':
         node = None
         first = True
 
+        if cmd.exclude and not cmd.sub_paths:           # exclude everything
+            exit(0)
+
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
                 continue
 
-            if cmd.ignore and not datum.has_sub_path(cmd.path):
-                continue
+            if not cmd.sub_paths:
+                target = datum
 
-            try:
-                node = datum.node(cmd.path)
+            else:
+                target = PathDict()
 
-            except KeyError as ex:
-                print("node: KeyError: %s" % ex, file=sys.stderr)
-                exit(1)
+                paths = datum.paths()
 
-            document = JSONify.dumps(node)
+                if cmd.exclude:
+                    for path in paths:
+                        if not cmd.includes(path):
+                            target.append(path, datum.node(path))
+
+                else:
+                    for sub_path in cmd.sub_paths:
+                        try:
+                            target.append(sub_path, datum.node(sub_path))
+                        except KeyError:
+                            continue
+
+            if not target:
+                continue                                # skip empty outputs
 
             if cmd.sequence:
-                try:
-                    for item in node:
-                        print(JSONify.dumps(item))
-                except TypeError:
-                    print(document)
+                for path in cmd.sub_paths:
+                    node = target.node(path)
+
+                    try:
+                        for item in node:
+                            print(JSONify.dumps(item))
+                    except TypeError as ex:
+                        print(ex)
+                        print(JSONify.dumps(node))
 
             else:
                 if cmd.array:
                     if first:
-                        print(document, end='')
+                        print(JSONify.dumps(target), end='')
                         first = False
 
                     else:
-                        print(", %s" % document, end='')
+                        print(", %s" % JSONify.dumps(target), end='')
 
                 else:
-                    print(document)
+                    print(JSONify.dumps(target))
 
             sys.stdout.flush()
 

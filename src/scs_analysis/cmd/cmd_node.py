@@ -16,17 +16,18 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-i] [{ -a | -s }] [-v] [SUB_PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]",
+                                              version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--ignore", "-i", action="store_true", dest="ignore", default=False,
-                                 help="ignore data where node is missing")
+        self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
+                                 help="include all sub-paths except the named one(s)")
 
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
                                  help="output the sequence of input JSON documents as array")
 
         self.__parser.add_option("--sequence", "-s", action="store_true", dest="sequence", default=False,
-                                 help="output the contents of the input array node as a sequence")
+                                 help="output the contents of the input array node(s) as a sequence")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -37,17 +38,28 @@ class CmdNode(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.exclude and self.sequence:
+            return False
+
         if self.array and self.sequence:
             return False
 
         return True
 
 
+    def includes(self, path):
+        for sub_path in self.sub_paths:
+            if path.startswith(sub_path):
+                return True
+
+        return False
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def ignore(self):
-        return self.__opts.ignore
+    def exclude(self):
+        return self.__opts.exclude
 
 
     @property
@@ -66,8 +78,8 @@ class CmdNode(object):
 
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def sub_paths(self):
+        return set(self.__args)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -77,5 +89,5 @@ class CmdNode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNode:{ignore:%s, array:%s, sequence:%s, verbose:%s, path:%s}" %  \
-               (self.ignore, self.array, self.sequence, self.verbose, self.path)
+        return "CmdNode:{exclude:%s, array:%s, sequence:%s, verbose:%s, sub_paths:%s}" %  \
+               (self.exclude, self.array, self.sequence, self.verbose, self.sub_paths)
