@@ -53,6 +53,9 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    document_count = 0
+    output_count = 0
+
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
@@ -80,10 +83,13 @@ if __name__ == '__main__':
             exit(0)
 
         for line in sys.stdin:
-            datum = PathDict.construct_from_jstr(line)
+            jstr = line.strip()
+            datum = PathDict.construct_from_jstr(jstr)
 
             if datum is None:
                 continue
+
+            document_count += 1
 
             # build...
             if not cmd.sub_paths:
@@ -125,6 +131,8 @@ if __name__ == '__main__':
 
             sys.stdout.flush()
 
+            output_count += 1
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -136,3 +144,6 @@ if __name__ == '__main__':
     finally:
         if cmd.array:
             print(']')
+
+        if cmd.verbose:
+            print("node: documents: %d output: %d" % (document_count, output_count), file=sys.stderr)

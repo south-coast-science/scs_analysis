@@ -26,7 +26,7 @@ class CmdSampleISO8601(object):
         self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store", default=None,
                                  dest="timezone", help="source timezone (default 'UTC')")
 
-        self.__parser.add_option("--iso", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

@@ -39,7 +39,7 @@ At each checkpoint, if there are no values for a given path, then only the rec f
 set, then any checkpoints missing in the input data are written to stdout in sequence.
 
 SYNOPSIS
-sample_aggregate.py [-m] [-t] [-f] [-v] -c HH:MM:SS [PATH_1..PATH_N]
+sample_aggregate.py -c HH:MM:SS [-m] [-t] [-f] [-i] [-v] [PATH_1..PATH_N]
 
 EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -f -c **:/5:00 val
@@ -47,145 +47,21 @@ csv_reader.py gases.csv | sample_aggregate.py -f -c **:/5:00 val
 
 import sys
 
-from decimal import InvalidOperation
-
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
+from scs_analysis.handler.sample_aggregate import SampleAggregate
 
-from scs_core.data.json import JSONify
-from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
-from scs_core.data.precision import Precision
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class SampleAggregate(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, min_max, include_tag, nodes):
-        """
-        Constructor
-        """
-        self.__min_max = min_max
-        self.__nodes = nodes
-
-        self.__precisions = {}
-        self.__regressions = {}
-
-        self.__initialised = False
-
-        self.__include_tag = include_tag
-        self.__tag = None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def has_value(self):
-        for regression in self.__regressions.values():
-            if regression.has_midpoint():
-                return True
-
-        return False
-
-
-    def append(self, datetime: LocalizedDatetime, sample: PathDict):
-        # initialise...
-        if not self.__initialised:
-            for node in self.__nodes:
-                try:
-                    paths = sample.paths(node)
-
-                except KeyError:
-                    continue
-
-                except IndexError as ex:
-                    paths = None
-                    print("sample_aggregate: %s: IndexError: %s" % (node, ex), file=sys.stderr)
-                    sys.stderr.flush()
-                    exit(1)
-
-                for path in paths:
-                    self.__precisions[path] = Precision()
-                    self.__regressions[path] = LinearRegression()
-
-            self.__initialised = True
-
-        # tag...
-        if self.__include_tag:
-            if sample.has_path('tag'):
-                self.__tag = sample.node('tag')
-
-        # values...
-        for path in self.__precisions.keys():
-            try:
-                value = sample.node(path)
-
-            except KeyError:
-                continue
-
-            if value is None:
-                continue
-
-            try:
-                self.__precisions[path].widen(value)
-                self.__regressions[path].append(datetime, value)
-
-            except InvalidOperation:
-                continue
-
-    def reset(self):
-        for path in self.__regressions.keys():
-            self.__regressions[path].reset()
-
-
-    def report(self, localised_datetime):
-        report = PathDict()
-
-        # tag...
-        if self.__tag:
-            report.append('tag', self.__tag)
-
-        # rec...
-        report.append('rec', localised_datetime.as_iso8601())
-
-        # values...
-        for path, precision in self.__precisions.items():
-            regression = self.__regressions[path]
-
-            if self.__regressions[path].has_midpoint():
-                _, midpoint = regression.midpoint()
-
-                if self.__min_max:
-                    report.append(path + '.min', round(regression.min(), precision.digits))
-                    report.append(path + '.mid', round(midpoint, precision.digits))
-                    report.append(path + '.max', round(regression.max(), precision.digits))
-
-                else:
-                    report.append(path, round(midpoint, precision.digits))
-
-        return report
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        regressions = '[' + ', '.join(topic + ':' + str(reg) for topic, reg in self.__regressions.items()) + ']'
-
-        return "SampleAggregate:{min_max:%s, regressions:%s}" % (self.__min_max, regressions)
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
+    aggregate = None
+
     document_count = 0
     processed_count = 0
-
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -206,7 +82,7 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.include_tag, cmd.nodes)
+        aggregate = SampleAggregate(cmd.min_max, cmd.include_tag, cmd.iso, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
@@ -228,7 +104,7 @@ if __name__ == '__main__':
             document_count += 1
 
             try:
-                rec_node = datum.node('rec')
+                rec_node = datum.node(cmd.iso)
             except KeyError:
                 continue
 
@@ -240,7 +116,7 @@ if __name__ == '__main__':
 
             # report and reset...
             if rec.datetime > checkpoint.datetime:
-                print(JSONify.dumps(aggregate.report(checkpoint)))
+                aggregate.print(checkpoint)
                 aggregate.reset()
 
                 filler = checkpoint
@@ -253,9 +129,7 @@ if __name__ == '__main__':
                     if filler >= checkpoint:
                         break
 
-                    print(JSONify.dumps(aggregate.report(filler)))
-
-            sys.stdout.flush()
+                    aggregate.print(filler)
 
             # append sample...
             aggregate.append(rec, datum)
@@ -264,7 +138,7 @@ if __name__ == '__main__':
 
         # report remainder...
         if aggregate.has_value():
-            print(JSONify.dumps(aggregate.report(checkpoint)))
+            aggregate.print(checkpoint)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -276,4 +150,7 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            print("sample_aggregate: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+            output_count = 0 if aggregate is None else aggregate.output_count
+
+            print("sample_aggregate: documents: %d processed: %d output: %d" %
+                  (document_count, processed_count, output_count), file=sys.stderr)
