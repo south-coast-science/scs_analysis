@@ -29,11 +29,11 @@ class CmdSampleAggregate(object):
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="report min and max in addition to midpoint")
 
-        self.__parser.add_option("--include-tag", "-t", action="store_true", dest="include_tag", default=False,
-                                 help="include tag field, if present")
-
         self.__parser.add_option("--fill", "-f", action="store_true", dest="fill", default=False,
                                  help="fill output with checkpoints missing from input")
+
+        self.__parser.add_option("--include-tag", "-t", action="store_true", dest="include_tag", default=False,
+                                 help="include tag field, if present")
 
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
