@@ -16,9 +16,13 @@ terminates.
 
 The type of the field must be specified explicitly as either numeric or ISO 8601 datetime.
 
-Evaluation is based on greater than or equal to the lower bound and less than the upper bound. Both upper
-and lower bounds are optional. If both are present, then the lower bound value must be less than the upper bound value.
-If neither are present, then the sample_bounds utility filers out documents with missing fields or empty values.
+Evaluation follows the rule:
+
+lower bound <= value < upper bound
+
+Both upper and lower bounds are optional. If both are present, then the lower bound value must be less than the upper
+bound value. If neither are present, then the sample_bounds utility filers out documents with missing fields or
+empty values.
 
 If the --exclusions flag is used, the sample_bounds utility outputs only the documents that do not fit within the
 specified bounds. Note that, in this case, documents with missing or empty fields are still discarded.
