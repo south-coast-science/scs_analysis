@@ -52,8 +52,6 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: limit to 6 decimal places
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
