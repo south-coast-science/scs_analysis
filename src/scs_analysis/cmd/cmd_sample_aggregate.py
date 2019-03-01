@@ -18,13 +18,14 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m] [-t] [-f] [-v] -c HH:MM:SS [PATH_1 .. PATH_N]",
+        self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-t] [-f] [-i] [-v] [PATH_1 .. PATH_N]",
                                               version="%prog 1.0")
 
-        # optional...
+        # compulsory...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
                                  help="a time specification as **:/5:00")
 
+        # optional...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="report min and max in addition to midpoint")
 
@@ -33,6 +34,9 @@ class CmdSampleAggregate(object):
 
         self.__parser.add_option("--fill", "-f", action="store_true", dest="fill", default=False,
                                  help="fill output with checkpoints missing from input")
+
+        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+                                 help="path for ISO 8601 datetime field (default 'rec')")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -81,6 +85,11 @@ class CmdSampleAggregate(object):
 
 
     @property
+    def iso(self):
+        return self.__opts.iso
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -92,5 +101,7 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, include_tag:%s, fill:%s, verbose:%s, nodes:%s}" %  \
-               (self.__opts.checkpoint, self.min_max, self.include_tag, self.fill, self.verbose, self.nodes)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, include_tag:%s, fill:%s, iso:%s, verbose:%s, " \
+               "nodes:%s}" %  \
+               (self.__opts.checkpoint, self.min_max, self.include_tag, self.fill, self.iso, self.verbose,
+                self.nodes)
