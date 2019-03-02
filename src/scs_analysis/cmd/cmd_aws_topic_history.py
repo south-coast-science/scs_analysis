@@ -67,13 +67,21 @@ class CmdAWSTopicHistory(object):
         if count != 1:
             return False
 
-        if self.__opts.start is not None and LocalizedDatetime.construct_from_iso8601(self.__opts.start) is None:
-            return False
-
-        if self.__opts.end is not None and LocalizedDatetime.construct_from_iso8601(self.__opts.end) is None:
-            return False
-
         return True
+
+
+    def is_valid_start(self):
+        if self.__opts.start is None:
+            return True
+
+        return LocalizedDatetime.construct_from_iso8601(self.__opts.start) is not None
+
+
+    def is_valid_end(self):
+        if self.__opts.end is None:
+            return True
+
+        return LocalizedDatetime.construct_from_iso8601(self.__opts.end) is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
