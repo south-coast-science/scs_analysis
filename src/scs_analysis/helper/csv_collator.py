@@ -21,14 +21,14 @@ class CSVCollator(object):
     def construct(cls, dataset_lower, dataset_upper, delta, file_prefix):
         bins = []
 
-        lower = dataset_lower
+        bin_lower = dataset_lower
         form = Datum.format(dataset_upper, True)
 
-        while lower < dataset_upper:
-            upper = lower + delta
-            bins.append(CSVCollatorBin.construct(lower, upper, file_prefix, form))
+        while bin_lower < dataset_upper:
+            bin_upper = bin_lower + delta
+            bins.append(CSVCollatorBin.construct(bin_lower, bin_upper, file_prefix, form))
 
-            lower = upper
+            bin_lower = bin_upper
 
         return CSVCollator(dataset_lower, delta, bins)
 
