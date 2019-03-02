@@ -31,7 +31,7 @@ csv_collator.py -l 5.0 -u 21.0 -d 1.0 -f collation/alphasense_303_2018-08 -v val
 import sys
 
 from scs_analysis.cmd.cmd_csv_collator import CmdCSVCollator
-from scs_analysis.handler.csv_collator_bin import CSVCollatorBin
+from scs_analysis.helper.csv_collator import CSVCollator
 
 from scs_core.data.path_dict import PathDict
 
@@ -40,7 +40,7 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
-    bins = []
+    collator = None
 
     document_count = 0
     processed_count = 0
@@ -61,15 +61,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        lower = cmd.lower
-
-        while lower < cmd.upper:
-            upper = lower + cmd.delta
-            bins.append(CSVCollatorBin.construct(lower, upper, cmd.file_prefix))
-
-            lower = upper
-
-        max_bin_index = len(bins) - 1
+        collator = CSVCollator.construct(cmd.lower, cmd.upper, cmd.delta, cmd.file_prefix)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -92,12 +84,8 @@ if __name__ == '__main__':
             except (TypeError, ValueError):
                 continue
 
-            index = int((value - cmd.lower) // cmd.delta)
-
-            if index < 0 or index > max_bin_index:
+            if not collator.collate(value, jstr):
                 continue
-
-            bins[index].write(jstr)
 
             processed_count += 1
 
@@ -110,12 +98,12 @@ if __name__ == '__main__':
             print("csv_collator: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-        for b in bins:
-            b.close()
+        if collator is not None:
+            collator.close()
 
-        if cmd.verbose:
-            for b in bins:
-                print("csv_collator: lower: %4.1f upper: %4.1f count: %5d" % (b.lower, b.upper, b.count),
-                      file=sys.stderr)
+            if cmd.verbose:
+                for b in collator.bins:
+                    print("csv_collator: lower: %4.1f upper: %4.1f count: %5d" % (b.lower, b.upper, b.count),
+                          file=sys.stderr)
 
             print("csv_collator: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

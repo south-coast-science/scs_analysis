@@ -31,7 +31,7 @@ import sys
 import time
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
-from scs_analysis.handler.aws_mqtt_control_handler import AWSMQTTControlHandler
+from scs_analysis.helper.aws_mqtt_control_handler import AWSMQTTControlHandler
 
 from scs_core.control.control_datum import ControlDatum
 

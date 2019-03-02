@@ -44,7 +44,7 @@ https://github.com/curl/curl
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
-from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
+from scs_analysis.helper.aws_topic_history_reporter import AWSTopicHistoryReporter
 
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
@@ -70,9 +70,18 @@ if __name__ == '__main__':
 
     cmd = CmdAWSTopicHistory()
 
+    if not cmd.is_valid_start():
+        print("aws_topic_history: invalid format for start datetime.", file=sys.stderr)
+        exit(2)
+
+    if not cmd.is_valid_end():
+        print("aws_topic_history: invalid format for end datetime.", file=sys.stderr)
+        exit(2)
+
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
+
 
     if cmd.verbose:
         print("aws_topic_history: %s" % cmd, file=sys.stderr)

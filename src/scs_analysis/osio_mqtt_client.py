@@ -41,8 +41,8 @@ import time
 from collections import OrderedDict
 
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
-from scs_analysis.handler.osio_mqtt_client_handler import OSIOMQTTHandler
-from scs_analysis.handler.mqtt_reporter import MQTTReporter
+from scs_analysis.helper.osio_mqtt_client_handler import OSIOMQTTHandler
+from scs_analysis.helper.mqtt_reporter import MQTTReporter
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication

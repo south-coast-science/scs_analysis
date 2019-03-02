@@ -48,7 +48,7 @@ csv_reader.py gases.csv | sample_aggregate.py -f -c **:/5:00 val
 import sys
 
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
-from scs_analysis.handler.sample_aggregate import SampleAggregate
+from scs_analysis.helper.sample_aggregate import SampleAggregate
 
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
