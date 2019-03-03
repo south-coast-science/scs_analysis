@@ -114,4 +114,4 @@ if __name__ == '__main__':
             print("sample_duplicates: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
 
             if dupes is not None:
-                print("sample_duplicates: matched keys: %d" % dupes.matched_key_count, file=sys.stderr)
+                print("sample_duplicates: values with duplicates: %d" % dupes.matched_key_count, file=sys.stderr)
