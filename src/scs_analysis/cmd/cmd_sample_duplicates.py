@@ -1,5 +1,5 @@
 """
-Created on 16 Feb 2019
+Created on 3 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,16 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleAH(object):
+class CmdSampleDuplicates(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] RH_PATH T_PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c] [-v] PATH", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--counts", "-c", action="store_true", dest="counts", default=False,
+                                 help="only list the count of matching documents")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -28,7 +31,7 @@ class CmdSampleAH(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 2:
+        if len(self.__args) != 1:
             return False
 
         return True
@@ -37,18 +40,18 @@ class CmdSampleAH(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def counts(self):
+        return self.__opts.counts
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
-    def rh_path(self):
+    def path(self):
         return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
-    def t_path(self):
-        return self.__args[1] if len(self.__args) > 1 else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -58,4 +61,4 @@ class CmdSampleAH(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAH:{verbose:%s, rh_path:%s, t_path:%s}" % (self.verbose, self.rh_path, self.t_path)
+        return "CmdSampleDuplicates:{counts:%s, verbose:%s, path:%s}" % (self.counts, self.verbose, self.path)
