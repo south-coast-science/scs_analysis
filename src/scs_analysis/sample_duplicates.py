@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Created on 16 Feb 2019
+Created on 3 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -114,4 +114,4 @@ if __name__ == '__main__':
             print("sample_duplicates: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
 
             if dupes is not None:
-                print("sample_duplicates: matched keys: %d" % dupes.matched_key_count, file=sys.stderr)
+                print("sample_duplicates: values with duplicates: %d" % dupes.matched_key_count, file=sys.stderr)
