@@ -75,7 +75,7 @@ if __name__ == '__main__':
             # resources...
 
             try:
-                reader = CSVReader(filename)
+                reader = CSVReader(filename, cast=cmd.cast)
             except FileNotFoundError:
                 print("csv_reader: file not found: %s" % filename, file=sys.stderr)
                 exit(1)
