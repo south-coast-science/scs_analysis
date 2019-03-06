@@ -38,8 +38,6 @@ import random
 import sys
 import time
 
-from collections import OrderedDict
-
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 from scs_analysis.helper.osio_mqtt_client_handler import OSIOMQTTHandler
 from scs_analysis.helper.mqtt_reporter import MQTTReporter
@@ -153,7 +151,7 @@ if __name__ == '__main__':
 
         for message in pub_comms.read():
             try:
-                datum = json.loads(message, object_pairs_hook=OrderedDict)
+                datum = json.loads(message)
             except ValueError:
                 reporter.print("bad datum: %s" % message)
                 continue

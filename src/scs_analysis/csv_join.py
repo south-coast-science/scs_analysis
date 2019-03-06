@@ -94,7 +94,7 @@ if __name__ == '__main__':
         join = Join.construct(cmd.left_prefix, cmd.left_pk, cmd.right_prefix, cmd.right_pk, cmd.iso8601)
 
         try:
-            reader = CSVReader(cmd.left_filename)
+            reader = CSVReader(filename=cmd.left_filename)
         except FileNotFoundError:
             print("csv_join: file not found: %s" % cmd.left_filename, file=sys.stderr)
             exit(1)
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         reader.close()
 
         try:
-            reader = CSVReader(cmd.right_filename)
+            reader = CSVReader(filename=cmd.right_filename)
         except FileNotFoundError:
             print("csv_join: file not found: %s" % cmd.right_filename, file=sys.stderr)
             exit(1)

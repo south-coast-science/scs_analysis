@@ -6,8 +6,6 @@ Created on 11 Jan 2018
 
 import json
 
-from collections import OrderedDict
-
 from scs_core.control.control_receipt import ControlReceipt
 
 
@@ -38,7 +36,7 @@ class AWSMQTTControlHandler(object):
     # noinspection PyUnusedLocal
 
     def handle(self, client, userdata, message):
-        payload = json.loads(message.payload.decode(), object_pairs_hook=OrderedDict)
+        payload = json.loads(message.payload.decode())
 
         try:
             receipt = ControlReceipt.construct_from_jdict(payload)

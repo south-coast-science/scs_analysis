@@ -27,8 +27,6 @@ scs_analysis/aws_mqtt_client
 import json
 import sys
 
-from collections import OrderedDict
-
 from scs_analysis.cmd.cmd_aws_topic_publisher import CmdAWSTopicPublisher
 
 from scs_core.data.json import JSONify
@@ -53,7 +51,7 @@ if __name__ == '__main__':
 
         for line in sys.stdin:
             try:
-                jdict = json.loads(line, object_pairs_hook=OrderedDict)
+                jdict = json.loads(line)
             except ValueError:
                 continue
 
