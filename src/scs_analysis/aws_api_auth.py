@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Created on 2 Apr 2018
+Created on 2 Apr 2018 - nano
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
