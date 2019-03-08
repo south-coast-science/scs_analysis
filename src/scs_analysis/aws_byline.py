@@ -5,6 +5,8 @@ Created on 25 Dec 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The aws_byline utility is used to find the date / time of the most-recently published message for a given topic
 or device. The user may specify a topic path (find all devices that have published to the given topic), or a device tag

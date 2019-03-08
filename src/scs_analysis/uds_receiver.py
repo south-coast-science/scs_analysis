@@ -5,6 +5,8 @@ Created on 11 Apr 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The uds_receiver utility is used to accept data via a Unix domain socket, with data sourced from the same host, or
 another host on the same local area network.

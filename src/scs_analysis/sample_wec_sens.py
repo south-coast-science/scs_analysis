@@ -5,6 +5,8 @@ Created on 16 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_wec_sens utility is used to inject a non-baselined, simple data interpretation into any JSON document that
 contains a temperature-corrected working electrode voltage (weC) field.

@@ -5,6 +5,8 @@ Created on 19 Nov 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_timezone utility is used to shift the rec datetime field of each input document from its current offset to
 the offset determined by the given timezone. This is particularly useful when using data visualisation systems that are

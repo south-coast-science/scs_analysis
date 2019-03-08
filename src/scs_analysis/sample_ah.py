@@ -5,6 +5,8 @@ Created on 16 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_ah utility is used to inject an absolute humidity (aH) value into any JSON document that contains
 relative humidity (rH) and temperature (t) fields.

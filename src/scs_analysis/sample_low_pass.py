@@ -5,6 +5,8 @@ Created on 24 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_low_pass utility provides a rolling exponential average or low pass filter. The user must specify the
 sampling interval in seconds, together with the cut-off frequency.

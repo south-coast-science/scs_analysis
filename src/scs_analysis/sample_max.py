@@ -5,6 +5,8 @@ Created on 24 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_max utility is used to find the record with the highest value for the given node.
 

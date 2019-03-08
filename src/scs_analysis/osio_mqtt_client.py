@@ -5,6 +5,8 @@ Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The osio_mqtt_client utility is used to subscribe or publish using the OpenSensors.io Community Edition messaging
 infrastructure.

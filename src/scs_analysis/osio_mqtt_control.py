@@ -5,6 +5,8 @@ Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The osio_mqtt_control utility is used to interact with a remote host, using the device's control topic - its
 command / receipt message regime provides an interactive system over the OpenSensors.io Community Edition

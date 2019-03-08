@@ -5,6 +5,8 @@ Created on 20 Mar 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_median utility provides a median filter - the filter maintains an odd-numbered window on the input
 data sequence, and outputs the middle item in the sorted list of items. The user can specify the

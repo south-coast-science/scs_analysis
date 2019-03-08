@@ -5,6 +5,8 @@ Created on 19 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_error utility is typically used in a setting where data has a gaussian distribution around a fixed or
 slow-moving value. The error analysis shows the difference between the current value, and an exponential

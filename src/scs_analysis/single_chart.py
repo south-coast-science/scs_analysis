@@ -5,6 +5,8 @@ Created on 21 Jul 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The single_chart utility is used to display a Matplotlib categorical chart for one or more data sources. Data is
 provided by a sequence of JSON documents on stdin. The charting source is specified by a path to a leaf node in the

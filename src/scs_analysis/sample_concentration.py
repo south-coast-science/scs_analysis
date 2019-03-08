@@ -5,6 +5,8 @@ Created on 15 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_concentration utility is used to inject a gas concentration value, based on a given density (microgrammes
 per cubic metre), temperature and pressure. The reported value is in parts per billion.

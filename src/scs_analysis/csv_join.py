@@ -5,6 +5,8 @@ Created on 22 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The csv_join utility performs an SQL join operation on a pair of CSV files. This is particularly useful where a
 comparison is to be made on timeline data from two devices.

@@ -5,6 +5,8 @@ Created on 16 Apr 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The csv_logger utility is used to provide continuous logging of data. For devices that are not internet-connected, this
 can be used as the method of data capture. For always-connected devices, it is recommended that the utility is used to

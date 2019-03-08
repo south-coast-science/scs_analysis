@@ -5,6 +5,8 @@ Created on 23 Aug 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_regression utility computes a linear regression for a stream of data delivered on stdin.
 

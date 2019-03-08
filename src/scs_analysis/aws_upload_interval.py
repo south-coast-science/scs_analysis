@@ -5,6 +5,8 @@ Created on 24 Dec 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The aws_upload_interval utility is used to determine the end-to-end health of the data infrastructure. Specifically, it
 reports on the time difference between a sense document being created on a device, and the same document being

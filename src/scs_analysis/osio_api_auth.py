@@ -5,6 +5,8 @@ Created on 18 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The osio_api_auth utility is used to store or read the API key required by the OpenSensors.io Community Edition
 historic data retrieval system.

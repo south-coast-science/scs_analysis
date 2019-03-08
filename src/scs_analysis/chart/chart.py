@@ -2,6 +2,8 @@
 Created on 15 Jul 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 from abc import abstractmethod

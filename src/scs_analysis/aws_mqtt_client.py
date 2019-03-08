@@ -5,6 +5,8 @@ Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
 infrastructure.

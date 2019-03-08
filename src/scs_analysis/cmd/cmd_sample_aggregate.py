@@ -2,6 +2,8 @@
 Created on 24 Oct 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 import optparse

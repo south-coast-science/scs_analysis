@@ -5,6 +5,8 @@ Created on 2 Apr 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The aws_api_auth utility is used to store or read the endpoint host name and API key required by the South Coast
 Science / AWS historic data retrieval system.
