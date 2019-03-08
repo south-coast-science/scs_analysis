@@ -2,6 +2,8 @@
 Created on 2 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 from scs_core.csv.csv_writer import CSVWriter

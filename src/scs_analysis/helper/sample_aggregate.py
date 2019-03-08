@@ -2,6 +2,8 @@
 Created on 1 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 import sys
