@@ -5,36 +5,44 @@ Created on 9 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-source repo: scs_analysis
-
 DESCRIPTION
-The aws_api_auth utility is used to store or read the endpoint host name and API key required by the South Coast
-Science / AWS historic data retrieval system.
+The mqtt_control_auth utility is used to maintain a database of authentication documents for use with the
+scs_analysis/aws_mqtt_control and scs_analysis/osio_mqtt_control utilities.
+
+Authentication details for specific devices are available on request from South Coast Science, or can be obtained
+using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-aws_api_auth.py [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]
+mqtt_control_auth.py { -l | [-s HOSTNAME TAG SHARED_SECRET TOPIC] [-d HOSTNAME] } [-v]
 
 EXAMPLES
-aws_api_auth.py -e aws.southcoastscience.com -a de92c5ff-b47a-4cc4-a04c-62d684d64a1f
+mqtt_control_auth.py -s scs-bbe-002 scs-be2-2 secret1 \
+south-coast-science-dev/production-test/device/alpha-bb-eng-000002/status
 
 FILES
-~/SCS/aws/aws_api_auth.json
+~/SCS/aws/mqtt_control_auths.json
 
 DOCUMENT EXAMPLE
-{"endpoint": "aws.southcoastscience.com", "api-key": "de92c5ff-b47a-4cc4-a04c-62d684d64a1f"}
+{"auths": {"scs-rpi-006": {"hostname": "scs-rpi-006", "tag": "scs-ap1-6", "shared-secret": "secret2",
+"topic": "south-coast-science-dev/development/auth/alpha-pi-eng-000006/control"}}}
 
 SEE ALSO
-scs_analysis/aws_topic_history
+scs_analysis/aws_mqtt_control
+scs_analysis/osio_mqtt_control
+scs_mfr/shared_secret
+scs_mfr/system_id
+scs_mfr/aws_project
 """
 
 import sys
 
-from scs_core.aws.client.api_auth import APIAuth
+from scs_analysis.cmd.cmd_mqtt_control_auth import CmdMQTTControlAuth
+
 from scs_core.data.json import JSONify
 
-from scs_host.sys.host import Host
+from scs_core.estate.mqtt_control_auth import MQTTControlAuth, MQTTControlAuthSet
 
-from scs_analysis.cmd.cmd_aws_api_auth import CmdAWSAPIAuth
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -44,14 +52,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdAWSAPIAuth()
+    cmd = CmdMQTTControlAuth()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("aws_api_auth: %s" % cmd, file=sys.stderr)
+        print("mqtt_control_auth: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 
@@ -59,27 +67,35 @@ if __name__ == '__main__':
     # resources...
 
     # APIAuth...
-    auth = APIAuth.load(Host)
+    group = MQTTControlAuthSet.load(Host)
+
+    if cmd.verbose and group is not None:
+        print("mqtt_control_auth: %s" % group, file=sys.stderr)
+        sys.stderr.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # run...
 
-    if cmd.set():
-        if auth is None and not cmd.is_complete():
-            print("aws_api_auth: No configuration is stored. You must therefore set all fields.", file=sys.stderr)
-            cmd.print_help(sys.stderr)
-            exit(1)
+    # list...
+    if cmd.list:
+        if group is not None:
+            for auth in group.auths:
+                print(JSONify.dumps(auth))
 
-        endpoint = cmd.endpoint if cmd.endpoint else auth.endpoint
-        api_key = cmd.api_key if cmd.api_key else auth.api_key
+        exit(0)
 
-        auth = APIAuth(endpoint, api_key)
-        auth.save(Host)
+    # set...
+    if cmd.is_set_auth():
+        auth = MQTTControlAuth(cmd.auth_hostname, cmd.auth_tag, cmd.auth_shared_secret, cmd.auth_topic)
+        group.insert(auth)
+        group.save(Host)
 
-    if cmd.delete:
-        auth.delete(Host)
-        auth = None
+    # delete...
+    if cmd.is_delete_auth():
+        group.remove(cmd.delete_hostname)
+        group.save(Host)
 
-    if auth:
-        print(JSONify.dumps(auth))
+    # report...
+    if group:
+        print(JSONify.dumps(group))
