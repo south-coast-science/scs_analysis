@@ -11,14 +11,19 @@ DESCRIPTION
 The aws_mqtt_control utility is used to interact with a remote host, using the device's control topic.
 A command / receipt message regime provides an interactive system over the messaging infrastructure.
 
-For security reasons, the user must be in possession of the target device's unique tag and shared secret.
+For security reasons, the user must be in possession of the target device's unique tag and shared secret. These
+tokens can be supplied on the command line, or sourced from an MQTT control auth document managed by the
+mqtt_control_auth utility.
+
+In order to publish on the MQTT control topic, the host must hold an appropriate authentication certificate.
+Certificates are available on request from South Coast Science. The certificate should be indicated using the
+aws_client_auth utility.
 
 SYNOPSIS
-aws_mqtt_control.py -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] [-v]
+aws_mqtt_control.py { -a HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
 
 EXAMPLES
-aws_mqtt_control.py -d scs-be2-2 5016BBBK202E \
-south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control -i
+aws_mqtt_control.py -a scs-bbe-002 -r "disk_usage ."
 
 FILES
 ~/SCS/aws/aws_client_auth.json
@@ -26,7 +31,10 @@ FILES
 SEE ALSO
 scs_analysis/aws_client_auth
 scs_analysis/aws_mqtt_client
+scs_analysis/mqtt_control_auth
+scs_mfr/aws_project
 scs_mfr/shared_secret
+scs_mfr/system_id
 """
 
 import sys
@@ -35,13 +43,15 @@ import time
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 from scs_analysis.helper.aws_mqtt_control_handler import AWSMQTTControlHandler
 
-from scs_core.control.control_datum import ControlDatum
-
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 
+from scs_core.control.control_datum import ControlDatum
+
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
+
+from scs_core.estate.mqtt_control_auth import MQTTControlAuthSet
 
 from scs_host.comms.stdio import StdIO
 
@@ -72,6 +82,27 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        if cmd.is_auth():
+            control_auth_group = MQTTControlAuthSet.load(Host)
+            control_auth = control_auth_group.auth(cmd.auth_hostname)
+
+            if control_auth is None:
+                print("aws_mqtt_control: no MQTT control auth document found for host '%s'." % cmd.auth_hostname,
+                      file=sys.stderr)
+                exit(2)
+
+            if cmd.verbose:
+                print("aws_mqtt_control: %s" % control_auth, file=sys.stderr)
+
+            device_tag = control_auth.tag
+            key = control_auth.shared_secret
+            topic = control_auth.topic
+
+        else:
+            device_tag = cmd.device_tag
+            key = cmd.device_shared_secret
+            topic = cmd.device_topic
+
         # ClientAuth...
         auth = ClientAuth.load(Host)
 
@@ -84,7 +115,7 @@ if __name__ == '__main__':
 
         # responder...
         handler = AWSMQTTControlHandler()
-        subscriber = MQTTSubscriber(cmd.topic, handler.handle)
+        subscriber = MQTTSubscriber(topic, handler.handle)
 
         # client...
         client = MQTTClient(subscriber)
@@ -94,7 +125,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # tag...
-        tag = Host.name()
+        host_tag = Host.name()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -105,7 +136,7 @@ if __name__ == '__main__':
         while True:
             # cmd...
             if cmd.interactive:
-                line = StdIO.prompt(cmd.device_tag + ' > ')
+                line = StdIO.prompt(device_tag + ' > ')
                 cmd_tokens = line.split() if len(line) > 0 else None
 
             else:
@@ -113,9 +144,9 @@ if __name__ == '__main__':
 
             # datum...
             now = LocalizedDatetime.now()
-            datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_host_id)
+            datum = ControlDatum.construct(host_tag, device_tag, now, cmd_tokens, key)
 
-            publication = Publication(cmd.topic, datum)
+            publication = Publication(topic, datum)
 
             handler.set(publication)
 
@@ -132,7 +163,7 @@ if __name__ == '__main__':
             if cmd.receipt or cmd.interactive:
                 while True:
                     if handler.receipt:
-                        if not handler.receipt.is_valid(cmd.device_host_id):
+                        if not handler.receipt.is_valid(key):
                             raise ValueError("invalid digest: %s" % handler.receipt)
 
                         if cmd.verbose:

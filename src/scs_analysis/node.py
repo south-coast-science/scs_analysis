@@ -24,7 +24,7 @@ Alternatively, if the node is an array or other iterable type, then it may be ou
 separated by newline characters) according to the -s flag.
 
 SYNOPSIS
-node.py [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]
+node.py { [-x] [-a] | -s } [-v] [SUB_PATH_1 ... SUB_PATH_N]
 
 EXAMPLES
 csv_reader.py climate.csv | node.py -x val.bar

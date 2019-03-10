@@ -29,6 +29,7 @@ FILES
 ~/SCS/osio/osio_client_auth.json
 
 SEE ALSO
+scs_analysis/mqtt_control_auth
 scs_analysis/osio_api_auth
 scs_analysis/osio_client_auth
 scs_analysis/osio_mqtt_client
@@ -108,13 +109,13 @@ if __name__ == '__main__':
         manager = TopicManager(HTTPClient(), api_auth.api_key)
 
         # check topic...
-        if not manager.find(cmd.topic):
-            print("osio_mqtt_control: Topic not available: %s" % cmd.topic, file=sys.stderr)
+        if not manager.find(cmd.device_topic):
+            print("osio_mqtt_control: Topic not available: %s" % cmd.device_topic, file=sys.stderr)
             exit(1)
 
         # responder...
         handler = OSIOMQTTControlHandler()
-        subscriber = MQTTSubscriber(cmd.topic, handler.handle)
+        subscriber = MQTTSubscriber(cmd.device_topic, handler.handle)
 
         # client...
         client = MQTTClient(subscriber)
@@ -143,9 +144,9 @@ if __name__ == '__main__':
 
             # datum...
             now = LocalizedDatetime.now()
-            datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_host_id)
+            datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_shared_secret)
 
-            publication = Publication(cmd.topic, datum)
+            publication = Publication(cmd.device_topic, datum)
 
             handler.set(publication)
 
@@ -176,7 +177,7 @@ if __name__ == '__main__':
             if cmd.receipt or cmd.interactive:
                 while True:
                     if handler.receipt:
-                        if not handler.receipt.is_valid(cmd.device_host_id):
+                        if not handler.receipt.is_valid(cmd.device_shared_secret):
                             raise ValueError("osio_mqtt_control: invalid digest: %s" % handler.receipt)
 
                         if cmd.verbose:
