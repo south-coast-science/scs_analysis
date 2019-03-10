@@ -5,6 +5,8 @@ Created on 11 Apr 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The node utility is used to extract a node or nodes from within a JSON document. Data is presented as a sequence of
 documents on stdin, and the extracted node(s) are passed to stdout. The extracted node may be a leaf node or an internal
@@ -22,7 +24,7 @@ Alternatively, if the node is an array or other iterable type, then it may be ou
 separated by newline characters) according to the -s flag.
 
 SYNOPSIS
-node.py [{ [-x] [-a] | -s }] [-v] [SUB_PATH_1 ... SUB_PATH_N]
+node.py { [-x] [-a] | -s } [-v] [SUB_PATH_1 ... SUB_PATH_N]
 
 EXAMPLES
 csv_reader.py climate.csv | node.py -x val.bar

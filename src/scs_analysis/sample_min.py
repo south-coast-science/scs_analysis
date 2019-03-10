@@ -5,6 +5,8 @@ Created on 25 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_min utility is used to find the record with the lowest value for the given node.
 

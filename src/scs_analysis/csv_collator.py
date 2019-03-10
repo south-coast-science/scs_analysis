@@ -5,6 +5,8 @@ Created on 20 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The csv_collator utility is used to separate the input JSON documents according to the upper and lower bounds of a
 sequence of bins. For each bin, assignment follows the rule:

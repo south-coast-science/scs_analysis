@@ -5,6 +5,8 @@ Created on 18 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The aws_topic_publisher utility is used to prepare data for publication by the aws_mqtt_client script. The
 aws_topic_publisher acts by taking data from stdin, wrapping it in a JSON document whose only field has the name of

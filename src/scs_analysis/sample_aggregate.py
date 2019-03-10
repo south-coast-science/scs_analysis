@@ -5,6 +5,8 @@ Created on 24 Oct 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_aggregate utility provides linear regression midpoints for data delivered on stdin, over specified units of
 time. It can perform this operation for one or many nodes of the input documents.

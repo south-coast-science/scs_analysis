@@ -5,6 +5,8 @@ Created on 16 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_interval utility is used to discover the jitter present in a data stream.
 

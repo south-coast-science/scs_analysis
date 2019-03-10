@@ -5,6 +5,8 @@ Created on 20 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The localised_datetime utility is used to report the localised date and time, as understood by the host operating
 system, in ISO 8601 format. Optional offsets in hours, minutes and seconds can be supplied.

@@ -5,6 +5,8 @@ Created on 3 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The histo_chart utility is used to create Matplotlib histogram charts and comma-separated value (CSV) histogram files.
 The utility analyses a given path to a leaf node of the input JSON data stream.

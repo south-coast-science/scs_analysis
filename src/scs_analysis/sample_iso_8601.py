@@ -5,6 +5,8 @@ Created on 15 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_iso_8601 utility is used to replace non-localised datetime fields with an ISO 8601 localised datetime field
 for JSON documents of any schema.

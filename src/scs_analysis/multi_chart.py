@@ -5,6 +5,8 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The multi_chart utility is used to display a Matplotlib categorical chart for one or more data sources. The
 data sources share a common y-axis scale. Data is provided by a sequence of JSON documents on stdin. Each charting

@@ -5,6 +5,8 @@ Created on 26 Feb 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_bounds utility is used to find a subset of documents whose value for a specified field lies either
 inside or outside one or two bounding values.

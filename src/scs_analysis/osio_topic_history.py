@@ -5,6 +5,8 @@ Created on 20 Feb 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The osio_topic_history utility is used to retrieve stored data from the OpenSensors.io Community Edition data
 infrastructure. Data can be retrieved by start or start + end localised date / times, or by minutes backwards from now.

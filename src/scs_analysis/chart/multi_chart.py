@@ -3,6 +3,8 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 uses matplotlibrc configuration file
 
 https://matplotlib.org/faq/usage_faq.html

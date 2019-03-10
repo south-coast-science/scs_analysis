@@ -2,6 +2,8 @@
 Created on 9 May 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 import optparse
@@ -16,12 +18,15 @@ class CmdMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -d TAG SHARED_SECRET TOPIC { -i | -r CMD } [-t TIMEOUT] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -a HOSTNAME | -d TAG SHARED_SECRET TOPIC } "
+                                                    "{ -i | -r [CMD_TOKENS] } [-t TIMEOUT] [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--device", "-d", type="string", nargs=3, action="store", dest="tag_host_topic",
-                                 help="tag, shared secret and topic for device")
+        self.__parser.add_option("--auth", "-a", type="string", nargs=1, action="store", dest="auth",
+                                 help="use the stored MQTT control auth document")
+
+        self.__parser.add_option("--device", "-d", type="string", nargs=3, action="store", dest="device",
+                                 help="specify the tag, shared secret and topic for device")
 
         # optional...
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
@@ -31,7 +36,7 @@ class CmdMQTTControl(object):
                                  help="interactive mode (always waits for receipt)")
 
         self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout", default=10,
-                                 help="receipt timeout (default 10 seconds)")
+                                 help="receipt timeout in seconds (default 10)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -42,30 +47,48 @@ class CmdMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.is_auth() == self.is_device():
+            return False
+
         if self.interactive == self.receipt:
             return False
 
         if self.interactive and self.cmd_tokens is not None:
             return False
 
-        return bool(self.__opts.tag_host_topic)
+        return True
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_auth(self):
+        return self.__opts.auth is not None
+
+
+    def is_device(self):
+        return self.__opts.device is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def auth_hostname(self):
+        return self.__opts.auth
+
+
+    @property
     def device_tag(self):
-        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[0]
+        return None if self.__opts.device is None else self.__opts.device[0]
 
 
     @property
-    def device_host_id(self):
-        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[1]
+    def device_shared_secret(self):
+        return None if self.__opts.device is None else self.__opts.device[1]
 
 
     @property
-    def topic(self):
-        return None if self.__opts.tag_host_topic is None else self.__opts.tag_host_topic[2]
+    def device_topic(self):
+        return None if self.__opts.device is None else self.__opts.device[2]
 
 
     @property
@@ -100,7 +123,7 @@ class CmdMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMQTTControl:{tag_host:%s, topic:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
+        return "CmdMQTTControl:{auth:%s, device:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
                "verbose:%s}" % \
-               (self.__opts.tag_host_topic, self.topic, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
+               (self.__opts.auth, self.__opts.device, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
                 self.verbose)

@@ -5,6 +5,8 @@ Created on 13 Oct 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_average utility is used to compute an average value for a stream of data delivered on stdin. This can be an
 average of all values, or a rolling average for a given number of values.

@@ -5,6 +5,8 @@ Created on 3 Mar 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+source repo: scs_analysis
+
 DESCRIPTION
 The sample_duplicates utility is used to find duplicate values in a sequence of input JSON documents, for a specified
 leaf node path. It is particularly useful in searching for duplicate recording datetimes.
