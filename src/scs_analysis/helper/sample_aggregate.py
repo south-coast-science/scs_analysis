@@ -29,12 +29,11 @@ class SampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, min_max, include_tag, iso_path, nodes):
+    def __init__(self, min_max, iso_path, nodes):
         """
         Constructor
         """
         self.__min_max = min_max
-        self.__include_tag = include_tag
         self.__iso_path = iso_path
         self.__nodes = nodes
 
@@ -74,16 +73,14 @@ class SampleAggregate(object):
                     exit(1)
 
                 for path in paths:
+                    if path == 'rec':
+                        continue
+
                     self.__precisions[path] = Precision()
                     self.__regressions[path] = LinearRegression() if Datum.is_numeric(sample.node(path)) else \
                         CatagoricalRegression()
 
             self.__initialised = True
-
-        # tag...
-        if self.__include_tag:
-            if sample.has_path('tag'):
-                self.__tag = sample.node('tag')
 
         # values...
         for path in self.__precisions.keys():
@@ -109,10 +106,6 @@ class SampleAggregate(object):
 
     def report(self, localised_datetime):
         report = PathDict()
-
-        # tag...
-        if self.__tag:
-            report.append('tag', self.__tag)
 
         # rec...
         report.append(self.__iso_path, localised_datetime.as_iso8601())
@@ -154,5 +147,5 @@ class SampleAggregate(object):
     def __str__(self, *args, **kwargs):
         regressions = '{' + ', '.join(topic + ': ' + str(reg) for topic, reg in self.__regressions.items()) + '}'
 
-        return "SampleAggregate:{min_max:%s, include_tag:%s iso_path:%s output_count:%s, regressions:%s}" % \
-               (self.__min_max, self.__include_tag, self.__iso_path, self.output_count, regressions)
+        return "SampleAggregate:{min_max:%s, iso_path:%s output_count:%s, regressions:%s}" % \
+               (self.__min_max, self.__iso_path, self.output_count, regressions)

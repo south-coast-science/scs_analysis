@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
         generator = cmd.checkpoint_generator
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.include_tag, cmd.iso, cmd.nodes)
+        aggregate = SampleAggregate(cmd.min_max, cmd.iso, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
