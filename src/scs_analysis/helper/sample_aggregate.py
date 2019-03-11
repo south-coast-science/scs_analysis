@@ -10,6 +10,9 @@ import sys
 
 from decimal import InvalidOperation
 
+
+from scs_core.data.catagorical_regression import CatagoricalRegression
+from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.localized_datetime import LocalizedDatetime
@@ -72,7 +75,8 @@ class SampleAggregate(object):
 
                 for path in paths:
                     self.__precisions[path] = Precision()
-                    self.__regressions[path] = LinearRegression()
+                    self.__regressions[path] = LinearRegression() if Datum.is_numeric(sample.node(path)) else \
+                        CatagoricalRegression()
 
             self.__initialised = True
 
@@ -118,15 +122,15 @@ class SampleAggregate(object):
             regression = self.__regressions[path]
 
             if self.__regressions[path].has_midpoint():
-                _, midpoint = regression.midpoint()
+                _, midpoint = regression.midpoint(precision.digits)
 
                 if self.__min_max:
-                    report.append(path + '.min', round(regression.min(), precision.digits))
-                    report.append(path + '.mid', round(midpoint, precision.digits))
-                    report.append(path + '.max', round(regression.max(), precision.digits))
+                    report.append(path + '.min', regression.min(precision.digits))
+                    report.append(path + '.mid', midpoint)
+                    report.append(path + '.max', regression.max(precision.digits))
 
                 else:
-                    report.append(path, round(midpoint, precision.digits))
+                    report.append(path, midpoint)
 
         return report
 
@@ -148,7 +152,7 @@ class SampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        regressions = '[' + ', '.join(topic + ':' + str(reg) for topic, reg in self.__regressions.items()) + ']'
+        regressions = '{' + ', '.join(topic + ': ' + str(reg) for topic, reg in self.__regressions.items()) + '}'
 
         return "SampleAggregate:{min_max:%s, include_tag:%s iso_path:%s output_count:%s, regressions:%s}" % \
                (self.__min_max, self.__include_tag, self.__iso_path, self.output_count, regressions)
