@@ -8,8 +8,6 @@ source repo: scs_analysis
 
 import optparse
 
-from scs_core.data.checkpoint_generator import CheckpointGenerator
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -45,22 +43,9 @@ class CmdSampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_valid(self):
-        if self.checkpoint_generator is None:
-            return False
-
-        return True
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     @property
-    def checkpoint_generator(self):
-        try:
-            return CheckpointGenerator.construct(self.__opts.checkpoint)
-
-        except (AttributeError, ValueError):
-            return None
+    def checkpoint(self):
+        return self.__opts.checkpoint
 
 
     @property
@@ -96,4 +81,4 @@ class CmdSampleAggregate(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, fill:%s, iso:%s, verbose:%s, nodes:%s}" %  \
-               (self.__opts.checkpoint, self.min_max, self.fill, self.iso, self.verbose, self.nodes)
+               (self.checkpoint, self.min_max, self.fill, self.iso, self.verbose, self.nodes)
