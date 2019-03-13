@@ -82,7 +82,7 @@ class SampleRegression(object):
         if not self.__func.has_regression():
             return None
 
-        slope, intercept = self.__func.compute()
+        slope, intercept = self.__func.line()
 
         if slope is None:
             return None

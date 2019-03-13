@@ -15,10 +15,10 @@ from their container by a period ('.') character, and array members are separate
 
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
 contain fields that were not in this first document, these extra fields are ignored. If subsequent JSON documents
-do not contain a field in the header, then this field is given the null value.
+do not contain a field that is in the header, then this field is given the null value.
 
 SYNOPSIS
-csv_writer.py [-a] [-e] [-v] [FILENAME]
+csv_writer.py [{ -a | -x }] [-e] [-v] [FILENAME]
 
 EXAMPLES
 socket_receiver.py | csv_writer.py temp.csv -e
@@ -54,6 +54,10 @@ if __name__ == '__main__':
 
     cmd = CmdCSVWriter()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print("csv_writer: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
@@ -62,7 +66,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        writer = CSVWriter(filename=cmd.filename, append=cmd.append)
+        writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header)
 
         if cmd.verbose:
             print("csv_writer: %s" % writer, file=sys.stderr)

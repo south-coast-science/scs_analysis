@@ -8,7 +8,7 @@ Created on 24 Oct 2018
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_aggregate utility provides linear regression midpoints for data delivered on stdin, over specified units of
+The sample_aggregate utility provides regression midpoints for data delivered on stdin, over specified units of
 time. It can perform this operation for one or many nodes of the input documents.
 
 When each time checkpoint is encountered in the input stream, the midpoint values - together with min and max, if
@@ -34,8 +34,10 @@ The input JSON document must contain a field labelled 'rec', providing an ISO 86
 is not present then the document is skipped. Note that the timezone of the output rec datetimes is the same as the
 input rec values.
 
-If the input document does not contain a specified path - or if the value is null - then the value is ignored. Aside
-from null, values must be integers or floats.
+Leaf node values may be numeric or strings. Numeric values are processed according to a simple linear regression.
+String values are processed using a categorical regression.
+
+If the input document does not contain a specified path - or if the value is null - then the value is ignored.
 
 At each checkpoint, if there are no values for a given path, then only the rec field is reported. If the fill flag is
 set, then any checkpoints missing in the input data are written to stdout in sequence.
@@ -52,6 +54,7 @@ import sys
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 from scs_analysis.helper.sample_aggregate import SampleAggregate
 
+from scs_core.data.checkpoint_generator import CheckpointGenerator
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
@@ -70,8 +73,8 @@ if __name__ == '__main__':
 
     cmd = CmdSampleAggregate()
 
-    if not cmd.is_valid():
-        cmd.print_help(sys.stderr)
+    if not CheckpointGenerator.is_valid(cmd.checkpoint):
+        print("sample_aggregate: the checkpoint specification %s is invalid." % cmd.checkpoint, file=sys.stderr)
         exit(2)
 
     if cmd.verbose:
@@ -82,9 +85,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        generator = cmd.checkpoint_generator
+        generator = CheckpointGenerator.construct(cmd.checkpoint)
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.include_tag, cmd.iso, cmd.nodes)
+        aggregate = SampleAggregate(cmd.min_max, cmd.iso, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
