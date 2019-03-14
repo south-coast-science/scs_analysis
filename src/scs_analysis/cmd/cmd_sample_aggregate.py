@@ -50,7 +50,7 @@ class CmdSampleAggregate(object):
 
     @property
     def nodes(self):
-        return set(self.__args) if len(self.__args) > 0 else [None]
+        return self.__args if len(self.__args) > 0 else [None]
 
 
     @property

@@ -28,10 +28,10 @@ class CmdOSIOTopicHistory(object):
                                  help="starting minutes ago")
 
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
-                                 help="localised datetime start")
+                                 help="ISO 8601 datetime start")
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
-                                 help="localised datetime end")
+                                 help="ISO 8601 datetime end")
 
         self.__parser.add_option("--pause", "-p", type="float", nargs=1, action="store", dest="pause", default=0.0,
                                  help="pause for SECONDS between retrieved batches (prevents rate limit exceeded)")
