@@ -137,6 +137,10 @@ if __name__ == '__main__':
                 date = datum.node(cmd.date_path)
                 time = datum.node(cmd.time_path)
 
+            if cmd.separator is not None:
+                ymd = date.split(cmd.separator)
+                date = '-'.join(ymd)
+
             # ISO 8601...
             iso = LocalizedDatetime.construct_from_date_time(date, time, zone)
 
