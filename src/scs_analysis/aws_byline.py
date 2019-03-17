@@ -16,7 +16,7 @@ Output is in the form of zero or more JSON documents, indicating the device, top
 latest sense event.
 
 SYNOPSIS
-aws_byline.py { -d DEVICE | -t TOPIC } [-v]
+aws_byline.py { -d DEVICE | -t TOPIC [-l] } [-v]
 
 EXAMPLES
 aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
@@ -86,16 +86,28 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        latest = None
+
         try:
+            # get...
             if cmd.topic:
                 bylines = manager.find_bylines_for_topic(cmd.topic)
 
             else:
                 bylines = manager.find_bylines_for_device(cmd.device)
 
+            # process...
             for byline in bylines:
-                print(JSONify.dumps(byline))
-                sys.stdout.flush()
+                if cmd.latest:
+                    if latest is None or latest.rec < byline.rec:
+                        latest = byline
+
+                else:
+                    print(JSONify.dumps(byline))
+                    sys.stdout.flush()
+
+            if cmd.latest and latest is not None:
+                print(JSONify.dumps(latest))
 
         except HTTPException as ex:
             print("aws_byline: %s" % ex, file=sys.stderr)

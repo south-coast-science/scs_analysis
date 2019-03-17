@@ -18,15 +18,19 @@ class CmdSampleISO8601(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] { -z | [-i ISO_PATH] [-t TIMEZONE_NAME] "
-                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } }", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -z | [-i ISO_PATH] [-t TIMEZONE_NAME] [-s SEPARATOR] "
+                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
 
-        self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store", default=None,
+        self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store",
                                  dest="timezone", help="source timezone (default 'UTC')")
+
+        self.__parser.add_option("--separator", "-s", type="string", nargs=1, action="store", default=None,
+                                 dest="separator", help="specify date parts separator (default '-')")
 
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
@@ -85,6 +89,11 @@ class CmdSampleISO8601(object):
 
 
     @property
+    def separator(self):
+        return self.__opts.separator
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -111,5 +120,5 @@ class CmdSampleISO8601(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleISO8601:{zones:%s, timezone:%s, iso:%s, verbose:%s, datetime_paths:%s}" % \
-               (self.zones, self.timezone, self.iso, self.verbose, self.datetime_paths())
+        return "CmdSampleISO8601:{zones:%s, timezone:%s, iso:%s, separator:%s, verbose:%s, datetime_paths:%s}" % \
+               (self.zones, self.timezone, self.iso, self.separator, self.verbose, self.datetime_paths())

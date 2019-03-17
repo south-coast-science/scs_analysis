@@ -32,10 +32,10 @@ class CmdAWSTopicHistory(object):
                                  help="starting days / hours / minutes ago, and ending now")
 
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
-                                 help="localised datetime start")
+                                 help="ISO 8601 datetime start")
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
-                                 help="localised datetime end")
+                                 help="ISO 8601 datetime end")
 
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include storage wrapper")
