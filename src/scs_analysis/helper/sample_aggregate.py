@@ -10,7 +10,6 @@ import sys
 
 from decimal import InvalidOperation
 
-
 from scs_core.data.categorical_regression import CategoricalRegression
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
