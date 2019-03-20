@@ -6,14 +6,14 @@ Created on 15 Jul 2017
 source repo: scs_analysis
 """
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 from matplotlib import pyplot as plt
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Chart(object):
+class Chart(ABC):
     """
     classdocs
     """
