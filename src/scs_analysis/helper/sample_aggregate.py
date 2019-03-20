@@ -11,7 +11,7 @@ import sys
 from decimal import InvalidOperation
 
 
-from scs_core.data.catagorical_regression import CatagoricalRegression
+from scs_core.data.categorical_regression import CategoricalRegression
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
@@ -78,7 +78,7 @@ class SampleAggregate(object):
 
                     self.__precisions[path] = Precision()
                     self.__regressions[path] = LinearRegression() if Datum.is_numeric(sample.node(path)) else \
-                        CatagoricalRegression()
+                        CategoricalRegression()
 
             self.__initialised = True
 
