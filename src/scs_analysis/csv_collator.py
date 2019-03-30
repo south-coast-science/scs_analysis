@@ -38,6 +38,8 @@ from scs_analysis.helper.csv_collator import CSVCollator
 from scs_core.data.path_dict import PathDict
 
 
+# TODO: collate by datetime interval?
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
