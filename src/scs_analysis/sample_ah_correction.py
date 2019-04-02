@@ -140,7 +140,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # compute...
-            cnc_ah_corr = round(correction.compute(we_c, ah), 1)
+            cnc_ah_corr = round(correction.compute(we_c, ah), 1)                # report to 0.1 ppb
 
             # copy...
             target = PathDict()
