@@ -107,11 +107,12 @@ if __name__ == '__main__':
                 print("sample_ah: invalid value for t in %s" % jstr, file=sys.stderr)
                 exit(1)
 
+            # compute...
             ah = round(AbsoluteHumidity.from_rh_t(rh, t), 3)                # report to 0.001 g / m3
 
+            # copy...
             target = PathDict()
 
-            # copy...
             for path in paths:
                 if path == cmd.rh_path:
                     target.append(path + '.rH', rh)

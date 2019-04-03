@@ -112,11 +112,12 @@ if __name__ == '__main__':
                 print("sample_wec_sens: invalid value for %s in %s" % (wec_path, jstr), file=sys.stderr)
                 exit(1)
 
+            # compute...
             wec_sens = round(wec / (cmd.sens / 1000), 1)
 
+            # copy...
             target = PathDict()
 
-            # copy...
             for path in paths:
                 if path == wec_sens_path:
                     continue                                        # ignore any existing wec_sens_path
