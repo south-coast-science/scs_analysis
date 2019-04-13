@@ -14,15 +14,15 @@ A sequence of documents is accepted from stdin. If a positive offset on N is spe
 specified source node is postponed by N documents. Output values are therefore aligned with a datetime that is in the
 future, relative to their original position. If a negative offset is specified, then values are shifted to the past.
 
-Some output documents will have null values: in the case of positive shift operations, the initial documents have
+Some output documents inevitably have null values: in the case of positive shift operations, the initial documents have
 null values, in the case of negative offsets, the final documents have null values. These documents can be
 included in the output (preserving the input document count) if the --fill flag is specified. Otherwise, these
 documents are discarded.
 
-If TARGET_PATH is specified, then the shifted node will be renamed.
+If TARGET_SUB_PATH is specified, then the shifted node will be renamed.
 
 SYNOPSIS
-node_shift.py -o OFFSET [-r] [-v] SOURCE_PATH [TARGET_PATH]
+node_shift.py -o OFFSET [-r] [-v] SOURCE_SUB_PATH [TARGET_SUB_PATH]
 
 EXAMPLES
 csv_reader.py climate.csv | node_shift.py -v -o 1 -f val.hmd val.hmd-shift-1 | csv_writer.py climate-shifted.csv

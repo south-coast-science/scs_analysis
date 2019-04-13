@@ -1,5 +1,5 @@
 """
-Created on 15 Feb 2019
+Created on 12 Apr 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -18,7 +18,7 @@ class CmdNodeShift(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -o OFFSET [-f] [-v] SOURCE_PATH [TARGET_PATH]",
+        self.__parser = optparse.OptionParser(usage="%prog -o OFFSET [-f] [-v] SOURCE_SUB_PATH [TARGET_SUB_PATH]",
                                               version="%prog 1.0")
 
         # compulsory...
