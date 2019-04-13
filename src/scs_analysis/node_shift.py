@@ -8,11 +8,14 @@ Created on 12 Apr 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The node_shift utility is used to time-shift JSON document nodes or sub-nodes representing timeline data.
+The node_shift utility is used to time-shift JSON document nodes (or sub-nodes) representing timeline data.
 
-A sequence of documents is accepted from stdin. If a positive offset on N is specified, then the content of the
+A sequence of documents is accepted from stdin. If a positive offset of N is specified, then the content of the
 specified source node is postponed by N documents. Output values are therefore aligned with a datetime that is in the
 future, relative to their original position. If a negative offset is specified, then values are shifted to the past.
+
+If the specified SOURCE_SUB_PATH is not present in any of the input documents, then the node_shift utility
+terminates.
 
 Some output documents inevitably have null values: in the case of positive shift operations, the initial documents have
 null values, in the case of negative offsets, the final documents have null values. These documents can be
@@ -21,11 +24,15 @@ documents are discarded.
 
 If TARGET_SUB_PATH is specified, then the shifted node will be renamed.
 
+Warning: because shifts are by document count and not actual datetime, results are unpredictable unless the input
+stream presents a regular sequence of datetime points. The stream should therefore be pre-processed with
+sample_aggregate.py --fill.
+
 SYNOPSIS
 node_shift.py -o OFFSET [-r] [-v] SOURCE_SUB_PATH [TARGET_SUB_PATH]
 
 EXAMPLES
-csv_reader.py climate.csv | node_shift.py -v -o 1 -f val.hmd val.hmd-shift-1 | csv_writer.py climate-shifted.csv
+csv_reader.py climate.csv | sample_aggregate.py -f -c **:/01:00 | node_shift.py -o 2 -f val.hmd val.hmd-s2
 """
 
 import sys
