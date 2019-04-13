@@ -96,7 +96,8 @@ if __name__ == '__main__':
             print("sample_ah_correction: %s" % correction, file=sys.stderr)
             sys.stderr.flush()
 
-        we_c_path = cmd.gas_sub_path + '.weC'
+        # we_c_path = cmd.gas_sub_path + '.weC'
+
         cnc_path = cmd.gas_sub_path + '.cnc'
         cnc_corr_path = cmd.gas_sub_path + '.cnc-ah-corr'
 
@@ -116,19 +117,20 @@ if __name__ == '__main__':
             paths = datum.paths()
 
             # weC, aH...
-            if we_c_path not in paths or cmd.ah_path not in paths:
+            if cnc_path not in paths or cmd.ah_path not in paths:       # we_c_path
                 continue
 
-            we_c_node = datum.node(we_c_path)
+            # we_c_node = datum.node(we_c_path)
+            cnc_node = datum.node(cnc_path)
             ah_node = datum.node(cmd.ah_path)
 
-            if we_c_node == '' or ah_node == '':
+            if cnc_node == '' or ah_node == '':
                 continue
 
             try:
-                we_c = float(we_c_node)
+                cnc = float(cnc_node)
             except ValueError:
-                we_c = None
+                cnc = None
                 print("sample_ah_correction: invalid value for weC in %s" % jstr, file=sys.stderr)
                 exit(1)
 
@@ -140,7 +142,12 @@ if __name__ == '__main__':
                 exit(1)
 
             # compute...
-            cnc_ah_corr = round(correction.compute(we_c, ah), 1)                # report to 0.1 ppb
+            cnc_ah_corr = round(correction.ah_corr(cnc, ah), 1)                # report to 0.1 ppb
+
+            # corrected_sens = (-0.0152 * ah) + 0.2942            # mV
+            # corrected_baseline_offset = (-0.909 * ah) + 30.8    # ppb
+
+            # ubl = we_c / (corrected_sens / 1000.0)
 
             # copy...
             target = PathDict()
@@ -150,6 +157,9 @@ if __name__ == '__main__':
 
                 if path == cnc_path:
                     target.append(cnc_corr_path, cnc_ah_corr)
+                    # target.append(cmd.gas_sub_path + '.cs', corrected_sens)
+                    # target.append(cmd.gas_sub_path + '.cbo', corrected_baseline_offset)
+                    # target.append(cmd.gas_sub_path + '.ubl', ubl)
 
             # report...
             print(JSONify.dumps(target.node()))
