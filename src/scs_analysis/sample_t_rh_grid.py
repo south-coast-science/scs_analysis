@@ -33,8 +33,8 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_t_rh_grid import CmdSampleTRhGrid
 
-from scs_core.data.json import JSONify
 from scs_core.data.error_grid import ErrorGridRhT, ErrorGridTRh
+from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
