@@ -21,7 +21,7 @@ Input documents whose temperature or humidity values are outside the specified b
 Missing or non-floating point values will cause the utility to terminate.
 
 SYNOPSIS
-sample_t_rh_grid.py -r MIN MAX STEP -t MIN MAX STEP { -w | -c | -d } [-v] RH_PATH T_PATH REPORT_PATH, REF_PATH
+sample_t_rh_grid.py -r MIN MAX STEP -t MIN MAX STEP { -w | -c | -d } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
 
 EXAMPLES
 csv_reader.py praxis_ref_joined_climate_tsh3m15.csv | \
@@ -31,7 +31,7 @@ joined.praxis.val.NO2.cnc joined.ref.15min
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_t_rh_grid import CmdSampleTRhGrid
+from scs_analysis.cmd.cmd_sample_rh_t_grid import CmdSampleRhTGrid
 
 from scs_core.data.error_grid import ErrorGridRhT, ErrorGridTRh
 from scs_core.data.json import JSONify
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleTRhGrid()
+    cmd = CmdSampleRhTGrid()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)

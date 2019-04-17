@@ -11,7 +11,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleTRhGrid(object):
+class CmdSampleRhTGrid(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -19,7 +19,7 @@ class CmdSampleTRhGrid(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -r MIN MAX STEP -t MIN MAX STEP { -w | -c | -d } [-v] "
-                                                    "RH_PATH T_PATH REPORT_PATH, REF_PATH", version="%prog 1.0")
+                                                    "RH_PATH T_PATH REPORT_PATH REF_PATH", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--rh", "-r", type="int", nargs=3, action="store", dest="rh",
@@ -148,7 +148,7 @@ class CmdSampleTRhGrid(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTRhGrid:{rh:%s, t:%s, rh_rows:%s, rh_cols:%s, stdev:%s, verbose:%s, " \
+        return "CmdSampleRhTGrid:{rh:%s, t:%s, rh_rows:%s, rh_cols:%s, stdev:%s, verbose:%s, " \
                "rh_path:%s, t_path:%s, report_path:%s, ref_path:%s}" % \
                (self.__opts.rh, self.__opts.t, self.rh_rows, self.rh_cols, self.stdev, self.verbose,
                 self.rh_path, self.t_path, self.report_path, self.ref_path)
