@@ -9,6 +9,8 @@ source repo: scs_analysis
 import optparse
 
 
+# TODO: replace booleans with mode flag
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleRhTGrid(object):

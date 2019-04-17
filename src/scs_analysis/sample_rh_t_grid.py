@@ -31,9 +31,11 @@ joined.praxis.val.NO2.cnc joined.ref.15min
 
 import sys
 
+import scipy.stats
+
 from scs_analysis.cmd.cmd_sample_rh_t_grid import CmdSampleRhTGrid
 
-from scs_core.data.error_grid import ErrorGridRhT, ErrorGridTRh
+from scs_core.data.error_grid import ErrorGridRhT, ErrorGridTRh, ErrorGridStats
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
@@ -59,10 +61,10 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
+        # resources... ErrorGridTRh
 
         if cmd.rh_cols:
-            grid = ErrorGridTRh.construct(cmd.rh_min, cmd.rh_max, cmd.rh_step, cmd.t_min, cmd.t_max, cmd.t_step)
+            grid = ErrorGridStats.construct(cmd.rh_min, cmd.rh_max, cmd.rh_step, cmd.t_min, cmd.t_max, cmd.t_step)
 
         else:
             grid = ErrorGridRhT.construct(cmd.rh_min, cmd.rh_max, cmd.rh_step, cmd.t_min, cmd.t_max, cmd.t_step)
@@ -110,13 +112,39 @@ if __name__ == '__main__':
 
             included_count += 1
 
+        rows = []
+
         # report...
         if cmd.stdev:
             print(grid.stdev())
 
         else:
             for row in grid.as_json():
+                rows.append(row)
                 print(JSONify.dumps(row))
+
+        print("-")
+
+        rh_avgs = []
+        mts = []
+        cts = []
+
+        for row in rows:
+            rh_avgs.append(row['rH_avg'])
+            mts.append(row['mT'])
+            cts.append(row['cT'])
+
+        print("rH_avgs: %s" % str(rh_avgs))
+        print("mts: %s" % str(mts))
+        print("cts: %s" % str(cts))
+
+        print("-")
+
+        mt_mhr, mt_chr, mt_r, mt_p, mt_std_err = scipy.stats.linregress(rh_avgs, mts)
+        ct_mhr, ct_chr, ct_r, ct_p, ct_std_err = scipy.stats.linregress(rh_avgs, cts)
+
+        print("mt_mhr: %0.3f mt_chr: %0.3f mt_r2: %0.3f" % (mt_mhr, mt_chr, mt_r ** 2))
+        print("ct_mhr: %0.3f ct_chr: %0.3f ct_r2: %0.3f" % (ct_mhr, ct_chr, ct_r ** 2))
 
 
     # ----------------------------------------------------------------------------------------------------------------
