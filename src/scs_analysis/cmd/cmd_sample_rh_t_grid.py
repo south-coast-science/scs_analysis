@@ -53,7 +53,7 @@ class CmdSampleRhTGrid(object):
         if self.__opts.rh is None or self.__opts.t is None:
             return False
 
-        if self.rh_path is None or self.t_path is None:
+        if self.rh_path is None or self.t_path is None or self.report_path is None or self.ref_path is None:
             return False
 
         if self.output_mode is None or not self.is_valid_mode(self.output_mode):

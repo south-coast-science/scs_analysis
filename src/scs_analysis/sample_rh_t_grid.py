@@ -21,12 +21,11 @@ Input documents whose temperature or humidity values are outside the specified b
 Missing or non-floating point values will cause the utility to terminate.
 
 SYNOPSIS
-sample_t_rh_grid.py -r MIN MAX STEP -t MIN MAX STEP { -w | -c | -d } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
+sample_rh_t_grid.py -r MIN MAX STEP -t MIN MAX STEP -o { R | C | L | S } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
 
 EXAMPLES
-csv_reader.py praxis_ref_joined_climate_tsh3m15.csv | \
-sample_t_rh_grid.py -r 20 95 5 -t 0 30 5 -d -v climate.val.hmd.rH climate.val.tmp.C \
-joined.praxis.val.NO2.cnc joined.ref.15min
+bruno:ts_stdev bruno$ csv_reader.py data.csv | sample_rh_t_grid.py -r 20 95 5 -t 0 30 5 -oS -v \
+praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2.cnc ref.real
 """
 
 import sys
