@@ -13,10 +13,13 @@ Important note: the equation applied by this utility is experimental.
 The sample_ah_correction utility is used to
 
 SYNOPSIS
-sample_rh_t_grid_correction.py -m SLOPE INTERCEPT -c SLOPE INTERCEPT [-v] RH_PATH T_PATH REPORT_PATH
+sample_rh_t_grid_correction.py -m B2 B1 B0 -c B2 B1 B0 INTERCEPT [-v] RH_PATH T_PATH REPORT_PATH
 
 EXAMPLES
-
+csv_reader.py data.csv | \
+sample_rh_t_grid_correction.py -v -m -0.001074 0.152974 -5.475746 -c -0.003792 0.846763 -22.535076 \
+praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2 | \
+csv_writer.py corrected_data.csv
 RESOURCES
 https://joshualoong.com/2018/10/03/Fitting-Polynomial-Regressions-in-Python/
 """
