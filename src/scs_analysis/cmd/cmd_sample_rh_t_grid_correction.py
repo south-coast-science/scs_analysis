@@ -21,7 +21,7 @@ class CmdSampleRhTGridCorrection(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -m B2 B1 B0 -c B2 B1 B0 INTERCEPT [-v] "
+        self.__parser = optparse.OptionParser(usage="%prog -m B2 B1 B0 -c B2 B1 B0 [-r REFERENCE_PATH] [-v] "
                                                     "RH_PATH T_PATH REPORT_PATH", version="%prog 1.0")
 
         # compulsory...
@@ -32,6 +32,9 @@ class CmdSampleRhTGridCorrection(object):
                                  help="coefficients for offset (highest first)")
 
         # optional...
+        self.__parser.add_option("--r2", "-r", type="string", nargs=1, action="store", dest="r2",
+                                 help="report R squared against REFERENCE instead of outputting data")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -44,7 +47,7 @@ class CmdSampleRhTGridCorrection(object):
         if self.__opts.mt is None or self.__opts.ct is None:
             return False
 
-        if self.rh_path is None or self.t_path is None or self.report_path is None:
+        if len(self.__args) < 3:
             return False
 
         return True
@@ -93,6 +96,16 @@ class CmdSampleRhTGridCorrection(object):
 
 
     @property
+    def r2(self):
+        return self.__opts.r2 is not None
+
+
+    @property
+    def reference_path(self):
+        return self.__opts.r2
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -119,5 +132,7 @@ class CmdSampleRhTGridCorrection(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRhTGridCorrection:{mt:%s, ct:%s, verbose:%s, rh_path:%s, t_path:%s, report_path:%s}" % \
-               (self.__opts.mt, self.__opts.ct, self.verbose, self.rh_path, self.t_path, self.report_path)
+        return "CmdSampleRhTGridCorrection:{mt:%s, ct:%s, r2:%s, verbose:%s, " \
+               "rh_path:%s, t_path:%s, report_path:%s, reference_path:%s}" % \
+               (self.__opts.mt, self.__opts.ct, self.r2, self.verbose,
+                self.rh_path, self.t_path, self.report_path, self.reference_path)

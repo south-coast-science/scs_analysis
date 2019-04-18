@@ -8,23 +8,27 @@ Created on 18 Apr 2019
 source repo: scs_analysis
 
 DESCRIPTION
-Important note: the equation applied by this utility is experimental.
-
 The sample_ah_correction utility is used to
 
 SYNOPSIS
-sample_rh_t_grid_correction.py -m B2 B1 B0 -c B2 B1 B0 INTERCEPT [-v] RH_PATH T_PATH REPORT_PATH
+sample_rh_t_grid_correction.py -m B2 B1 B0 -c B2 B1 B0 [-r REFERENCE_PATH] [-v] RH_PATH T_PATH REPORT_PATH
 
 EXAMPLES
 csv_reader.py data.csv | \
 sample_rh_t_grid_correction.py -v -m -0.001074 0.152974 -5.475746 -c -0.003792 0.846763 -22.535076 \
 praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2 | \
 csv_writer.py corrected_data.csv
+
+csv_reader.py data.csv | \
+sample_rh_t_grid_correction.py -v -m -0.001074 0.152974 -5.475746 -c -0.003792 0.846763 -22.535076 -r ref.real \
+praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2
+
 RESOURCES
 https://joshualoong.com/2018/10/03/Fitting-Polynomial-Regressions-in-Python/
 """
 
 import numpy as np
+import scipy.stats as stats
 import sys
 
 from scs_analysis.cmd.cmd_sample_rh_t_grid_correction import CmdSampleRhTGridCorrection
@@ -64,6 +68,8 @@ if __name__ == '__main__':
         m_t_poly = np.poly1d(cmd.mt_weights)
         c_t_poly = np.poly1d(cmd.ct_weights)
 
+        references = []
+        corrected = []
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -97,6 +103,15 @@ if __name__ == '__main__':
             error = (m_t * t) + c_t
             report_corrected = round(report - error, 1)
 
+            if cmd.r2:
+                reference_node = datum.node(cmd.reference_path)
+                reference = float(reference_node)
+
+                references.append(reference)
+                corrected.append(report_corrected)
+
+                continue
+
             # target...
             target = PathDict()
 
@@ -106,9 +121,14 @@ if __name__ == '__main__':
                 if path == cnc_report_path:
                     target.append(sbl_report_path, report_corrected)
 
-            # report...
+            # data report...
             print(JSONify.dumps(target.node()))
             sys.stdout.flush()
+
+        # r2 report...
+        if cmd.r2:
+            mt, ct, r, p, std_err = stats.linregress(references, corrected)
+            print(round(r ** 2, 3))
 
 
     # ----------------------------------------------------------------------------------------------------------------
