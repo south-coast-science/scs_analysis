@@ -9,36 +9,38 @@ source repo: scs_analysis
 import optparse
 
 
-# TODO: replace booleans with mode flag
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleRhTGrid(object):
     """unix command line handler"""
 
+    __OUTPUT_MODES = ['R', 'C', 'L', 'S']
+
+    @classmethod
+    def is_valid_mode(cls, mode):
+        return mode in cls.__OUTPUT_MODES
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -r MIN MAX STEP -t MIN MAX STEP { -w | -c | -d } [-v] "
+        self.__parser = optparse.OptionParser(usage="%prog -r MIN MAX STEP -t MIN MAX STEP -o { R | C | L | S } [-v] "
                                                     "RH_PATH T_PATH REPORT_PATH REF_PATH", version="%prog 1.0")
 
-        # optional...
+        # compulsory...
         self.__parser.add_option("--rh", "-r", type="int", nargs=3, action="store", dest="rh",
                                  help="MIN, MAX and STEP for humidity deltas")
 
         self.__parser.add_option("--temp", "-t", type="int", nargs=3, action="store", dest="t",
                                  help="MIN, MAX and STEP for temperature deltas")
 
-        self.__parser.add_option("--rh-rows", "-w", action="store_true", dest="rh_rows", default=False,
-                                 help="report humidity rows, temperature columns")
+        self.__parser.add_option("--output", "-o", type="string", nargs=1, action="store", dest="output_mode",
+                                 help="output mode (rH rows, rH cols, linear responses or surface)")
 
-        self.__parser.add_option("--rh-cols", "-c", action="store_true", dest="rh_cols", default=False,
-                                 help="report temperature rows, humidity columns")
-
-        self.__parser.add_option("--stdev", "-d", action="store_true", dest="stdev", default=False,
-                                 help="report average standard deviation")
-
+        # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -54,18 +56,7 @@ class CmdSampleRhTGrid(object):
         if self.rh_path is None or self.t_path is None:
             return False
 
-        count = 0
-
-        if self.rh_rows:
-            count += 1
-
-        if self.rh_cols:
-            count += 1
-
-        if self.stdev:
-            count += 1
-
-        if count != 1:
+        if self.output_mode is None or not self.is_valid_mode(self.output_mode):
             return False
 
         return True
@@ -104,18 +95,8 @@ class CmdSampleRhTGrid(object):
 
 
     @property
-    def rh_rows(self):
-        return self.__opts.rh_rows
-
-
-    @property
-    def rh_cols(self):
-        return self.__opts.rh_cols
-
-
-    @property
-    def stdev(self):
-        return self.__opts.stdev
+    def output_mode(self):
+        return None if self.__opts.output_mode is None else self.__opts.output_mode.upper()
 
 
     @property
@@ -150,7 +131,7 @@ class CmdSampleRhTGrid(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleRhTGrid:{rh:%s, t:%s, rh_rows:%s, rh_cols:%s, stdev:%s, verbose:%s, " \
+        return "CmdSampleRhTGrid:{rh:%s, t:%s, output_mode:%s, verbose:%s, " \
                "rh_path:%s, t_path:%s, report_path:%s, ref_path:%s}" % \
-               (self.__opts.rh, self.__opts.t, self.rh_rows, self.rh_cols, self.stdev, self.verbose,
+               (self.__opts.rh, self.__opts.t, self.output_mode, self.verbose,
                 self.rh_path, self.t_path, self.report_path, self.ref_path)
