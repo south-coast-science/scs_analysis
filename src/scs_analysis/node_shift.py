@@ -87,8 +87,6 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            paths = datum.paths()
-
             if not datum.has_sub_path(cmd.source_path):
                 print("node_shift: source path '%s' not in %s" % (cmd.source_path, jstr),
                       file=sys.stderr)

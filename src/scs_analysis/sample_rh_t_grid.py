@@ -38,6 +38,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
+# TODO: validate document nodes
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
