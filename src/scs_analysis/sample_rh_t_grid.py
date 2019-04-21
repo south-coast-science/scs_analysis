@@ -37,9 +37,9 @@ from scs_core.data.path_dict import PathDict
 
 from scs_core.error.error_grid import ErrorGrid
 
-from scs_core.error.error_grid_mesh_t_rh import ErrorGridMeshTRh
 from scs_core.error.error_grid_report_rh_t import ErrorGridReportRhT
 from scs_core.error.error_grid_report_t_rh import ErrorGridReportTRh
+from scs_core.error.error_mesh_t_rh import ErrorMeshTRh
 from scs_core.error.error_surface import ErrorSurface
 
 
@@ -128,13 +128,13 @@ if __name__ == '__main__':
                 print(JSONify.dumps(row))
 
         elif cmd.output_mode == 'M':
-            mesh = ErrorGridMeshTRh.construct(grid)
+            mesh = ErrorMeshTRh.construct(grid)
 
             for line in mesh.lines():
                 print(JSONify.dumps(line))
 
         elif cmd.output_mode == 'S':
-            mesh = ErrorGridMeshTRh.construct(grid)
+            mesh = ErrorMeshTRh.construct(grid)
             surface = ErrorSurface.construct(mesh)
 
             print(JSONify.dumps(surface))
