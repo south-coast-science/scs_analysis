@@ -21,7 +21,7 @@ Input documents whose temperature or humidity values are outside the specified b
 Missing or non-floating point values will cause the utility to terminate.
 
 SYNOPSIS
-sample_rh_t_grid.py -r MIN MAX STEP -t MIN MAX STEP -o { R | C | L | S } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
+sample_rh_t_grid.py -r MIN MAX STEP -t MIN MAX STEP -o { R | C | M | S } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
 
 EXAMPLES
 bruno:ts_stdev bruno$ csv_reader.py data.csv | sample_rh_t_grid.py -r 20 95 5 -t 0 30 5 -oS -v \
@@ -32,10 +32,16 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_rh_t_grid import CmdSampleRhTGrid
 
-from scs_core.data.error_grid import ErrorGridRhT, ErrorGridTRh, ErrorGridStats
-from scs_core.data.error_surface import ErrorSurface
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+
+from scs_core.error.error_grid import ErrorGrid
+
+from scs_core.error.error_grid_mesh_t_rh import ErrorGridMeshTRh
+from scs_core.error.error_grid_report_rh_t import ErrorGridReportRhT
+from scs_core.error.error_grid_report_t_rh import ErrorGridReportTRh
+from scs_core.error.error_surface import ErrorSurface
+
 
 
 # TODO: validate document nodes
@@ -63,24 +69,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        grid_params = (cmd.rh_min, cmd.rh_max, cmd.rh_step, cmd.t_min, cmd.t_max, cmd.t_step)
-
-        if cmd.output_mode == 'R':
-            grid = ErrorGridRhT.construct(*grid_params)
-
-        elif cmd.output_mode == 'C':
-            grid = ErrorGridTRh.construct(*grid_params)
-
-        elif cmd.output_mode == 'L':
-            grid = ErrorGridStats.construct(*grid_params)
-
-        elif cmd.output_mode == 'S':
-            grid = ErrorSurface.construct(*grid_params)
-
-        else:
-            print("sample_t_rh_grid: unrecognised output mode: %s" % cmd.output_mode, file=sys.stderr)
-            grid = None
-            exit(2)
+        grid = ErrorGrid.construct(cmd.rh_min, cmd.rh_max, cmd.rh_step, cmd.t_min, cmd.t_max, cmd.t_step)
 
         if cmd.verbose:
             print(grid, file=sys.stderr)
@@ -126,12 +115,29 @@ if __name__ == '__main__':
             included_count += 1
 
         # report...
-        if cmd.output_mode == 'S':
-            print(JSONify.dumps(grid.as_json()))
+        if cmd.output_mode == 'R':
+            report = ErrorGridReportRhT.construct(grid)
 
-        else:
-            for row in grid.as_json():
+            for row in report.rows():
                 print(JSONify.dumps(row))
+
+        elif cmd.output_mode == 'C':
+            report = ErrorGridReportTRh.construct(grid)
+
+            for row in report.rows():
+                print(JSONify.dumps(row))
+
+        elif cmd.output_mode == 'M':
+            mesh = ErrorGridMeshTRh.construct(grid)
+
+            for line in mesh.lines():
+                print(JSONify.dumps(line))
+
+        elif cmd.output_mode == 'S':
+            mesh = ErrorGridMeshTRh.construct(grid)
+            surface = ErrorSurface.construct(mesh)
+
+            print(JSONify.dumps(surface))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -143,5 +149,4 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            print("sample_t_rh_grid: documents: %d included: %d" % (document_count, included_count),
-                  file=sys.stderr)
+            print("sample_t_rh_grid: documents: %d included: %d" % (document_count, included_count), file=sys.stderr)

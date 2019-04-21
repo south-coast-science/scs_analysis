@@ -14,7 +14,7 @@ import optparse
 class CmdSampleRhTGrid(object):
     """unix command line handler"""
 
-    __OUTPUT_MODES = ['R', 'C', 'L', 'S']
+    __OUTPUT_MODES = ['R', 'C', 'M', 'S']
 
     @classmethod
     def is_valid_mode(cls, mode):
@@ -27,7 +27,7 @@ class CmdSampleRhTGrid(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -r MIN MAX STEP -t MIN MAX STEP -o { R | C | L | S } [-v] "
+        self.__parser = optparse.OptionParser(usage="%prog -r MIN MAX STEP -t MIN MAX STEP -o { R | C | M | S } [-v] "
                                                     "RH_PATH T_PATH REPORT_PATH REF_PATH", version="%prog 1.0")
 
         # compulsory...
@@ -53,7 +53,7 @@ class CmdSampleRhTGrid(object):
         if self.__opts.rh is None or self.__opts.t is None:
             return False
 
-        if self.rh_path is None or self.t_path is None or self.report_path is None or self.ref_path is None:
+        if len(self.__args) < 4:
             return False
 
         if self.output_mode is None or not self.is_valid_mode(self.output_mode):

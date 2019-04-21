@@ -22,7 +22,7 @@ class CmdSampleRhTGridCorrection(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -m B2 B1 B0 -c B2 B1 B0 [-r REFERENCE_PATH] [-v] "
-                                                    "RH_PATH T_PATH REPORT_PATH", version="%prog 1.0")
+                                                    "RH_PATH T_PATH REPORT_SUB_PATH", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--mT-weights", "-m", type="float", nargs=3, action="store", dest="mt",
@@ -121,7 +121,7 @@ class CmdSampleRhTGridCorrection(object):
 
 
     @property
-    def report_path(self):
+    def report_sub_path(self):
         return self.__args[2] if len(self.__args) > 2 else None
 
 
@@ -133,6 +133,6 @@ class CmdSampleRhTGridCorrection(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdSampleRhTGridCorrection:{mt:%s, ct:%s, r2:%s, verbose:%s, " \
-               "rh_path:%s, t_path:%s, report_path:%s, reference_path:%s}" % \
+               "rh_path:%s, t_path:%s, report_sub_path:%s, reference_path:%s}" % \
                (self.__opts.mt, self.__opts.ct, self.r2, self.verbose,
-                self.rh_path, self.t_path, self.report_path, self.reference_path)
+                self.rh_path, self.t_path, self.report_sub_path, self.reference_path)

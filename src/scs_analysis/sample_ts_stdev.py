@@ -20,15 +20,10 @@ EXAMPLES
 import sys
 import time
 
-from collections import OrderedDict
-
 from subprocess import check_output, Popen, PIPE
 
-from scs_analysis.cmd.cmd_sample_rh_t_grid import CmdSampleRhTGrid
-
-from scs_core.data.error_report import ErrorReport
+from scs_core.error.error_report import ErrorReport
 from scs_core.data.json import JSONify
-from scs_core.data.path_dict import PathDict
 
 
 # --------------------------------------------------------------------------------------------------------------------

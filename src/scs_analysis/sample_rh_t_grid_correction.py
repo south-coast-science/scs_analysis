@@ -11,7 +11,7 @@ DESCRIPTION
 The sample_ah_correction utility is used to
 
 SYNOPSIS
-sample_rh_t_grid_correction.py -m B2 B1 B0 -c B2 B1 B0 [-r REFERENCE_PATH] [-v] RH_PATH T_PATH REPORT_PATH
+sample_rh_t_grid_correction.py -m B2 B1 B0 -c B2 B1 B0 [-r REFERENCE_PATH] [-v] RH_PATH T_PATH REPORT_SUB_PATH
 
 EXAMPLES
 csv_reader.py data.csv | \
@@ -62,8 +62,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        cnc_report_path = cmd.report_path + '.cnc'
-        sbl_report_path = cmd.report_path + '.cnc-sbl1'
+        cnc_report_path = cmd.report_sub_path + '.cnc'
+        sbl_report_path = cmd.report_sub_path + '.cnc-sbl1'
 
         m_t_poly = np.poly1d(cmd.mt_weights)
         c_t_poly = np.poly1d(cmd.ct_weights)
