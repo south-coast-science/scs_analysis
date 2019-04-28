@@ -136,11 +136,12 @@ if __name__ == '__main__':
             else:
                 p = cmd.pressure
 
+            # compute...
             cnc = round(Gas.concentration(cmd.gas, density, t, p), 1)
 
+            # copy...
             target = PathDict()
 
-            # copy...
             for path in paths:
                 if path == concentration_path:
                     continue

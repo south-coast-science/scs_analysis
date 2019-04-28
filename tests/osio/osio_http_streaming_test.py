@@ -58,7 +58,7 @@ try:
 # end...
 
 except KeyboardInterrupt:
-        print("osio_http_streaming_test: KeyboardInterrupt", file=sys.stderr)
+    print("osio_http_streaming_test: KeyboardInterrupt", file=sys.stderr)
 
 
 except Exception as ex:

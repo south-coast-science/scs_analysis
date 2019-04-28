@@ -40,6 +40,9 @@ scs_mfr/system_id
 import sys
 import time
 
+from AWSIoTPythonSDK.exception.operationError import operationError
+from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeoutException
+
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 from scs_analysis.helper.aws_mqtt_control_handler import AWSMQTTControlHandler
 
@@ -155,7 +158,14 @@ if __name__ == '__main__':
                 sys.stderr.flush()
 
             # publish...
-            client.publish(publication)
+            try:
+                success = client.publish(publication)
+
+                if cmd.verbose:
+                    print("paho: %s" % "1" if success else "0", file=sys.stderr)
+
+            except (OSError, operationError, operationTimeoutException) as ex:
+                print(ex.__class__.__name__, file=sys.stderr)
 
             # subscribe...
             timeout = time.time() + cmd.timeout
