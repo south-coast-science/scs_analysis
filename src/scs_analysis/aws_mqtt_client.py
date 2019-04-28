@@ -43,6 +43,9 @@ When run as a background process, aws_mqtt_client will exit if it has no stdin s
 import json
 import sys
 
+from AWSIoTPythonSDK.exception.operationError import operationError
+from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeoutException
+
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 from scs_analysis.helper.aws_mqtt_client_handler import AWSMQTTClientHandler
 from scs_analysis.helper.mqtt_reporter import MQTTReporter
@@ -133,9 +136,12 @@ if __name__ == '__main__':
 
             publication = Publication.construct_from_jdict(jdict)
 
-            success = client.publish(publication)
+            try:
+                success = client.publish(publication)
+                reporter.print("paho: %s" % "1" if success else "0")
 
-            reporter.print("done" if success else "abandoned")
+            except (OSError, operationError, operationTimeoutException) as ex:
+                reporter.print(ex.__class__.__name__)
 
             if cmd.echo:
                 print(message)

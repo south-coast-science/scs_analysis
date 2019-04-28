@@ -18,11 +18,11 @@ class CmdSampleWeCSens(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] -s SENS PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] T_PATH REPORT_SUB_PATH", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--sens", "-s", type="float", nargs=1, action="store", default=None, dest="sens",
-                                 help="sensitivity (mV / ppb)")
+        # self.__parser.add_option("--sens", "-s", type="float", nargs=1, action="store", default=None, dest="sens",
+        #                          help="sensitivity (mV / ppb)")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -34,7 +34,7 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.sens is None or len(self.__args) != 1:
+        if len(self.__args) != 2:
             return False
 
         return True
@@ -43,18 +43,18 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def sens(self):
-        return self.__opts.sens
-
-
-    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
-    def path(self):
+    def t_path(self):
         return self.__args[0] if len(self.__args) > 0 else None
+
+
+    @property
+    def report_sub_path(self):
+        return self.__args[1] if len(self.__args) > 1 else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,4 +64,4 @@ class CmdSampleWeCSens(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleWeCSens:{sens:%s, verbose:%s, path:%s}" % (self.sens, self.verbose, self.path)
+        return "CmdSampleWeCSens:{verbose:%s, path:%s, path:%s}" % (self.verbose, self.t_path, self.report_sub_path)

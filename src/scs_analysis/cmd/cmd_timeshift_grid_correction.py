@@ -1,5 +1,5 @@
 """
-Created on 18 Apr 2019
+Created on 22 Apr 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -11,7 +11,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdTimeshiftGrid(object):
+class CmdTimeshiftGridCorrection(object):
     """unix command line handler"""
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -20,16 +20,16 @@ class CmdTimeshiftGrid(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -r START END STEP -t START END STEP -p FILENAME -f FILENAME "
+        self.__parser = optparse.OptionParser(usage="%prog -r OFFSET -t OFFSET -p FILENAME -f FILENAME "
                                                     "[-v] RH_PATH T_PATH REPORT_SUB_PATH REF_PATH",
                                                     version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--rh-offsets", "-r", type="int", nargs=3, action="store", dest="rh_offsets",
-                                 help="START, END and STEP for humidity shifts (START <= END, STEP > 0)")
+        self.__parser.add_option("--rh-offset", "-r", type="int", nargs=1, action="store", dest="rh_offset",
+                                 help="OFFSET for humidity shift")
 
-        self.__parser.add_option("--t-offsets", "-t", type="int", nargs=3, action="store", dest="t_offsets",
-                                 help="START, END and STEP for temperature shifts (START <= END, STEP > 0)")
+        self.__parser.add_option("--t-offset", "-t", type="int", nargs=1, action="store", dest="t_offset",
+                                 help="OFFSET for temperature shift")
 
         self.__parser.add_option("--report-file", "-p", type="string", nargs=1, action="store", dest="report_filename",
                                  help="reported data filename")
@@ -47,7 +47,7 @@ class CmdTimeshiftGrid(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.__opts.rh_offsets is None or self.__opts.t_offsets is None:
+        if self.__opts.rh_offset is None or self.__opts.t_offset is None:
             return False
 
         if self.report_filename is None or self.ref_filename is None:
@@ -56,51 +56,19 @@ class CmdTimeshiftGrid(object):
         if len(self.__args) < 4:
             return False
 
-        if self.rh_offset_start > self.rh_offset_end:
-            return False
-
-        if self.rh_offset_start < self.rh_offset_end and self.rh_offset_step < 1:
-            return False
-
-        if self.t_offset_start > self.t_offset_end:
-            return False
-
-        if self.t_offset_start < self.t_offset_end and self.t_offset_step < 1:
-            return False
-
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def rh_offset_start(self):
-        return None if self.__opts.rh_offsets is None else self.__opts.rh_offsets[0]
+    def rh_offset(self):
+        return self.__opts.rh_offset
 
 
     @property
-    def rh_offset_end(self):
-        return None if self.__opts.rh_offsets is None else self.__opts.rh_offsets[1]
-
-
-    @property
-    def rh_offset_step(self):
-        return None if self.__opts.rh_offsets is None else self.__opts.rh_offsets[2]
-
-
-    @property
-    def t_offset_start(self):
-        return None if self.__opts.t_offsets is None else self.__opts.t_offsets[0]
-
-
-    @property
-    def t_offset_end(self):
-        return None if self.__opts.t_offsets is None else self.__opts.t_offsets[1]
-
-
-    @property
-    def t_offset_step(self):
-        return None if self.__opts.t_offsets is None else self.__opts.t_offsets[2]
+    def t_offset(self):
+        return self.__opts.t_offset
 
 
     @property
@@ -145,7 +113,9 @@ class CmdTimeshiftGrid(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdTimeshiftGrid:{rh_offsets:%s, t_offsets:%s, report_filename:%s, ref_filename:%s, verbose:%s, " \
+        return "CmdTimeshiftGridCorrection:{rh_offset:%s, t_offset:%s, " \
+               "report_filename:%s, ref_filename:%s, verbose:%s, " \
                "rh_path:%s, t_path:%s, report_sub_path:%s, ref_path:%s}" % \
-               (self.__opts.rh_offsets, self.__opts.t_offsets, self.report_filename, self.ref_filename, self.verbose,
+               (self.__opts.rh_offset, self.__opts.t_offset,
+                self.report_filename, self.ref_filename, self.verbose,
                 self.rh_path, self.t_path, self.report_sub_path, self.ref_path)

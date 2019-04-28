@@ -16,6 +16,11 @@ timeshift_grid.py -r START END STEP -t START END STEP -p FILENAME -f FILENAME [-
 EXAMPLES
 timeshift_grid.py -v -r -240 -180 5 -t 120 120 1 -p praxis_climate_joined_1min.csv -f LHR2_ref_15_min_rec.csv \
 climate.val.hmd climate.val.tmp gas.val.NO2 real
+
+timeshift_grid_reporter.py -v -r -300 -120 5 -t -125 -125 1 -p praxis_climate_status_joined_1min.csv \
+-f LHR2_ref_15_min_rec.csv
+env.climate.val.hmd env.gas.val.sht.tmp env.gas.val.NO2 real | \
+csv_writer.py -e r2_rm300_m120_tm125.csv
 """
 
 import json
@@ -26,7 +31,7 @@ import time
 
 from subprocess import check_output, Popen, PIPE
 
-from scs_analysis.cmd.cmd_timeshift_grid import CmdTimeshiftGrid
+from scs_analysis.cmd.cmd_timeshift_grid_reporter import CmdTimeshiftGridReporter
 
 from scs_core.error.error_report import ErrorReport
 from scs_core.error.error_surface import ErrorSurface
@@ -42,7 +47,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdTimeshiftGrid()
+    cmd = CmdTimeshiftGridReporter()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -64,7 +69,9 @@ if __name__ == '__main__':
         report_prefix = 'praxis'
         ref_prefix = 'ref'
 
-        joined_report_path = report_prefix + '.' + cmd.report_sub_path + '.cnc'
+        # joined_report_path = report_prefix + '.' + cmd.report_sub_path + '.cnc'
+        joined_report_path = report_prefix + '.' + cmd.report_sub_path + '.weC_sens'
+
         joined_ref_path = ref_prefix + '.' + cmd.ref_path
 
 
@@ -76,30 +83,36 @@ if __name__ == '__main__':
             offset_infix = 'm' if t_offset < 0 else 'p'
             t_shifted_path = cmd.t_path + '_' + offset_infix + str(abs(t_offset))
 
+
             # ----------------------------------------------------------------------------------------------------
-            # run: time shift t 1 min data...
+            # run: time shift t 1 min data, compute weC_sens...
 
             if cmd.verbose:
-                print("sample_ts_stdev: time shift t 1 min data...", end='', file=sys.stderr)
+                print("timeshift_grid_reporter: time shift t 1 min data, compute weC_sens...", end='', file=sys.stderr)
                 sys.stderr.flush()
 
             args = ['csv_reader.py', cmd.report_filename]
-            sp1 = Popen(args, stdout=PIPE)
+            sp1 = Popen([str(a) for a in args], stdout=PIPE)
 
-            args = ['node_shift.py', '-o', str(t_offset), cmd.t_path, t_shifted_path]
-            sp2 = Popen(args, stdin=sp1.stdout, stdout=PIPE)
+            args = ['node_shift.py', '-o', t_offset, cmd.t_path, t_shifted_path]
+            sp2 = Popen([str(a) for a in args], stdin=sp1.stdout, stdout=PIPE)
+
+            args = ['sample_wec_sens.py', t_shifted_path, cmd.report_sub_path]
+            sp3 = Popen([str(a) for a in args], stdin=sp2.stdout, stdout=PIPE)
 
             args = ['csv_writer.py', reported_t_shifted_filename]
-            sp3 = Popen(args, stdin=sp2.stdout)
+            sp4 = Popen([str(a) for a in args], stdin=sp3.stdout)
 
-            sp3.wait()
+            sp4.wait()
 
-            if sp3.returncode > 0:
-                print("sample_ts_stdev: t shift phase failed with exit code %s." % sp3.returncode, file=sys.stderr)
-                exit(sp3.returncode)
+            if sp4.returncode > 0:
+                print("timeshift_grid_reporter: t shift phase failed with exit code %s." % sp4.returncode,
+                      file=sys.stderr)
+                exit(sp4.returncode)
 
             if cmd.verbose:
                 print("done.", file=sys.stderr)
+
 
             # --------------------------------------------------------------------------------------------------------
 
@@ -110,29 +123,36 @@ if __name__ == '__main__':
 
                 start_time = time.time()
 
+
                 # ----------------------------------------------------------------------------------------------------
                 # run: time shift rH 1 min data, aggregate to 15 min...
 
                 if cmd.verbose:
-                    print("sample_ts_stdev: time shift rH 1 min data, aggregate to 15 min...", end='', file=sys.stderr)
+                    print("timeshift_grid_reporter: time shift rH 1 min data, aggregate to 15 min...", end='',
+                          file=sys.stderr)
                     sys.stderr.flush()
 
                 args = ['csv_reader.py', reported_t_shifted_filename]
-                sp1 = Popen(args, stdout=PIPE)
 
-                args = ['node_shift.py', '-o', str(rh_offset), cmd.rh_path, rh_shifted_path]
-                sp2 = Popen(args, stdin=sp1.stdout, stdout=PIPE)
+                sp1 = Popen([str(a) for a in args], stdout=PIPE)
+
+                args = ['node_shift.py', '-o', rh_offset, cmd.rh_path, rh_shifted_path]
+
+                sp2 = Popen([str(a) for a in args], stdin=sp1.stdout, stdout=PIPE)
 
                 args = ['sample_aggregate.py', '-c' '**:/15:00']
-                sp3 = Popen(args, stdin=sp2.stdout, stdout=PIPE)
+
+                sp3 = Popen([str(a) for a in args], stdin=sp2.stdout, stdout=PIPE)
 
                 args = ['csv_writer.py', reported_15min_filename]
-                sp4 = Popen(args, stdin=sp3.stdout)
+
+                sp4 = Popen([str(a) for a in args], stdin=sp3.stdout)
 
                 sp4.wait()
 
                 if sp4.returncode > 0:
-                    print("sample_ts_stdev: rH shift phase failed with exit code %s." % sp4.returncode, file=sys.stderr)
+                    print("timeshift_grid_reporter: rH shift phase failed with exit code %s." % sp4.returncode,
+                          file=sys.stderr)
                     exit(sp4.returncode)
 
                 if cmd.verbose:
@@ -143,20 +163,23 @@ if __name__ == '__main__':
                 # run: join with ref 15 min data...
 
                 if cmd.verbose:
-                    print("sample_ts_stdev: join with ref 15 min data...", end='', file=sys.stderr)
+                    print("timeshift_grid_reporter: join with ref 15 min data...", end='', file=sys.stderr)
                     sys.stderr.flush()
 
                 args = ['csv_join.py', '-i', '-l', report_prefix, 'rec', reported_15min_filename,
                         '-r', ref_prefix, 'rec', cmd.ref_filename]
-                sp1 = Popen(args, stdout=PIPE)
+
+                sp1 = Popen([str(a) for a in args], stdout=PIPE)
 
                 args = ['csv_writer.py', joined_15min_filename]
-                sp2 = Popen(args, stdin=sp1.stdout)
+
+                sp2 = Popen([str(a) for a in args], stdin=sp1.stdout)
 
                 sp2.wait()
 
                 if sp2.returncode > 0:
-                    print("sample_ts_stdev: join phase failed with exit code %s." % sp2.returncode, file=sys.stderr)
+                    print("timeshift_grid_reporter: join phase failed with exit code %s." % sp2.returncode,
+                          file=sys.stderr)
                     exit(sp2.returncode)
 
                 if cmd.verbose:
@@ -167,30 +190,53 @@ if __name__ == '__main__':
                 # run: t rH grid...
 
                 if cmd.verbose:
-                    print("sample_ts_stdev: t rH grid...", end='', file=sys.stderr)
+                    print("timeshift_grid_reporter: t rH grid...", end='', file=sys.stderr)
                     sys.stderr.flush()
 
                 args = ['csv_reader.py', joined_15min_filename]
+
                 sp1 = Popen(args, stdout=PIPE)
 
-                args = ['sample_rh_t_grid.py', '-r', '20', '95', '5', '-t', '0', '30', '5', '-o', 'S',
+                args = ['sample_rh_t_grid.py', '-r', 20, 95, 5, '-t', 0, 30, 5, '-o', 'S',
                         'praxis.' + rh_shifted_path, 'praxis.' + t_shifted_path, joined_report_path, joined_ref_path]
 
-                output = check_output(args, stdin=sp1.stdout)
+                output = check_output([str(a) for a in args], stdin=sp1.stdout)
 
                 if cmd.verbose:
                     print("done.", file=sys.stderr)
+                    sys.stderr.flush()
 
-                print("output: %s" % output.decode())
+                s = ErrorSurface.construct_from_jdict(json.loads(output.decode()))
 
-                surface = ErrorSurface.construct_from_jdict(json.loads(output.decode()))
-
-                print("surface: %s" % surface)
+                print("surface: %s" % s, file=sys.stderr)
 
 
                 # ----------------------------------------------------------------------------------------------------
                 # run: correction...
 
+                if cmd.verbose:
+                    print("timeshift_grid_reporter: correction r2...", end='', file=sys.stderr)
+
+                args = ['csv_reader.py', joined_15min_filename]
+
+                sp1 = Popen(args, stdout=PIPE)
+
+                args = ['sample_rh_t_grid_correction.py', '-r', joined_ref_path,
+                        '-m', s.mt_weight_b2, s.mt_weight_b1, s.mt_weight_b0,
+                        '-c', s.ct_weight_b2, s.ct_weight_b1, s.ct_weight_b0,
+                        'praxis.' + rh_shifted_path, 'praxis.' + t_shifted_path,
+                        report_prefix + '.' + cmd.report_sub_path]
+
+                output = check_output([str(a) for a in args], stdin=sp1.stdout)
+
+
+                if cmd.verbose:
+                    print("done.", file=sys.stderr)
+                    sys.stderr.flush()
+
+                # print("output: %s" % output.decode())
+
+                r2 = float(output.decode())
 
 
                 # ----------------------------------------------------------------------------------------------------
@@ -198,8 +244,9 @@ if __name__ == '__main__':
 
                 elapsed_time = round(time.time() - start_time, 1)
                 print("elapsed: %s" % elapsed_time, file=sys.stderr)
+                sys.stderr.flush()
 
-                report = ErrorReport(t_offset, rh_offset, None)     # stdev
+                report = ErrorReport(t_offset, rh_offset, r2)     # stdev
                 print(JSONify.dumps(report))
                 sys.stdout.flush()
 
@@ -213,4 +260,4 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_ts_stdev: KeyboardInterrupt", file=sys.stderr)
+            print("timeshift_grid_reporter: KeyboardInterrupt", file=sys.stderr)

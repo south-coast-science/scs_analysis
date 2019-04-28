@@ -62,8 +62,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        cnc_report_path = cmd.report_sub_path + '.cnc'
-        sbl_report_path = cmd.report_sub_path + '.cnc-sbl1'
+        cnc_report_path = cmd.report_sub_path + '.weC_sens'          # '.cnc'
+        sbl_report_path = cmd.report_sub_path + '.weC_sens_sbl1'
 
         m_t_poly = np.poly1d(cmd.mt_weights)
         c_t_poly = np.poly1d(cmd.ct_weights)
