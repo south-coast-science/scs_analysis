@@ -1,5 +1,5 @@
 """
-Created on 16 Feb 2019
+Created on 12 Apr 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -11,20 +11,24 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleWeCSens(object):
+class CmdNodeShift(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] T_PATH REPORT_SUB_PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -o OFFSET [-f] [-v] SOURCE_SUB_PATH [TARGET_SUB_PATH]",
+                                              version="%prog 1.0")
 
         # compulsory...
-        # self.__parser.add_option("--sens", "-s", type="float", nargs=1, action="store", default=None, dest="sens",
-        #                          help="sensitivity (mV / ppb)")
+        self.__parser.add_option("--offset", "-o", type="int", nargs=1, action="store", dest="offset",
+                                 help="number of documents of shift (negative is up)")
 
         # optional...
+        self.__parser.add_option("--fill", "-f", action="store_true", dest="fill", default=False,
+                                 help="report documents with missing inner values")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -34,7 +38,7 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 2:
+        if self.offset is None or self.source_path is None:
             return False
 
         return True
@@ -43,17 +47,27 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def offset(self):
+        return self.__opts.offset
+
+
+    @property
+    def fill(self):
+        return self.__opts.fill
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
-    def t_path(self):
+    def source_path(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
-    def report_sub_path(self):
+    def target_path(self):
         return self.__args[1] if len(self.__args) > 1 else None
 
 
@@ -64,4 +78,5 @@ class CmdSampleWeCSens(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleWeCSens:{verbose:%s, path:%s, path:%s}" % (self.verbose, self.t_path, self.report_sub_path)
+        return "CmdNodeShift:{offset:%s, fill:%s, verbose:%s, source_path:%s, target_path:%s}" % \
+               (self.offset, self.fill, self.verbose, self.source_path, self.target_path)
