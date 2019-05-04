@@ -43,7 +43,6 @@ from scs_core.error.error_mesh_t_rh import ErrorMeshTRh
 from scs_core.error.error_surface import ErrorSurface
 
 
-
 # TODO: validate document nodes
 
 # --------------------------------------------------------------------------------------------------------------------
