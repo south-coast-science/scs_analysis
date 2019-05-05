@@ -9,6 +9,8 @@ source repo: scs_analysis
 import json
 import sys
 
+from collections import OrderedDict
+
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
 
@@ -38,9 +40,9 @@ class AWSMQTTClientHandler(object):
 
     def handle(self, client, userdata, message):
         payload = message.payload.decode()
-        payload_jdict = json.loads(payload)
+        jdict = json.loads(payload, object_pairs_hook=OrderedDict)
 
-        pub = Publication(message.topic, payload_jdict) if self.__include_wrapper else payload_jdict
+        pub = Publication(message.topic, jdict) if self.__include_wrapper else jdict
 
         try:
             self.__comms.connect()
