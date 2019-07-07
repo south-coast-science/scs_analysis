@@ -23,7 +23,7 @@ SYNOPSIS
 aws_mqtt_control.py { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
 
 EXAMPLES
-aws_mqtt_control.py -p scs-bbe-002 -r "disk_usage ."
+aws_mqtt_control.py -p scs-bbe-002 -r "disk_usage"
 
 FILES
 ~/SCS/aws/aws_client_auth.json
