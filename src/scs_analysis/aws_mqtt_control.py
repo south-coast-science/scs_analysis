@@ -13,17 +13,17 @@ A command / receipt message regime provides an interactive system over the messa
 
 For security reasons, the user must be in possession of the target device's unique tag and shared secret. These
 tokens can be supplied on the command line, or sourced from an MQTT control auth document managed by the
-mqtt_control_auth utility.
+mqtt_peer utility.
 
 In order to publish on the MQTT control topic, the host must hold an appropriate authentication certificate.
 Certificates are available on request from South Coast Science. The certificate should be indicated using the
 aws_client_auth utility.
 
 SYNOPSIS
-aws_mqtt_control.py { -a HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
+aws_mqtt_control.py { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
 
 EXAMPLES
-aws_mqtt_control.py -a scs-bbe-002 -r "disk_usage ."
+aws_mqtt_control.py -p scs-bbe-002 -r "disk_usage"
 
 FILES
 ~/SCS/aws/aws_client_auth.json
@@ -31,7 +31,7 @@ FILES
 SEE ALSO
 scs_analysis/aws_client_auth
 scs_analysis/aws_mqtt_client
-scs_analysis/mqtt_control_auth
+scs_analysis/mqtt_peer
 scs_mfr/aws_project
 scs_mfr/shared_secret
 scs_mfr/system_id
@@ -54,7 +54,7 @@ from scs_core.control.control_datum import ControlDatum
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
-from scs_core.estate.mqtt_control_auth import MQTTControlAuthSet
+from scs_core.estate.mqtt_peer import MQTTPeerSet
 
 from scs_host.comms.stdio import StdIO
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdMQTTControl()
+    cmd = CmdMQTTControl(20)
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -85,21 +85,21 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if cmd.is_auth():
-            control_auth_group = MQTTControlAuthSet.load(Host)
-            control_auth = control_auth_group.auth(cmd.auth_hostname)
+        if cmd.is_stored_peer():
+            peer_group = MQTTPeerSet.load(Host)
+            peer = peer_group.peer(cmd.peer_hostname)
 
-            if control_auth is None:
-                print("aws_mqtt_control: no MQTT control auth document found for host '%s'." % cmd.auth_hostname,
+            if peer is None:
+                print("aws_mqtt_control: no MQTT peer found for host '%s'." % cmd.peer_hostname,
                       file=sys.stderr)
                 exit(2)
 
             if cmd.verbose:
-                print("aws_mqtt_control: %s" % control_auth, file=sys.stderr)
+                print("aws_mqtt_control: %s" % peer, file=sys.stderr)
 
-            device_tag = control_auth.tag
-            key = control_auth.shared_secret
-            topic = control_auth.topic
+            device_tag = peer.tag
+            key = peer.shared_secret
+            topic = peer.topic
 
         else:
             device_tag = cmd.device_tag

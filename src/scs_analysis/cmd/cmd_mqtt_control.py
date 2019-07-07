@@ -14,29 +14,29 @@ import optparse
 class CmdMQTTControl(object):
     """unix command line handler"""
 
-    def __init__(self):
+    def __init__(self, timeout):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -a HOSTNAME | -d TAG SHARED_SECRET TOPIC } "
+        self.__parser = optparse.OptionParser(usage="%prog { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } "
                                                     "{ -i | -r [CMD_TOKENS] } [-t TIMEOUT] [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--auth", "-a", type="string", nargs=1, action="store", dest="auth",
-                                 help="use the stored MQTT control auth document")
+        self.__parser.add_option("--peer", "-p", type="string", nargs=1, action="store", dest="peer",
+                                 help="use the stored MQTT peer")
 
         self.__parser.add_option("--device", "-d", type="string", nargs=3, action="store", dest="device",
-                                 help="specify the tag, shared secret and topic for device")
+                                 help="specify a tag, shared secret and topic for the peer")
 
         # optional...
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
-                                 help="wait for receipt from target device")
+                                 help="wait for receipt from target peer")
 
         self.__parser.add_option("--interactive", "-i", action="store_true", dest="interactive", default=False,
                                  help="interactive mode (always waits for receipt)")
 
-        self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout", default=10,
-                                 help="receipt timeout in seconds (default 10)")
+        self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout",
+                                 default=timeout, help="receipt timeout in seconds (default %d)" % timeout)
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -47,7 +47,7 @@ class CmdMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.is_auth() == self.is_device():
+        if self.is_stored_peer() == self.is_device():
             return False
 
         if self.interactive == self.receipt:
@@ -61,8 +61,8 @@ class CmdMQTTControl(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_auth(self):
-        return self.__opts.auth is not None
+    def is_stored_peer(self):
+        return self.__opts.peer is not None
 
 
     def is_device(self):
@@ -72,8 +72,8 @@ class CmdMQTTControl(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def auth_hostname(self):
-        return self.__opts.auth
+    def peer_hostname(self):
+        return self.__opts.peer
 
 
     @property
@@ -123,7 +123,7 @@ class CmdMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMQTTControl:{auth:%s, device:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
+        return "CmdMQTTControl:{peer:%s, device:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
                "verbose:%s}" % \
-               (self.__opts.auth, self.__opts.device, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
+               (self.__opts.peer, self.__opts.device, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
                 self.verbose)
