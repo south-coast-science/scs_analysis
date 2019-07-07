@@ -6,25 +6,25 @@ Created on 9 Mar 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The mqtt_control_auth utility is used to maintain a database of authentication documents for use with the
+The mqtt_peers utility is used to maintain a database of peers for use with the
 scs_analysis/aws_mqtt_control and scs_analysis/osio_mqtt_control utilities.
 
 Authentication details for specific devices are available on request from South Coast Science, or can be obtained
 using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-mqtt_control_auth.py { -l | [-s HOSTNAME TAG SHARED_SECRET TOPIC] [-d HOSTNAME] } [-v]
+mqtt_peers.py { -l | [-s HOSTNAME TAG SHARED_SECRET TOPIC] [-d HOSTNAME] } [-v]
 
 EXAMPLES
-mqtt_control_auth.py -s scs-bbe-002 scs-be2-2 secret1 \
+mqtt_peers.py -s scs-bbe-002 scs-be2-2 secret1 \
 south-coast-science-dev/production-test/device/alpha-bb-eng-000002/status
 
 FILES
-~/SCS/aws/mqtt_control_auths.json
+~/SCS/aws/mqtt_peers.json
 
 DOCUMENT EXAMPLE
-{"auths": {"scs-rpi-006": {"hostname": "scs-rpi-006", "tag": "scs-ap1-6", "shared-secret": "secret2",
-"topic": "south-coast-science-dev/development/auth/alpha-pi-eng-000006/control"}}}
+{"peers": {"scs-rpi-006": {"hostname": "scs-rpi-006", "tag": "scs-ap1-6", "shared-secret": "secret2",
+"topic": "south-coast-science-dev/development/peer/alpha-pi-eng-000006/control"}}}
 
 SEE ALSO
 scs_analysis/aws_mqtt_control
@@ -36,11 +36,11 @@ scs_mfr/aws_project
 
 import sys
 
-from scs_analysis.cmd.cmd_mqtt_control_auth import CmdMQTTControlAuth
+from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
 from scs_core.data.json import JSONify
 
-from scs_core.estate.mqtt_control_auth import MQTTControlAuth, MQTTControlAuthSet
+from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
 
 from scs_host.sys.host import Host
 
@@ -52,14 +52,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdMQTTControlAuth()
+    cmd = CmdMQTTPeers()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("mqtt_control_auth: %s" % cmd, file=sys.stderr)
+        print("mqtt_peers: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 
@@ -67,10 +67,10 @@ if __name__ == '__main__':
     # resources...
 
     # APIAuth...
-    group = MQTTControlAuthSet.load(Host)
+    group = MQTTPeerSet.load(Host)
 
     if cmd.verbose and group is not None:
-        print("mqtt_control_auth: %s" % group, file=sys.stderr)
+        print("mqtt_peers: %s" % group, file=sys.stderr)
         sys.stderr.flush()
 
 
@@ -80,21 +80,36 @@ if __name__ == '__main__':
     # list...
     if cmd.list:
         if group is not None:
-            for auth in group.auths:
-                print(JSONify.dumps(auth))
+            for peer in group.peers:
+                print(JSONify.dumps(peer))
+
+        exit(0)
+
+    # find...
+    if cmd.is_find_peer():
+        peer = group.peer(cmd.find_hostname)
+
+        if peer is not None:
+            print(JSONify.dumps(peer))
 
         exit(0)
 
     # set...
-    if cmd.is_set_auth():
-        auth = MQTTControlAuth(cmd.auth_hostname, cmd.auth_tag, cmd.auth_shared_secret, cmd.auth_topic)
-        group.insert(auth)
+    if cmd.is_set_peer():
+        peer = MQTTPeer(cmd.set_hostname, cmd.set_tag, cmd.set_shared_secret, cmd.set_topic)
+        group.insert(peer)
         group.save(Host)
 
+        print(JSONify.dumps(peer))
+
+        exit(0)
+
     # delete...
-    if cmd.is_delete_auth():
+    if cmd.is_delete_peer():
         group.remove(cmd.delete_hostname)
         group.save(Host)
+
+        exit(0)
 
     # report...
     if group:
