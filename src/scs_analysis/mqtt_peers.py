@@ -6,14 +6,14 @@ Created on 9 Mar 2019
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The mqtt_peers utility is used to maintain a database of peers for use with the
+The mqtt_peers utility is used to maintain a database of MQTT peers for use with the
 scs_analysis/aws_mqtt_control and scs_analysis/osio_mqtt_control utilities.
 
 Authentication details for specific devices are available on request from South Coast Science, or can be obtained
 using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-mqtt_peers.py { -l | [-s HOSTNAME TAG SHARED_SECRET TOPIC] [-d HOSTNAME] } [-v]
+mqtt_peers.py { -l [-f HOSTNAME] | [-s HOSTNAME TAG SHARED_SECRET TOPIC] [-d HOSTNAME] } [-v]
 
 EXAMPLES
 mqtt_peers.py -s scs-bbe-002 scs-be2-2 secret1 \

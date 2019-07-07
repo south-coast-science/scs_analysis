@@ -14,7 +14,7 @@ import optparse
 class CmdMQTTControl(object):
     """unix command line handler"""
 
-    def __init__(self):
+    def __init__(self, timeout):
         """
         Constructor
         """
@@ -35,8 +35,8 @@ class CmdMQTTControl(object):
         self.__parser.add_option("--interactive", "-i", action="store_true", dest="interactive", default=False,
                                  help="interactive mode (always waits for receipt)")
 
-        self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout", default=10,
-                                 help="receipt timeout in seconds (default 10)")
+        self.__parser.add_option("--timeout", "-t", type="int", nargs=1, action="store", dest="timeout",
+                                 default=timeout, help="receipt timeout in seconds (default %d)" % timeout)
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")

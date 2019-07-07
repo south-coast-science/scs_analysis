@@ -20,10 +20,10 @@ Certificates are available on request from South Coast Science. The certificate 
 aws_client_auth utility.
 
 SYNOPSIS
-aws_mqtt_control.py { -a HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
+aws_mqtt_control.py { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
 
 EXAMPLES
-aws_mqtt_control.py -a scs-bbe-002 -r "disk_usage ."
+aws_mqtt_control.py -p scs-bbe-002 -r "disk_usage ."
 
 FILES
 ~/SCS/aws/aws_client_auth.json
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdMQTTControl()
+    cmd = CmdMQTTControl(20)
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
