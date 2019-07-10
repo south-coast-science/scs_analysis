@@ -24,7 +24,7 @@ class CmdMQTTPeers(object):
                                  help="list the stored MQTT peers to stdout")
 
         self.__parser.add_option("--find", "-f", type="string", nargs=1, action="store", dest="find",
-                                 help="find the MQTT peer with the given hostname")
+                                 help="find the MQTT peer with the given hostname substring")
 
         self.__parser.add_option("--set", "-s", type="string", nargs=4, action="store", dest="peer",
                                  help="insert or update an MQTT peer")

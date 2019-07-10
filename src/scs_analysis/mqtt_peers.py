@@ -87,9 +87,7 @@ if __name__ == '__main__':
 
     # find...
     if cmd.is_find_peer():
-        peer = group.peer(cmd.find_hostname)
-
-        if peer is not None:
+        for peer in group.subset(cmd.find_hostname):
             print(JSONify.dumps(peer))
 
         exit(0)
