@@ -140,7 +140,11 @@ if __name__ == '__main__':
             # cmd...
             if cmd.interactive:
                 line = StdIO.prompt(device_tag + ' > ')
-                cmd_tokens = line.split() if len(line) > 0 else None
+
+                if not line:
+                    continue
+
+                cmd_tokens = line.split()
 
             else:
                 cmd_tokens = cmd.cmd_tokens
