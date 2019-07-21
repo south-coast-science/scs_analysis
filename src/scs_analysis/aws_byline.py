@@ -43,8 +43,6 @@ from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
-# TODO: support "all topics" mode
-
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
