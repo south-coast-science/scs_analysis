@@ -9,8 +9,6 @@ source repo: scs_analysis
 import optparse
 
 
-# TODO: bug: missing checkpoint reported as invalid
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleAggregate(object):
