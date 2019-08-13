@@ -9,6 +9,8 @@ source repo: scs_analysis
 import optparse
 
 
+# TODO: bug: missing checkpoint reported as invalid
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdSampleAggregate(object):
@@ -39,6 +41,15 @@ class CmdSampleAggregate(object):
                                  help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_valid(self):
+        if self.checkpoint is None:
+            return False
+
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
