@@ -25,7 +25,7 @@ SYNOPSIS
 csv_reader.py [-c] [-l LIMIT] [-a] [-v] [FILENAME_1 ... FILENAME_N]
 
 EXAMPLES
-csv_reader.py sht.csv
+csv_reader.py -v scs-ph1-10-status-2019-07-*.csv
 
 DOCUMENT EXAMPLE - INPUT
 tag,rec,val.hmd,val.tmp
@@ -49,15 +49,17 @@ import sys
 
 from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 
-from scs_core.csv.csv_reader import CSVReader
+from scs_core.csv.csv_reader import CSVReader, CSVReaderException
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
+    file_count = 0
+    total_rows = 0
+
     reader = None
-    count = 0
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -72,6 +74,9 @@ if __name__ == '__main__':
 
     try:
         for filename in cmd.filenames:
+
+            file_count += 1
+            rows = 0
 
             # --------------------------------------------------------------------------------------------------------
             # resources...
@@ -90,27 +95,34 @@ if __name__ == '__main__':
             # --------------------------------------------------------------------------------------------------------
             # run...
 
-            for datum in reader.rows:
-                if cmd.limit is not None and count >= cmd.limit:
-                    break
+            try:
+                for datum in reader.rows:
+                    if cmd.limit is not None and rows >= cmd.limit:
+                        break
 
-                if cmd.array:
-                    if count == 0:
-                        print(datum, end='')
+                    if cmd.array:
+                        if rows == 0:
+                            print(datum, end='')
+
+                        else:
+                            print(", %s" % datum, end='')
 
                     else:
-                        print(", %s" % datum, end='')
+                        print(datum)
 
-                else:
-                    print(datum)
+                    sys.stdout.flush()
 
-                sys.stdout.flush()
+                    rows += 1
 
-                count += 1
+            except CSVReaderException as ex:
+                if cmd.verbose:
+                    print("csv_reader: terminating: %s" % ex, file=sys.stderr)
 
-            # close...
-            if reader is not None:
-                reader.close()
+            if cmd.verbose:
+                print("csv_reader: rows: %d" % rows, file=sys.stderr)
+
+            total_rows += rows
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
@@ -123,5 +135,8 @@ if __name__ == '__main__':
         if cmd.array:
             print(']')
 
-        if cmd.verbose:
-            print("csv_reader: rows: %d" % count, file=sys.stderr)
+        if cmd and cmd.verbose and file_count > 1:
+            print("csv_reader: total rows: %d" % total_rows, file=sys.stderr)
+
+        if reader is not None:
+            reader.close()

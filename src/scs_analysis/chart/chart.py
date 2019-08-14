@@ -28,6 +28,9 @@ class Chart(ABC):
                 print("Chart: RuntimeError")
                 return
 
+            except KeyboardInterrupt:
+                return
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
