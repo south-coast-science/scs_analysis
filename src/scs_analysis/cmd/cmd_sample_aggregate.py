@@ -43,6 +43,15 @@ class CmdSampleAggregate(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self):
+        if self.checkpoint is None:
+            return False
+
+        return True
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     @property
     def checkpoint(self):
         return self.__opts.checkpoint

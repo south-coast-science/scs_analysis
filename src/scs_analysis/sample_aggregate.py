@@ -73,6 +73,10 @@ if __name__ == '__main__':
 
     cmd = CmdSampleAggregate()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if not CheckpointGenerator.is_valid(cmd.checkpoint):
         print("sample_aggregate: the checkpoint specification %s is invalid." % cmd.checkpoint, file=sys.stderr)
         exit(2)
