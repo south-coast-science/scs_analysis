@@ -23,7 +23,7 @@ Evaluation follows the rule:
 lower bound <= value < upper bound
 
 Both upper and lower bounds are optional. If both are present, then the lower bound value must be less than the upper
-bound value. If neither are present, then the sample_bounds utility filers out documents with missing fields or
+bound value. If neither are present, then the sample_bounds utility filters out documents with missing fields or
 empty values.
 
 If the --exclusions flag is used, the sample_bounds utility outputs only the documents that do not fit within the
@@ -112,14 +112,14 @@ if __name__ == '__main__':
                 value = Datum.datetime(value_node)
 
                 if value is None:
-                    print("sample_bounds: invalid ISO 8601 value %s in %s" % (value_node, jstr), file=sys.stderr)
+                    print("sample_bounds: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
 
             else:
                 value = Datum.float(value_node)
 
                 if value is None:
-                    print("sample_bounds: invalid numeric value %s in %s" % (value_node, jstr), file=sys.stderr)
+                    print("sample_bounds: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
 
             processed_count += 1
