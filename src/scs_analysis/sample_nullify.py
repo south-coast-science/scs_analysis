@@ -16,8 +16,8 @@ Evaluation follows the rule:
 
 lower bound <= value < upper bound
 
-Both upper and lower bounds are optional. If both are present, then the lower bound value must be less than the upper
-bound value.
+Both upper and lower bounds are optional. If both are present, then the lower bounding value must be less than the
+upper bounding value.
 
 SYNOPSIS
 sample_nullify.py -t TARGET_PATH -s SOURCE_PATH [-l LOWER] [-u UPPER] [-v]

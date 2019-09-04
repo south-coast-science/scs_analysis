@@ -26,7 +26,7 @@ class CmdSampleNullify(object):
                                  help="field to be nullified")
 
         self.__parser.add_option("--source", "-s", type="string", nargs=1, action="store", dest="source",
-                                 help="field providing test value")
+                                 help="field providing the test value")
 
         # optional...
         self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", dest="lower",
