@@ -13,7 +13,7 @@ from scs_core.data.datum import Datum
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleBounds(object):
+class CmdSampleSubset(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -126,7 +126,7 @@ class CmdSampleBounds(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleBounds:{iso8601:%s, numeric:%s, lower:%s, upper:%s, exclusions:%s, " \
+        return "CmdSampleSubset:{iso8601:%s, numeric:%s, lower:%s, upper:%s, exclusions:%s, " \
                "verbose:%s, path:%s}" % \
                (self.iso8601, self.numeric, self.__opts.lower, self.__opts.upper, self.exclusions,
                 self.verbose, self.path)
