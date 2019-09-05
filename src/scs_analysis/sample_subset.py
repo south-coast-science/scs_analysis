@@ -8,12 +8,12 @@ Created on 26 Feb 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_bounds utility is used to find a subset of documents whose value for a specified field lies either
+The sample_subset utility is used to find a subset of documents whose value for a specified field lies either
 inside or outside one or two bounding values.
 
 Input is in the form of a stream of JSON documents. Documents are written to stdout if they match the specification,
 and discarded otherwise. Documents which do not have the specified field, or have an empty field value are also
-discarded. If a field value is present but cannot be cast to the correct type, then the sample_bounds utility
+discarded. If a field value is present but cannot be cast to the correct type, then the sample_subset utility
 terminates.
 
 The type of the field must be specified explicitly as either numeric or ISO 8601 datetime.
@@ -23,22 +23,22 @@ Evaluation follows the rule:
 lower bound <= value < upper bound
 
 Both upper and lower bounds are optional. If both are present, then the lower bound value must be less than the upper
-bound value. If neither are present, then the sample_bounds utility filers out documents with missing fields or
+bound value. If neither are present, then the sample_subset utility filters out documents with missing fields or
 empty values.
 
-If the --exclusions flag is used, the sample_bounds utility outputs only the documents that do not fit within the
+If the --exclusions flag is used, the sample_subset utility outputs only the documents that do not fit within the
 specified bounds. Note that, in this case, documents with missing or empty fields are still discarded.
 
 SYNOPSIS
-sample_bounds.py { -i | -n } [-l LOWER] [-u UPPER] [-x] [-v] PATH
+sample_subset.py { -i | -n } [-l LOWER] [-u UPPER] [-x] [-v] PATH
 
 EXAMPLES
-csv_reader.py praxis_303.csv | sample_bounds.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
+csv_reader.py praxis_303.csv | sample_subset.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_bounds import CmdSampleBounds
+from scs_analysis.cmd.cmd_sample_subset import CmdSampleSubset
 
 from scs_core.data.datum import Datum
 from scs_core.data.path_dict import PathDict
@@ -59,14 +59,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleBounds()
+    cmd = CmdSampleSubset()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("sample_bounds: %s" % cmd, file=sys.stderr)
+        print("sample_subset: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -75,13 +75,13 @@ if __name__ == '__main__':
         try:
             lower_bound = cmd.lower
         except ValueError as ex:
-            print("sample_bounds: invalid value for lower bound: %s" % ex, file=sys.stderr)
+            print("sample_subset: invalid value for lower bound: %s" % ex, file=sys.stderr)
             exit(2)
 
         try:
             upper_bound = cmd.upper
         except ValueError as ex:
-            print("sample_bounds: invalid value for upper bound: %s" % ex, file=sys.stderr)
+            print("sample_subset: invalid value for upper bound: %s" % ex, file=sys.stderr)
             exit(2)
 
 
@@ -112,14 +112,14 @@ if __name__ == '__main__':
                 value = Datum.datetime(value_node)
 
                 if value is None:
-                    print("sample_bounds: invalid ISO 8601 value %s in %s" % (value_node, jstr), file=sys.stderr)
+                    print("sample_subset: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
 
             else:
                 value = Datum.float(value_node)
 
                 if value is None:
-                    print("sample_bounds: invalid numeric value %s in %s" % (value_node, jstr), file=sys.stderr)
+                    print("sample_subset: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
 
             processed_count += 1
@@ -142,9 +142,9 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_bounds: KeyboardInterrupt", file=sys.stderr)
+            print("sample_subset: KeyboardInterrupt", file=sys.stderr)
 
     finally:
         if cmd.verbose:
-            print("sample_bounds: documents: %d processed: %d output: %d" %
+            print("sample_subset: documents: %d processed: %d output: %d" %
                   (document_count, processed_count, output_count), file=sys.stderr)
