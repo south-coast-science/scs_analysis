@@ -35,9 +35,7 @@ class AWSMQTTControlHandler(object):
         self.__receipt = None
 
 
-    # noinspection PyUnusedLocal
-
-    def handle(self, client, userdata, message):
+    def handle(self, _client, _userdata, message):
         payload = json.loads(message.payload.decode())
 
         try:

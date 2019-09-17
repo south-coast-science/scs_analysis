@@ -36,9 +36,7 @@ class AWSMQTTClientHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # noinspection PyUnusedLocal
-
-    def handle(self, client, userdata, message):
+    def handle(self, _client, _userdata, message):
         payload = message.payload.decode()
         jdict = json.loads(payload, object_pairs_hook=OrderedDict)
 
