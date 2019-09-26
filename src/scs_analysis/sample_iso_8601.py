@@ -11,6 +11,18 @@ DESCRIPTION
 The sample_iso_8601 utility is used to replace non-localised datetime fields with an ISO 8601 localised datetime field
 for JSON documents of any schema.
 
+Dates may be in the format:
+
+* DD-MM-YYYY
+* DD/MM/YYYY
+* DD/MM/YY
+* MM-DD-YYYY
+* MM/DD/YYYY
+* MM/DD/YY
+* YYYY-MM-DD
+* YYYY/MM/DD
+* OLE Automation date
+
 Times in the 24-hour format HH:MM or HH:MM:SS. For datetime fields, the
 format may be YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing
 from the input document or are malformed, execution will terminate.
@@ -23,7 +35,7 @@ datetime fields. The default name for the ISO 8601 datetime output field is 'rec
 specified.
 
 SYNOPSIS
-sample_iso_8601.py { -z | -f DATE_FORMAT [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]
+sample_iso_8601.py { -z | { -o | -f DATE_FORMAT } [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]
 { DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]
 
 EXAMPLES
@@ -42,6 +54,7 @@ DOCUMENT EXAMPLE - OUTPUT
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
 https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
+https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netframework-4.8
 """
 
 import sys
@@ -75,7 +88,7 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if not DateParser.is_valid_format(cmd.format):
+    if not cmd.oad and not DateParser.is_valid_format(cmd.format):
         print("sample_iso_8601: unsupported format: %s" % cmd.format, file=sys.stderr)
         exit(2)
 
@@ -86,12 +99,15 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        parser = DateParser.construct(cmd.format)
+        # format...
+        if cmd.format:
+            parser = DateParser.construct(cmd.format)
 
-        if cmd.verbose:
-            print("sample_iso_8601: %s" % parser, file=sys.stderr)
-            sys.stderr.flush()
+            if cmd.verbose:
+                print("sample_iso_8601: %s" % parser, file=sys.stderr)
+                sys.stderr.flush()
 
+        # timezone...
         if cmd.timezone is not None:
             try:
                 timezone = Timezone(cmd.timezone)
@@ -125,8 +141,17 @@ if __name__ == '__main__':
 
             paths = datum.paths()
 
-            # date / time...
-            if cmd.uses_datetime():
+            if cmd.oad:
+                # OAD...
+                if cmd.datetime_path not in paths:
+                    print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    exit(1)
+
+                # ISO 8601...
+                iso = LocalizedDatetime.construct_from_oad(datum.node(cmd.datetime_path), tz=zone)
+
+            elif cmd.uses_datetime():
+                # datetime...
                 if cmd.datetime_path not in paths:
                     print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
                     exit(1)
@@ -140,7 +165,11 @@ if __name__ == '__main__':
                 date = pieces[0].strip()
                 time = pieces[1].strip()
 
+                # ISO 8601...
+                iso = LocalizedDatetime.construct_from_oad(datum.node(cmd.datetime_path), tz=zone)
+
             else:
+                # date / time...
                 if cmd.date_path not in paths:
                     print("sample_iso_8601: date path '%s' not in %s" % (cmd.date_path, jstr), file=sys.stderr)
                     exit(1)
@@ -152,8 +181,9 @@ if __name__ == '__main__':
                 date = datum.node(cmd.date_path)
                 time = datum.node(cmd.time_path)
 
-            # ISO 8601...
-            iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
+                # ISO 8601...
+                iso = LocalizedDatetime.construct_from_oad(datum.node(cmd.datetime_path), tz=zone)
+
 
             if iso is None:
                 print("sample_iso_8601: malformed datetime in %s" % jstr, file=sys.stderr)

@@ -58,11 +58,6 @@ class CmdSampleAggregate(object):
 
 
     @property
-    def nodes(self):
-        return self.__args if len(self.__args) > 0 else [None]
-
-
-    @property
     def min_max(self):
         return self.__opts.min_max
 
@@ -80,6 +75,11 @@ class CmdSampleAggregate(object):
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def nodes(self):
+        return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
