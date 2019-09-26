@@ -18,16 +18,20 @@ class CmdSampleISO8601(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -z | -f DATE_FORMAT [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]"
-                                                    " { DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -z | { -o | -f DATE_FORMAT } "
+                                                    "[-t TIMEZONE_NAME [-u]] [-i ISO_PATH] "
+                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]",
                                               version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
 
+        self.__parser.add_option("--oad", "-o", action="store_true", dest="oad", default=False,
+                                 help="datetime format is OLE Automation date")
+
         self.__parser.add_option("--format", "-f", type="string", nargs=1, action="store", dest="format",
-                                 help="format of input date string, i.e. YYYY-MM-DD")
+                                 help="specifies format of input date string, i.e. YYYY-MM-DD")
 
         self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store",
                                  dest="timezone", help="source timezone (default 'UTC')")
@@ -48,6 +52,9 @@ class CmdSampleISO8601(object):
 
     def is_valid(self):
         if self.zones:
+            return True
+
+        if self.oad:
             return True
 
         if self.format is None:
@@ -85,6 +92,11 @@ class CmdSampleISO8601(object):
     @property
     def zones(self):
         return self.__opts.zones
+
+
+    @property
+    def oad(self):
+        return self.__opts.oad
 
 
     @property
@@ -134,5 +146,7 @@ class CmdSampleISO8601(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleISO8601:{zones:%s, format:%s, timezone:%s, utc:%s, iso:%s, verbose:%s, datetime_paths:%s}" % \
-               (self.zones, self.format, self.timezone, self.utc, self.iso, self.verbose, self.datetime_paths())
+        return "CmdSampleISO8601:{zones:%s, oad:%s, format:%s, timezone:%s, utc:%s, iso:%s, verbose:%s, " \
+               "datetime_paths:%s}" % \
+               (self.zones, self.oad, self.format, self.timezone, self.utc, self.iso, self.verbose,
+                self.datetime_paths())

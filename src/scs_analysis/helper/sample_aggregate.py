@@ -58,7 +58,9 @@ class SampleAggregate(object):
     def append(self, datetime: LocalizedDatetime, sample: PathDict):
         # initialise...
         if not self.__initialised:
-            for node in self.__nodes:
+            nodes = self.__nodes if self.__nodes else sample.paths()        # use all paths if nodes are not specified
+
+            for node in nodes:
                 try:
                     paths = sample.paths(node)
 
