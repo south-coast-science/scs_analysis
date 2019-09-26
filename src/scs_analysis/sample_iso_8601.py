@@ -21,6 +21,7 @@ Dates may be in the format:
 * MM/DD/YY
 * YYYY-MM-DD
 * YYYY/MM/DD
+* OLE Automation date
 
 Times in the 24-hour format HH:MM or HH:MM:SS. For datetime fields, the
 format may be YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing
@@ -34,7 +35,7 @@ datetime fields. The default name for the ISO 8601 datetime output field is 'rec
 specified.
 
 SYNOPSIS
-sample_iso_8601.py { -z | -f DATE_FORMAT [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]
+sample_iso_8601.py { -z | { -o | -f DATE_FORMAT } [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]
 { DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]
 
 EXAMPLES
@@ -53,6 +54,7 @@ DOCUMENT EXAMPLE - OUTPUT
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
 https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
+https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netframework-4.8
 """
 
 import sys
