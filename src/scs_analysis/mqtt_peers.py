@@ -69,10 +69,6 @@ if __name__ == '__main__':
     # APIAuth...
     group = MQTTPeerSet.load(Host)
 
-    if cmd.verbose and group is not None:
-        print("mqtt_peers: %s" % group, file=sys.stderr)
-        sys.stderr.flush()
-
 
     # ----------------------------------------------------------------------------------------------------------------
     # run...
