@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
                         break
 
-                    if cmd.interactive and time.time() > timeout:
+                    if time.time() > timeout:           # was cmd.interactive and ...
                         break
 
                     time.sleep(0.1)
