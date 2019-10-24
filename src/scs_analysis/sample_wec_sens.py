@@ -54,7 +54,7 @@ from scs_analysis.cmd.cmd_sample_wec_sens import CmdSampleWeCSens
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-from scs_core.gas.a4_temp_comp import A4TempComp
+from scs_core.gas.a4.a4_temp_comp import A4TempComp
 from scs_core.gas.afe_calib import AFECalib
 from scs_core.gas.sensor import Sensor
 
