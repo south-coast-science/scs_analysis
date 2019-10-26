@@ -26,7 +26,8 @@ SYNOPSIS
 particulate_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
 
 EXAMPLES
-aws_topic_history.py org/heathrow/loc/4/particulates -t1 | particulate_exegesis.py -v -e isece1 val.sht.hmd val
+csv_reader.py -v ~/part-source.csv | particulate_exegesis.py -v -e isecen2v1 val.sht.hmd val | \
+csv_writer.py -v ~/part.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"val": {"mtf1": 28, "pm1": 0.4, "mtf5": 0, "pm2p5": 0.5, "mtf3": 31, "pm10": 0.5, "mtf7": 0, "per": 4.9, "sfr": 5.2,
