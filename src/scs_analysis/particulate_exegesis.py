@@ -11,7 +11,7 @@ DESCRIPTION
 The particulate_exegesis utility is used to perform data interpretation on particle densities reported by an optical
 particle counter.
 
-Input is in the form of a sequence of JSON sense documents. The output includes the original document, with
+Input is in the form of a sequence of JSON sense documents. The output includes the original document, plus
 a field containing the specified interpretation. If an interpretation with the given name already exists on the input
 document, it is overwritten.
 
@@ -20,7 +20,7 @@ field is missing or empty, the document is ignored. If the rH value is malformed
 or malformed, the particulate_exegesis utility terminates.
 
 Exactly one exegete (data interpretation model) must be specified. The name of the model forms the last part of the
-path for its report field. The default exegesis root is "exg".
+path for its report field. For the output, the default exegesis root is "exg".
 
 SYNOPSIS
 particulate_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
