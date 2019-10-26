@@ -39,7 +39,7 @@ DOCUMENT EXAMPLE - OUTPUT
 "exg": {"isece1": {"pm1": 0.3, "pm2p5": 0.3, "pm10": 0.3}}}
 
 RESOURCES
-https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isece001.py
+https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isecen2_v001.py
 """
 
 import sys
