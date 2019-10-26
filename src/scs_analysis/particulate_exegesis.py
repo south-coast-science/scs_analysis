@@ -8,13 +8,25 @@ Created on 26 Oct 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The particle_exegesis utility is used to
+The particulate_exegesis utility is used to perform data interpretation on particle densities reported by an optical
+particle counter.
+
+Input is in the form of a sequence of JSON sense documents. The output includes the original document, with
+a field containing the specified interpretation. If an interpretation with the given name already exists on the input
+document, it is overwritten.
+
+The input document must contain a relative humidity (rH) field, in addition to pm1, pm2p5.5 and pm10 fields. If the rH
+field is missing or empty, the document is ignored. If the rH value is malformed, or if the PM fields are missing
+or malformed, the particulate_exegesis utility terminates.
+
+Exactly one exegete (data interpretation model) must be specified. The name of the model forms the last part of the
+path for its report field. The default exegesis root is "exg".
 
 SYNOPSIS
-particle_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
+particulate_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
 
 EXAMPLES
-aws_topic_history.py org/heathrow/loc/4/particulates -t1 | particle_exegesis.py -v -e isece1 val.sht.hmd val
+aws_topic_history.py org/heathrow/loc/4/particulates -t1 | particulate_exegesis.py -v -e isece1 val.sht.hmd val
 
 DOCUMENT EXAMPLE - INPUT
 {"val": {"mtf1": 28, "pm1": 0.4, "mtf5": 0, "pm2p5": 0.5, "mtf3": 31, "pm10": 0.5, "mtf7": 0, "per": 4.9, "sfr": 5.2,
@@ -26,11 +38,12 @@ DOCUMENT EXAMPLE - OUTPUT
 "exg": {"isece1": {"pm1": 0.3, "pm2p5": 0.3, "pm10": 0.3}}}
 
 RESOURCES
+https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isece001.py
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_particle_exegesis import CmdParticleExegesis
+from scs_analysis.cmd.cmd_particulate_exegesis import CmdParticulateExegesis
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -53,14 +66,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdParticleExegesis()
+    cmd = CmdParticulateExegesis()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("particle_exegesis: %s" % cmd, file=sys.stderr)
+        print("particulate_exegesis: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -69,7 +82,7 @@ if __name__ == '__main__':
         exegete = Exegete.model(cmd.exegete, Host)
 
         if cmd.verbose:
-            print("particle_exegesis: %s" % exegete, file=sys.stderr)
+            print("particulate_exegesis: %s" % exegete, file=sys.stderr)
             sys.stderr.flush()
 
         exegesis_path = cmd.exegesis_path + '.' + exegete.name()
@@ -89,7 +102,7 @@ if __name__ == '__main__':
 
             paths = datum.paths()
 
-            # sources...
+            # source...
             if cmd.rh_path not in paths or not datum.has_sub_path(cmd.pmx_path):
                 continue
 
@@ -102,10 +115,10 @@ if __name__ == '__main__':
             try:
                 rh = float(rh_node)
             except ValueError:
-                print("particle_exegesis: invalid value for rh in %s" % jstr, file=sys.stderr)
+                print("particulate_exegesis: invalid value for rh in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            # target...
+            # interpretation...
             text = Text.construct_from_jdict(pmx_node)
             interpretation = exegete.interpret(text, rh)
             datum.append(exegesis_path, interpretation.as_json())
@@ -122,9 +135,9 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("particle_exegesis: KeyboardInterrupt", file=sys.stderr)
+            print("particulate_exegesis: KeyboardInterrupt", file=sys.stderr)
 
     finally:
         if cmd.verbose:
-            print("particle_exegesis: documents: %d processed: %d" % (document_count, processed_count),
+            print("particulate_exegesis: documents: %d processed: %d" % (document_count, processed_count),
                   file=sys.stderr)

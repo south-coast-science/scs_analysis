@@ -13,7 +13,7 @@ from scs_core.particulate.exegesis.exegete import Exegete
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdParticleExegesis(object):
+class CmdParticulateExegesis(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -22,7 +22,7 @@ class CmdParticleExegesis(object):
         """
         models = ' | '.join(Exegete.models())
 
-        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]",
+        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_ROOT]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -72,7 +72,7 @@ class CmdParticleExegesis(object):
 
     @property
     def exegesis_path(self):
-        return self.__args[2] if len(self.__args) > 2 else 'exg'
+        return self.__args[2] if len(self.__args) > 2 else Exegete.root()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -82,5 +82,5 @@ class CmdParticleExegesis(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdParticleExegesis:{exegete:%s, verbose:%s, rh_path:%s, pmx_path:%s, exegesis_path:%s}" % \
+        return "CmdParticulateExegesis:{exegete:%s, verbose:%s, rh_path:%s, pmx_path:%s, exegesis_path:%s}" % \
                (self.exegete, self.verbose, self.rh_path, self.pmx_path, self.exegesis_path)
