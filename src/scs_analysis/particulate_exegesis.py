@@ -34,9 +34,9 @@ DOCUMENT EXAMPLE - INPUT
 "sht": {"hmd": 45.6, "tmp": 20}}, "rec": "2019-10-26T16:59:02Z", "tag": "scs-bgx-431", "src": "N3"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"mtf1": 28, "pm1": 0.4, "mtf5": 0, "pm2p5": 0.5, "mtf3": 31, "pm10": 0.5, "mtf7": 0, "per": 4.9, "sfr": 5.2,
-"sht": {"hmd": 45.6, "tmp": 20}}, "rec": "2019-10-26T16:59:02Z", "tag": "scs-bgx-431", "src": "N3",
-"exg": {"isece1": {"pm1": 0.3, "pm2p5": 0.3, "pm10": 0.3}}}
+{"val": {"mtf1": 27, "pm1": 1.9, "mtf5": 34, "pm2p5": 2.5,  "mtf3": 30, "pm10": 2.6, "mtf7": 0, "per": 4.9, "sfr": 5.81,
+"sht": {"hmd": 46.6, "tmp": 18}}, "rec": "2019-10-26T19:56:32Z", "tag": "scs-bgx-431", "src": "N3",
+"exg": {"isecen2v1": {"pm1": 1.2, "pm2p5": 1.6, "pm10": 1.7}}}
 
 RESOURCES
 https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isecen2_v001.py
