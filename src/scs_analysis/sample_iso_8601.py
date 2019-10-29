@@ -88,7 +88,7 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if not cmd.oad and not DateParser.is_valid_format(cmd.format):
+    if not cmd.zones and not cmd.oad and not DateParser.is_valid_format(cmd.format):
         print("sample_iso_8601: unsupported format: %s" % cmd.format, file=sys.stderr)
         exit(2)
 
