@@ -156,7 +156,7 @@ if __name__ == '__main__':
                     print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
                     exit(1)
 
-                pieces = datum.node(cmd.datetime_path).split(' ')
+                pieces = datum.node(cmd.datetime_path).split(' ', 1)
 
                 if len(pieces) != 2:
                     print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
@@ -166,7 +166,7 @@ if __name__ == '__main__':
                 time = pieces[1].strip()
 
                 # ISO 8601...
-                iso = LocalizedDatetime.construct_from_oad(datum.node(cmd.datetime_path), tz=zone)
+                iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             else:
                 # date / time...
@@ -182,8 +182,7 @@ if __name__ == '__main__':
                 time = datum.node(cmd.time_path)
 
                 # ISO 8601...
-                iso = LocalizedDatetime.construct_from_oad(datum.node(cmd.datetime_path), tz=zone)
-
+                iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             if iso is None:
                 print("sample_iso_8601: malformed datetime in %s" % jstr, file=sys.stderr)
