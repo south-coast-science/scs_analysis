@@ -185,7 +185,7 @@ if __name__ == '__main__':
                 iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             if iso is None:
-                print("sample_iso_8601: malformed datetime in %s" % jstr, file=sys.stderr)
+                print("sample_iso_8601: malformed date/time in %s" % jstr, file=sys.stderr)
                 exit(1)
 
             if cmd.timezone is not None and cmd.utc:
