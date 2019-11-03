@@ -28,8 +28,17 @@ csv_collation_summary.py -v -f collated_5rH/joined_PM_meteo_data_2019-02_2019-07
 -i th.praxis.val.hmd pm1_scaling pm2p5_scaling pm10_scaling | \
 csv_writer.py -v collated_5rH/summary.csv
 
+DOCUMENT EXAMPLE - OUTPUT
+> {"samples": 1765, "th": {"praxis": {"val": {"hmd": {"min": 60.0, "avg": 62.6, "max": 64.9}}}},
+ "pm1_scaling": {"avg": 25.375, "stdev": 29.259},
+ "pm2p5_scaling": {"avg": 2.282, "stdev": 1.804},
+ "pm10_scaling": {"avg": 2.051, "stdev": 1.677}}
+
 SEE ALSO
 scs_analysis/csv_collator
+
+RESOURCES
+https://en.wikipedia.org/wiki/Dependent_and_independent_variables
 """
 
 import sys
@@ -90,8 +99,13 @@ if __name__ == '__main__':
             try:
                 for row in reader.rows:
                     datum = PathDict.construct_from_jstr(row)
+                    paths = datum.paths()
 
                     rows += 1
+
+                    if cmd.ind_path not in paths:
+                        print("csv_collation_summary: ind_path not in datum: %s" % cmd.ind_path, file=sys.stderr)
+                        exit(1)
 
                     try:
                         ind_value = float(datum.node(cmd.ind_path))
@@ -100,6 +114,10 @@ if __name__ == '__main__':
 
                     dependents = {}
                     for dep_path in cmd.dep_paths:
+                        if dep_path not in paths:
+                            print("csv_collation_summary: dep_path not in datum: %s" % dep_path, file=sys.stderr)
+                            exit(1)
+
                         try:
                             dep_value = float(datum.node(dep_path))
                         except ValueError:
