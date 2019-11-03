@@ -36,7 +36,7 @@ class CmdCollationSummary(object):
                                  help="path to independent variable")
 
         # optional...
-        self.__parser.add_option("--prec", "-p", type="int", nargs=2, action="store", dest="precision",
+        self.__parser.add_option("--prec", "-p", type="int", nargs=2, action="store", dest="precisions",
                                  help="precision for independent and dependent variables (default 1, 3 decimals)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -73,12 +73,12 @@ class CmdCollationSummary(object):
 
     @property
     def ind_prec(self):
-        return ModelDelta.DEFAULT_INDEPENDENT_PREC if self.__opts.precision is None else self.__opts.precision[0]
+        return ModelDelta.DEFAULT_INDEPENDENT_PREC if self.__opts.precisions is None else self.__opts.precisions[0]
 
 
     @property
     def dep_prec(self):
-        return ModelDelta.DEFAULT_DEPENDENT_PREC if self.__opts.precision is None else self.__opts.precision[1]
+        return ModelDelta.DEFAULT_DEPENDENT_PREC if self.__opts.precisions is None else self.__opts.precisions[1]
 
 
     @property
@@ -98,5 +98,5 @@ class CmdCollationSummary(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCollationSummary:{file_prefix:%s, ind_path:%s, precision:%s, verbose:%s, dep_paths:%s}" % \
-               (self.file_prefix, self.ind_path, self.__opts.precision, self.verbose, self.dep_paths)
+        return "CmdCollationSummary:{file_prefix:%s, ind_path:%s, precisions:%s, verbose:%s, dep_paths:%s}" % \
+               (self.file_prefix, self.ind_path, self.__opts.precisions, self.verbose, self.dep_paths)
