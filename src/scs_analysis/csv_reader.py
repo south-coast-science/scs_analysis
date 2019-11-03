@@ -118,6 +118,10 @@ if __name__ == '__main__':
                 if cmd.verbose:
                     print("csv_reader: terminating: %s" % ex, file=sys.stderr)
 
+            finally:
+                if reader is not None:
+                    reader.close()
+
             if cmd.verbose:
                 print("csv_reader: rows: %d" % rows, file=sys.stderr)
 
@@ -137,6 +141,3 @@ if __name__ == '__main__':
 
         if cmd and cmd.verbose and file_count > 1:
             print("csv_reader: total rows: %d" % total_rows, file=sys.stderr)
-
-        if reader is not None:
-            reader.close()

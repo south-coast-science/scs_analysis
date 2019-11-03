@@ -14,8 +14,8 @@ sequence of bins. For each bin, assignment follows the rule:
 lower bound <= value < upper bound
 
 The upper and lower bounds for the data set should be specified, along with a step size. The number of bins required
-to service this domain is calculated automatically. Additionally, a file (and path) prefix for the generated CSV files
-must be specified, along with the path identifying the leaf node in the input document where the value is to be found.
+to service this domain is calculated automatically. A file (and path) prefix for the generated CSV files must be
+specified, along with the path identifying the leaf node in the input document where the value is to be found.
 
 Documents that do not contain a field at the specified path, or have values that cannot be evaluated as a float, are
 ignored. Likewise, values outside the upper and lower bounds are ignored.
@@ -28,6 +28,9 @@ csv_collator.py -l LOWER_BOUND -u UPPER_BOUND -d DELTA -f FILE_PREFIX [-v] PATH
 EXAMPLES
 csv_reader.py alphasense_303_2018-08.csv |
 csv_collator.py -l 5.0 -u 21.0 -d 1.0 -f collation/alphasense_303_2018-08 -v val.sht.hmd.aH
+
+SEE ALSO
+scs_analysis/csv_collation_summary
 """
 
 import sys
@@ -72,8 +75,7 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
-            jstr = line.strip()
-            datum = PathDict.construct_from_jstr(jstr)
+            datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
                 break
@@ -88,7 +90,7 @@ if __name__ == '__main__':
             except (TypeError, ValueError):
                 continue
 
-            if not collator.collate(value, jstr):
+            if not collator.collate(value, line):
                 continue
 
             processed_count += 1
