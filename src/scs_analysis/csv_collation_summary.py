@@ -67,6 +67,10 @@ if __name__ == '__main__':
 
     cmd = CmdCollationSummary()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print("csv_collation_summary: %s" % cmd, file=sys.stderr)
 
@@ -135,6 +139,7 @@ if __name__ == '__main__':
             except CSVReaderException as ex:
                 if cmd.verbose:
                     print("csv_collation_summary: terminating: %s" % ex, file=sys.stderr)
+                    exit(1)
 
             finally:
                 if reader is not None:
