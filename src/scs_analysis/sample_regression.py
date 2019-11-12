@@ -89,12 +89,16 @@ class SampleRegression(object):
 
         target = PathDict()
 
-        if sample.has_path('rec'):
-            target.copy(sample, 'rec')
+        for path in sample.paths():
+            if path == self.__path:
+                target.append(self.__path + '.src', value)
+                target.append(self.__path + '.slope', round(slope, self.__precision))
+                target.append(self.__path + '.intercept', round(intercept, self.__precision))
+            else:
+                target.copy(sample, path)
 
-        target.append(self.__path + '.src', value)
-        target.append(self.__path + '.slope', round(slope, self.__precision))
-        target.append(self.__path + '.intercept', round(intercept, self.__precision))
+        # if sample.has_path('rec'):
+        #     target.copy(sample, 'rec')
 
         return target.node()
 

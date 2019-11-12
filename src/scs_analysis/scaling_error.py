@@ -51,6 +51,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
+# TODO: support both linear and scaling errors, and use this script to replace sample_error
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -107,7 +109,7 @@ if __name__ == '__main__':
                 continue
 
             # error...
-            error = round(reported / reference, cmd.precision)
+            error = round(reported / reference, cmd.precision)      # TODO: / or -
 
             # report...
             datum.append(cmd.error_path, error)
