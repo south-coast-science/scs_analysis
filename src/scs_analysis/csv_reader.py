@@ -117,6 +117,7 @@ if __name__ == '__main__':
             except CSVReaderException as ex:
                 if cmd.verbose:
                     print("csv_reader: terminating: %s" % ex, file=sys.stderr)
+                    exit(1)
 
             finally:
                 if reader is not None:

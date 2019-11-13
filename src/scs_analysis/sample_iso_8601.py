@@ -156,7 +156,8 @@ if __name__ == '__main__':
                     print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
                     exit(1)
 
-                pieces = datum.node(cmd.datetime_path).split(' ', 1)
+                pieces = datum.node(cmd.datetime_path).rsplit(' ', 1)           # split on last space character
+                print("pieces:%s" % pieces)
 
                 if len(pieces) != 2:
                     print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
