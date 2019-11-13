@@ -52,8 +52,6 @@ from scs_core.data.path_dict import PathDict
 from scs_core.particulate.exegesis.exegete import Exegete
 from scs_core.particulate.exegesis.text import Text
 
-from scs_host.sys.host import Host
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -80,7 +78,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        exegete = Exegete.model(cmd.exegete, Host)
+        exegete = Exegete.standard(cmd.exegete)
 
         if cmd.verbose:
             print("particulate_exegesis: %s" % exegete, file=sys.stderr)

@@ -24,7 +24,7 @@ SYNOPSIS
 sample_rh_t_grid.py -r MIN MAX STEP -t MIN MAX STEP -o { R | C | M | S } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
 
 EXAMPLES
-bruno:ts_stdev bruno$ csv_reader.py data.csv | sample_rh_t_grid.py -r 20 95 5 -t 0 30 5 -oS -v \
+csv_reader.py data.csv | sample_rh_t_grid.py -r 20 95 5 -t 0 30 5 -oS -v \
 praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2.cnc ref.real
 """
 
