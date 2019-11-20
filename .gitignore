@@ -96,3 +96,4 @@ ENV/
 **/*.numbers
 **/*.xls
 **/*.xlsx
+**/.DS_Store
