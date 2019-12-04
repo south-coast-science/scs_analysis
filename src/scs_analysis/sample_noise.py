@@ -8,19 +8,19 @@ Created on 19 Aug 2016
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_error utility is typically used in a setting where data has a gaussian distribution around a fixed or
+The sample_noise utility is typically used in a setting where data has a gaussian distribution around a fixed or
 slow-moving value. The error analysis shows the difference between the current value, and an exponential
 average.
 
 Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
 the document that is to be examined. The node is typically a leaf node integer or float. The output of the
-sample_error utility includes the source value, aggregate, and the error.
+sample_noise utility includes the source value, aggregate, and the error.
 
 SYNOPSIS
-sample_error.py [-p PRECISION] [-v] [PATH]
+sample_noise.py [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_error.py -p3 val.CO.cnc
+aws_topic_history.py -t 10 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_noise.py -p 3 val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
@@ -44,7 +44,7 @@ from scs_core.data.path_dict import PathDict
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SampleError(object):
+class SampleNoise(object):
     """
     classdocs
     """
@@ -97,7 +97,7 @@ class SampleError(object):
     def __str__(self, *args, **kwargs):
         aggregate = "None" if self.__aggregate is None else format(self.__aggregate, '.6f')
 
-        return "SampleError:{path:%s, precision:%s, aggregate:%s}" % (self.__path, self.__precision, aggregate)
+        return "SampleNoise:{path:%s, precision:%s, aggregate:%s}" % (self.__path, self.__precision, aggregate)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -113,16 +113,16 @@ if __name__ == '__main__':
     cmd = CmdSampleFilter()
 
     if cmd.verbose:
-        print("sample_error: %s" % cmd, file=sys.stderr)
+        print("sample_noise: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        err = SampleError(cmd.path, cmd.precision)
+        err = SampleNoise(cmd.path, cmd.precision)
 
         if cmd.verbose:
-            print("sample_error: %s" % err, file=sys.stderr)
+            print("sample_noise: %s" % err, file=sys.stderr)
             sys.stderr.flush()
 
 
@@ -154,8 +154,8 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("sample_error: KeyboardInterrupt", file=sys.stderr)
+            print("sample_noise: KeyboardInterrupt", file=sys.stderr)
 
     finally:
         if cmd.verbose:
-            print("sample_error: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+            print("sample_noise: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
