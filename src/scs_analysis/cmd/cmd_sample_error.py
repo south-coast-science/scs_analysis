@@ -11,7 +11,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdScalingError(object):
+class CmdSampleError(object):
     """
     unix command line handler
     """
@@ -20,12 +20,19 @@ class CmdScalingError(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] REFERENCE_PATH REPORTED_PATH ERROR_PATH",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -s } [-p PRECISION] [-v] "
+                                                    "REFERENCE_PATH REPORTED_PATH ERROR_PATH", version="%prog 1.0")
+
+        # compulsory...
+        self.__parser.add_option("--linear", "-l", action="store_true", dest="linear", default=False,
+                                 help="error is REPORTED - REFERENCE")
+
+        self.__parser.add_option("--scaling", "-s", action="store_true", dest="scaling", default=False,
+                                 help="error is REPORTED / REFERENCE")
 
         # optional...
         self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
-                                 help="precision (default 3 decimal place)")
+                                 help="precision (default 3 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -36,6 +43,9 @@ class CmdScalingError(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if not self.linear and not self.scaling:
+            return False
+
         if len(self.__args) != 3:
             return False
 
@@ -43,6 +53,16 @@ class CmdScalingError(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def linear(self):
+        return self.__opts.linear
+
+
+    @property
+    def scaling(self):
+        return self.__opts.scaling
+
 
     @property
     def precision(self):
@@ -76,5 +96,7 @@ class CmdScalingError(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdScalingError:{precision:%s, verbose:%s, reference_path:%s, reported_path:%s, error_path:%s}" % \
-               (self.precision, self.verbose, self.reference_path, self.reported_path, self.error_path)
+        return "CmdSampleError:{linear:%s, scaling:%s, precision:%s, verbose:%s, " \
+               "reference_path:%s, reported_path:%s, error_path:%s}" % \
+               (self.linear, self.scaling, self.precision, self.verbose,
+                self.reference_path, self.reported_path, self.error_path)
