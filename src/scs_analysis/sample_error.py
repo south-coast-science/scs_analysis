@@ -1,103 +1,52 @@
 #!/usr/bin/env python3
 
 """
-Created on 19 Aug 2016
+Created on 6 Nov 2019
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_error utility is typically used in a setting where data has a gaussian distribution around a fixed or
-slow-moving value. The error analysis shows the difference between the current value, and an exponential
-average.
+The sample_error utility is used to compute either the difference between or the ratio of a reported value and a
+reference value for a given path is a stream of JSON documents.
 
-Input data is typically in the form of a JSON document. A command parameter specifies the path to the node within
-the document that is to be examined. The node is typically a leaf node integer or float. The output of the
-sample_error utility includes the source value, aggregate, and the error.
+Input is a sequence of JSON documents on stdin, containing both reported and reference values. If the specified
+REFERENCE_PATH and REPORTED_PATH are not present, the utility terminates. If either value cannot be interpreted as a
+floating-point value, the document is ignored. If the specified ERROR_PATH is already present in the document, it is
+overwritten.
 
 SYNOPSIS
-sample_error.py [-p PRECISION] [-v] [PATH]
+sample_error.py { -l | -s } [-p PRECISION] [-v] REFERENCE_PATH REPORTED_PATH ERROR_PATH
 
 EXAMPLES
-osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_error.py -p3 val.CO.cnc
+csv_reader.py -v Pi-R1-joined-2019-10-15min.csv | \
+sample_error.py -s -v "fidas.PM25 Converted Measurement" r1.val.pm2p5 error.pm2p5 | \
+sample_error.py -s -v "fidas.PM10 Converted Measurement" r1.val.pm10 error.pm10 | \
+csv_writer.py -v Pi-R1-joined-2019-10-15min-error.csv
 
 DOCUMENT EXAMPLE - INPUT
-{"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
-"NO2": {"weV": 0.29563, "aeV": 0.280879, "weC": 0.009569, "cnc": 61.0},
-"Ox": {"weV": 0.406819, "aeV": 0.387443, "weC": -0.010706, "cnc": 34.7},
-"NO": {"weV": 0.319692, "aeV": 0.292129, "weC": 0.028952, "cnc": 165.5},
-"CO": {"weV": 0.395819, "aeV": 0.289317, "weC": 0.113108, "cnc": 311.3},
-"sht": {"hmd": 82.4, "tmp": 12.6}}}
+{"rec": "2019-09-24T13:15:00Z", "fidas": {"Site": "Heathrow LHR2", "SiteCode": "LHR2",
+"PM10 Processed Measurement": 6.3, "PM10 Converted Measurement": 6.3, "PM10 Data Status": "Provisional",
+"PM25 Processed Measurement": 3.447, "PM25 Converted Measurement": 3.2519, "PM25 Data Status": "Provisional"},
+"r1": {"val": {"mtf1": 32.4, "pm1": 2.1, "mtf5": 34.1, "pm2p5": 6.3, "sht": {"hmd": 29.5, "tmp": 33.0}},
+"tag": "scs-pb1-3", "src": "R1"}}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"rec": "2018-03-27T10:07:11.033+00:00", "val": {"CO": {"cnc": {"src": 263.0, "agr": 194.69, "err": 68.31}}}}
+{"rec": "2019-09-24T13:15:00Z", "fidas": {"Site": "Heathrow LHR2", "SiteCode": "LHR2",
+"PM10 Processed Measurement": 6.3, "PM10 Converted Measurement": 6.3, "PM10 Data Status": "Provisional",
+"PM25 Processed Measurement": 3.447, "PM25 Converted Measurement": 3.2519, "PM25 Data Status": "Provisional"},
+"r1": {"val": {"mtf1": 32.4, "pm1": 2.1, "mtf5": 34.1, "pm2p5": 6.3, "sht": {"hmd": 29.5, "tmp": 33.0}},
+"tag": "scs-pb1-3", "src": "R1"},
+"error": {"pm2p5": 1.937, "pm10": 1.889}}
 """
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_filter import CmdSampleFilter
+from scs_analysis.cmd.cmd_sample_error import CmdSampleError
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class SampleError(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, path, precision):
-        """
-        Constructor
-        """
-        self.__path = path
-        self.__precision = precision
-
-        self.__aggregate = None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def datum(self, sample):
-        latest = float(sample.node(self.__path))
-
-        if self.__aggregate is None:
-            self.__aggregate = latest
-            return None
-
-        self.__aggregate = (0.9 * self.__aggregate) + (0.1 * latest)
-        error = latest - self.__aggregate
-
-        target = PathDict()
-
-        if sample.has_path('rec'):
-            target.copy(sample, 'rec')
-
-        target.append(self.__path + '.src', latest)
-        target.append(self.__path + '.agr', round(self.__aggregate, self.__precision))
-        target.append(self.__path + '.err', round(error, self.__precision))
-
-        return target.node()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def aggregate(self):
-        return self.__aggregate
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        aggregate = "None" if self.__aggregate is None else format(self.__aggregate, '.6f')
-
-        return "SampleError:{path:%s, precision:%s, aggregate:%s}" % (self.__path, self.__precision, aggregate)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -110,24 +59,22 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleFilter()
+    cmd = CmdSampleError()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
 
     if cmd.verbose:
         print("sample_error: %s" % cmd, file=sys.stderr)
+        sys.stderr.flush()
+
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
-
-        err = SampleError(cmd.path, cmd.precision)
-
-        if cmd.verbose:
-            print("sample_error: %s" % err, file=sys.stderr)
-            sys.stderr.flush()
-
-
-        # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        max_datum = None
 
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
@@ -137,16 +84,36 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            error_datum = err.datum(datum)
+            # reference...
+            if cmd.reference_path not in datum.paths():
+                print("sample_error: reference path '%s' not present" % cmd.reference_path, file=sys.stderr)
+                exit(1)
 
-            if error_datum is not None:
-                print(JSONify.dumps(error_datum))
-                sys.stdout.flush()
+            try:
+                reference = float(datum.node(cmd.reference_path))
+            except (TypeError, ValueError):
+                continue
+
+            # reported...
+            if cmd.reported_path not in datum.paths():
+                print("sample_error: reported path '%s' not present" % cmd.reference_path, file=sys.stderr)
+                exit(1)
+
+            try:
+                reported = float(datum.node(cmd.reported_path))
+            except (TypeError, ValueError):
+                continue
+
+            # error...
+            error = reported / reference if cmd.scaling else reported - reference
+
+            # report...
+            datum.append(cmd.error_path, round(error, cmd.precision))
+            sys.stdout.flush()
 
             processed_count += 1
 
-        if cmd.verbose:
-            print(err, file=sys.stderr)
+            print(JSONify.dumps(datum))
 
 
     # ----------------------------------------------------------------------------------------------------------------
