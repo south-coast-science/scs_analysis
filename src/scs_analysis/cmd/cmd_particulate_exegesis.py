@@ -20,14 +20,14 @@ class CmdParticulateExegesis(object):
         """
         Constructor
         """
-        models = ' | '.join(Exegete.models())
+        model_names = ' | '.join(Exegete.model_names())
 
         self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_ROOT]",
                                               version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--exegete", "-e", type="string", nargs=1, action="store", default=None,
-                                 dest="exegete", help="exegete model { %s }" % models)
+                                 dest="exegete", help="exegete model { %s }" % model_names)
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -42,7 +42,7 @@ class CmdParticulateExegesis(object):
         if self.exegete is None or self.rh_path is None or self.pmx_path is None:
             return False
 
-        if self.exegete not in Exegete.models():
+        if self.exegete not in Exegete.model_names():
             return False
 
         return True
