@@ -49,7 +49,7 @@ from scs_analysis.cmd.cmd_particulate_exegesis import CmdParticulateExegesis
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-from scs_core.particulate.exegesis.exegete import Exegete
+from scs_core.particulate.exegesis.exegete_collection import ExegeteCollection
 from scs_core.particulate.exegesis.text import Text
 
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        exegete = Exegete.standard(cmd.exegete)
+        exegete = ExegeteCollection.construct(cmd.exegete)
 
         if cmd.verbose:
             print("particulate_exegesis: %s" % exegete, file=sys.stderr)
