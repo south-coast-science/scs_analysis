@@ -8,7 +8,7 @@ source repo: scs_analysis
 
 import optparse
 
-from scs_core.particulate.exegesis.exegete import Exegete
+from scs_core.particulate.exegesis.exegete_catalogue import ExegeteCatalogue
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ class CmdParticulateExegesis(object):
         """
         Constructor
         """
-        model_names = ' | '.join(Exegete.model_names())
+        model_names = ' | '.join(ExegeteCatalogue.model_names())
 
         self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_ROOT]",
                                               version="%prog 1.0")
@@ -72,7 +72,7 @@ class CmdParticulateExegesis(object):
 
     @property
     def exegesis_path(self):
-        return self.__args[2] if len(self.__args) > 2 else Exegete.root()
+        return self.__args[2] if len(self.__args) > 2 else ExegeteCatalogue.root()
 
 
     # ----------------------------------------------------------------------------------------------------------------
