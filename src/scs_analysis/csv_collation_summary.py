@@ -29,10 +29,10 @@ csv_collation_summary.py -v -f collated_5rH/joined_PM_meteo_data_2019-02_2019-07
 csv_writer.py -v collated_5rH/summary.csv
 
 DOCUMENT EXAMPLE - OUTPUT
-> {"samples": 1765, "th": {"praxis": {"val": {"hmd": {"min": 60.0, "avg": 62.6, "max": 64.9}}}},
- "pm1_scaling": {"avg": 25.375, "stdev": 29.259},
- "pm2p5_scaling": {"avg": 2.282, "stdev": 1.804},
- "pm10_scaling": {"avg": 2.051, "stdev": 1.677}}
+{"samples": 1765, "th": {"praxis": {"val": {"hmd": {"min": 60.0, "avg": 62.6, "max": 64.9}}}},
+"pm1_scaling": {"avg": 25.375, "stdev": 29.259},
+"pm2p5_scaling": {"avg": 2.282, "stdev": 1.804},
+"pm10_scaling": {"avg": 2.051, "stdev": 1.677}}
 
 SEE ALSO
 scs_analysis/csv_collator
