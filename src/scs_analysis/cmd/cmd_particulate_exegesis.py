@@ -8,6 +8,7 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_core.sample.sample import Sample
 from scs_core.particulate.exegesis.exegete_catalogue import ExegeteCatalogue
 
 
@@ -42,7 +43,7 @@ class CmdParticulateExegesis(object):
         if self.exegete is None or self.rh_path is None or self.pmx_path is None:
             return False
 
-        if self.exegete not in Exegete.model_names():
+        if self.exegete not in ExegeteCatalogue.model_names():
             return False
 
         return True
@@ -72,7 +73,7 @@ class CmdParticulateExegesis(object):
 
     @property
     def exegesis_path(self):
-        return self.__args[2] if len(self.__args) > 2 else ExegeteCatalogue.root()
+        return self.__args[2] if len(self.__args) > 2 else Sample.EXEGESIS_TAG
 
 
     # ----------------------------------------------------------------------------------------------------------------
