@@ -37,7 +37,7 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: validate document nodes
+# TODO: use as the basis of gases exegesis
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -56,7 +56,6 @@ if __name__ == '__main__':
 
     if cmd.verbose:
         print("sample_rh_t_grid_correction: %s" % cmd, file=sys.stderr)
-
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -85,15 +84,21 @@ if __name__ == '__main__':
 
             paths = datum.paths()
 
-            # nodes...
-            rh_node = datum.node(cmd.rh_path)
-            rh = float(rh_node)
+            # fields...
+            try:
+                rh = float(datum.node(cmd.rh_path))
+            except (TypeError, ValueError):
+                continue
 
-            t_node = datum.node(cmd.t_path)
-            t = float(t_node)
+            try:
+                t = float(datum.node(cmd.t_path))
+            except (TypeError, ValueError):
+                continue
 
-            report_node = datum.node(cnc_report_path)
-            report = float(report_node)
+            try:
+                report = float(datum.node(cnc_report_path))
+            except (TypeError, ValueError):
+                continue
 
             # numpy poly...
             m_t = m_t_poly(rh)
