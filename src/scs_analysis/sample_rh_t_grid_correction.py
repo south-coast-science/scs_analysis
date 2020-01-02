@@ -61,8 +61,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        cnc_report_path = cmd.report_sub_path + '.weC_sens'          # '.cnc'
-        sbl_report_path = cmd.report_sub_path + '.weC_sens_sbl1'
+        cnc_report_path = cmd.report_sub_path + '.cnc'                  # '.weC_sens'          # '.cnc'
+        sbl_report_path = cmd.report_sub_path + '.cnc_sbl1'             # '.weC_sens_sbl1'
 
         m_t_poly = np.poly1d(cmd.mt_weights)
         c_t_poly = np.poly1d(cmd.ct_weights)
@@ -109,8 +109,10 @@ if __name__ == '__main__':
             report_corrected = round(report - error, 1)
 
             if cmd.r2:
-                reference_node = datum.node(cmd.reference_path)
-                reference = float(reference_node)
+                try:
+                    reference = float(datum.node(cmd.reference_path))
+                except (TypeError, ValueError):
+                    continue
 
                 references.append(reference)
                 corrected.append(report_corrected)

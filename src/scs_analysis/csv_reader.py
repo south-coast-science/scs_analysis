@@ -114,9 +114,9 @@ if __name__ == '__main__':
 
                     rows += 1
 
-            except CSVReaderException as ex:
+            except CSVReaderException as ex:        # TODO: continue over NULL
                 if cmd.verbose:
-                    print("csv_reader: terminating: %s" % ex, file=sys.stderr)
+                    print("csv_reader: terminating on row %d: %s" % (rows, ex), file=sys.stderr)
                     exit(1)
 
             finally:
