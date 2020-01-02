@@ -37,7 +37,7 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
-# TODO: validate document nodes
+# TODO: use as the basis of gases exegesis
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -57,13 +57,12 @@ if __name__ == '__main__':
     if cmd.verbose:
         print("sample_rh_t_grid_correction: %s" % cmd, file=sys.stderr)
 
-
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        cnc_report_path = cmd.report_sub_path + '.weC_sens'          # '.cnc'
-        sbl_report_path = cmd.report_sub_path + '.weC_sens_sbl1'
+        cnc_report_path = cmd.report_sub_path + '.cnc'                  # '.weC_sens'          # '.cnc'
+        sbl_report_path = cmd.report_sub_path + '.cnc_sbl1'             # '.weC_sens_sbl1'
 
         m_t_poly = np.poly1d(cmd.mt_weights)
         c_t_poly = np.poly1d(cmd.ct_weights)
@@ -85,15 +84,21 @@ if __name__ == '__main__':
 
             paths = datum.paths()
 
-            # nodes...
-            rh_node = datum.node(cmd.rh_path)
-            rh = float(rh_node)
+            # fields...
+            try:
+                rh = float(datum.node(cmd.rh_path))
+            except (TypeError, ValueError):
+                continue
 
-            t_node = datum.node(cmd.t_path)
-            t = float(t_node)
+            try:
+                t = float(datum.node(cmd.t_path))
+            except (TypeError, ValueError):
+                continue
 
-            report_node = datum.node(cnc_report_path)
-            report = float(report_node)
+            try:
+                report = float(datum.node(cnc_report_path))
+            except (TypeError, ValueError):
+                continue
 
             # numpy poly...
             m_t = m_t_poly(rh)
@@ -104,8 +109,10 @@ if __name__ == '__main__':
             report_corrected = round(report - error, 1)
 
             if cmd.r2:
-                reference_node = datum.node(cmd.reference_path)
-                reference = float(reference_node)
+                try:
+                    reference = float(datum.node(cmd.reference_path))
+                except (TypeError, ValueError):
+                    continue
 
                 references.append(reference)
                 corrected.append(report_corrected)

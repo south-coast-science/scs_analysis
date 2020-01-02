@@ -17,15 +17,18 @@ the grid, indicating the number of values and, where possible, the average and s
 The output grid may have rows for humidity steps and columns for temperature steps, or vice-versa. Alternatively, the
 utility may simply report the average standard deviation for all cells.
 
-Input documents whose temperature or humidity values are outside the specified bounds of the grid are ignored.
-Missing or non-floating point values will cause the utility to terminate.
+Input documents whose temperature or humidity values are outside the specified bounds of the grid are ignored,
+input documents with empty or non-floating point values will also be ignored.
 
 SYNOPSIS
 sample_rh_t_grid.py -r MIN MAX STEP -t MIN MAX STEP -o { R | C | M | S } [-v] RH_PATH T_PATH REPORT_PATH REF_PATH
 
 EXAMPLES
-csv_reader.py data.csv | sample_rh_t_grid.py -r 20 95 5 -t 0 30 5 -oS -v \
-praxis.climate.val.hmd_m30 praxis.climate.val.tmp_p60 praxis.gas.val.NO2.cnc ref.real
+csv_reader.py -v praxis_431_gases_2019-02-07_2019-03-14_15min_joined.csv | \
+sample_rh_t_grid.py -v -r 0 100 10 -t 0 40 10 -o S val.sht.hmd.rH val.sht.tmp val.NO2.cnc '15 minute "real" data'
+
+RESOURCES
+https://joshualoong.com/2018/10/03/Fitting-Polynomial-Regressions-in-Python/
 """
 
 import sys
@@ -42,8 +45,6 @@ from scs_core.error.error_grid_report_t_rh import ErrorGridReportTRh
 from scs_core.error.error_mesh_t_rh import ErrorMeshTRh
 from scs_core.error.error_surface import ErrorSurface
 
-
-# TODO: validate document nodes
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -88,18 +89,26 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            # nodes...
-            rh_node = datum.node(cmd.rh_path)
-            rh = float(rh_node)
+            # fields...
+            try:
+                rh = float(datum.node(cmd.rh_path))
+            except (TypeError, ValueError):
+                continue
 
-            t_node = datum.node(cmd.t_path)
-            t = float(t_node)
+            try:
+                t = float(datum.node(cmd.t_path))
+            except (TypeError, ValueError):
+                continue
 
-            report_node = datum.node(cmd.report_path)
-            report = float(report_node)
+            try:
+                report = float(datum.node(cmd.report_path))
+            except (TypeError, ValueError):
+                continue
 
-            ref_node = datum.node(cmd.ref_path)
-            ref = float(ref_node)
+            try:
+                ref = float(datum.node(cmd.ref_path))
+            except (TypeError, ValueError):
+                continue
 
             # append...
             included = grid.append(rh, t, report, ref)
@@ -113,25 +122,28 @@ if __name__ == '__main__':
 
             included_count += 1
 
-        # report...
+        # report t rows...
         if cmd.output_mode == 'R':
             report = ErrorGridReportRhT.construct(grid)
 
             for row in report.rows():
                 print(JSONify.dumps(row))
 
+        # report t columns...
         elif cmd.output_mode == 'C':
             report = ErrorGridReportTRh.construct(grid)
 
             for row in report.rows():
                 print(JSONify.dumps(row))
 
+        # report mesh...
         elif cmd.output_mode == 'M':
             mesh = ErrorMeshTRh.construct(grid)
 
             for line in mesh.lines():
                 print(JSONify.dumps(line))
 
+        # report surface...
         elif cmd.output_mode == 'S':
             mesh = ErrorMeshTRh.construct(grid)
             surface = ErrorSurface.construct(mesh)
