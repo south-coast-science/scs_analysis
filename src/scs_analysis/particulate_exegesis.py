@@ -19,8 +19,8 @@ The input document must contain a relative humidity (rH) field, in addition to p
 field is missing or empty, the document is ignored. If the rH value is malformed, or if the PM fields are missing
 or malformed, the particulate_exegesis utility terminates.
 
-Exactly one exegete (data interpretation model) must be specified. The name of the model forms the last part of the
-path for its report field. For the output, the default exegesis root is "exg".
+A list of available particulates exegetes can be found using the --help flag. The name of the model forms the last part
+of the path for its report field. For the output, the default exegesis root is "exg".
 
 SYNOPSIS
 particulate_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
@@ -39,7 +39,7 @@ DOCUMENT EXAMPLE - OUTPUT
 "exg": {"isecen2v1": {"pm1": 1.2, "pm2p5": 1.6, "pm10": 1.7}}}
 
 RESOURCES
-https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isecen2_v001.py
+https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isecee/isecee_n2_v001.py
 """
 
 import sys
