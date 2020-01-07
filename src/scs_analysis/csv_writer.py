@@ -47,7 +47,9 @@ from scs_core.csv.csv_writer import CSVWriter
 if __name__ == '__main__':
 
     writer = None
-    count = 0
+
+    document_count = 0
+    processed_count = 0
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -78,14 +80,17 @@ if __name__ == '__main__':
         for line in sys.stdin:
             jstr = line.strip()
 
-            writer.write(jstr)
+            document_count += 1
+
+            if not writer.write(jstr):
+                continue
 
             # echo...
             if cmd.echo:
                 print(jstr)
                 sys.stdout.flush()
 
-            count += 1
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -100,4 +105,4 @@ if __name__ == '__main__':
             writer.close()
 
         if cmd.verbose:
-            print("csv_writer: rows: %d" % count, file=sys.stderr)
+            print("csv_writer: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
