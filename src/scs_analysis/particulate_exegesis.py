@@ -26,8 +26,9 @@ SYNOPSIS
 particulate_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
 
 EXAMPLES
-csv_reader.py -v ~/part-source.csv | particulate_exegesis.py -v -e isecen2v1 val.sht.hmd val | \
-csv_writer.py -v ~/part.csv
+csv_reader.py -v preston-circus-2020-01-07-joined.csv | \
+particulate_exegesis.py -v -e iselutn2v1 meteo.val.hmd opc.val opc | \
+csv_writer.py -v preston-circus-2020-01-07-exg.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"val": {"mtf1": 28, "pm1": 0.4, "mtf5": 0, "pm2p5": 0.5, "mtf3": 31, "pm10": 0.5, "mtf7": 0, "per": 4.9, "sfr": 5.2,
@@ -49,7 +50,7 @@ from scs_analysis.cmd.cmd_particulate_exegesis import CmdParticulateExegesis
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-from scs_core.particulate.exegesis.exegete_collection import ExegeteCollection
+from scs_core.particulate.exegesis.exegete_catalogue import ExegeteCatalogue
 from scs_core.particulate.exegesis.text import Text
 
 
@@ -78,7 +79,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        exegete = ExegeteCollection.construct(cmd.exegete)
+        exegete = ExegeteCatalogue.standard(cmd.exegete)
 
         if cmd.verbose:
             print("particulate_exegesis: %s" % exegete, file=sys.stderr)
