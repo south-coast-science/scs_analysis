@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
             # interpretation...
             text = Text.construct_from_jdict(pmx_node)
-            interpretation = exegete.interpret(text, rh)
+            interpretation = exegete.interpretation(text, rh)
             datum.append(exegesis_path, interpretation.as_json())
 
             # report...
