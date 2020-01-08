@@ -8,12 +8,12 @@ source repo: scs_analysis
 
 import optparse
 
-from scs_core.particulate.exegesis.exegete_catalogue import ExegeteCatalogue
+from scs_core.gas.exegesis.exegete_catalogue import ExegeteCatalogue
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdParticulateExegete(object):
+class CmdGasExegete(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -22,15 +22,22 @@ class CmdParticulateExegete(object):
         """
         model_names = ' | '.join(ExegeteCatalogue.model_names())
 
-        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE -r RH_MIN RH_MAX RH_DELTA [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE -g GAS -r RH_MIN RH_MAX RH_DELTA "
+                                                    "-t T_MIN T_MAX T_DELTA [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--exegete", "-e", type="string", nargs=1, action="store", default=None,
                                  dest="exegete", help="exegete model { %s }" % model_names)
 
+        self.__parser.add_option("--gas", "-g", type="string", nargs=1, action="store", default=None,
+                                 dest="gas", help="gas name")
+
         self.__parser.add_option("--rh", "-r", type="int", nargs=3, action="store", default=None,
                                  dest="rh", help="rH range (integer values)")
+
+        self.__parser.add_option("--t", "-t", type="int", nargs=3, action="store", default=None,
+                                 dest="t", help="temperature range (integer values)")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -42,7 +49,7 @@ class CmdParticulateExegete(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.exegete is None or self.__opts.rh is None:
+        if self.exegete is None or self.gas is None or self.__opts.rh is None or self.__opts.t is None:
             return False
 
         if self.exegete not in ExegeteCatalogue.model_names():
@@ -59,8 +66,8 @@ class CmdParticulateExegete(object):
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def gas(self):
+        return self.__opts.gas
 
 
     @property
@@ -78,6 +85,26 @@ class CmdParticulateExegete(object):
         return None if self.__opts.rh is None else self.__opts.rh[2]
 
 
+    @property
+    def t_min(self):
+        return None if self.__opts.t is None else self.__opts.t[0]
+
+
+    @property
+    def t_max(self):
+        return None if self.__opts.t is None else self.__opts.t[1]
+
+
+    @property
+    def t_delta(self):
+        return None if self.__opts.t is None else self.__opts.t[2]
+
+
+    @property
+    def verbose(self):
+        return self.__opts.verbose
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -85,5 +112,5 @@ class CmdParticulateExegete(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdParticulateExegete:{exegete:%s, verbose:%s, rh_min:%s, rh_max:%s, rh_delta:%s}" % \
-               (self.exegete, self.verbose, self.rh_min, self.rh_max, self.rh_delta)
+        return "CmdGasExegete:{exegete:%s, gas:%s, rh:%s, t:%s, verbose:%s}" % \
+               (self.exegete, self.gas, self.__opts.rh, self.__opts.t, self.verbose)
