@@ -61,10 +61,10 @@ if __name__ == '__main__':
         # resources...
 
         exegete = ExegeteCatalogue.standard(cmd.exegete)
-        available_gases = exegete.gases()
+        supported_gases = exegete.gases()
 
-        if cmd.gas not in available_gases:
-            print("gas_exegete: only gas(es) %s are supported by the exegete '%s'." % (available_gases, exegete.name()))
+        if cmd.gas not in supported_gases:
+            print("gas_exegete: only gas(es) %s are supported by the exegete '%s'." % (supported_gases, exegete.name()))
             exit(2)
 
         if cmd.verbose:

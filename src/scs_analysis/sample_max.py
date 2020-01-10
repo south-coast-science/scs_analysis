@@ -96,11 +96,14 @@ if __name__ == '__main__':
             processed_count += 1
 
         if max_datum:
-            print(JSONify.dumps(max_datum.node()))
+            print(JSONify.dumps(max_datum))
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
+
+    except KeyError as ex:
+        print("sample_max: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
