@@ -111,6 +111,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except KeyError as ex:
+        print("sample_median: KeyError: %s" % ex, file=sys.stderr)
+
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_median: KeyboardInterrupt", file=sys.stderr)

@@ -133,6 +133,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except KeyError as ex:
+        print("particulate_exegesis: KeyError: %s" % ex, file=sys.stderr)
+
     except KeyboardInterrupt:
         if cmd.verbose:
             print("particulate_exegesis: KeyboardInterrupt", file=sys.stderr)

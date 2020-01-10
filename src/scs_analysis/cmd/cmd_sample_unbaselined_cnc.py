@@ -1,5 +1,5 @@
 """
-Created on 16 Feb 2019
+Created on 9 Jan 2020
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -11,18 +11,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleWeCSens(object):
+class CmdSampleUnbaselinedCnc(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] T_PATH REPORT_SUB_PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -a AFE_SERIAL_NUMBER [-v] REPORT_SUB_PATH",
+                                              version="%prog 1.0")
 
         # compulsory...
-        # self.__parser.add_option("--sens", "-s", type="float", nargs=1, action="store", default=None, dest="sens",
-        #                          help="sensitivity (mV / ppb)")
+        self.__parser.add_option("--afe", "-a", type="string", nargs=1, action="store", dest="afe_serial_number",
+                                 help="use given AFE calibration data")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -34,7 +35,10 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 2:
+        if self.afe_serial_number is None:
+            return False
+
+        if len(self.__args) != 1:
             return False
 
         return True
@@ -43,18 +47,18 @@ class CmdSampleWeCSens(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def afe_serial_number(self):
+        return self.__opts.afe_serial_number
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
-    def t_path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
-
-    @property
     def report_sub_path(self):
-        return self.__args[1] if len(self.__args) > 1 else None
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,4 +68,5 @@ class CmdSampleWeCSens(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleWeCSens:{verbose:%s, path:%s, path:%s}" % (self.verbose, self.t_path, self.report_sub_path)
+        return "CmdSampleUnbaselinedCnc:{afe_serial_number:%s, verbose:%s, report_sub_path:%s}" % \
+               (self.afe_serial_number, self.verbose, self.report_sub_path)

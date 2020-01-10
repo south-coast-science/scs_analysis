@@ -101,7 +101,7 @@ if __name__ == '__main__':
                 continue
 
             if cmd.echo:
-                print(JSONify.dumps(datum.node()))
+                print(JSONify.dumps(datum))
                 sys.stdout.flush()
 
             chart.plot(datum)
