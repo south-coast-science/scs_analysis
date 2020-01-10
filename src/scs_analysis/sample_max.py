@@ -96,7 +96,7 @@ if __name__ == '__main__':
             processed_count += 1
 
         if max_datum:
-            print(JSONify.dumps(max_datum.node()))
+            print(JSONify.dumps(max_datum))
 
 
     # ----------------------------------------------------------------------------------------------------------------

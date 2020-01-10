@@ -96,7 +96,7 @@ if __name__ == '__main__':
             processed_count += 1
 
         if min_datum:
-            print(JSONify.dumps(min_datum.node()))
+            print(JSONify.dumps(min_datum))
 
 
     # ----------------------------------------------------------------------------------------------------------------
