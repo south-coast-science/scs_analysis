@@ -191,6 +191,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except KeyError as ex:
+        print("xx: KeyError: %s" % ex, file=sys.stderr)
+
     except KeyboardInterrupt:
         if cmd and cmd.verbose:
             print("csv_join: KeyboardInterrupt", file=sys.stderr)

@@ -210,6 +210,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except KeyError as ex:
+        print("xx: KeyError: %s" % ex, file=sys.stderr)
+
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_iso_8601: KeyboardInterrupt", file=sys.stderr)

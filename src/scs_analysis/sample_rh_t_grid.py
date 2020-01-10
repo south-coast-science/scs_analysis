@@ -154,6 +154,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except KeyError as ex:
+        print("sample_t_rh_grid: KeyError: %s" % ex, file=sys.stderr)
+
     except KeyboardInterrupt:
         if cmd.verbose:
             print("sample_t_rh_grid: KeyboardInterrupt", file=sys.stderr)
