@@ -140,7 +140,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyError as ex:
-        print("xx: KeyError: %s" % ex, file=sys.stderr)
+        print("node: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
