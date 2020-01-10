@@ -22,8 +22,8 @@ analysis. The equation applied by the sample_unbaselined_cnc utility is simply:
 concentration [ppb] = weC [Volts] / sensitivity [Volts / ppb]
 
 The user must specify the AFE serial number in order that the correct sensitivity value is used. All of the gases
-specified in the calibration document are processed. The output field name for each gas is "u-cnc". If the field
-already exists, it is overwritten.
+specified in the calibration document are processed. The input field name for each gas is "weC". The output field name
+for each gas is "u-cnc". If the output field already exists, it is overwritten.
 
 If input values are missing or non-numeric, the input document is ignored. If any of the fields are missing, the
 utility terminates.
@@ -143,6 +143,7 @@ if __name__ == '__main__':
 
             paths = datum.paths()
 
+            # gases...
             for gas_name, sensor_calib in sensor_calibs.items():
                 report_sub_path = cmd.report_sub_path + '.' + gas_name
 
