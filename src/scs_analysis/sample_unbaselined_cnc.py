@@ -58,7 +58,6 @@ https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/gas/a4
 https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
 """
 
-import json
 import sys
 
 from collections import OrderedDict
