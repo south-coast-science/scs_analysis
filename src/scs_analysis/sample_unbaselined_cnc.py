@@ -102,24 +102,16 @@ if __name__ == '__main__':
         # resources...
 
         # AFECalib...
-        client = HTTPClient()
-        client.connect(AFECalib.ALPHASENSE_HOST)
-
         try:
-            path = AFECalib.ALPHASENSE_PATH + cmd.afe_serial_number
-            jdict = json.loads(client.get(path, None, AFECalib.ALPHASENSE_HEADER))
-            afe_calib = AFECalib.construct_from_jdict(jdict)
-
-            if cmd.verbose:
-                print("sample_unbaselined_cnc: %s" % afe_calib, file=sys.stderr)
-                sys.stderr.flush()
+            afe_calib = AFECalib.download(HTTPClient(), cmd.afe_serial_number)
 
         except HTTPException as ex:
             print("sample_unbaselined_cnc: %s" % ex, file=sys.stderr)
             exit(1)
 
-        finally:
-            client.close()
+        if cmd.verbose:
+            print("sample_unbaselined_cnc: %s" % afe_calib, file=sys.stderr)
+            sys.stderr.flush()
 
         # SensorCalib lookup...
         gas_names = afe_calib.gas_names()
