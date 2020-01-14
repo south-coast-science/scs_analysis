@@ -95,14 +95,22 @@ if __name__ == '__main__':
 
             # build...
             if not cmd.sub_paths:
-                target = datum
+                target = datum                          # everything is included
 
             else:
                 target = PathDict()
 
-                for path in datum.paths():
-                    if cmd.includes(path):
-                        target.append(path, datum.node(path))
+                if cmd.exclude:
+                    # use datum field ordering...
+                    for path in datum.paths():
+                        if cmd.includes(path):
+                            target.append(path, datum.node(path))
+
+                else:
+                    # use cmd.sub_paths field ordering...
+                    for sub_path in cmd.sub_paths:
+                        if datum.has_sub_path(sub_path):
+                            target.append(sub_path, datum.node(sub_path))
 
             # report...
             if not target:
