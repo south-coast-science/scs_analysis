@@ -83,7 +83,7 @@ class CmdNode(object):
 
     @property
     def sub_paths(self):
-        return set(self.__args)
+        return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
