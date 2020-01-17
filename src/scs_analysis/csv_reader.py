@@ -22,7 +22,7 @@ selected, output is in the form of a JSON array - the output opens with a '[' ch
 the ',' character, and the output is terminated by a ']' character.
 
 SYNOPSIS
-csv_reader.py [-c] [-l LIMIT] [-a] [-v] [FILENAME_1 ... FILENAME_N]
+csv_reader.py [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]
 
 EXAMPLES
 csv_reader.py -v scs-ph1-10-status-2019-07-*.csv
@@ -82,7 +82,8 @@ if __name__ == '__main__':
             # resources...
 
             try:
-                reader = CSVReader(filename=filename, cast=cmd.cast)
+                reader = CSVReader(filename=filename, numeric_cast=cmd.cast, empty_string_as_null=cmd.nullify)
+
             except FileNotFoundError:
                 print("csv_reader: file not found: %s" % filename, file=sys.stderr)
                 exit(1)
@@ -96,7 +97,7 @@ if __name__ == '__main__':
             # run...
 
             try:
-                for datum in reader.rows:
+                for datum in reader.rows():
                     if cmd.limit is not None and rows >= cmd.limit:
                         break
 

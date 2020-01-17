@@ -18,12 +18,15 @@ class CmdCSVReader(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-s] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]",
+        self.__parser = optparse.OptionParser(usage="%prog [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]",
                                               version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--string", "-s", action="store_true", dest="string", default=False,
                                  help="interpret all values as strings")
+
+        self.__parser.add_option("--nullify", "-n", action="store_true", dest="nullify", default=False,
+                                 help="convert empty strings to nulls")
 
         self.__parser.add_option("--limit", "-l", type="int", nargs=1, action="store", dest="limit",
                                  help="output a maximum of LIMIT rows")
@@ -49,6 +52,11 @@ class CmdCSVReader(object):
     @property
     def string(self):
         return self.__opts.string
+
+
+    @property
+    def nullify(self):
+        return self.__opts.nullify
 
 
     @property
@@ -78,5 +86,5 @@ class CmdCSVReader(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVReader:{string:%s, limit:%s, array:%s, verbose:%s, filenames:%s}" % \
-               (self.string, self.limit, self.array, self.verbose, self.filenames)
+        return "CmdCSVReader:{string:%s, nullify:%s, limit:%s, array:%s, verbose:%s, filenames:%s}" % \
+               (self.string, self.nullify, self.limit, self.array, self.verbose, self.filenames)
