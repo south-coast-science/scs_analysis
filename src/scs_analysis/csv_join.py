@@ -102,7 +102,7 @@ if __name__ == '__main__':
             print("csv_join: file not found: %s" % cmd.left_filename, file=sys.stderr)
             exit(1)
 
-        for row in reader.rows:
+        for row in reader.rows():
             jstr = row.strip()
             datum = PathDict.construct_from_jstr(row)
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
             print("csv_join: file not found: %s" % cmd.right_filename, file=sys.stderr)
             exit(1)
 
-        for row in reader.rows:
+        for row in reader.rows():
             jstr = row.strip()
             datum = PathDict.construct_from_jstr(row)
 

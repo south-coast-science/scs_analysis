@@ -101,7 +101,7 @@ if __name__ == '__main__':
             delta = ModelDelta.construct(cmd.ind_path, cmd.ind_prec, cmd.dep_paths, cmd.dep_prec)
 
             try:
-                for row in reader.rows:
+                for row in reader.rows():
                     datum = PathDict.construct_from_jstr(row)
                     paths = datum.paths()
 
