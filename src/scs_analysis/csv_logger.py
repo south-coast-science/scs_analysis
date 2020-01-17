@@ -102,7 +102,7 @@ if __name__ == '__main__':
             print("csv_logger: %s" % conf, file=sys.stderr)
 
         # CSVLog...
-        log = None if conf is None else CSVLog(conf.root_path, cmd.topic, cmd.tag)
+        log = None if conf is None else CSVLog(conf.root_path, cmd.topic_name, cmd.tag)
 
         if log and cmd.verbose:
             print("csv_logger: %s" % log, file=sys.stderr)

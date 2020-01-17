@@ -70,10 +70,7 @@ if __name__ == '__main__':
             print("aws_byline: APIAuth not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose:
-            print("aws_byline: %s" % api_auth, file=sys.stderr)
-
-        # byline manager...
+        # BylineManager...
         manager = BylineManager(HTTPClient(), api_auth)
 
         if cmd.verbose:
