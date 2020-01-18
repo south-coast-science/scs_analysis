@@ -153,7 +153,7 @@ if __name__ == '__main__':
             now = LocalizedDatetime.now()
             datum = ControlDatum.construct(host_tag, device_tag, now, cmd_tokens, key)
 
-            publication = Publication(topic, datum)
+            publication = Publication(topic, 0, datum)
 
             handler.set(publication)
 
