@@ -18,7 +18,7 @@ class CmdAWSTopicPublisher(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-q PRIORITY] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -26,6 +26,9 @@ class CmdAWSTopicPublisher(object):
                                  help="topic path")
 
         # optional...
+        self.__parser.add_option("--queue-priority", "-q", type="int", nargs=1, action="store", dest="priority",
+                                 default=1, help="queue priority (default 1)")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -40,6 +43,11 @@ class CmdAWSTopicPublisher(object):
 
 
     @property
+    def priority(self):
+        return self.__opts.priority
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -51,4 +59,5 @@ class CmdAWSTopicPublisher(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicPublisher:{topic:%s, verbose:%s}" % (self.topic, self.verbose)
+        return "CmdAWSTopicPublisher:{topic:%s, priority:%s, verbose:%s}" % \
+               (self.topic, self.priority, self.verbose)

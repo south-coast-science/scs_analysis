@@ -82,7 +82,7 @@ if __name__ == '__main__':
             # resources...
 
             try:
-                reader = CSVReader(filename=filename, numeric_cast=cmd.cast, empty_string_as_null=cmd.nullify)
+                reader = CSVReader.construct_for_file(filename, numeric_cast=cmd.cast, empty_string_as_null=cmd.nullify)
 
             except FileNotFoundError:
                 print("csv_reader: file not found: %s" % filename, file=sys.stderr)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
                     rows += 1
 
-            except CSVReaderException as ex:        # TODO: continue over NULL
+            except CSVReaderException as ex:
                 if cmd.verbose:
                     print("csv_reader: terminating on row %d: %s" % (rows, ex), file=sys.stderr)
                     exit(1)

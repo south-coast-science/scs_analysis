@@ -85,7 +85,7 @@ if __name__ == '__main__':
             # resources...
 
             try:
-                reader = CSVReader(filename=filename)
+                reader = CSVReader.construct_for_file(filename)
             except FileNotFoundError:
                 print("csv_collation_summary: file not found: %s" % filename, file=sys.stderr)
                 exit(1)
