@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
         # read left CSV file...
         try:
-            reader = CSVReader(filename=cmd.left_filename)
+            reader = CSVReader.construct_for_file(cmd.left_filename)
         except FileNotFoundError:
             print("csv_join: file not found: %s" % cmd.left_filename, file=sys.stderr)
             exit(1)
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
         # read right CSV file...
         try:
-            reader = CSVReader(filename=cmd.right_filename)
+            reader = CSVReader.construct_for_file(cmd.right_filename)
         except FileNotFoundError:
             print("csv_join: file not found: %s" % cmd.right_filename, file=sys.stderr)
             exit(1)
