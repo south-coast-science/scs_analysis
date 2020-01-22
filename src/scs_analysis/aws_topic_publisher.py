@@ -57,7 +57,7 @@ if __name__ == '__main__':
             except ValueError:
                 continue
 
-            publication = Publication(cmd.topic, cmd.priority, jdict)
+            publication = Publication(cmd.topic, jdict)
 
             print(JSONify.dumps(publication))
             sys.stdout.flush()

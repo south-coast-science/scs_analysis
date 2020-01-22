@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
             # time.sleep(1)
 
-            publication = Publication(topic, cmd.priority, payload)
+            publication = Publication(topic, payload)
 
             print(JSONify.dumps(publication))
             sys.stdout.flush()
