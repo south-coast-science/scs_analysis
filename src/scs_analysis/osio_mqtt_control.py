@@ -146,7 +146,7 @@ if __name__ == '__main__':
             now = LocalizedDatetime.now()
             datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_shared_secret)
 
-            publication = Publication(cmd.device_topic, 0, datum)
+            publication = Publication(cmd.device_topic, datum)
             handler.set(publication)
 
             if cmd.verbose:
