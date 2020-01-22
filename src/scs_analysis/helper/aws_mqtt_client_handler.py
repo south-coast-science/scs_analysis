@@ -40,7 +40,7 @@ class AWSMQTTClientHandler(object):
         payload = message.payload.decode()
         jdict = json.loads(payload, object_pairs_hook=OrderedDict)
 
-        pub = Publication(message.topic, 0, jdict) if self.__include_wrapper else jdict
+        pub = Publication(message.topic, jdict) if self.__include_wrapper else jdict
 
         try:
             self.__comms.connect()
