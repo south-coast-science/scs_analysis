@@ -23,14 +23,17 @@ class CmdGasExegesis(object):
         """
         model_names = ' | '.join(ExegeteCatalogue.model_names())
 
-        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-v] T_PATH RH_PATH REPORT_SUB_PATH "
-                                                    "[EXEGESIS_SUB_PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -e EXEGETE [-o OFFSET] [-v] RH_PATH T_PATH REPORT_SUB_PATH "
+                                                    "[EXEGESIS_ROOT]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--exegete", "-e", type="string", nargs=1, action="store", default=None,
                                  dest="exegete", help="exegete model { %s }" % model_names)
 
         # optional...
+        self.__parser.add_option("--offset", "-o", type="int", nargs=1, action="store", default=0,
+                                 dest="offset", help="baseline offset for the error correction (default 0")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -57,18 +60,23 @@ class CmdGasExegesis(object):
 
 
     @property
+    def offset(self):
+        return self.__opts.offset
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
-    def t_path(self):
-        return self.__args[1] if len(self.__args) > 1 else None
+    def rh_path(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     @property
-    def rh_path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def t_path(self):
+        return self.__args[1] if len(self.__args) > 1 else None
 
 
     @property
@@ -88,5 +96,7 @@ class CmdGasExegesis(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdGasExegesis:{exegete:%s, verbose:%s, t_path:%s, rh_path:%s, report_path:%s, exegesis_path:%s}" % \
-               (self.exegete, self.verbose, self.t_path, self.rh_path, self.report_path, self.exegesis_path)
+        return "CmdGasExegesis:{exegete:%s, offset:%s, verbose:%s, " \
+               "rh_path:%s, t_path:%s, report_path:%s, exegesis_path:%s}" % \
+               (self.exegete, self.offset, self.verbose,
+                self.rh_path, self.t_path, self.report_path, self.exegesis_path)

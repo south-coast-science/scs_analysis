@@ -1,64 +1,73 @@
 #!/usr/bin/env python3
 
 """
-Created on 26 Oct 2019
+Created on 4 Feb 2020
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 source repo: scs_analysis
 
 DESCRIPTION
-The gas_exegesis utility is used to perform data interpretation on
+The gas_exegesis utility is used to perform error correction on temperature-corrected gas concentrations
+(reported as 'cnc') as delivered by the scs_dev/gases_sampler utility.
 
 Input is in the form of a sequence of JSON sense documents. The output includes the original document, plus
 a field containing the specified interpretation. If an interpretation with the given name already exists on the input
 document, it is overwritten.
 
-The input document must contain a relative humidity (rH) field, in addition to pm1, pm2p5.5 and pm10 fields. If the rH
-field is missing or empty, the document is ignored. If the rH value is malformed, or if the PM fields are missing
-or malformed, the gas_exegesis utility terminates.
+The input document must contain a temperature (t) field and relative humidity (rH) field, in addition to cnc fields
+for any number of gases. Correction is performed on all of the gases supported by the selected exegete.
 
-A list of available particulates exegetes can be found using the --help flag. The name of the model forms the last part
+If the t or rH field is missing or empty, the document is ignored. If the values is malformed, or if the cnc fields
+are malformed, the gas_exegesis utility terminates.
+
+A list of available gas exegetes can be found using the --help flag. The name of the model forms the last part
 of the path for its report field. For the output, the default exegesis root is "exg".
 
 SYNOPSIS
-gas_exegesis.py -e EXEGETE [-v] RH_PATH PMX_PATH [EXEGESIS_PATH]
+Usage: gas_exegesis.py -e EXEGETE [-o OFFSET] [-v] RH_PATH T_PATH REPORT_SUB_PATH [EXEGESIS_ROOT]
 
 EXAMPLES
-csv_reader.py -v preston-circus-2020-01-07-joined.csv | \
-gas_exegesis.py -v -e iselutn2v1 meteo.val.hmd opc.val opc | \
-csv_writer.py -v preston-circus-2020-01-07-exg.csv
+csv_reader.py -v gases.csv | \
+gas_exegesis.py -e sbl1v1 -v val.sht.hmd val.sht.tmp val | \
+csv_writer.py -v gases-corrected.csv
 
 DOCUMENT EXAMPLE - INPUT
-{"val": {"mtf1": 28, "pm1": 0.4, "mtf5": 0, "pm2p5": 0.5, "mtf3": 31, "pm10": 0.5, "mtf7": 0, "per": 4.9, "sfr": 5.2,
-"sht": {"hmd": 45.6, "tmp": 20}}, "rec": "2019-10-26T16:59:02Z", "tag": "scs-bgx-431", "src": "N3"}
+{"tag": "scs-bgb-410", "val": {"NO2": {"weC": -0.01333, "cnc": -3.2, "aeV": 0.29013, "weV": 0.29313},
+"sht": {"tmp": 26.3, "hmd": 46.4}, "CO": {"weC": 0.21045, "cnc": 731.2, "aeV": 0.16213, "weV": 0.6132}},
+"rec": "2020-02-04T16:24:16Z"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"mtf1": 27, "pm1": 1.9, "mtf5": 34, "pm2p5": 2.5,  "mtf3": 30, "pm10": 2.6, "mtf7": 0, "per": 4.9, "sfr": 5.81,
-"sht": {"hmd": 46.6, "tmp": 18}}, "rec": "2019-10-26T19:56:32Z", "tag": "scs-bgx-431", "src": "N3",
-"exg": {"isecen2v1": {"pm1": 1.2, "pm2p5": 1.6, "pm10": 1.7}}}
+{"tag": "scs-bgb-410", "val": {"NO2": {"weC": -0.01333, "cnc": -3.2, "aeV": 0.29013, "weV": 0.29313},
+"sht": {"tmp": 26.3, "hmd": 46.4}, "CO": {"weC": 0.21045, "cnc": 731.2, "aeV": 0.16213, "weV": 0.6132}},
+"rec": "2020-02-04T16:24:16Z", "exg": {"sbl1v1": {"NO2": {"cnc": 17.0}}}}
+
+SEE ALSO
+scs_analysis/gas_exegete
 
 RESOURCES
-https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/particulate/exegesis/isecee/isecee_n2_v001.py
+https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/gas/exegesis/sbl1/sbl1_v1.py
 """
 
 import sys
 
 from scs_analysis.cmd.cmd_gas_exegesis import CmdGasExegesis
 
+from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 from scs_core.gas.exegesis.exegete_catalogue import ExegeteCatalogue
-# from scs_core.gas.exegesis.text import Text
 
+
+# TODO: consider computing u-cnc with AFE calibration, like sample_unbaselined_cnc.py
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    t = None
     rh = None
+    t = None
 
     document_count = 0
     processed_count = 0
@@ -85,13 +94,12 @@ if __name__ == '__main__':
             print("gas_exegesis: %s" % exegete, file=sys.stderr)
             sys.stderr.flush()
 
+        exegete_gas_names = exegete.gas_names()
         exegesis_path = cmd.exegesis_path + '.' + exegete.name()
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-
-        exit(0)
 
         for line in sys.stdin:
             jstr = line.strip()
@@ -105,21 +113,15 @@ if __name__ == '__main__':
             paths = datum.paths()
 
             # source...
-            if cmd.t_path not in paths or cmd.rh_path not in paths or not datum.has_sub_path(cmd.report_path):
+            if cmd.rh_path not in paths or cmd.t_path not in paths or not datum.has_sub_path(cmd.report_path):
                 continue
 
-            t_node = datum.node(cmd.t_path)
             rh_node = datum.node(cmd.rh_path)
+            t_node = datum.node(cmd.t_path)
             report_node = datum.node(cmd.report_path)
 
-            if t_node == '' or rh_node == '':
+            if rh_node == '' or t_node == '':
                 continue
-
-            try:
-                t = float(t_node)
-            except ValueError:
-                print("gas_exegesis: invalid value for t in %s" % jstr, file=sys.stderr)
-                exit(1)
 
             try:
                 rh = float(rh_node)
@@ -127,10 +129,23 @@ if __name__ == '__main__':
                 print("gas_exegesis: invalid value for rh in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            # interpretation...
-            # text = Text.construct_from_jdict(report_node)
-            interpretation = exegete.interpretation(None, t, rh)             # text
-            datum.append(exegesis_path, interpretation.as_json())
+            try:
+                t = float(t_node)
+            except ValueError:
+                print("gas_exegesis: invalid value for t in %s" % jstr, file=sys.stderr)
+                exit(1)
+
+            # correction...
+            for gas_name in report_node:                            # uses source document ordering
+                if gas_name not in exegete_gas_names:
+                    continue
+
+                corrected_path = exegesis_path + '.' + gas_name + '.cnc'
+
+                text = report_node[gas_name]['cnc']
+                interpretation = exegete.interpretation(gas_name, text, rh, t) + cmd.offset
+
+                datum.append(corrected_path, Datum.float(interpretation, 1))
 
             # report...
             print(JSONify.dumps(datum))
@@ -151,5 +166,4 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            print("gas_exegesis: documents: %d processed: %d" % (document_count, processed_count),
-                  file=sys.stderr)
+            print("gas_exegesis: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)

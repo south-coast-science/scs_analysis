@@ -8,8 +8,8 @@ Created on 26 Oct 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The particulate_exegesis utility is used to perform data interpretation on particle densities reported by an optical
-particle counter.
+The particulate_exegesis utility is used to perform error correction on particle densities, as reported by an optical
+particle counter (OPC).
 
 Input is in the form of a sequence of JSON sense documents. The output includes the original document, plus
 a field containing the specified interpretation. If an interpretation with the given name already exists on the input
@@ -118,9 +118,10 @@ if __name__ == '__main__':
                 print("particulate_exegesis: invalid value for rh in %s" % jstr, file=sys.stderr)
                 exit(1)
 
-            # interpretation...
+            # correction...
             text = Text.construct_from_jdict(pmx_node)
             interpretation = exegete.interpretation(text, rh)
+
             datum.append(exegesis_path, interpretation.as_json())
 
             # report...
