@@ -26,6 +26,9 @@ DOCUMENT EXAMPLE - OUTPUT
 {"rh": "85 %", "-10 °C": 27.3, "-5 °C": 25.6, ..., "35 °C": 11.6, "40 °C": 9.9}
 {"rh": "90 %", "-10 °C": 35.4, "-5 °C": 32.7, ..., "35 °C": 11.4, "40 °C": 8.7}
 
+SEE ALSO
+scs_analysis/gas_exegesis
+
 RESOURCES
 https://github.com/south-coast-science/scs_core/blob/develop/src/scs_core/gas/exegesis/sbl1/sbl1_v1.py
 """
@@ -61,7 +64,7 @@ if __name__ == '__main__':
         # resources...
 
         exegete = ExegeteCatalogue.standard(cmd.exegete)
-        supported_gases = exegete.gases()
+        supported_gases = exegete.gas_names()
 
         if cmd.gas not in supported_gases:
             print("gas_exegete: only gas(es) %s are supported by the exegete '%s'." % (supported_gases, exegete.name()))

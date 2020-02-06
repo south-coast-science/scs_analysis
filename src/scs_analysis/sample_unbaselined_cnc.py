@@ -135,7 +135,7 @@ if __name__ == '__main__':
             paths = datum.paths()
 
             # gases...
-            for gas_name, sensor_calib in sensor_calibs.items():
+            for gas_name, sensor_calib in sensor_calibs.items():                # uses calibration ordering
                 report_sub_path = cmd.report_sub_path + '.' + gas_name
 
                 try:
