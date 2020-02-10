@@ -16,6 +16,7 @@ Dates may be in the format:
 * DD-MM-YYYY
 * DD/MM/YYYY
 * DD/MM/YY
+* DD_MMM_YYYY
 * MM-DD-YYYY
 * MM/DD/YYYY
 * MM/DD/YY
@@ -157,7 +158,6 @@ if __name__ == '__main__':
                     exit(1)
 
                 pieces = datum.node(cmd.datetime_path).rsplit(' ', 1)           # split on last space character
-                print("pieces:%s" % pieces)
 
                 if len(pieces) != 2:
                     print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
