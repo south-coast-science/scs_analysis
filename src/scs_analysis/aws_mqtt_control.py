@@ -51,7 +51,7 @@ from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 
 from scs_core.control.control_datum import ControlDatum
 
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
 
 from scs_core.estate.mqtt_peer import MQTTPeerSet

@@ -55,7 +55,7 @@ from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 from scs_analysis.helper.sample_aggregate import SampleAggregate
 
 from scs_core.data.checkpoint_generator import CheckpointGenerator
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 

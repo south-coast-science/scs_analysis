@@ -31,8 +31,8 @@ import sys
 
 from scs_analysis.cmd.cmd_osio_topic_history import CmdOSIOTopicHistory
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
-from scs_core.data.localized_datetime import LocalizedDatetime
 
 from scs_core.osio.client.api_auth import APIAuth
 from scs_core.osio.manager.topic_manager import TopicManager
