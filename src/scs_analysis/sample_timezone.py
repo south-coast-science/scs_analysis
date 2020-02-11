@@ -54,8 +54,8 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_timezone import CmdSampleTimezone
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
-from scs_core.data.localized_datetime import LocalizedDatetime
 
 from scs_core.location.timezone import Timezone
 

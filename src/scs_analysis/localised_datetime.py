@@ -31,7 +31,7 @@ import sys
 
 from scs_analysis.cmd.cmd_localised_datetime import CmdLocalizedDatetime
 
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 
 from scs_core.location.timezone import Timezone
 

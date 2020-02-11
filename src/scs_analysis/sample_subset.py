@@ -16,7 +16,8 @@ and discarded otherwise. Documents which do not have the specified field, or hav
 discarded. If a field value is present but cannot be cast to the correct type, then the sample_subset utility
 terminates.
 
-The type of the field must be specified explicitly as either numeric or ISO 8601 datetime.
+The type of the field may be specified explicitly as either numeric or ISO 8601 datetime. If no specification is given,
+the value is interpreted as a string.
 
 Evaluation follows the rule:
 
@@ -30,7 +31,7 @@ If the --exclusions flag is used, the sample_subset utility outputs only the doc
 specified bounds. Note that, in this case, documents with missing or empty fields are still discarded.
 
 SYNOPSIS
-sample_subset.py { -i | -n } [-l LOWER] [-u UPPER] [-x] [-v] PATH
+sample_subset.py [{ -i | -n }] [-l LOWER] [-u UPPER] [-x] [-v] PATH
 
 EXAMPLES
 csv_reader.py praxis_303.csv | sample_subset.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
@@ -115,12 +116,18 @@ if __name__ == '__main__':
                     print("sample_subset: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
 
-            else:
+            elif cmd.numeric:
                 value = Datum.float(value_node)
 
                 if value is None:
                     print("sample_subset: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
                     exit(1)
+
+            else:
+                value = value_node
+
+                if not value:
+                    continue
 
             processed_count += 1
 
