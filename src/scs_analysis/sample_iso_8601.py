@@ -62,8 +62,8 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_iso_8601 import CmdSampleISO8601
 
+from scs_core.data.datetime import DateParser, LocalizedDatetime
 from scs_core.data.json import JSONify
-from scs_core.data.localized_datetime import DateParser, LocalizedDatetime
 from scs_core.data.path_dict import PathDict
 
 from scs_core.location.timezone import Timezone

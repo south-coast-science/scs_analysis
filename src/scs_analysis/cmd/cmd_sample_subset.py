@@ -20,7 +20,7 @@ class CmdSampleSubset(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -i | -n } [-l LOWER] [-u UPPER] [-x] [-v] PATH",
+        self.__parser = optparse.OptionParser(usage="%prog [{ -i | -n }] [-l LOWER] [-u UPPER] [-x] [-v] PATH",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -49,7 +49,7 @@ class CmdSampleSubset(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if bool(self.iso8601) == bool(self.numeric):
+        if self.iso8601 and self.numeric:
             return False
 
         if self.lower is not None and self.upper is not None and self.upper <= self.lower:
@@ -110,6 +110,9 @@ class CmdSampleSubset(object):
     def __cast(self, value):
         if value is None:
             return None
+
+        if not self.iso8601 and not self.numeric:
+            return str(value)
 
         cast_value = Datum.datetime(value) if self.iso8601 else Datum.float(value)
 
