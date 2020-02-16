@@ -130,7 +130,6 @@ class CSVCollatorBin(object):
         return low, high
 
 
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, lower, upper, writer):
