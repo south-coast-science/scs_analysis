@@ -29,10 +29,9 @@ csv_collation_summary.py -v -f collated_5rH/joined_PM_meteo_data_2019-02_2019-07
 csv_writer.py -v collated_5rH/summary.csv
 
 DOCUMENT EXAMPLE - OUTPUT
-{"samples": 1765, "th": {"praxis": {"val": {"hmd": {"min": 60.0, "avg": 62.6, "max": 64.9}}}},
-"pm1_scaling": {"avg": 25.375, "stdev": 29.259},
-"pm2p5_scaling": {"avg": 2.282, "stdev": 1.804},
-"pm10_scaling": {"avg": 2.051, "stdev": 1.677}}
+{"domain": "70.0 - 75.0", "praxis": {"climate": {"val": {"hmd": {"min": 70.0, "avg": 72.6, "max": 74.9}}}},
+"error": {"pm1": {"avg": 2.648, "stdev": 2.458}, "pm2p5": {"avg": 2.992, "stdev": 2.652},
+"pm10": {"avg": 2.77, "stdev": 2.456}}, "samples": 2307}
 
 SEE ALSO
 scs_analysis/csv_collator
@@ -44,6 +43,7 @@ https://en.wikipedia.org/wiki/Dependent_and_independent_variables
 import sys
 
 from scs_analysis.cmd.cmd_csv_collation_summary import CmdCollationSummary
+from scs_analysis.helper.csv_collator import CSVCollatorBin
 
 from scs_core.csv.csv_reader import CSVReader, CSVReaderException
 
@@ -61,6 +61,7 @@ if __name__ == '__main__':
     total_processed = 0
 
     reader = None
+    domain = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -85,6 +86,13 @@ if __name__ == '__main__':
             # resources...
 
             try:
+                low, high = CSVCollatorBin.parse(filename)
+                domain = str(low) + ' - ' + str(high)
+            except ValueError:
+                print("csv_collation_summary: file name could not be parsed: %s" % filename, file=sys.stderr)
+                exit(1)
+
+            try:
                 reader = CSVReader.construct_for_file(filename)
             except FileNotFoundError:
                 print("csv_collation_summary: file not found: %s" % filename, file=sys.stderr)
@@ -98,7 +106,7 @@ if __name__ == '__main__':
             # --------------------------------------------------------------------------------------------------------
             # run...
 
-            delta = ModelDelta.construct(cmd.ind_path, cmd.ind_prec, cmd.dep_paths, cmd.dep_prec)
+            delta = ModelDelta.construct(domain, cmd.ind_path, cmd.ind_prec, cmd.dep_paths, cmd.dep_prec)
 
             try:
                 for row in reader.rows():
