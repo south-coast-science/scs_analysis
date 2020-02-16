@@ -29,6 +29,10 @@ EXAMPLES
 csv_reader.py alphasense_303_2018-08.csv |
 csv_collator.py -l 5.0 -u 21.0 -d 1.0 -f collation/alphasense_303_2018-08 -v val.sht.hmd.aH
 
+FILES
+Output file names are of the form:
+FILE-PREFIX_DOMAIN-LOW_DOMAIN-HIGH.csv
+
 SEE ALSO
 scs_analysis/csv_collation_summary
 """

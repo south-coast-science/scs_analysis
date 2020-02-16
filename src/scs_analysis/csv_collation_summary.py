@@ -28,6 +28,10 @@ csv_collation_summary.py -v -f collated_5rH/joined_PM_meteo_data_2019-02_2019-07
 -i th.praxis.val.hmd pm1_scaling pm2p5_scaling pm10_scaling | \
 csv_writer.py -v collated_5rH/summary.csv
 
+FILES
+Input file names must be of the form:
+FILE-PREFIX_DOMAIN-LOW_DOMAIN-HIGH.csv
+
 DOCUMENT EXAMPLE - OUTPUT
 {"domain": "70.0 - 75.0", "praxis": {"climate": {"val": {"hmd": {"min": 70.0, "avg": 72.6, "max": 74.9}}}},
 "error": {"pm1": {"avg": 2.648, "stdev": 2.458}, "pm2p5": {"avg": 2.992, "stdev": 2.652},
