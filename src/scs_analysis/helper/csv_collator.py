@@ -124,8 +124,8 @@ class CSVCollatorBin(object):
 
         fields = match.groups()
 
-        low = float(fields[0] + '.' + fields[1])
-        high = float(fields[2] + '.' + fields[3])
+        low = float('.'.join(fields[0:2]))
+        high = float('.'.join(fields[2:4]))
 
         return low, high
 

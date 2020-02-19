@@ -85,7 +85,7 @@ if __name__ == '__main__':
             print("particulate_exegesis: %s" % exegete, file=sys.stderr)
             sys.stderr.flush()
 
-        exegesis_path = cmd.exegesis_path + '.' + exegete.name()
+        exegesis_path = '.'.join((cmd.exegesis_path, exegete.name()))
 
 
         # ------------------------------------------------------------------------------------------------------------

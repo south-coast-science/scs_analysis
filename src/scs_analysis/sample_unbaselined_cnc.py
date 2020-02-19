@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
             # gases...
             for gas_name, sensor_calib in sensor_calibs.items():                # uses calibration ordering
-                report_sub_path = cmd.report_sub_path + '.' + gas_name
+                report_sub_path = '.'.join((cmd.report_sub_path, gas_name))
 
                 try:
                     we_c = float(datum.node(report_sub_path + '.weC'))

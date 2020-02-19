@@ -95,7 +95,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         exegete_gas_names = exegete.gas_names()
-        exegesis_path = cmd.exegesis_path + '.' + exegete.name()
+        exegesis_path = '.'.join((cmd.exegesis_path, exegete.name()))
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ if __name__ == '__main__':
                 if gas_name not in exegete_gas_names:
                     continue
 
-                corrected_path = exegesis_path + '.' + gas_name + '.cnc'
+                corrected_path = '.'.join((exegesis_path, gas_name, 'cnc'))
 
                 text = report_node[gas_name]['cnc']
                 interpretation = exegete.interpretation(gas_name, text, rh, t) + cmd.offset

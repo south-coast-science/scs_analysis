@@ -68,10 +68,10 @@ if __name__ == '__main__':
         report_prefix = 'praxis'
         ref_prefix = 'ref'
 
-        joined_report_sub_path = report_prefix + '.' + cmd.report_sub_path
+        joined_report_sub_path = '.'.join((report_prefix, cmd.report_sub_path))
         joined_report_path = joined_report_sub_path + '.weC_sens'
 
-        joined_ref_path = ref_prefix + '.' + cmd.ref_path
+        joined_ref_path = '.'.join((ref_prefix, cmd.ref_path))
 
 
         # ------------------------------------------------------------------------------------------------------------
