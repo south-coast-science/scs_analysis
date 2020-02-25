@@ -6,6 +6,8 @@ Created on 2 Mar 2019
 source repo: scs_analysis
 """
 
+import re
+
 from scs_core.csv.csv_writer import CSVWriter
 from scs_core.data.datum import Datum
 
@@ -24,11 +26,11 @@ class CSVCollator(object):
         bins = []
 
         bin_lower = dataset_lower
-        form = Datum.format(dataset_upper, True)
+        numeric_format = Datum.format(dataset_upper, True)
 
         while bin_lower < dataset_upper:
             bin_upper = bin_lower + delta
-            bins.append(CSVCollatorBin.construct(bin_lower, bin_upper, file_prefix, form))
+            bins.append(CSVCollatorBin.construct(bin_lower, bin_upper, file_prefix, numeric_format))
 
             bin_lower = bin_upper
 
@@ -98,18 +100,34 @@ class CSVCollatorBin(object):
     """
 
     # ----------------------------------------------------------------------------------------------------------------
+    # e.g. scs-bgx-431-ref-particulates-N2-climate-2019_15min_clipped_085p0_090p0.csv
 
     @classmethod
-    def construct(cls, lower, upper, file_prefix, form):
-        file_name = file_prefix + cls.__infix(form, lower) + cls.__infix(form, upper) + '.csv'
+    def construct(cls, lower, upper, file_prefix, numeric_format):
+        file_name = file_prefix + cls.__infix(numeric_format, lower) + cls.__infix(numeric_format, upper) + '.csv'
         writer = CSVWriter(file_name)
 
         return CSVCollatorBin(lower, upper, writer)
 
 
     @classmethod
-    def __infix(cls, form, bound):
-        return str.replace("_" + form % bound, ".", "p")
+    def __infix(cls, numeric_format, bound):
+        return str.replace("_" + numeric_format % bound, ".", "p")
+
+
+    @classmethod
+    def parse(cls, filename):
+        match = re.match(r'.*_(\d+)p(\d+)_(\d+)p(\d+)\.csv$', filename)
+
+        if match is None:
+            raise ValueError(filename)
+
+        fields = match.groups()
+
+        low = float('.'.join(fields[0:2]))
+        high = float('.'.join(fields[2:4]))
+
+        return low, high
 
 
     # ----------------------------------------------------------------------------------------------------------------
