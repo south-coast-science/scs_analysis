@@ -47,7 +47,7 @@ https://en.wikipedia.org/wiki/Dependent_and_independent_variables
 import sys
 
 from scs_analysis.cmd.cmd_csv_collation_summary import CmdCollationSummary
-from scs_analysis.helper.csv_collator import CSVCollatorBin
+from scs_analysis.handler.csv_collator import CSVCollatorBin
 
 from scs_core.csv.csv_reader import CSVReader, CSVReaderException
 

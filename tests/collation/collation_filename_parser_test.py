@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from scs_analysis.helper.csv_collator import CSVCollatorBin
+from scs_analysis.handler.csv_collator import CSVCollatorBin
 
 
 # --------------------------------------------------------------------------------------------------------------------

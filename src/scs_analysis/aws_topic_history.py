@@ -46,7 +46,7 @@ https://github.com/curl/curl
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
-from scs_analysis.helper.aws_topic_history_reporter import AWSTopicHistoryReporter
+from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
 
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
