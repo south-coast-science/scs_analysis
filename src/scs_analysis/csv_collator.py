@@ -40,7 +40,7 @@ scs_analysis/csv_collation_summary
 import sys
 
 from scs_analysis.cmd.cmd_csv_collator import CmdCSVCollator
-from scs_analysis.helper.csv_collator import CSVCollator
+from scs_analysis.handler.csv_collator import CSVCollator
 
 from scs_core.data.path_dict import PathDict
 

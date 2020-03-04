@@ -2,8 +2,6 @@
 Created on 23 Mar 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-source repo: scs_analysis
 """
 
 import optparse
@@ -19,21 +17,22 @@ class CmdMQTTClient(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-p UDS_PUB] "
-                                                    "[-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] "
-                                                    "[-w] [-e] [-v]", version="%prog 1.0")
+                                                    "[-s] { -c { C | G | P | S | X } (UDS_SUB_1) | "
+                                                    "[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } "
+                                                    "[-e] [-v]", version="%prog 1.0")
 
         # optional...
-        self.__parser.add_option("--pub-addr", "-p", type="string", nargs=1, action="store", dest="uds_pub_addr",
-                                 help="read publications from UDS instead of stdin")
+        self.__parser.add_option("--pub", "-p", type="string", nargs=1, action="store", dest="uds_pub",
+                                 default=None, help="read publications from UDS instead of stdin")
 
         self.__parser.add_option("--sub", "-s", action="store_true", dest="uds_sub",
                                  help="write subscriptions to UDS instead of stdout")
 
-        self.__parser.add_option("--wrapper", "-w", action="store_false", dest="include_wrapper", default=True,
-                                 help="do not include topic wrapper")
+        self.__parser.add_option("--channel", "-c", type="string", nargs=1, action="store", dest="channel",
+                                 help="subscribe to channel")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo input to stdout (if writing subscriptions to UDS)")
+                                 help="echo input to stdout (if not writing subscriptions to stdout)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -44,11 +43,19 @@ class CmdMQTTClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.echo and not self.__opts.uds_sub:
+        if self.echo and self.subscriptions and not self.__opts.uds_sub:
             return False
 
-        if self.__opts.uds_sub and len(self.__args) % 2 != 0:
-            return False
+        if self.channel is None:
+            if self.__opts.uds_sub and len(self.__args) % 2 != 0:
+                return False
+
+        # else:
+        #     if self.__opts.uds_sub and len(self.__args) != 1:
+        #         return False
+        #
+        #     if not self.__opts.uds_sub and len(self.__args) != 0:
+        #         return False
 
         return True
 
@@ -58,6 +65,9 @@ class CmdMQTTClient(object):
     @property
     def subscriptions(self):
         subscriptions = []
+
+        if self.channel:
+            return subscriptions
 
         if self.__opts.uds_sub:
             for i in range(0, len(self.__args), 2):
@@ -70,13 +80,21 @@ class CmdMQTTClient(object):
 
 
     @property
-    def uds_pub_addr(self):
-        return self.__opts.uds_pub_addr
+    def channel(self):
+        return self.__opts.channel
 
 
     @property
-    def include_wrapper(self):
-        return self.__opts.include_wrapper
+    def channel_uds(self):
+        if self.channel is None or not self.__opts.uds_sub:
+            return None
+
+        return self.__args[0]
+
+
+    @property
+    def uds_pub(self):
+        return self.__opts.uds_pub
 
 
     @property
@@ -98,8 +116,8 @@ class CmdMQTTClient(object):
     def __str__(self, *args, **kwargs):
         subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
 
-        return "CmdMQTTClient:{subscriptions:%s, uds_pub_addr:%s, include_wrapper:%s, echo:%s, verbose:%s}" % \
-               (subscriptions, self.uds_pub_addr, self.include_wrapper, self.echo, self.verbose)
+        return "CmdMQTTClient:{subscriptions:%s, channel:%s, channel_uds:%s, uds_pub:%s, echo:%s, verbose:%s}" % \
+               (subscriptions, self.channel, self.channel_uds, self.uds_pub, self.echo, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------
