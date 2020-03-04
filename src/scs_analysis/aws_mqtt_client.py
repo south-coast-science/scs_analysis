@@ -5,8 +5,6 @@ Created on 4 Oct 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-source repo: scs_analysis
-
 DESCRIPTION
 The aws_mqtt_client utility is used to subscribe or publish using the South Coast Science / AWS messaging
 infrastructure.
@@ -14,27 +12,36 @@ infrastructure.
 Documents for publication are gained from stdin by default, otherwise from the specified Unix domain socket (UDS).
 Likewise, documents gained from subscription are written to stdout, or a specified UDS.
 
+Subscriptions can be specified either by a project channel name, or by an explicit messaging topic path. Documents
+gained by subscription may be delivered either to stdout, or to a specified Unix domain socket.
+
+In order to operate effectively in environments with unreliable communications, the aws_mqtt_client buffers messages
+prior to publication. The size of the buffer is set by the scs_mfr/mqtt_conf utility.
+
+The aws_mqtt_client utility requires the AWS client authorisation to operate.
+
 Only one MQTT client should run at any one time, per TCP/IP host.
 
 SYNOPSIS
-aws_mqtt_client.py [-p UDS_PUB] [-s] [SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] [-w] [-e] [-v]
+aws_mqtt_client.py [-p UDS_PUB] [-s] { -c { C | G | P | S | X } (UDS_SUB_1) | \
+[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } [-e] [-v]
 
 EXAMPLES
-aws_mqtt_client.py south-coast-science-dev/production-test/loc/1/gases
-
-DOCUMENT EXAMPLE - OUTPUT
-{"south-coast-science-demo/brighton/loc/1/climate":
-{"tag": "scs-bgx-401", "rec": "2019-01-11T12:10:36Z", "val": {"hmd": 68.5, "tmp": 12.2}}}
-
-{"tag": "scs-bgx-401", "rec": "2019-01-11T12:10:36Z", "val": {"hmd": 68.5, "tmp": 12.2}}
+( cat < /home/pi/SCS/pipes/mqtt_publication_pipe & ) | \
+/home/pi/SCS/scs_dev/src/scs_dev/aws_mqtt_client.py -v -cX  > /home/pi/SCS/pipes/control_subscription_pipe
 
 FILES
 ~/SCS/aws/aws_client_auth.json
+~/SCS/aws/certs/NNNNNNNNNN-certificate.pem.crt
+~/SCS/aws/certs/NNNNNNNNNN-private.pem.key
+~/SCS/aws/certs/NNNNNNNNNN-public.pem.key
+~/SCS/aws/certs/root-CA.crt
 
 SEE ALSO
-scs_analysis/aws_client_auth
-scs_analysis/aws_mqtt_control
-scs_analysis/aws_topic_publisher
+scs_dev/led_controller
+scs_mfr/mqtt_conf
+scs_mfr/aws_client_auth
+scs_mfr/aws_project
 
 BUGS
 When run as a background process, aws_mqtt_client will exit if it has no stdin stream.
@@ -43,33 +50,36 @@ When run as a background process, aws_mqtt_client will exit if it has no stdin s
 import json
 import sys
 
-from collections import OrderedDict
-
-from AWSIoTPythonSDK.exception.operationError import operationError
-from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeoutException
-
 from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
-from scs_analysis.helper.aws_mqtt_client_handler import AWSMQTTClientHandler
-from scs_analysis.helper.mqtt_reporter import MQTTReporter
+
+from scs_analysis.handler.aws_mqtt_publisher import AWSMQTTPublisher
+from scs_analysis.handler.aws_mqtt_subscription_handler import AWSMQTTSubscriptionHandler
+from scs_analysis.handler.mqtt_reporter import MQTTReporter
 
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
+from scs_core.aws.config.project import Project
+
+from scs_core.comms.mqtt_conf import MQTTConf
+from scs_core.comms.uds_reader import UDSReader
+from scs_core.comms.uds_writer import UDSWriter
 
 from scs_core.data.publication import Publication
 
-from scs_host.comms.domain_socket import DomainSocket
-from scs_host.comms.stdio import StdIO
-
+from scs_core.sys.filesystem import Filesystem
 from scs_host.sys.host import Host
+from scs_core.sys.signalled_exit import SignalledExit
+from scs_core.sys.system_id import SystemID
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    client = None
-    pub_comms = None
-
+    conf = None
+    source = None
+    reporter = None
+    publisher = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -87,6 +97,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        # MQTTConf
+        conf = MQTTConf.load(Host)
+
+        if cmd.verbose:
+            print("aws_mqtt_client: conf: %s" % conf, file=sys.stderr)
+
         # ClientAuth...
         auth = ClientAuth.load(Host)
 
@@ -94,11 +110,11 @@ if __name__ == '__main__':
             print("aws_mqtt_client: ClientAuth not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose:
-            print("aws_mqtt_client: %s" % auth, file=sys.stderr)
-
         # comms...
-        pub_comms = DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
+        source = UDSReader(cmd.uds_pub)
+
+        if cmd.verbose:
+            print("aws_mqtt_client: %s" % source, file=sys.stderr)
 
         # reporter...
         reporter = MQTTReporter(cmd.verbose)
@@ -106,60 +122,117 @@ if __name__ == '__main__':
         # subscribers...
         subscribers = []
 
-        for subscription in cmd.subscriptions:
-            sub_comms = DomainSocket(subscription.address) if subscription.address else StdIO()
+        if cmd.channel:
+            # SystemID...
+            system_id = SystemID.load(Host)
 
-            # handler...
-            handler = AWSMQTTClientHandler(reporter, sub_comms, cmd.include_wrapper, cmd.echo)
+            if system_id is None:
+                print("aws_mqtt_client: SystemID not available.", file=sys.stderr)
+                exit(1)
 
-            subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
+            if cmd.verbose:
+                print("aws_mqtt_client: %s" % system_id, file=sys.stderr)
+
+            # Project...
+            project = Project.load(Host)
+
+            if project is None:
+                print("aws_mqtt_client: Project not available.", file=sys.stderr)
+                exit(1)
+
+            if cmd.verbose:
+                print("aws_mqtt_client: %s" % project, file=sys.stderr)
+
+            topic = project.channel_path(cmd.channel, system_id)
+
+            # subscriber...
+            sub_comms = UDSWriter(cmd.channel_uds)
+
+            handler = AWSMQTTSubscriptionHandler(reporter, sub_comms, cmd.echo)
+
+            subscribers.append(MQTTSubscriber(topic, handler.handle))
+
+        else:
+            for subscription in cmd.subscriptions:
+                sub_comms = UDSWriter(subscription.address)
+
+                # subscriber...
+                handler = AWSMQTTSubscriptionHandler(reporter, sub_comms, cmd.echo)
+
+                if cmd.verbose:
+                    print("aws_mqtt_client: %s" % handler, file=sys.stderr)
+
+                subscribers.append(MQTTSubscriber(subscription.topic, handler.handle))
 
         # client...
         client = MQTTClient(*subscribers)
+        publisher = AWSMQTTPublisher(conf, auth, client, reporter)
 
         if cmd.verbose:
-            print("aws_mqtt_client: %s" % client, file=sys.stderr)
+            print("aws_mqtt_client: %s" % publisher, file=sys.stderr)
             sys.stderr.flush()
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        client.connect(auth, False)
+        # signal handler...
+        SignalledExit.construct("aws_mqtt_client", cmd.verbose)
 
-        pub_comms.connect()
+        # client...
+        if not conf.inhibit_publishing:
+            publisher.connect()
 
-        for message in pub_comms.read():
+        # data source...
+        source.connect()
+
+        # process input...
+        for message in source.messages():
+            # receive...
             try:
-                jdict = json.loads(message, object_pairs_hook=OrderedDict)
-            except ValueError:
-                reporter.print("bad datum: %s" % message)
+                jdict = json.loads(message)
+
+            except (TypeError, ValueError) as ex:
+                reporter.print("%s: %s" % (ex, message))
                 continue
-
-            publication = Publication.construct_from_jdict(jdict)
-
-            try:
-                success = client.publish(publication)
-                reporter.print("paho: %s" % "1" if success else "0")
-
-            except (OSError, operationError, operationTimeoutException) as ex:
-                reporter.print(ex.__class__.__name__)
 
             if cmd.echo:
                 print(message)
                 sys.stdout.flush()
 
+            if conf.inhibit_publishing:
+                continue
 
-        # ------------------------------------------------------------------------------------------------------------
-        # end...
+            publication = Publication.construct_from_jdict(jdict)
 
-    except KeyboardInterrupt:
-        if cmd.verbose:
-            print("aws_mqtt_client: KeyboardInterrupt", file=sys.stderr)
+            if publication is None:
+                continue
+
+            # publish...
+            publisher.publish(publication)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # end...
+
+    except ConnectionError as ex:
+        print("aws_mqtt_client: %s" % ex, file=sys.stderr)
+
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
     finally:
-        if client:
-            client.disconnect()
+        if cmd and cmd.verbose:
+            print("aws_mqtt_client: finishing", file=sys.stderr)
 
-        if pub_comms:
-            pub_comms.close()
+        if source:
+            source.close()
+
+        if publisher:
+            publisher.disconnect()
+
+        if conf:
+            Filesystem.rm(conf.report_file)
+
+        if reporter:
+            reporter.print("finished")

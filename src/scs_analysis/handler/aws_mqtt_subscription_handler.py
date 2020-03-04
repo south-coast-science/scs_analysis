@@ -1,66 +1,66 @@
 """
-Created on 11 Jan 2018
+Created on 27 Sep 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-source repo: scs_analysis
 """
 
 import json
 import sys
-
-from collections import OrderedDict
 
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
 
 
 # --------------------------------------------------------------------------------------------------------------------
+# subscription handler...
 
-class AWSMQTTClientHandler(object):
+class AWSMQTTSubscriptionHandler(object):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, mqtt_reporter, comms, include_wrapper, echo):
+    def __init__(self, reporter, comms=None, echo=False):
         """
         Constructor
         """
-        self.__reporter = mqtt_reporter
+        self.__reporter = reporter
         self.__comms = comms
-        self.__include_wrapper = include_wrapper
         self.__echo = echo
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def handle(self, _client, _userdata, message):
-        payload = message.payload.decode()
-        jdict = json.loads(payload, object_pairs_hook=OrderedDict)
+    # noinspection PyUnusedLocal
 
-        pub = Publication(message.topic, jdict) if self.__include_wrapper else jdict
+    def handle(self, client, userdata, message):
+        payload = message.payload.decode()
+        payload_jdict = json.loads(payload)
+
+        publication = Publication(message.topic, payload_jdict)
 
         try:
             self.__comms.connect()
-            self.__comms.write(JSONify.dumps(pub), False)
+            self.__comms.write(JSONify.dumps(publication), False)
 
-        except ConnectionRefusedError:
-            self.__reporter.print("connection refused for %s" % self.__comms.address)
+        except ConnectionError:
+            self.__reporter.print("connect: %s" % self.__comms.address)
 
         finally:
             self.__comms.close()
 
         if self.__echo:
-            print(JSONify.dumps(pub))
+            print(JSONify.dumps(publication))
             sys.stdout.flush()
 
-        self.__reporter.print("received: %s" % JSONify.dumps(pub))
+            self.__reporter.print("received: %s" % JSONify.dumps(publication))
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTClientHandler:{reporter:%s, comms:%s, include_wrapper:%s, echo:%s}" % \
-               (self.__reporter, self.__comms, self.__include_wrapper, self.__echo)
+        return "AWSMQTTSubscriptionHandler:{reporter:%s, comms:%s, echo:%s}" % \
+               (self.__reporter, self.__comms, self.__echo)
+
+

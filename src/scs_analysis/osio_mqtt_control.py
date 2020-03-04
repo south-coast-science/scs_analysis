@@ -40,7 +40,7 @@ import sys
 import time
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
-from scs_analysis.helper.osio_mqtt_control_handler import OSIOMQTTControlHandler
+from scs_analysis.handler.osio_mqtt_control_handler import OSIOMQTTControlHandler
 
 from scs_core.control.control_datum import ControlDatum
 
