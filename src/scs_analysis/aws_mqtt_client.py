@@ -68,7 +68,6 @@ from scs_core.data.publication import Publication
 
 from scs_core.sys.filesystem import Filesystem
 from scs_host.sys.host import Host
-from scs_core.sys.signalled_exit import SignalledExit
 from scs_core.sys.system_id import SystemID
 
 
@@ -176,9 +175,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # signal handler...
-        SignalledExit.construct("aws_mqtt_client", cmd.verbose)
-
         # client...
         if not conf.inhibit_publishing:
             publisher.connect()
@@ -218,7 +214,7 @@ if __name__ == '__main__':
     except ConnectionError as ex:
         print("aws_mqtt_client: %s" % ex, file=sys.stderr)
 
-    except (KeyboardInterrupt, SystemExit):
+    except KeyboardInterrupt:
         pass
 
     finally:
@@ -233,6 +229,3 @@ if __name__ == '__main__':
 
         if conf:
             Filesystem.rm(conf.report_file)
-
-        if reporter:
-            reporter.print("finished")
