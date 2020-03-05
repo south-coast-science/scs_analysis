@@ -15,7 +15,7 @@ SYNOPSIS
 uds_receiver.py [-v] UDS_SUB
 
 EXAMPLES
-uds_receiver.py scs-particulates.uds
+./uds_receiver.py scs-particulates.uds
 
 SEE ALSO
 scs_analysis/socket_receiver
@@ -23,9 +23,9 @@ scs_analysis/socket_receiver
 
 import sys
 
-from scs_analysis.cmd.cmd_uds import CmdUDS
+from scs_philips_hue.cmd.cmd_uds import CmdUDS
 
-from scs_host.comms.domain_socket import DomainSocket
+from scs_core.comms.uds_reader import UDSReader
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -42,16 +42,16 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print("uds_reader: %s" % cmd, file=sys.stderr)
+        print("uds_receiver: %s" % cmd, file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # resources...
 
-    uds = DomainSocket(cmd.path)
+    uds = UDSReader(cmd.path)
 
     if cmd.verbose:
-        print("uds_reader: %s" % uds, file=sys.stderr)
+        print("uds_receiver: %s" % uds, file=sys.stderr)
         sys.stderr.flush()
 
     try:
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         uds.connect()
 
-        for message in uds.read():
+        for message in uds.messages():
             print(message)
             sys.stdout.flush()
 
@@ -70,4 +70,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         if cmd.verbose:
-            print("uds_reader: KeyboardInterrupt", file=sys.stderr)
+            print("uds_receiver: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        uds.close()
