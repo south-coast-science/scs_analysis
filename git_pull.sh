@@ -7,7 +7,7 @@ echo ${GIT_PATH}
 git -C ${GIT_PATH} pull
 echo '-'
 
-GIT_PATH=~/SCS/scs_analysis/                # comment out if the package is not installed
+GIT_PATH=~/SCS/scs_analysis/
 echo ${GIT_PATH}
 git -C ${GIT_PATH} pull
 echo '-'
@@ -17,7 +17,7 @@ echo ${GIT_PATH}
 git -C ${GIT_PATH} pull
 echo '-'
 
-GIT_PATH=~/SCS/scs_core/                    # comment out if the package is not installed
+GIT_PATH=~/SCS/scs_core/
 echo ${GIT_PATH}
 git -C ${GIT_PATH} pull
 echo '-'
