@@ -23,7 +23,7 @@ scs_analysis/socket_receiver
 
 import sys
 
-from scs_philips_hue.cmd.cmd_uds import CmdUDS
+from scs_analysis.cmd.cmd_uds import CmdUDS
 
 from scs_core.comms.uds_reader import UDSReader
 
