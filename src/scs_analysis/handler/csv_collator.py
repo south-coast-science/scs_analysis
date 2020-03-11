@@ -8,8 +8,12 @@ source repo: scs_analysis
 
 import re
 
+from collections import OrderedDict
+
 from scs_core.csv.csv_writer import CSVWriter
+
 from scs_core.data.datum import Datum
+from scs_core.data.json import JSONable
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -58,7 +62,7 @@ class CSVCollator(object):
         if index < 0 or index > self.__max_bin_index:
             return False
 
-        self.__bins[index].write(jstr)
+        self.__bins[index].append(jstr)
 
         return True
 
@@ -94,7 +98,7 @@ class CSVCollator(object):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CSVCollatorBin(object):
+class CSVCollatorBin(JSONable):
     """
     classdocs
     """
@@ -104,10 +108,13 @@ class CSVCollatorBin(object):
 
     @classmethod
     def construct(cls, lower, upper, file_prefix, numeric_format):
+        if file_prefix is None:
+            return cls(lower, upper, None)
+
         file_name = file_prefix + cls.__infix(numeric_format, lower) + cls.__infix(numeric_format, upper) + '.csv'
         writer = CSVWriter(file_name)
 
-        return CSVCollatorBin(lower, upper, writer)
+        return cls(lower, upper, writer)
 
 
     @classmethod
@@ -115,8 +122,8 @@ class CSVCollatorBin(object):
         return str.replace("_" + numeric_format % bound, ".", "p")
 
 
-    @classmethod
-    def parse(cls, filename):
+    @staticmethod
+    def parse(filename):
         match = re.match(r'.*_(\d+)p(\d+)_(\d+)p(\d+)\.csv$', filename)
 
         if match is None:
@@ -145,14 +152,28 @@ class CSVCollatorBin(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def write(self, datum):
-        self.__writer.write(datum)
+    def append(self, datum):
+        if self.__writer:
+            self.__writer.write(datum)
 
         self.__count += 1
 
 
     def close(self):
-        self.__writer.close()
+        if self.__writer:
+            self.__writer.close()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self):
+        jdict = OrderedDict()
+
+        jdict['lower'] = self.lower
+        jdict['upper'] = self.upper
+        jdict['count'] = self.count
+
+        return jdict
 
 
     # ----------------------------------------------------------------------------------------------------------------
