@@ -21,15 +21,15 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -t [[DD-]HH:]MM | -s START [-e END] } [-w] [-v] "
-                                                    "TOPIC", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } "
+                                                    "[-w] [-v] TOPIC", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="the most recent document only")
 
         self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
-                                 help="starting days / hours / minutes ago, and ending now")
+                                 help="starting days / hours / minutes / seconds ago, and ending now")
 
         self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
                                  help="ISO 8601 datetime start")
@@ -132,5 +132,5 @@ class CmdAWSTopicHistory(object):
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, timedelta:%s, start:%s, end:%s, include_wrapper:%s, " \
                "verbose:%s, topic:%s}" % \
-                    (self.latest, self.__opts.timedelta, self.start, self.end, self.include_wrapper,
+                    (self.latest, self.timedelta, self.start, self.end, self.include_wrapper,
                      self.verbose, self.topic)
