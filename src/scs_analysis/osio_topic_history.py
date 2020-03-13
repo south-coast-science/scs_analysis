@@ -75,11 +75,14 @@ if __name__ == '__main__':
             print("osio_topic_history: %s" % api_auth, file=sys.stderr)
             sys.stderr.flush()
 
+        # HTTPClient...
+        http_client = HTTPClient(False)
+
         # topic manager...
-        topic_manager = TopicManager(HTTPClient(False), api_auth.api_key)
+        topic_manager = TopicManager(http_client, api_auth.api_key)
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(False), api_auth.api_key, cmd.verbose)
+        message_manager = MessageManager(http_client, api_auth.api_key, cmd.verbose)
 
         if cmd.verbose:
             print("osio_topic_history: %s" % message_manager, file=sys.stderr)
