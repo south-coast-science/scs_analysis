@@ -42,7 +42,7 @@ print("-")
 # --------------------------------------------------------------------------------------------------------------------
 
 # manager...
-manager = MessageManager(HTTPClient(), api_key)
+manager = MessageManager(HTTPClient(False), api_key)
 print(manager)
 print("=")
 

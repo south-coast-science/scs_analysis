@@ -76,10 +76,10 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # topic manager...
-        topic_manager = TopicManager(HTTPClient(), api_auth.api_key)
+        topic_manager = TopicManager(HTTPClient(False), api_auth.api_key)
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(), api_auth.api_key, cmd.verbose)
+        message_manager = MessageManager(HTTPClient(False), api_auth.api_key, cmd.verbose)
 
         if cmd.verbose:
             print("osio_topic_history: %s" % message_manager, file=sys.stderr)
