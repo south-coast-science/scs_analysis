@@ -105,11 +105,14 @@ if __name__ == '__main__':
         # reporter...
         reporter = AWSTopicHistoryReporter(cmd.verbose)
 
+        # HTTPClient...
+        http_client = HTTPClient(False)
+
         # byline manager...
-        byline_manager = BylineManager(HTTPClient(), api_auth)
+        byline_manager = BylineManager(http_client, api_auth)
 
         # message manager...
-        message_manager = MessageManager(HTTPClient(), api_auth, reporter)
+        message_manager = MessageManager(http_client, api_auth, reporter)
 
         if cmd.verbose:
             print("aws_topic_history: %s" % message_manager, file=sys.stderr)

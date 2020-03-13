@@ -110,7 +110,7 @@ if __name__ == '__main__':
         pub_comms = StdIO()     # DomainSocket(cmd.uds_pub_addr) if cmd.uds_pub_addr else StdIO()
 
         # manager...
-        manager = TopicManager(HTTPClient(), api_auth.api_key)
+        manager = TopicManager(HTTPClient(False), api_auth.api_key)
 
         # check topics...
         unavailable = False
