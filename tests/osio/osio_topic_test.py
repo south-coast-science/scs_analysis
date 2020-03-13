@@ -30,7 +30,7 @@ api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 # --------------------------------------------------------------------------------------------------------------------
 
 # manager...
-manager = TopicManager(HTTPClient(), api_key)
+manager = TopicManager(HTTPClient(False), api_key)
 print(manager)
 print("=")
 

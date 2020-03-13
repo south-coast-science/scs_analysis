@@ -77,11 +77,14 @@ if __name__ == '__main__':
     if cmd.verbose:
         print("osio_client_auth: %s" % api_auth, file=sys.stderr)
 
+    # HTTPClient...
+    http_client = HTTPClient(False)
+
     # User manager...
-    user_manager = UserManager(HTTPClient(), api_auth.api_key)
+    user_manager = UserManager(http_client, api_auth.api_key)
 
     # Device manager...
-    device_manager = DeviceManager(HTTPClient(), api_auth.api_key)
+    device_manager = DeviceManager(http_client, api_auth.api_key)
 
     # check for existing registration...
     device = device_manager.find_for_name(api_auth.org_id, Host.name())

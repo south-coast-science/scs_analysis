@@ -11,14 +11,14 @@ DESCRIPTION
 The csv_segmentor utility is used to segment the input stream of JSON documents into CSV files whose rows
 have contiguous datetime values.
 
-The input documents must contain a field carrying an ISO 8601 datetime. If the field in a given document is empty or
-malformed, the document is ignored. If the field is not present in any document, the csv_segmentor utility
-terminates.
-
 Contiguity is defined by the --max-interval flag. If the time interval between a document and the previous document is
 greater than this interval, then the current CSV file is closed, and a new file is opened. File names (and
 sub-directories) as specified by the --file-prefix flag. The datetime of the first row of CSV file is appended to the
 prefix.
+
+The input documents must contain a field carrying an ISO 8601 datetime. If the field in a given document is empty or
+malformed, the document is ignored. If the field is not present in any document, the csv_segmentor utility
+terminates.
 
 The csv_segmentor utility generates a report giving the specifications of each contiguous block. If no file prefix
 is given, then the CSV files are not generated, but the report is still produced.

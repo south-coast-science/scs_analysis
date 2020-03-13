@@ -30,7 +30,7 @@ api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 # --------------------------------------------------------------------------------------------------------------------
 
 # manager...
-manager = SchemaManager(HTTPClient(), api_key)
+manager = SchemaManager(HTTPClient(False), api_key)
 print(manager)
 print("=")
 
