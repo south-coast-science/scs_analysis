@@ -104,8 +104,8 @@ if __name__ == '__main__':
             if cmd.latest and latest is not None:
                 print(JSONify.dumps(latest))
 
-        except HTTPException as ex:
-            print("aws_byline: %s" % ex, file=sys.stderr)
+        except (ConnectionError, HTTPException) as ex:
+            print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
             exit(1)
 
 
