@@ -71,7 +71,7 @@ if __name__ == '__main__':
             exit(1)
 
         # BylineManager...
-        manager = BylineManager(HTTPClient(False), api_auth)
+        manager = BylineManager(HTTPClient(True), api_auth)
 
         if cmd.verbose:
             print("aws_byline: %s" % manager, file=sys.stderr)
@@ -83,30 +83,25 @@ if __name__ == '__main__':
 
         latest = None
 
-        try:
-            # get...
-            if cmd.topic:
-                bylines = manager.find_bylines_for_topic(cmd.topic)
+        # get...
+        if cmd.topic:
+            bylines = manager.find_bylines_for_topic(cmd.topic)
+
+        else:
+            bylines = manager.find_bylines_for_device(cmd.device)
+
+        # process...
+        for byline in bylines:
+            if cmd.latest:
+                if latest is None or latest.rec < byline.rec:
+                    latest = byline
 
             else:
-                bylines = manager.find_bylines_for_device(cmd.device)
+                print(JSONify.dumps(byline))
+                sys.stdout.flush()
 
-            # process...
-            for byline in bylines:
-                if cmd.latest:
-                    if latest is None or latest.rec < byline.rec:
-                        latest = byline
-
-                else:
-                    print(JSONify.dumps(byline))
-                    sys.stdout.flush()
-
-            if cmd.latest and latest is not None:
-                print(JSONify.dumps(latest))
-
-        except (ConnectionError, HTTPException) as ex:
-            print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
-            exit(1)
+        if cmd.latest and latest is not None:
+            print(JSONify.dumps(latest))
 
 
     # ----------------------------------------------------------------------------------------------------------------
