@@ -106,7 +106,7 @@ if __name__ == '__main__':
         reporter = AWSTopicHistoryReporter(cmd.verbose)
 
         # HTTPClient...
-        http_client = HTTPClient(False)
+        http_client = HTTPClient(True)
 
         # byline manager...
         byline_manager = BylineManager(http_client, api_auth)
