@@ -71,7 +71,7 @@ if __name__ == '__main__':
             exit(1)
 
         # BylineManager...
-        manager = BylineManager(HTTPClient(True), api_auth)
+        manager = BylineManager(HTTPClient(False), api_auth)
 
         if cmd.verbose:
             print("aws_byline: %s" % manager, file=sys.stderr)
@@ -106,6 +106,9 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
+
+    except (ConnectionError, HTTPException) as ex:
+        print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
