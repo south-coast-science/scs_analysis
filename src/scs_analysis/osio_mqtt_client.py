@@ -44,6 +44,8 @@ from scs_analysis.cmd.cmd_mqtt_client import CmdMQTTClient
 from scs_analysis.handler.osio_mqtt_client_handler import OSIOMQTTHandler
 from scs_analysis.handler.mqtt_reporter import MQTTReporter
 
+from scs_core.client.http_client import HTTPClient
+
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
 
@@ -53,7 +55,6 @@ from scs_core.osio.manager.topic_manager import TopicManager
 
 from scs_core.sys.exception_report import ExceptionReport
 
-from scs_host.client.http_client import HTTPClient
 from scs_host.client.mqtt_client import MQTTClient, MQTTSubscriber
 
 from scs_host.comms.domain_socket import DomainSocket

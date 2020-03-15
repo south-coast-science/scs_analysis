@@ -35,11 +35,12 @@ from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 
+from scs_core.client.http_client import HTTPClient
+
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
 
-from scs_host.client.http_client import HTTPClient
 from scs_host.sys.host import Host
 
 
