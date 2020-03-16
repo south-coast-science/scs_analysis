@@ -31,7 +31,7 @@ print(api_key)
 topic = "/orgs/south-coast-science-dev/exhibition/loc/1/climate"
 print(topic)
 
-end_date = LocalizedDatetime.now()
+end_date = LocalizedDatetime.now().utc()
 start_date = LocalizedDatetime.construct_from_timestamp(end_date.timestamp() - 60)
 
 print("start: %s" % start_date)

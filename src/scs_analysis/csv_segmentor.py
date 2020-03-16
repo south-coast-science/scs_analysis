@@ -133,5 +133,5 @@ if __name__ == '__main__':
             segmentor.close()
 
         if cmd.verbose:
-            print("csv_segmentor: documents: %d processed: %d" % (document_count, processed_count),
-                  file=sys.stderr)
+            print("csv_segmentor: documents: %d processed: %d segments: %d" %
+                  (document_count, processed_count, len(segmentor)), file=sys.stderr)

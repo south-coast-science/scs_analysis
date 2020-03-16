@@ -144,7 +144,7 @@ if __name__ == '__main__':
                 cmd_tokens = cmd.cmd_tokens
 
             # datum...
-            now = LocalizedDatetime.now()
+            now = LocalizedDatetime.now().utc()
             datum = ControlDatum.construct(tag, cmd.device_tag, now, cmd_tokens, cmd.device_shared_secret)
 
             publication = Publication(cmd.device_topic, datum)

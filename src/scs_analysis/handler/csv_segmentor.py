@@ -33,6 +33,10 @@ class CSVSegmentor(object):
         self.__blocks = []                                      # array of CSVContiguousBlock
 
 
+    def __len__(self):
+        return len(self.__blocks)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def collate(self, rec, jstr):
@@ -102,7 +106,7 @@ class CSVContiguousBlock(JSONable):
         if file_prefix is None:
             return cls(prev_interval, start, None)
 
-        file_name = '_'.join((file_prefix,  start.as_iso8601().replace(':', '-'))) + '.csv'
+        file_name = '-'.join((file_prefix,  start.as_iso8601().replace(':', '-'))) + '.csv'
         return cls(prev_interval, start, CSVWriter(file_name))
 
 

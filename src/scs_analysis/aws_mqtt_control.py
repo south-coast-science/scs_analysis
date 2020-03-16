@@ -150,7 +150,7 @@ if __name__ == '__main__':
                 cmd_tokens = cmd.cmd_tokens
 
             # datum...
-            now = LocalizedDatetime.now()
+            now = LocalizedDatetime.now().utc()
             datum = ControlDatum.construct(host_tag, device_tag, now, cmd_tokens, key)
 
             publication = Publication(topic, datum)
