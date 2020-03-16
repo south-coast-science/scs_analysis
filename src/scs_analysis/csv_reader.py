@@ -117,8 +117,8 @@ if __name__ == '__main__':
 
             except CSVReaderException as ex:
                 if cmd.verbose:
-                    print("csv_reader: terminating on row %d: %s" % (rows, ex), file=sys.stderr)
-                    exit(1)
+                    print("csv_reader: ending file on row %d: %s" % (rows, ex), file=sys.stderr)
+                    continue
 
             finally:
                 if reader is not None:
