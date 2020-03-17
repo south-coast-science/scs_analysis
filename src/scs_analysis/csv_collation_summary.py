@@ -93,8 +93,9 @@ if __name__ == '__main__':
                 low, high = CSVCollatorBin.parse(filename)
                 domain = str(low) + ' - ' + str(high)
             except ValueError:
-                print("csv_collation_summary: file name could not be parsed: %s" % filename, file=sys.stderr)
-                exit(1)
+                print("csv_collation_summary: skipping file: %s" % filename, file=sys.stderr)
+                sys.stderr.flush()
+                continue
 
             try:
                 reader = CSVReader.construct_for_file(filename)
