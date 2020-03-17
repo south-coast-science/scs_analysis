@@ -33,80 +33,14 @@ DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-03-27T16:10:51.033+00:00", "val": {"CO": {"cnc": {"src": 202.5, "slope": 0.039, "intercept": 226.217}}}}
 """
 
-
 import sys
 
 from scs_analysis.cmd.cmd_sample_tally import CmdSampleTally
 
-from scs_core.data.datetime import LocalizedDatetime
+from scs_analysis.handler.sample_regression import SampleRegression
+
 from scs_core.data.json import JSONify
-from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.path_dict import PathDict
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class SampleRegression(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, path, tally, precision):
-        """
-        Constructor
-        """
-        self.__path = path
-        self.__precision = precision
-
-        self.__func = LinearRegression(tally, True)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def datum(self, sample):
-        if not sample.has_path(self.__path):
-            return None
-
-        try:
-            rec_node = sample.node('rec')
-        except KeyError:
-            return None
-
-        rec = LocalizedDatetime.construct_from_jdict(rec_node)
-        value = sample.node(self.__path)
-
-        self.__func.append(rec, value)
-
-        if not self.__func.has_regression():
-            return None
-
-        slope, intercept = self.__func.line()
-
-        if slope is None:
-            return None
-
-        target = PathDict()
-
-        for path in sample.paths():
-            if path == self.__path:
-                target.append(self.__path + '.src', value)
-                target.append(self.__path + '.slope', round(slope, self.__precision))
-                target.append(self.__path + '.intercept', round(intercept, self.__precision))
-            else:
-                target.copy(sample, path)
-
-        # if sample.has_path('rec'):
-        #     target.copy(sample, 'rec')
-
-        return target.node()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "SampleRegression:{path:%s, func:%s}" % (self.__path, self.__func)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -150,10 +84,10 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            average = sampler.datum(datum)
+            regression = sampler.datum(datum)
 
-            if average is not None:
-                print(JSONify.dumps(average))
+            if regression is not None:
+                print(JSONify.dumps(regression))
                 sys.stdout.flush()
 
             processed_count += 1
@@ -168,4 +102,5 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            print("sample_regression: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+            print("sample_regression: documents: %d processed: %d" % (document_count, processed_count),
+                  file=sys.stderr)
