@@ -24,7 +24,7 @@ The csv_segmentor utility generates a report giving the specifications of each c
 is given, then the CSV files are not generated, but the report is still produced.
 
 SYNOPSIS
-csv_segmentor.py -m { [[DD-]HH:]MM[:SS] | :SS } [-f FILE_PREFIX] [-v] REC_PATH
+csv_segmentor.py -m { [[DD-]HH:]MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] [-v]
 
 EXAMPLES
 csv_reader.py -v scs-bgx-431-gases-AFE065-2019.csv |

@@ -18,11 +18,14 @@ class CmdSampleTimezone(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -z | TIMEZONE_NAME }", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -z | [-i ISO_PATH] TIMEZONE_NAME }", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
+
+        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+                                 help="path for ISO 8601 datetime output (default 'rec')")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -36,15 +39,13 @@ class CmdSampleTimezone(object):
         if bool(self.timezone) == bool(self.__opts.zones):
             return False
 
+        if self.iso is not None and self.timezone is None:
+            return False
+
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def timezone(self):
-        return self.__args[0] if len(self.__args) > 0 else None
-
 
     @property
     def zones(self):
@@ -52,8 +53,18 @@ class CmdSampleTimezone(object):
 
 
     @property
+    def iso(self):
+        return self.__opts.iso
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def timezone(self):
+        return self.__args[0] if len(self.__args) > 0 else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -63,4 +74,5 @@ class CmdSampleTimezone(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleTimezone:{timezone:%s, zones:%s, verbose:%s}" % (self.timezone, self.zones, self.verbose)
+        return "CmdSampleTimezone:{zones:%s, iso:%s, verbose:%s, timezone:%s}" % \
+               (self.zones, self.iso, self.verbose, self.timezone)

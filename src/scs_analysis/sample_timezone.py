@@ -28,7 +28,7 @@ The sample_timezone utility silently ignores input lines which have:
 Note that the timezone of a South Coast Science device is normally reported on its status topic.
 
 SYNOPSIS
-sample_timezone.py { -z | TIMEZONE_NAME }
+sample_timezone.py { -z | [-i ISO_PATH] TIMEZONE_NAME }
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/climate -s 2018-10-28T00:00:00+00:00 \
@@ -117,7 +117,7 @@ if __name__ == '__main__':
             document_count += 1
 
             try:
-                rec = jdict['rec']
+                rec = jdict[cmd.iso]
             except KeyError:
                 continue
 

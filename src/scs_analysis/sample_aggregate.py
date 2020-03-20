@@ -32,7 +32,7 @@ actual paths found in the first JSON document. Paths that do not exist in the fi
 
 The input JSON document must contain a field labelled 'rec', providing an ISO 8601 localised datetime. If this field
 is not present then the document is skipped. Note that the timezone of the output rec datetimes is the same as the
-input rec values.
+input rec values. Rows with successive duplicate rec values are ignored.
 
 Leaf node values may be numeric or strings. Numeric values are processed according to a simple linear regression.
 String values are processed using a categorical regression.
@@ -63,6 +63,7 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    prev_rec = None
     aggregate = None
 
     document_count = 0
@@ -140,10 +141,19 @@ if __name__ == '__main__':
 
                     aggregate.print(filler)
 
+            # duplicate recs?...
+            if rec == prev_rec:
+                if cmd.verbose:
+                    print("sample_aggregate: discarding duplicate: %s" % line.strip(), file=sys.stderr)
+                    sys.stderr.flush()
+
+                continue
+
             # append sample...
             aggregate.append(rec, datum)
 
             processed_count += 1
+            prev_rec = rec
 
         # report remainder...
         if aggregate.has_value():
