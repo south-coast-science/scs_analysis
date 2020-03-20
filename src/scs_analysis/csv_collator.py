@@ -26,7 +26,7 @@ On completion, a summary of the bin assignments is written to stdout.  If no fil
 are not generated, but the report is still produced.
 
 SYNOPSIS
-csv_collator.py -l LOWER_BOUND -u UPPER_BOUND -d DELTA -f FILE_PREFIX [-v] PATH
+csv_collator.py -l LOWER_BOUND -u UPPER_BOUND -d DELTA [-f FILE_PREFIX] [-v] PATH
 
 EXAMPLES
 csv_reader.py alphasense_303_2018-08.csv | \
