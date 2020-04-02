@@ -22,7 +22,7 @@ class CmdAWSTopicHistory(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } "
-                                                    "[-w] [-v] TOPIC", version="%prog 1.0")
+                                                    "[-r] [-w] [-v] TOPIC", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -36,6 +36,9 @@ class CmdAWSTopicHistory(object):
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="ISO 8601 datetime end")
+
+        self.__parser.add_option("--rec-only", "-r", action="store_true", dest="rec_only", default=False,
+                                 help="retrieve only the rec field")
 
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include storage wrapper")
@@ -114,6 +117,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def rec_only(self):
+        return self.__opts.rec_only
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -130,7 +138,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{latest:%s, timedelta:%s, start:%s, end:%s, include_wrapper:%s, " \
+        return "CmdAWSTopicHistory:{latest:%s, timedelta:%s, start:%s, end:%s, rec_only:%s, include_wrapper:%s, " \
                "verbose:%s, topic:%s}" % \
-                    (self.latest, self.timedelta, self.start, self.end, self.include_wrapper,
+                    (self.latest, self.timedelta, self.start, self.end, self.rec_only, self.include_wrapper,
                      self.verbose, self.topic)

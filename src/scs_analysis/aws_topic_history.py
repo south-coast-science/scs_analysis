@@ -13,6 +13,9 @@ retrieval system. Data can be retrieved by start or start + end localised date /
 timedelta back in time from now. A further "latest" mode returns the most recent document, or none if the topic has
 never received a publication.
 
+The --rec-only flag causes only the rec fields on the documents to be returned. This results in much faster data
+retrieval, and is useful if sampling continuity is being tested.
+
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
 
@@ -21,7 +24,7 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
-aws_topic_history.py { -l | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } [-w] [-v] TOPIC
+aws_topic_history.py { -l | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } [-r] [-w] [-v] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -148,7 +151,7 @@ if __name__ == '__main__':
 
         # messages...
         try:
-            for message in message_manager.find_for_topic(cmd.topic, start, end):
+            for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.rec_only):
                 document = message if cmd.include_wrapper else message.payload
 
                 print(JSONify.dumps(document))
