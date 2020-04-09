@@ -71,6 +71,9 @@ from scs_host.sys.host import Host
 from scs_core.sys.system_id import SystemID
 
 
+# TODO: -no-wrapper mode
+# TODO: check for topic existence
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
