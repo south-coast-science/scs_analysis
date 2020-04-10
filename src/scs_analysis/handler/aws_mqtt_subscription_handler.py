@@ -21,24 +21,23 @@ class AWSMQTTSubscriptionHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, reporter, comms=None, echo=False):
+    def __init__(self, reporter, comms=None, wrap=True, echo=False):
         """
         Constructor
         """
         self.__reporter = reporter
         self.__comms = comms
+        self.__wrap = wrap
         self.__echo = echo
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # noinspection PyUnusedLocal
-
-    def handle(self, client, userdata, message):
+    def handle(self, _client, _userdata, message):
         payload = message.payload.decode()
         payload_jdict = json.loads(payload)
 
-        publication = Publication(message.topic, payload_jdict)
+        publication = Publication(message.topic, payload_jdict) if self.__wrap else payload_jdict
 
         try:
             self.__comms.connect()
@@ -60,7 +59,7 @@ class AWSMQTTSubscriptionHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTSubscriptionHandler:{reporter:%s, comms:%s, echo:%s}" % \
-               (self.__reporter, self.__comms, self.__echo)
+        return "AWSMQTTSubscriptionHandler:{reporter:%s, comms:%s, wrap:%s, echo:%s}" % \
+               (self.__reporter, self.__comms, self.__wrap, self.__echo)
 
 

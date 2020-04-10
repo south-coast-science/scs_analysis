@@ -23,12 +23,11 @@ The aws_mqtt_client utility requires the AWS client authorisation to operate.
 Only one MQTT client should run at any one time, per TCP/IP host.
 
 SYNOPSIS
-aws_mqtt_client.py [-p UDS_PUB] [-s] { -c { C | G | P | S | X } (UDS_SUB_1) | \
-[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } [-e] [-v]
+Usage: aws_mqtt_client.py [-p UDS_PUB] [-s] { -c { C | G | P | S | X } (UDS_SUB_1) |
+[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } [-n] [-e] [-v]
 
 EXAMPLES
-( cat < /home/pi/SCS/pipes/mqtt_publication_pipe & ) | \
-/home/pi/SCS/scs_dev/src/scs_dev/aws_mqtt_client.py -v -cX  > /home/pi/SCS/pipes/control_subscription_pipe
+aws_mqtt_client.py -n south-coast-science-dev/production-test/loc/1/gases
 
 FILES
 ~/SCS/aws/aws_client_auth.json
@@ -38,10 +37,7 @@ FILES
 ~/SCS/aws/certs/root-CA.crt
 
 SEE ALSO
-scs_dev/led_controller
-scs_mfr/mqtt_conf
-scs_mfr/aws_client_auth
-scs_mfr/aws_project
+scs_analysis/aws_client_auth
 
 BUGS
 When run as a background process, aws_mqtt_client will exit if it has no stdin stream.
@@ -70,9 +66,6 @@ from scs_core.sys.filesystem import Filesystem
 from scs_host.sys.host import Host
 from scs_core.sys.system_id import SystemID
 
-
-# TODO: -no-wrapper mode
-# TODO: check for topic existence
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -150,7 +143,7 @@ if __name__ == '__main__':
             # subscriber...
             sub_comms = UDSWriter(cmd.channel_uds)
 
-            handler = AWSMQTTSubscriptionHandler(reporter, sub_comms, cmd.echo)
+            handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms, wrap=cmd.wrap, echo=cmd.echo)
 
             subscribers.append(MQTTSubscriber(topic, handler.handle))
 
@@ -159,7 +152,7 @@ if __name__ == '__main__':
                 sub_comms = UDSWriter(subscription.address)
 
                 # subscriber...
-                handler = AWSMQTTSubscriptionHandler(reporter, sub_comms, cmd.echo)
+                handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms, wrap=cmd.wrap, echo=cmd.echo)
 
                 if cmd.verbose:
                     print("aws_mqtt_client: %s" % handler, file=sys.stderr)

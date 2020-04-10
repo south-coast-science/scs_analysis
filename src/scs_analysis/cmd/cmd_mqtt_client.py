@@ -19,7 +19,7 @@ class CmdMQTTClient(object):
         self.__parser = optparse.OptionParser(usage="%prog [-p UDS_PUB] "
                                                     "[-s] { -c { C | G | P | S | X } (UDS_SUB_1) | "
                                                     "[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } "
-                                                    "[-e] [-v]", version="%prog 1.0")
+                                                    "[-n] [-e] [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--pub", "-p", type="string", nargs=1, action="store", dest="uds_pub",
@@ -30,6 +30,9 @@ class CmdMQTTClient(object):
 
         self.__parser.add_option("--channel", "-c", type="string", nargs=1, action="store", dest="channel",
                                  help="subscribe to channel")
+
+        self.__parser.add_option("--no-wrapper", "-n", action="store_true", dest="no_wrapper", default=False,
+                                 help="discard topic wrapper")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo input to stdout (if not writing subscriptions to stdout)")
@@ -98,6 +101,16 @@ class CmdMQTTClient(object):
 
 
     @property
+    def no_wrapper(self):
+        return self.__opts.no_wrapper
+
+
+    @property
+    def wrap(self):
+        return not self.__opts.no_wrapper
+
+
+    @property
     def echo(self):
         return self.__opts.echo
 
@@ -116,8 +129,10 @@ class CmdMQTTClient(object):
     def __str__(self, *args, **kwargs):
         subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
 
-        return "CmdMQTTClient:{subscriptions:%s, channel:%s, channel_uds:%s, uds_pub:%s, echo:%s, verbose:%s}" % \
-               (subscriptions, self.channel, self.channel_uds, self.uds_pub, self.echo, self.verbose)
+        return "CmdMQTTClient:{subscriptions:%s, channel:%s, channel_uds:%s, uds_pub:%s, no_wrapper:%s, echo:%s, " \
+               "verbose:%s}" % \
+               (subscriptions, self.channel, self.channel_uds, self.uds_pub, self.no_wrapper, self.echo,
+                self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------
