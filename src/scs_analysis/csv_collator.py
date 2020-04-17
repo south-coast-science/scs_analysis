@@ -25,6 +25,9 @@ ignored. Likewise, values outside the upper and lower bounds are ignored.
 On completion, a summary of the bin assignments is written to stdout.  If no file prefix is given, then the CSV files
 are not generated, but the report is still produced.
 
+Two collators are provided in this package: csv_collator collates into separate CSV files (collate to rows),
+whereas sample_collator collates into separate columns (collate to columns).
+
 SYNOPSIS
 csv_collator.py -l LOWER_BOUND -u UPPER_BOUND -d DELTA [-f FILE_PREFIX] [-v] PATH
 
@@ -39,6 +42,8 @@ FILE-PREFIX_DOMAIN-LOW_DOMAIN-HIGH.csv
 SEE ALSO
 scs_analysis/csv_collation_summary
 scs_analysis/csv_segmentor
+scs_analysis/sample_collator
+
 """
 
 import sys
