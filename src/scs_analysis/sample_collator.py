@@ -35,9 +35,8 @@ DOCUMENT EXAMPLE - INPUT
 DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2019-10-11T10:15:00Z",
 "opc": {"pmx": {"tag": "scs-pb1-3", "src": "R1", "val": {"per": 9.9, "pm1": 2.2, "pm2p5": 8.4, "pm10": 12.0}}},
-"error": {"pm1": 1.517,
-"pm2p5": {"src": 3.561, "0-10": 3.561, "10-20": null, "20-30": null, "30-40": null, "40-50": null, "50-60": null},
-"pm10": 3.429}}
+"error": {"pm1": 1.517, "pm2p5": {"src": 3.561, "0-10": 3.561, "10-20": null, "20-30": null, "30-40": null,
+"40-50": null, "50-60": null}, "pm10": 3.429}}
 
 SEE ALSO
 scs_analysis/csv_collator
