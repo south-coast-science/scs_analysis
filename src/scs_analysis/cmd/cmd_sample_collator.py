@@ -3,7 +3,7 @@ Created on 15 Apr 2020
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-source repo: scs_exegesis
+source repo: scs_analysis
 """
 
 import optparse
@@ -20,12 +20,16 @@ class CmdSampleCollator(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -x IND_PATH -y DEP_PATH [-l LOWER_BOUND] -u UPPER_BOUND "
-                                                    "-d DELTA [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -x IND_PATH [-n NAME] -y DEP_PATH "
+                                                    "[-l LOWER_BOUND] -u UPPER_BOUND -d DELTA [-v]",
+                                              version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--ind-path", "-x", type="string", nargs=1, action="store", dest="ind_path",
                                  help="path to independent variable")
+
+        self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",
+                                 help="name of the independent variable")
 
         self.__parser.add_option("--dep-path", "-y", type="string", nargs=1, action="store", dest="dep_path",
                                  help="path to dependent variable")
@@ -64,6 +68,11 @@ class CmdSampleCollator(object):
 
 
     @property
+    def name(self):
+        return self.__opts.name
+
+
+    @property
     def dep_path(self):
         return self.__opts.dep_path
 
@@ -95,5 +104,5 @@ class CmdSampleCollator(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleCollator:{ind_path:%s, dep_path:%s, lower:%s, upper:%s, delta:%s, verbose:%s}" % \
-               (self.ind_path, self.dep_path, self.lower, self.upper, self.delta, self.verbose)
+        return "CmdSampleCollator:{ind_path:%s, name:%s, dep_path:%s, lower:%s, upper:%s, delta:%s, verbose:%s}" % \
+               (self.ind_path, self.name, self.dep_path, self.lower, self.upper, self.delta, self.verbose)

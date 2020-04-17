@@ -17,11 +17,14 @@ The upper and lower bounds for the data set should be specified, along with a de
 to service this domain is calculated automatically. The path identifying the leaf node in the input document for both
 the independent and dependent fields must be specified.
 
+For each input document, if either the independent or dependent variable values cannot be interpreted ans a number,
+then the document is ignored. If either of the fields is not present, the sample_collator utility terminates.
+
 Two collators are provided in this package: sample_collator collates into separate columns (collate to columns),
 whereas csv_collator collates into separate CSV files (collate to rows).
 
 SYNOPSIS
-sample_collator.py -x IND_PATH -y DEP_PATH [-l LOWER_BOUND] -u UPPER_BOUND -d DELTA [-v]
+sample_collator.py -x IND_PATH [-n NAME] -y DEP_PATH [-l LOWER_BOUND] -u UPPER_BOUND -d DELTA [-v]
 
 EXAMPLES
 csv_reader.py -v -l 1 scs-pb1-3-ref-opc-r1-error-2019-09-27T11-03-41+01-00-15min-exegesis-error.csv | \
@@ -35,8 +38,8 @@ DOCUMENT EXAMPLE - INPUT
 DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2019-10-11T10:15:00Z",
 "opc": {"pmx": {"tag": "scs-pb1-3", "src": "R1", "val": {"per": 9.9, "pm1": 2.2, "pm2p5": 8.4, "pm10": 12.0}}},
-"error": {"pm1": 1.517, "pm2p5": {"src": 3.561, "0-10": 3.561, "10-20": null, "20-30": null, "30-40": null,
-"40-50": null, "50-60": null}, "pm10": 3.429}}
+"error": {"pm1": 1.517, "pm2p5": {"src": 3.561, "PM25_0-10": 3.561, "PM25_10-20": null, "PM25_20-30": null,
+"PM25_30-40": null, "PM25_40-50": null, "PM25_50-60": null, "PM25_60-70": null}, "pm10": 3.429}}
 
 SEE ALSO
 scs_analysis/csv_collator
@@ -74,7 +77,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        deltas = SampleDelta.deltas(cmd.lower, cmd.upper, cmd.delta)
+        deltas = SampleDelta.deltas(cmd.lower, cmd.upper, cmd.delta, name=cmd.name)
 
 
         # ------------------------------------------------------------------------------------------------------------
