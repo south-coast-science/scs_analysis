@@ -116,6 +116,7 @@ if __name__ == '__main__':
         # report...
         for block in segmentor.blocks:
             print(JSONify.dumps(block))
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
