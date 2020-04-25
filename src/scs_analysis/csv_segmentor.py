@@ -27,9 +27,9 @@ SYNOPSIS
 csv_segmentor.py -m { [[DD-]HH:]MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] [-v]
 
 EXAMPLES
-csv_reader.py -v scs-bgx-431-gases-AFE065-2019.csv |
-csv_segmentor.py -v -m :20 -f segments/scs-bgx-431-gases-AFE065 |
-csv_writer.py segments/report.csv
+csv_reader.py -v scs-bgx-508-gases-2020-Q1.csv | \
+csv_segmentor.py -m 06:00 -f segments/scs-bgx-508-gases-2020-Q1 -v | \
+csv_writer.py -v segments/scs-bgx-508-gases-2020-Q1-report.csv
 
 FILES
 Output file names are of the form:
@@ -116,6 +116,7 @@ if __name__ == '__main__':
         # report...
         for block in segmentor.blocks:
             print(JSONify.dumps(block))
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
