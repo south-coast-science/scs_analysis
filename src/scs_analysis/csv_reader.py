@@ -15,7 +15,7 @@ from their container by a period ('.') character, and JSON array members separat
 colon (':') character.
 
 The first row of the CSV file (or stdin input) is assumed to be a header row. If there are more columns in the body of
-the CSV than in the header, excess values are ignored.
+the CSV than in the header, excess values are ignored. Header cells may not be empty.
 
 By default, output is in the form of a sequence of JSON documents, separated by newlines. If the array (-a) option is
 selected, output is in the form of a JSON array - the output opens with a '[' character, documents are separated by
