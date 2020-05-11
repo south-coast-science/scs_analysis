@@ -88,6 +88,10 @@ if __name__ == '__main__':
                 print("csv_reader: file not found: %s" % filename, file=sys.stderr)
                 exit(1)
 
+            except KeyError as ex:
+                print("csv_reader: empty header cell in: %s." % ex, file=sys.stderr)
+                exit(1)
+
             if cmd.verbose:
                 print("csv_reader: %s" % reader, file=sys.stderr)
                 sys.stderr.flush()
