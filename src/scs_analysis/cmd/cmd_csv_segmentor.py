@@ -43,10 +43,17 @@ class CmdCSVSegmentor(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.max_interval is None:
+        if self.__opts.max_interval is None:
             return False
 
         return True
+
+
+    def is_valid_interval(self):
+        if self.__opts.max_interval is None:
+            return True
+
+        return self.max_interval is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -79,4 +86,4 @@ class CmdCSVSegmentor(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdCSVSegmentor:{max_interval:%s, iso:%s, file_prefix:%s, verbose:%s}" % \
-               (self.max_interval, self.iso, self.file_prefix, self.verbose)
+               (self.__opts.max_interval, self.iso, self.file_prefix, self.verbose)
