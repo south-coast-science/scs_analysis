@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_core.data.timedelta import Timedelta
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,22 +20,22 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-f] [-i ISO] [-v] [PATH_1 .. PATH_N]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-i ISO] [-r { [[DD-]HH:]MM[:SS] | :SS }] "
+                                                    "[-v] [PATH_1 .. PATH_N]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
-                                 help="a time specification as **:/5:00")
+                                 help="a time specification as **:/05:00")
 
         # optional...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="report min and max in addition to midpoint")
 
-        self.__parser.add_option("--fill", "-f", action="store_true", dest="fill", default=False,
-                                 help="fill output with checkpoints missing from input")
-
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
+
+        self.__parser.add_option("--rule", "-r", type="string", nargs=1, action="store", dest="rule",
+                                 help="apply 75% rule with sampling INTERVAL")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -50,6 +52,17 @@ class CmdSampleAggregate(object):
         return True
 
 
+    def is_valid_interval(self):
+        if self.__opts.rule is None:
+            return True
+
+        return self.interval is not None
+
+
+    def ignore_rule(self):
+        return self.__opts.rule is None
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -63,13 +76,13 @@ class CmdSampleAggregate(object):
 
 
     @property
-    def fill(self):
-        return self.__opts.fill
+    def iso(self):
+        return self.__opts.iso
 
 
     @property
-    def iso(self):
-        return self.__opts.iso
+    def interval(self):
+        return Timedelta.construct_from_flag(self.__opts.rule)
 
 
     @property
@@ -89,5 +102,5 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, fill:%s, iso:%s, verbose:%s, nodes:%s}" %  \
-               (self.checkpoint, self.min_max, self.fill, self.iso, self.verbose, self.nodes)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, iso:%s, interval:%s, verbose:%s, nodes:%s}" %  \
+               (self.checkpoint, self.min_max, self.iso, self.interval, self.verbose, self.nodes)

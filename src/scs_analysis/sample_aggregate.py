@@ -35,25 +35,26 @@ is not present then the document is skipped. Note that the timezone of the outpu
 input rec values. Rows with successive duplicate rec values are ignored.
 
 Leaf node values may be numeric or strings. Numeric values are processed according to a simple linear regression.
-String values are processed using a categorical regression.
+String values are processed using a simple categorical regression.
 
 If the input document does not contain a specified path - or if the value is null - then the value is ignored.
 
-At each checkpoint, if there are no values for a given path, then only the rec field is reported. If the fill flag is
-set, then any checkpoints missing in the input data are written to stdout in sequence.
+A --rule flag is available. If used, individual aggregates are rejected if less than 75% of the expected data points
+are present. In this case, a timedelta must be supplied, indicating indicating the expected interval between the
+input samples.
 
 SYNOPSIS
-sample_aggregate.py -c HH:MM:SS [-m] [-t] [-f] [-i] [-v] [PATH_1..PATH_N]
+sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [[DD-]HH:]MM[:SS] | :SS }] [-v] [PATH_1 .. PATH_N]
 
 EXAMPLES
-csv_reader.py gases.csv | sample_aggregate.py -f -c **:/5:00 val
+csv_reader.py gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
 """
 
 import sys
 
 from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
-from scs_analysis.handler.sample_aggregate import SampleAggregate
 
+from scs_core.data.aggregate import Aggregate
 from scs_core.data.checkpoint_generator import CheckpointGenerator
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.path_dict import PathDict
@@ -63,11 +64,15 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    prev_checkpoint = None
+    checkpoint = None
     prev_rec = None
     aggregate = None
 
     document_count = 0
     processed_count = 0
+    output_count = 0
+    rejected_count = 0
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -82,9 +87,12 @@ if __name__ == '__main__':
         print("sample_aggregate: the checkpoint specification %s is invalid." % cmd.checkpoint, file=sys.stderr)
         exit(2)
 
+    if not cmd.is_valid_interval():
+        print("sample_aggregate: invalid format for rule interval.", file=sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print("sample_aggregate: %s" % cmd, file=sys.stderr)
-
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -92,7 +100,7 @@ if __name__ == '__main__':
 
         generator = CheckpointGenerator.construct(cmd.checkpoint)
 
-        aggregate = SampleAggregate(cmd.min_max, cmd.iso, cmd.nodes)
+        aggregate = Aggregate(cmd.min_max, cmd.iso, cmd.nodes)
 
         if cmd.verbose:
             print("sample_aggregate: %s" % aggregate, file=sys.stderr)
@@ -101,8 +109,6 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-
-        checkpoint = None
 
         for line in sys.stdin:
             # sample...
@@ -122,24 +128,22 @@ if __name__ == '__main__':
 
             # set checkpoint...
             if checkpoint is None:
-                checkpoint = generator.enclosing_localised_datetime(rec)
+                prev_checkpoint = generator.prev_localised_datetime(rec)
+                checkpoint = generator.next_localised_datetime(rec)
 
             # report and reset...
-            if rec.datetime > checkpoint.datetime:
-                aggregate.print(checkpoint)
+            if rec > checkpoint:
+                if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.interval, checkpoint - prev_checkpoint):
+                    aggregate.print(checkpoint)
+                    output_count += 1
+
+                else:
+                    rejected_count += 1
+
                 aggregate.reset()
 
-                filler = checkpoint
+                prev_checkpoint = checkpoint
                 checkpoint = generator.enclosing_localised_datetime(rec)
-
-                # fill missing...
-                while cmd.fill:
-                    filler = generator.next_localised_datetime(filler)
-
-                    if filler >= checkpoint:
-                        break
-
-                    aggregate.print(filler)
 
             # duplicate recs?...
             if rec == prev_rec:
@@ -152,12 +156,17 @@ if __name__ == '__main__':
             # append sample...
             aggregate.append(rec, datum)
 
-            processed_count += 1
             prev_rec = rec
+            processed_count += 1
 
         # report remainder...
         if aggregate.has_value():
-            aggregate.print(checkpoint)
+            if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.interval, checkpoint - prev_checkpoint):
+                aggregate.print(checkpoint)
+                output_count += 1
+
+            else:
+                rejected_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -169,7 +178,5 @@ if __name__ == '__main__':
 
     finally:
         if cmd.verbose:
-            output_count = 0 if aggregate is None else aggregate.output_count
-
-            print("sample_aggregate: documents: %d processed: %d output: %d" %
-                  (document_count, processed_count, output_count), file=sys.stderr)
+            print("sample_aggregate: documents: %d processed: %d output: %d rejected: %d" %
+                  (document_count, processed_count, output_count, rejected_count), file=sys.stderr)

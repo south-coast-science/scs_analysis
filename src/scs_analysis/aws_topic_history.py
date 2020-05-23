@@ -77,6 +77,10 @@ if __name__ == '__main__':
 
     cmd = CmdAWSTopicHistory()
 
+    if not cmd.is_valid_timedelta():
+        print("aws_topic_history: invalid format for timedelta.", file=sys.stderr)
+        exit(2)
+
     if not cmd.is_valid_start():
         print("aws_topic_history: invalid format for start datetime.", file=sys.stderr)
         exit(2)
@@ -88,7 +92,6 @@ if __name__ == '__main__':
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
-
 
     if cmd.verbose:
         print("aws_topic_history: %s" % cmd, file=sys.stderr)
