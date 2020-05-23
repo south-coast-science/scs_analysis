@@ -71,6 +71,10 @@ if __name__ == '__main__':
 
     cmd = CmdCSVSegmentor()
 
+    if not cmd.is_valid_interval():
+        print("csv_segmentor: invalid format for max interval.", file=sys.stderr)
+        exit(2)
+
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)

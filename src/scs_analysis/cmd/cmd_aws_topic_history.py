@@ -55,7 +55,7 @@ class CmdAWSTopicHistory(object):
         if self.topic is None:
             return False
 
-        if self.__opts.timedelta is not None and self.timedelta is None:
+        if self.__opts.start is None and self.__opts.end is not None:
             return False
 
         count = 0
@@ -63,10 +63,10 @@ class CmdAWSTopicHistory(object):
         if self.latest:
             count += 1
 
-        if self.timedelta is not None:
+        if self.__opts.timedelta is not None:
             count += 1
 
-        if self.start is not None:
+        if self.__opts.start is not None:
             count += 1
 
         if count != 1:
@@ -75,18 +75,25 @@ class CmdAWSTopicHistory(object):
         return True
 
 
+    def is_valid_timedelta(self):
+        if self.__opts.timedelta is None:
+            return True
+
+        return self.timedelta is not None
+
+
     def is_valid_start(self):
         if self.__opts.start is None:
             return True
 
-        return LocalizedDatetime.construct_from_iso8601(self.__opts.start) is not None
+        return self.start is not None
 
 
     def is_valid_end(self):
         if self.__opts.end is None:
             return True
 
-        return LocalizedDatetime.construct_from_iso8601(self.__opts.end) is not None
+        return self.end is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -103,12 +110,12 @@ class CmdAWSTopicHistory(object):
 
     @property
     def start(self):
-        return None if self.__opts.start is None else LocalizedDatetime.construct_from_iso8601(self.__opts.start)
+        return LocalizedDatetime.construct_from_iso8601(self.__opts.start)
 
 
     @property
     def end(self):
-        return None if self.__opts.end is None else LocalizedDatetime.construct_from_iso8601(self.__opts.end)
+        return LocalizedDatetime.construct_from_iso8601(self.__opts.end)
 
 
     @property
@@ -140,5 +147,5 @@ class CmdAWSTopicHistory(object):
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, timedelta:%s, start:%s, end:%s, rec_only:%s, include_wrapper:%s, " \
                "verbose:%s, topic:%s}" % \
-                    (self.latest, self.timedelta, self.start, self.end, self.rec_only, self.include_wrapper,
+                    (self.latest, self.__opts.timedelta, self.start, self.end, self.rec_only, self.include_wrapper,
                      self.verbose, self.topic)
