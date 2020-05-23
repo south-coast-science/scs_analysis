@@ -41,7 +41,7 @@ If the input document does not contain a specified path - or if the value is nul
 
 A --rule flag is available. If used, individual aggregates are rejected if less than 75% of the expected data points
 are present. In this case, a timedelta must be supplied, indicating indicating the expected interval between the
-input samples.
+input samples. The interval may be found using the aws_topic_history utility.
 
 SYNOPSIS
 sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [[DD-]HH:]MM[:SS] | :SS }] [-v] [PATH_1 .. PATH_N]

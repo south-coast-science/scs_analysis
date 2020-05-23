@@ -13,7 +13,7 @@ retrieval system. Data can be retrieved by start or start + end localised dateti
 timedelta back in time from now.
 
 A latest mode returns the most recent document, or none if the topic has never received a publication. A --latest-at
-mode return the most recent document, or none, prior to or at the given datetime.
+mode returns the most recent document, or none, prior to, or at the given datetime.
 
 The --rec-only flag causes only the rec fields on the documents to be returned. This results in much faster data
 retrieval, and is useful if sampling continuity is being tested.
