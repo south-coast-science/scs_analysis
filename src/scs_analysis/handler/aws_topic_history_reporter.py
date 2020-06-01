@@ -9,6 +9,8 @@ source repo: scs_analysis
 import sys
 import time
 
+from scs_core.data.timedelta import Timedelta
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -36,10 +38,11 @@ class AWSTopicHistoryReporter(object):
             return
 
         self.__document_count += block_length
-        elapsed_time = round(time.time() - self.__start_time, 1)
+        elapsed_time = int(round(time.time() - self.__start_time))
+        elapsed_delta = Timedelta(seconds=elapsed_time)
 
-        print("aws_topic_history: block start:%s docs:%d elapsed:%0.1f" %
-              (block_start, self.__document_count, elapsed_time), file=sys.stderr)
+        print("aws_topic_history: block start:%s docs:%d elapsed:%s" %
+              (block_start, self.__document_count, elapsed_delta.as_json()), file=sys.stderr)
 
         sys.stderr.flush()
 
