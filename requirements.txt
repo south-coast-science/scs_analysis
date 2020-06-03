@@ -1,2 +1,9 @@
-AWSIoTPythonSDK
-matplotlib
+AWSIoTPythonSDK~=1.4.8
+pytz~=2020.1
+tzlocal~=2.1
+setuptools~=47.1.1
+matplotlib~=3.2.1
+numpy~=1.19.0rc2
+scipy~=1.5.0rc1
+paho-mqtt~=1.5.0
+pysftp~=0.2.9
