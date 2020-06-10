@@ -132,7 +132,13 @@ if __name__ == '__main__':
             processed_count += 1
 
             # bounds...
-            in_bounds = (lower_bound is None or value >= lower_bound) and (upper_bound is None or value < upper_bound)
+            try:
+                in_bounds = (lower_bound is None or value >= lower_bound) and \
+                            (upper_bound is None or value < upper_bound)
+            except TypeError as ex:
+                in_bounds = None
+                print("sample_subset: TypeError: %s" % jstr, file=sys.stderr)
+                exit(1)
 
             if (cmd.inclusions and not in_bounds) or (cmd.exclusions and in_bounds):
                 continue

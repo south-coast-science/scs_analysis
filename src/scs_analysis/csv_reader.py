@@ -50,6 +50,7 @@ import sys
 from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 
 from scs_core.csv.csv_reader import CSVReader, CSVReaderException
+from scs_core.csv.csv_dict import CSVHeaderError
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -118,6 +119,10 @@ if __name__ == '__main__':
                     sys.stdout.flush()
 
                     rows += 1
+
+            except CSVHeaderError as ex:
+                print("csv_reader: clashing column names: '%s' and '%s'" % (ex.left, ex.right), file=sys.stderr)
+                exit(1)
 
             except CSVReaderException as ex:
                 if cmd.verbose:
