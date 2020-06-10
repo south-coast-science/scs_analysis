@@ -119,6 +119,10 @@ if __name__ == '__main__':
 
                     rows += 1
 
+            except TypeError as ex:
+                print("csv_reader: clashing column names: '%s" % ex, file=sys.stderr)
+                exit(1)
+
             except CSVReaderException as ex:
                 if cmd.verbose:
                     print("csv_reader: ending file on row %d: %s" % (rows, ex), file=sys.stderr)

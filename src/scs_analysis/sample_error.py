@@ -105,7 +105,10 @@ if __name__ == '__main__':
                 continue
 
             # error...
-            error = reported / reference if cmd.scaling else reported - reference
+            try:
+                error = reported / reference if cmd.scaling else reported - reference
+            except ZeroDivisionError:
+                continue
 
             # report...
             datum.append(cmd.error_path, round(error, cmd.precision))
