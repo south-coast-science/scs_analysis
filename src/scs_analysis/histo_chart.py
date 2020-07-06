@@ -18,7 +18,7 @@ Depending on operating system, it may be necessary to edit the matplotlibrc file
 back-end graphics system.
 
 SYNOPSIS
-histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] [-v] PATH
+histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] [-o FILENAME] [-e] [-v] PATH
 
 EXAMPLES
 socket_receiver.py | histo_chart.py val.CO2.cnc -x -10 10 -e -o CO2.csv
@@ -75,7 +75,8 @@ if __name__ == '__main__':
             print("histo_chart: %s" % reader, file=sys.stderr)
 
         # chart...
-        chart = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.path, cmd.outfile)
+        chart = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.precision, cmd.path,
+                           outfile=cmd.outfile)
 
         if cmd.verbose:
             print("histo_chart: %s" % chart, file=sys.stderr)

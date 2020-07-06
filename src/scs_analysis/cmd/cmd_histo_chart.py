@@ -20,8 +20,8 @@ class CmdHistoChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x MIN MAX] [-c BIN_COUNT] [-o FILENAME] [-e] "
-                                                    "[-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] "
+                                                    "[-o FILENAME] [-e] [-v] PATH", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
@@ -32,6 +32,9 @@ class CmdHistoChart(object):
 
         self.__parser.add_option("--bincount", "-c", type="int", nargs=1, action="store", default=200, dest="bin_count",
                                  help="number of bins (default 200)")
+
+        self.__parser.add_option("--precision", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
+                                 help="precision of reported deltas (default 3)")
 
         self.__parser.add_option("--output", "-o", type="string", nargs=1, action="store", dest="outfile",
                                  help="output histogram to CSV file")
@@ -72,6 +75,11 @@ class CmdHistoChart(object):
 
 
     @property
+    def precision(self):
+        return self.__opts.precision
+
+
+    @property
     def outfile(self):
         return self.__opts.outfile
 
@@ -98,5 +106,7 @@ class CmdHistoChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, outfile:%s, echo:%s, verbose:%s, path:%s}" % \
-                    (self.batch_mode, self.x, self.bin_count, self.outfile, self.echo, self.verbose, self.path)
+        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, precision:%d, outfile:%s, echo:%s, verbose:%s, " \
+               "path:%s}" % \
+                    (self.batch_mode, self.x, self.bin_count, self.precision, self.outfile, self.echo, self.verbose,
+                     self.path)
