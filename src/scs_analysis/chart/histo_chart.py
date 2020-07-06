@@ -27,7 +27,7 @@ class HistoChart(Chart):
     classdocs
     """
 
-    def __init__(self, batch_mode, x_min, x_max, bin_count, path, outfile=None):
+    def __init__(self, batch_mode, x_min, x_max, bin_count, precision, path, outfile=None):
         """
         Constructor
         """
@@ -43,7 +43,7 @@ class HistoChart(Chart):
         self.__outfile = outfile
 
         # histo...
-        self.__histogram = Histogram(x_min, x_max, bin_count, path)
+        self.__histogram = Histogram(x_min, x_max, bin_count, precision, path)
 
         # plotter...
         plt.ion()                   # set plot to animated
