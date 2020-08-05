@@ -1,11 +1,11 @@
-AWSIoTPythonSDK~=1.4.8
-matplotlib~=3.2.1
-numpy~=1.19.0rc2
+AWSIoTPythonSDK~=1.4.9
+matplotlib~=3.3.0
+numpy~=1.19.1
 paho-mqtt~=1.5.0
 pycurl~=7.43.0.5
 pypandoc~=1.5
 pysftp~=0.2.9
 pytz~=2020.1
-scipy~=1.5.0rc1
-setuptools~=47.1.1
+scipy~=1.5.2
+setuptools~=49.2.1
 tzlocal~=2.1
