@@ -1,3 +1,10 @@
+"""
+Created on 4 Sep 2020
+
+@author: Jade Page (jade.page@southcoastscience.com)
+https://packaging.python.org/tutorials/packaging-projects/
+"""
+
 import setuptools
 
 with open("README.md", "r") as fh:
