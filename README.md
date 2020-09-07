@@ -15,3 +15,5 @@ https://dl.bintray.com/pycurl/pycurl/
 
 
     sudo apt install libcurl4-openssl-dev libssl-dev
+
+https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/
