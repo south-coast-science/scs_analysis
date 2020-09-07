@@ -15,7 +15,7 @@ with open('requirements.txt') as req_txt:
 
 setuptools.setup(
     name="scs-analysis",
-    version="1.0.4",
+    version="1.0.5",
     author="South Coast Science",
     author_email="contact@southcoastscience.com",
     description="Information management and analysis utilities for South Coast Science data consumers.",
@@ -38,6 +38,7 @@ setuptools.setup(
         'src/scs_analysis/aws_byline.py',
         'src/scs_analysis/aws_client_auth.py',
         'src/scs_analysis/aws_mqtt_client.py',
+        'src/scs_analysis/aws_mqtt_control.py',
         'src/scs_analysis/aws_topic_history.py',
         'src/scs_analysis/aws_topic_publisher.py',
         'src/scs_analysis/csv_reader.py',
