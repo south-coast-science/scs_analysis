@@ -9,8 +9,8 @@ source repo: scs_analysis
 
 DESCRIPTION
 The node utility is used to extract a node or nodes from within a JSON document. Data is presented as a sequence of
-documents on stdin, and the extracted node(s) are passed to stdout. The extracted node may be a leaf node or an internal
-node. Alternatively to stdin, a single JSON document can be read from a file.
+documents on stdin, and the extracted node(s) are passed to stdout. Alternatively to stdin, a single JSON document
+can be read from a file.The extracted node may be a leaf node or an internal node.
 
 By default, only the specified nodes are passed to the output. In the --exclude mode, all nodes are passed to stdout,
 with the exception of the specified nodes. In the default mode, if no node path is specified, the whole input document
