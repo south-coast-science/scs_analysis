@@ -71,7 +71,7 @@ if __name__ == '__main__':
         # network...
         if not Network.is_available():
             if cmd.verbose:
-                print("aws_byline: waiting for network...", file=sys.stderr, end='')
+                print("aws_byline: waiting for network", file=sys.stderr)
                 sys.stderr.flush()
 
             Network.wait()
