@@ -57,7 +57,6 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
-from scs_core.client.http_client import HTTPClient
 from scs_core.client.network_unavailable_exception import NetworkUnavailableException
 
 from scs_core.data.datetime import LocalizedDatetime
@@ -119,14 +118,11 @@ if __name__ == '__main__':
         # reporter...
         reporter = AWSTopicHistoryReporter(cmd.verbose)
 
-        # HTTPClient...
-        http_client = HTTPClient(False)
-
         # byline manager...
-        byline_manager = BylineManager(http_client, api_auth)
+        byline_manager = BylineManager(api_auth)
 
         # message manager...
-        message_manager = MessageManager(http_client, api_auth, reporter)
+        message_manager = MessageManager(api_auth, reporter)
 
         if cmd.verbose:
             print("aws_topic_history: %s" % message_manager, file=sys.stderr)

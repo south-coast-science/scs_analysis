@@ -36,7 +36,6 @@ from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 
-from scs_core.client.http_client import HTTPClient
 from scs_core.client.network_unavailable_exception import NetworkUnavailableException
 
 from scs_core.data.json import JSONify
@@ -76,7 +75,7 @@ if __name__ == '__main__':
             exit(1)
 
         # BylineManager...
-        manager = BylineManager(HTTPClient(False), api_auth)
+        manager = BylineManager(api_auth)
 
         if cmd.verbose:
             print("aws_byline: %s" % manager, file=sys.stderr)

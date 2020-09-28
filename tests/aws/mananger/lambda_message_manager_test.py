@@ -11,8 +11,6 @@ from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryRepor
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
-from scs_core.client.http_client import HTTPClient
-
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
@@ -32,11 +30,8 @@ print(api_auth)
 # reporter...
 reporter = AWSTopicHistoryReporter(False)
 
-# HTTPClient...
-http_client = HTTPClient(False)
-
 # message manager...
-message_manager = MessageManager(http_client, api_auth, reporter)
+message_manager = MessageManager(api_auth, reporter)
 print(message_manager)
 
 document = message_manager.find_latest_for_topic(topic, up_to)
