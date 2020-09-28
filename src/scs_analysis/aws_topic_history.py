@@ -57,7 +57,7 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
-from scs_core.client.network_unavailable_exception import NetworkUnavailableException
+from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -182,8 +182,8 @@ if __name__ == '__main__':
     except (ConnectionError, HTTPException) as ex:
         print("aws_topic_history: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
-    except NetworkUnavailableException:
-        print("aws_topic_history: network not available.", file=sys.stderr)
+    except ResourceUnavailableException as ex:
+        print("aws_topic_history: %s: %s" % (ex.resource, str(ex.original_exception)), file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
