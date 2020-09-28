@@ -106,14 +106,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # network...
-        if not Network.is_available():
-            if cmd.verbose:
-                print("aws_topic_history: waiting for network", file=sys.stderr)
-                sys.stderr.flush()
-
-            Network.wait()
-
         # APIAuth...
         api_auth = APIAuth.load(Host)
 
@@ -136,6 +128,17 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("aws_topic_history: %s" % message_manager, file=sys.stderr)
             sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # check...
+
+        if not Network.is_available():
+            if cmd.verbose:
+                print("aws_topic_history: waiting for network", file=sys.stderr)
+                sys.stderr.flush()
+
+            Network.wait()
 
 
         # ------------------------------------------------------------------------------------------------------------

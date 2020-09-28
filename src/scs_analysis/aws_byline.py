@@ -68,14 +68,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # network...
-        if not Network.is_available():
-            if cmd.verbose:
-                print("aws_byline: waiting for network", file=sys.stderr)
-                sys.stderr.flush()
-
-            Network.wait()
-
         # APIAuth...
         api_auth = APIAuth.load(Host)
 
@@ -89,6 +81,17 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("aws_byline: %s" % manager, file=sys.stderr)
             sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # check...
+
+        if not Network.is_available():
+            if cmd.verbose:
+                print("aws_byline: waiting for network", file=sys.stderr)
+                sys.stderr.flush()
+
+            Network.wait()
 
 
         # ------------------------------------------------------------------------------------------------------------
