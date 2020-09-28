@@ -22,7 +22,8 @@ EXAMPLES
 aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
 
 DOCUMENT EXAMPLE - OUTPUT
-{"device": "scs-be2-3", "topic": "south-coast-science-dev/development/loc/1/gases", "rec": "2018-12-25T20:31:04Z"}
+{"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/loc/1/particulates",
+"latest-pub": "2020-09-25T11:49:46Z", "latest-rec": "2020-09-25T11:49:40Z"}
 
 SEE ALSO
 scs_analysis/aws_topic_history
@@ -48,6 +49,8 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+
+    group = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -87,13 +90,13 @@ if __name__ == '__main__':
 
         # get...
         if cmd.topic:
-            bylines = manager.find_bylines_for_topic(cmd.topic)
+            group = manager.find_bylines_for_topic(cmd.topic)
 
         else:
-            bylines = manager.find_bylines_for_device(cmd.device)
+            group = manager.find_bylines_for_device(cmd.device)
 
         # process...
-        for byline in bylines:
+        for byline in group.bylines:
             if cmd.latest:
                 if latest is None or latest.rec < byline.rec:
                     latest = byline
@@ -118,3 +121,10 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("aws_byline: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose and group is not None and len(group):
+            latest_pub = group.latest_pub()
+            latest_iso = None if latest_pub is None else latest_pub.as_iso8601()
+
+            print("aws_byline: latest_pub: %s" % latest_iso, file=sys.stderr)
