@@ -57,6 +57,7 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
+from scs_core.client.network import Network
 from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.datetime import LocalizedDatetime
@@ -104,6 +105,14 @@ if __name__ == '__main__':
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        # network...
+        if not Network.is_available():
+            if cmd.verbose:
+                print("aws_topic_history: waiting for network...", file=sys.stderr, end='')
+                sys.stderr.flush()
+
+            Network.wait()
 
         # APIAuth...
         api_auth = APIAuth.load(Host)
@@ -183,7 +192,7 @@ if __name__ == '__main__':
         print("aws_topic_history: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
     except ResourceUnavailableException as ex:
-        print("aws_topic_history: %s: %s" % (ex.resource, str(ex.original_exception)), file=sys.stderr)
+        print("aws_topic_history: %s" % repr(ex), file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
