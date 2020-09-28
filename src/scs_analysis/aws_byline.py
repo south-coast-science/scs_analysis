@@ -23,7 +23,7 @@ aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
 
 DOCUMENT EXAMPLE - OUTPUT
 {"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/loc/1/particulates",
-"latest-pub": "2020-09-25T11:49:46Z", "latest-rec": "2020-09-25T11:49:40Z"}
+"pub": "2020-09-25T11:49:46Z", "rec": "2020-09-25T11:49:40Z"}
 
 SEE ALSO
 scs_analysis/aws_topic_history
