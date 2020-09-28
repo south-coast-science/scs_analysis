@@ -50,7 +50,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    bylines = []
+    group = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -90,13 +90,13 @@ if __name__ == '__main__':
 
         # get...
         if cmd.topic:
-            bylines = manager.find_bylines_for_topic(cmd.topic)
+            group = manager.find_bylines_for_topic(cmd.topic)
 
         else:
-            bylines = manager.find_bylines_for_device(cmd.device)
+            group = manager.find_bylines_for_device(cmd.device)
 
         # process...
-        for byline in bylines:
+        for byline in group.bylines:
             if cmd.latest:
                 if latest is None or latest.rec < byline.rec:
                     latest = byline
@@ -123,7 +123,8 @@ if __name__ == '__main__':
             print("aws_byline: KeyboardInterrupt", file=sys.stderr)
 
     finally:
-        if cmd.verbose and cmd.device and bylines:
-            latest_pub = max([byline.latest_pub for byline in bylines])
-            print("aws_byline: latest_pub:%s" % latest_pub.as_iso8601(), file=sys.stderr)
+        if cmd.verbose and group is not None and len(group):
+            latest_pub = group.latest_pub()
+            latest_iso = None if latest_pub is None else latest_pub.as_iso8601()
 
+            print("aws_byline: latest_pub: %s" % latest_iso, file=sys.stderr)
