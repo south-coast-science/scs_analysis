@@ -23,7 +23,7 @@ aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
 
 DOCUMENT EXAMPLE - OUTPUT
 {"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/loc/1/particulates",
-"latest-pub": "2020-09-25T11:49:46Z", "latest-rec": "2020-09-25T11:49:40Z"}
+"pub": "2020-09-25T11:49:46Z", "rec": "2020-09-25T11:49:40Z"}
 
 SEE ALSO
 scs_analysis/aws_topic_history
@@ -36,8 +36,8 @@ from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 
-from scs_core.client.http_client import HTTPClient
-from scs_core.client.network_unavailable_exception import NetworkUnavailableException
+from scs_core.client.network import Network
+from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.json import JSONify
 
@@ -76,11 +76,22 @@ if __name__ == '__main__':
             exit(1)
 
         # BylineManager...
-        manager = BylineManager(HTTPClient(False), api_auth)
+        manager = BylineManager(api_auth)
 
         if cmd.verbose:
             print("aws_byline: %s" % manager, file=sys.stderr)
             sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # check...
+
+        if not Network.is_available():
+            if cmd.verbose:
+                print("aws_byline: waiting for network.", file=sys.stderr)
+                sys.stderr.flush()
+
+            Network.wait()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -115,8 +126,8 @@ if __name__ == '__main__':
     except (ConnectionError, HTTPException) as ex:
         print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
-    except NetworkUnavailableException:
-        print("aws_byline: network not available.", file=sys.stderr)
+    except ResourceUnavailableException as ex:
+        print("aws_byline: %s" % repr(ex), file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:

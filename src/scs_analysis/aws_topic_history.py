@@ -57,8 +57,8 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
-from scs_core.client.http_client import HTTPClient
-from scs_core.client.network_unavailable_exception import NetworkUnavailableException
+from scs_core.client.network import Network
+from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -119,18 +119,26 @@ if __name__ == '__main__':
         # reporter...
         reporter = AWSTopicHistoryReporter(cmd.verbose)
 
-        # HTTPClient...
-        http_client = HTTPClient(False)
-
         # byline manager...
-        byline_manager = BylineManager(http_client, api_auth)
+        byline_manager = BylineManager(api_auth)
 
         # message manager...
-        message_manager = MessageManager(http_client, api_auth, reporter)
+        message_manager = MessageManager(api_auth, reporter)
 
         if cmd.verbose:
             print("aws_topic_history: %s" % message_manager, file=sys.stderr)
             sys.stderr.flush()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # check...
+
+        if not Network.is_available():
+            if cmd.verbose:
+                print("aws_topic_history: waiting for network.", file=sys.stderr)
+                sys.stderr.flush()
+
+            Network.wait()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -186,8 +194,8 @@ if __name__ == '__main__':
     except (ConnectionError, HTTPException) as ex:
         print("aws_topic_history: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
-    except NetworkUnavailableException:
-        print("aws_topic_history: network not available.", file=sys.stderr)
+    except ResourceUnavailableException as ex:
+        print("aws_topic_history: %s" % repr(ex), file=sys.stderr)
 
     except KeyboardInterrupt:
         if cmd.verbose:
