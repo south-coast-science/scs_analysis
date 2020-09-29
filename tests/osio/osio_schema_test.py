@@ -16,8 +16,6 @@ south-coast-science-dev
 43308b72-ad41-4555-b075-b4245c1971db
 """
 
-from scs_core.client.http_client import HTTPClient
-
 from scs_core.osio.manager.schema_manager import SchemaManager
 
 
@@ -30,7 +28,7 @@ api_key = "43308b72-ad41-4555-b075-b4245c1971db"
 # --------------------------------------------------------------------------------------------------------------------
 
 # manager...
-manager = SchemaManager(HTTPClient(False), api_key)
+manager = SchemaManager(api_key)
 print(manager)
 print("=")
 
