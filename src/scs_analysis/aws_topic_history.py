@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
         if not Network.is_available():
             if cmd.verbose:
-                print("aws_topic_history: waiting for network", file=sys.stderr)
+                print("aws_topic_history: waiting for network.", file=sys.stderr)
                 sys.stderr.flush()
 
             Network.wait()
