@@ -44,8 +44,6 @@ from scs_analysis.handler.osio_mqtt_control_handler import OSIOMQTTControlHandle
 
 from scs_core.control.control_datum import ControlDatum
 
-from scs_core.client.http_client import HTTPClient
-
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
@@ -107,7 +105,7 @@ if __name__ == '__main__':
             sys.stderr.flush()
 
         # manager...
-        manager = TopicManager(HTTPClient(False), api_auth.api_key)
+        manager = TopicManager(api_auth.api_key)
 
         # check topic...
         if not manager.find(cmd.device_topic):
