@@ -67,9 +67,6 @@ if __name__ == '__main__':
         prev_time = None
 
         for line in sys.stdin:
-            if cmd.verbose:
-                print(line, file=sys.stderr)
-
             datum = PathDict.construct_from_jstr(line)
 
             if datum is None:
