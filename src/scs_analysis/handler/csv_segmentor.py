@@ -7,7 +7,6 @@ source repo: scs_analysis
 """
 
 from collections import OrderedDict
-from datetime import timedelta
 
 from scs_core.csv.csv_writer import CSVWriter
 
@@ -24,7 +23,7 @@ class CSVSegmentor(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, max_interval: timedelta, file_prefix):
+    def __init__(self, max_interval: Timedelta, file_prefix):
         """
         Constructor
         """

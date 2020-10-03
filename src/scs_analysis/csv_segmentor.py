@@ -86,7 +86,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        segmentor = CSVSegmentor(cmd.max_interval.delta, cmd.file_prefix)
+        segmentor = CSVSegmentor(cmd.max_interval, cmd.file_prefix)
 
         if cmd.verbose:
             print("csv_segmentor: %s" % segmentor, file=sys.stderr)
