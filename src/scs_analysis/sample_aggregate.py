@@ -44,7 +44,7 @@ are present. In this case, a timedelta must be supplied, indicating indicating t
 input samples. The interval may be found using the aws_topic_history utility.
 
 SYNOPSIS
-sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [[DD-]HH:]MM[:SS] | :SS }] [-v] [PATH_1 .. PATH_N]
+sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] [-v] [PATH_1 .. PATH_N]
 
 EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
