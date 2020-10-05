@@ -20,7 +20,7 @@ class CmdCSVSegmentor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -m { [[DD-]HH:]MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] "
+        self.__parser = optparse.OptionParser(usage="%prog -m { [DD-]HH:MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] "
                                                     "[-v]", version="%prog 1.0")
 
         # compulsory...
