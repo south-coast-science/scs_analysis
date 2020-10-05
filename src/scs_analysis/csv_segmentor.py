@@ -24,7 +24,7 @@ The csv_segmentor utility generates a report giving the specifications of each c
 is given, then the CSV files are not generated, but the report is still produced.
 
 SYNOPSIS
-csv_segmentor.py -m { [[DD-]HH:]MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] [-v]
+csv_segmentor.py -m { [DD-]HH:MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] [-v]
 
 EXAMPLES
 csv_reader.py -v scs-bgx-508-gases-2020-Q1.csv | \
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        segmentor = CSVSegmentor(cmd.max_interval.delta, cmd.file_prefix)
+        segmentor = CSVSegmentor(cmd.max_interval, cmd.file_prefix)
 
         if cmd.verbose:
             print("csv_segmentor: %s" % segmentor, file=sys.stderr)
