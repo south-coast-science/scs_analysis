@@ -67,9 +67,9 @@ if __name__ == '__main__':
 
     if cmd.set():
         if auth is None and not cmd.is_complete():
-            print("aws_api_auth: No configuration is stored. You must therefore set all fields.", file=sys.stderr)
+            print("aws_api_auth: No configuration is stored - you must therefore set all fields.", file=sys.stderr)
             cmd.print_help(sys.stderr)
-            exit(1)
+            exit(2)
 
         endpoint = cmd.endpoint if cmd.endpoint else auth.endpoint
         api_key = cmd.api_key if cmd.api_key else auth.api_key
