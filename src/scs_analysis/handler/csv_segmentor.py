@@ -10,8 +10,8 @@ from collections import OrderedDict
 
 from scs_core.csv.csv_writer import CSVWriter
 
-from scs_core.data.format import Format
 from scs_core.data.json import JSONable
+from scs_core.data.str import Str
 from scs_core.data.timedelta import Timedelta
 
 
@@ -86,7 +86,7 @@ class CSVSegmentor(object):
 
     def __str__(self, *args, **kwargs):
         return "CSVSegmentor:{max_interval:%s, file_prefix:%s, blocks:%s}" % \
-               (self.max_interval, self.file_prefix, Format.collection(self.blocks))
+               (self.max_interval, self.file_prefix, Str.collection(self.blocks))
 
 
 # --------------------------------------------------------------------------------------------------------------------
