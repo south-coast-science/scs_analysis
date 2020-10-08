@@ -18,16 +18,23 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-v]",
+                                              version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--device", "-d", type="string", nargs=1, action="store", dest="device",
-                                 help="device tag")
+                                 help="report bylines for DEVICE")
 
         self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
-                                 help="topic path")
+                                 help="report bylines for TOPIC")
+
+        self.__parser.add_option("--all", "-a", action="store_true", dest="all", default=False,
+                                 help="report all bylines")
 
         # optional...
+        self.__parser.add_option("--excluded", "-x", type="string", nargs=1, action="store", dest="excluded",
+                                 help="exclude topics ending with EXCLUDED")
+
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="only report the most recent byline")
 
@@ -40,7 +47,16 @@ class CmdAWSByline(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if bool(self.device) == bool(self.topic):
+        count = 0
+
+        if bool(self.device):
+            count += 1
+        if bool(self.topic):
+            count += 1
+        if self.all:
+            count += 1
+
+        if count != 1:
             return False
 
         if self.latest and not bool(self.topic):
@@ -62,13 +78,23 @@ class CmdAWSByline(object):
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def latest(self):
+        return self.__opts.latest
 
 
     @property
-    def latest(self):
-        return self.__opts.latest
+    def all(self):
+        return self.__opts.all
+
+
+    @property
+    def excluded(self):
+        return self.__opts.excluded
+
+
+    @property
+    def verbose(self):
+        return self.__opts.verbose
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -78,5 +104,5 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, verbose:%s}" % \
-               (self.device, self.topic, self.latest, self.verbose)
+        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, verbose:%s}" % \
+               (self.device, self.topic, self.latest, self.all, self.excluded, self.verbose)

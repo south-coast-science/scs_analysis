@@ -22,7 +22,7 @@ print(manager)
 print("-")
 
 # TopicBylineGroup...
-group = manager.find_bylines_for_topic('')
+group = manager.find_bylines_for_topic('', excluded='/control')
 print(group)
 print("-")
 
@@ -45,6 +45,10 @@ for device in group.devices:
 print("=")
 
 # DeviceBylineGroup...
+group = manager.find_bylines_for_device('scs-bgx-431', excluded='/control')
+print(group)
+print("-")
+
 group = manager.find_bylines_for_device('scs-bgx-431')
 print(group)
 print("-")
