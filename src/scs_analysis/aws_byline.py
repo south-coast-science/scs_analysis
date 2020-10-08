@@ -101,13 +101,13 @@ if __name__ == '__main__':
 
         # find...
         if cmd.topic:
-            group = manager.find_bylines_for_topic(cmd.topic)
+            group = manager.find_bylines_for_topic(cmd.topic, excluded=cmd.excluded)
 
         elif cmd.device:
-            group = manager.find_bylines_for_device(cmd.device)
+            group = manager.find_bylines_for_device(cmd.device, excluded=cmd.excluded)
 
         else:
-            group = manager.find_bylines_for_topic('')
+            group = manager.find_bylines_for_topic('', excluded=cmd.excluded)
 
         # report...
         for byline in group.bylines:

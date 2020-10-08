@@ -18,7 +18,7 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-v]",
                                               version="%prog 1.0")
 
         # compulsory...
@@ -32,6 +32,9 @@ class CmdAWSByline(object):
                                  help="report all bylines")
 
         # optional...
+        self.__parser.add_option("--excluded", "-x", type="string", nargs=1, action="store", dest="excluded",
+                                 help="exclude topics ending with EXCLUDED")
+
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="only report the most recent byline")
 
@@ -85,6 +88,11 @@ class CmdAWSByline(object):
 
 
     @property
+    def excluded(self):
+        return self.__opts.excluded
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -96,5 +104,5 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, verbose:%s}" % \
-               (self.device, self.topic, self.latest, self.all, self.verbose)
+        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, verbose:%s}" % \
+               (self.device, self.topic, self.latest, self.all, self.excluded, self.verbose)
