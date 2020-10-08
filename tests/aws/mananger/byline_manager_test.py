@@ -8,8 +8,6 @@ Created on 7 Oct 2020
 
 import json
 
-from collections import OrderedDict
-
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.data.byline import DeviceBylineGroup
 from scs_core.aws.manager.byline_manager import BylineManager
