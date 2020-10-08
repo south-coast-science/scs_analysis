@@ -19,7 +19,7 @@ SYNOPSIS
 aws_byline.py { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-v]
 
 EXAMPLES
-aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
+aws_byline.py -t south-coast-science-demo -v -x /control
 
 DOCUMENT EXAMPLE - OUTPUT
 {"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/loc/1/particulates",
