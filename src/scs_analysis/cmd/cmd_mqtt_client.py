@@ -6,6 +6,8 @@ Created on 23 Mar 2017
 
 import optparse
 
+from scs_core.data.str import Str
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -127,12 +129,10 @@ class CmdMQTTClient(object):
 
 
     def __str__(self, *args, **kwargs):
-        subscriptions = '[' + ', '.join(str(subscription) for subscription in self.subscriptions) + ']'
-
-        return "CmdMQTTClient:{subscriptions:%s, channel:%s, channel_uds:%s, uds_pub:%s, no_wrapper:%s, echo:%s, " \
-               "verbose:%s}" % \
-               (subscriptions, self.channel, self.channel_uds, self.uds_pub, self.no_wrapper, self.echo,
-                self.verbose)
+        return "CmdMQTTClient:{subscriptions:%s, channel:%s, channel_uds:%s, uds_pub:%s, no_wrapper:%s, " \
+               "echo:%s, verbose:%s}" % \
+               (Str.collection(self.subscriptions), self.channel, self.channel_uds, self.uds_pub, self.no_wrapper,
+                self.echo, self.verbose)
 
 
 # --------------------------------------------------------------------------------------------------------------------

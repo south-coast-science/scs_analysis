@@ -10,16 +10,16 @@ source repo: scs_analysis
 DESCRIPTION
 The aws_byline utility is used to find the date / time of the most-recently published message for a given topic
 or device. The user may specify a topic path (find all devices that have published to the given topic), or a device tag
-(find all topics which the given device has published to), but not both.
+(find all topics which the given device has published to), but not both. A further option --all reports all bylines.
 
 Output is in the form of zero or more JSON documents, indicating the device, topic and localised date / time for each
 latest sense event.
 
 SYNOPSIS
-aws_byline.py { -d DEVICE | -t TOPIC [-l] } [-v]
+aws_byline.py { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-v]
 
 EXAMPLES
-aws_byline.py -t south-coast-science-demo/brighton/loc/1/gases
+aws_byline.py -t south-coast-science-demo -v -x /control
 
 DOCUMENT EXAMPLE - OUTPUT
 {"device": "scs-bgx-401", "topic": "south-coast-science-demo/brighton/loc/1/particulates",
@@ -99,14 +99,17 @@ if __name__ == '__main__':
 
         latest = None
 
-        # get...
+        # find...
         if cmd.topic:
-            group = manager.find_bylines_for_topic(cmd.topic)
+            group = manager.find_bylines_for_topic(cmd.topic, excluded=cmd.excluded)
+
+        elif cmd.device:
+            group = manager.find_bylines_for_device(cmd.device, excluded=cmd.excluded)
 
         else:
-            group = manager.find_bylines_for_device(cmd.device)
+            group = manager.find_bylines_for_topic('', excluded=cmd.excluded)
 
-        # process...
+        # report...
         for byline in group.bylines:
             if cmd.latest:
                 if latest is None or latest.rec < byline.rec:
