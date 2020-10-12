@@ -96,7 +96,7 @@ if __name__ == '__main__':
         conf = MQTTConf.load(Host)
 
         if cmd.verbose:
-            print("aws_mqtt_client: conf: %s" % conf, file=sys.stderr)
+            print("aws_mqtt_client: %s" % conf, file=sys.stderr)
 
         # ClientAuth...
         auth = ClientAuth.load(Host)
