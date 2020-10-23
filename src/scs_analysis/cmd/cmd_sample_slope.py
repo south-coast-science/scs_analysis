@@ -1,5 +1,5 @@
 """
-Created on 11 Jul 2016
+Created on 23 Oct 2020
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -18,7 +18,8 @@ class CmdSampleSlope(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-i ISO] [-t TALLY] [-p PRECISION] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-i ISO] [-t TALLY] [-p PRECISION] [-v] PATH",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
