@@ -139,9 +139,8 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        print()
+        print(file=sys.stderr)
 
     finally:
         if cmd.verbose:
-            print("sample_slope: documents: %d processed: %d" % (document_count, processed_count),
-                  file=sys.stderr)
+            print("sample_slope: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
