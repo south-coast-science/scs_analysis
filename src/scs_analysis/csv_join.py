@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
             try:
                 join.append_to_right(datum)
-            except ValueError as ex:
+            except (TypeError, ValueError) as ex:
                 print("csv_join: invalid pk '%s' in: %s" % (datum.node(cmd.right_pk), jstr), file=sys.stderr)
                 exit(1)
 
