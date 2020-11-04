@@ -93,6 +93,10 @@ if __name__ == '__main__':
                 print("csv_reader: empty header cell in: %s." % ex, file=sys.stderr)
                 exit(1)
 
+            except ValueError as ex:
+                print("csv_reader: duplicate column names in: %s." % ex, file=sys.stderr)
+                exit(1)
+
             if cmd.verbose:
                 print("csv_reader: %s" % reader, file=sys.stderr)
                 sys.stderr.flush()

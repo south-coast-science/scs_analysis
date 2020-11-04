@@ -34,7 +34,12 @@ SYNOPSIS
 sample_subset.py [{ -i | -n }] [-l LOWER] [-u UPPER] [-x] [-v] PATH
 
 EXAMPLES
-csv_reader.py praxis_303.csv | sample_subset.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
+csv_reader.py praxis_303.csv | \
+sample_subset.py -v -i -l 2018-09-26T00:00:00Z -u 2018-09-27T00:00:00Z rec
+
+csv_reader.py -v scs-bgx-431-ref-meteo-gases-2020-H1-slp.csv | \
+sample_subset.py -v "ref.NO2 Processed Measurement (ppb)" | \
+csv_writer.py -v scs-bgx-431-ref-meteo-gases-2020-H1-slp-no2.csv
 """
 
 import sys
