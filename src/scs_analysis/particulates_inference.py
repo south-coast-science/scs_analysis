@@ -57,6 +57,8 @@ from scs_core.comms.uds_client import UDSClient
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
+from scs_core.model.particulates.s1.pmx_request import PMxRequest
+
 from scs_core.sample.sample import Sample
 
 from scs_analysis.cmd.cmd_particulates_inference import CmdParticulatesInference
@@ -141,13 +143,13 @@ if __name__ == '__main__':
                 datum.append(src_path, 'N3')
 
             # request...
-            particulates = Sample.construct_from_jdict(datum.node(cmd.particulates))
+            sample = Sample.construct_from_jdict(datum.node(cmd.particulates))
             climate = Sample.construct_from_jdict(datum.node(cmd.climate))
 
-            combined = {"particulates": particulates.as_json(), "climate": climate.as_json()}
+            combined = PMxRequest(sample, climate)
 
             # inference...
-            client.request(JSONify.dumps(combined))
+            client.request(JSONify.dumps(combined.as_json()))
             response = client.wait_for_response()
 
             # report...
