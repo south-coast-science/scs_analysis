@@ -57,9 +57,6 @@ class CmdCSVWriter(object):
         if count > 1:
             return False
 
-        # if self.header_scan and self.echo:
-        #     return False
-
         return True
 
 
