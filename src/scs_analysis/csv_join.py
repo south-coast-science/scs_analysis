@@ -11,7 +11,7 @@ DESCRIPTION
 The csv_join utility performs an SQL join operation on a pair of CSV files. This is particularly useful where a
 comparison is to be made on timeline data from two devices.
 
-All four join types are supported: inner, left outer, right outer and full outer. Inner joins are used when the output
+All four join types are supported: INNER, LEFT outer, RIGHT outer and FULL outer. Inner joins are used when the output
 should only contain rows that match on their primary key.
 
 Output is in the form of a sequence of JSON documents containing three fields: rec, left table contents (labelled for
@@ -22,6 +22,10 @@ The --iso8601 flag is provided to indicate that the primary key should be interp
 useful where data sets use alternate datetime formats such as 2019-02-22T01:00:00Z and 2019-02-22T01:00:00+00:00.
 
 If the --verbose flag is used, a summary of the join operation is written to stderr.
+
+Warning: if LEFT, RIGHT or FULL joins are used, the first document written to stdout may not contain all of the fields
+of the input CSV pair. In these cases, if the output is piped to the csv_writer utility, then the csv_writer must be
+used in header-scan mode.
 
 SYNOPSIS
 csv_join.py [-t TYPE] -l PREFIX PK FILENAME -r PREFIX PK FILENAME [-i] [-v]
@@ -42,6 +46,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 SEE ALSO
 scs_analysis/csv_reader
+scs_analysis/csv_writer
 
 RESOURCES
 https://www.w3schools.com/sql/sql_join.asp

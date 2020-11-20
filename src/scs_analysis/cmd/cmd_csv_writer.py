@@ -18,7 +18,8 @@ class CmdCSVWriter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x }] [-e] [-v] [FILENAME]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-e] [-v] [FILENAME]",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,
@@ -26,6 +27,9 @@ class CmdCSVWriter(object):
 
         self.__parser.add_option("--exclude-header", "-x", action="store_true", dest="exclude_header", default=False,
                                  help="do not write the header row to stdout")
+
+        self.__parser.add_option("--header-scan", "-s", action="store_true", dest="header_scan", default=False,
+                                 help="scan all documents before building the header row")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
@@ -39,8 +43,22 @@ class CmdCSVWriter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.append and self.exclude_header:
+        count = 0
+
+        if self.append:
+            count += 1
+
+        if self.exclude_header:
+            count += 1
+
+        if self.header_scan:
+            count += 1
+
+        if count > 1:
             return False
+
+        # if self.header_scan and self.echo:
+        #     return False
 
         return True
 
@@ -55,6 +73,11 @@ class CmdCSVWriter(object):
     @property
     def exclude_header(self):
         return self.__opts.exclude_header
+
+
+    @property
+    def header_scan(self):
+        return self.__opts.header_scan
 
 
     @property
@@ -79,5 +102,5 @@ class CmdCSVWriter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVWriter:{append:%s, exclude_header:%s, echo:%s, verbose:%s, filename:%s}" % \
-                    (self.append, self.exclude_header, self.echo, self.verbose, self.filename)
+        return "CmdCSVWriter:{append:%s, exclude_header:%s, header_scan:%s, echo:%s, verbose:%s, filename:%s}" % \
+                    (self.append, self.exclude_header, self.header_scan, self.echo, self.verbose, self.filename)
