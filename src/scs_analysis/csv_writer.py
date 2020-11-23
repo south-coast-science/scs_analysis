@@ -13,12 +13,21 @@ The csv_writer utility is used to convert from JSON format to comma-separated va
 The path into the JSON document is used to name the column in the header row: dictionary fields are separated
 from their container by a period ('.') character, and array members are separated by a colon (':') character.
 
+default mode:
+
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
 contain fields that were not in this first document, these extra fields are ignored. If subsequent JSON documents
 do not contain a field that is in the header, then this field is given the null value.
 
+header-scan mode:
+
+All input documents are scanned in order to build an inclusive hearer row. The utility will terminate if
+paths in the input documents are not compatible with one another. Any documents that do not contain a header
+fields are given a null value for that field. Warning: the header-scan mode requires memory proportional to the
+size of its input.
+
 SYNOPSIS
-csv_writer.py [{ -a | -x }] [-e] [-v] [FILENAME]
+csv_writer.py [{ -a | -x | -s }] [-e] [-v] [FILENAME]
 
 EXAMPLES
 socket_receiver.py | csv_writer.py temp.csv -e
@@ -68,7 +77,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header)
+        writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header,
+                           header_scan=cmd.header_scan)
 
         if cmd.verbose:
             print("csv_writer: %s" % writer, file=sys.stderr)
