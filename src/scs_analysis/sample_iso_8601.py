@@ -76,6 +76,7 @@ if __name__ == '__main__':
     parser = None
     timezone = None
     zone = None
+    pieces = None
 
     document_count = 0
     processed_count = 0
@@ -156,9 +157,20 @@ if __name__ == '__main__':
                     print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
                     exit(1)
 
-                pieces = datum.node(cmd.datetime_path).rsplit(' ', 1)           # split on last space character
+                try:
+                    pieces = datum.node(cmd.datetime_path).rsplit(' ', 1)           # split on last space character
+
+                except AttributeError:
+                    if cmd.skip_malformed:
+                        continue
+
+                    print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    exit(1)
 
                 if len(pieces) != 2:
+                    if cmd.skip_malformed:
+                        continue
+
                     print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
                     exit(1)
 
@@ -185,6 +197,9 @@ if __name__ == '__main__':
                 iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             if iso is None:
+                if cmd.skip_malformed:
+                    continue
+
                 print("sample_iso_8601: malformed date/time in %s" % jstr, file=sys.stderr)
                 exit(1)
 

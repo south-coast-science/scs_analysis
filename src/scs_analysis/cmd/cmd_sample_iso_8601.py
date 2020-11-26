@@ -20,7 +20,7 @@ class CmdSampleISO8601(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog { -z | { -o | -f DATE_FORMAT } "
                                                     "[-t TIMEZONE_NAME [-u]] [-i ISO_PATH] "
-                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]",
+                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-s] [-v]",
                                               version="%prog 1.0")
 
         # optional...
@@ -41,6 +41,9 @@ class CmdSampleISO8601(object):
 
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
+
+        self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
+                                 help="ignore rows with malformed datetimes")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -120,6 +123,11 @@ class CmdSampleISO8601(object):
 
 
     @property
+    def skip_malformed(self):
+        return self.__opts.skip_malformed
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -146,7 +154,7 @@ class CmdSampleISO8601(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleISO8601:{zones:%s, oad:%s, format:%s, timezone:%s, utc:%s, iso:%s, verbose:%s, " \
-               "datetime_paths:%s}" % \
-               (self.zones, self.oad, self.format, self.timezone, self.utc, self.iso, self.verbose,
-                self.datetime_paths())
+        return "CmdSampleISO8601:{zones:%s, oad:%s, format:%s, timezone:%s, utc:%s, iso:%s, skip_malformed:%s, " \
+               "verbose:%s, datetime_paths:%s}" % \
+               (self.zones, self.oad, self.format, self.timezone, self.utc, self.iso, self.skip_malformed,
+                self.verbose, self.datetime_paths())
