@@ -25,13 +25,13 @@ lower bound <= value < upper bound
 
 Both upper and lower bounds are optional. If both are present, then the lower bound value must be less than the upper
 bound value. If neither are present, then the sample_subset utility filters out documents with missing fields or
-empty values.
+empty values. An alternative test is --equal.
 
 If the --exclusions flag is used, the sample_subset utility outputs only the documents that do not fit within the
-specified bounds. Note that, in this case, documents with missing or empty fields are still discarded.
+specification. Note that, in this case, documents with missing or empty fields are still discarded.
 
 SYNOPSIS
-sample_subset.py [{ -i | -n }] [-l LOWER] [-u UPPER] [-x] [-v] PATH
+sample_subset.py [{ -i | -n }] { [-e EQUAL] | [-l LOWER] [-u UPPER] } [-x] [-v] PATH
 
 EXAMPLES
 csv_reader.py praxis_303.csv | \
@@ -54,6 +54,7 @@ from scs_core.data.path_dict import PathDict
 
 if __name__ == '__main__':
 
+    equal_bound = None
     lower_bound = None
     upper_bound = None
     value = None
@@ -77,6 +78,12 @@ if __name__ == '__main__':
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        try:
+            equal_bound = cmd.equal
+        except ValueError as ex:
+            print("sample_subset: invalid value for equal: %s" % ex, file=sys.stderr)
+            exit(2)
 
         try:
             lower_bound = cmd.lower
@@ -138,8 +145,11 @@ if __name__ == '__main__':
 
             # bounds...
             try:
-                in_bounds = (lower_bound is None or value >= lower_bound) and \
-                            (upper_bound is None or value < upper_bound)
+                if equal_bound is not None:
+                    in_bounds = value == equal_bound
+                else:
+                    in_bounds = (lower_bound is None or value >= lower_bound) and \
+                                (upper_bound is None or value < upper_bound)
             except TypeError as ex:
                 in_bounds = None
                 print("sample_subset: TypeError: %s" % jstr, file=sys.stderr)
