@@ -51,6 +51,9 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("timer: KeyboardInterrupt", file=sys.stderr)
 
+    except (BrokenPipeError, IOError):
+        pass
+
     # ----------------------------------------------------------------------------------------------------------------
     # close...
 
@@ -59,3 +62,5 @@ if __name__ == '__main__':
         delta = Timedelta(seconds=elapsed_time)
 
         print("timer: %s" % JSONify.dumps(delta.as_json()).strip('"'), file=sys.stderr)
+
+        sys.stderr.close()
