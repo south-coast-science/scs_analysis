@@ -16,6 +16,8 @@ timer.py
 
 EXAMPLES
 csv_reader.py source*.csv | timer.py | csv_writer.py target.csv
+
+https://stackoverflow.com/questions/26692284/how-to-prevent-brokenpipeerror-when-doing-a-flush-in-python
 """
 
 import sys
@@ -51,6 +53,9 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("timer: KeyboardInterrupt", file=sys.stderr)
 
+    except (BrokenPipeError, IOError):
+        pass
+
     # ----------------------------------------------------------------------------------------------------------------
     # close...
 
@@ -59,3 +64,5 @@ if __name__ == '__main__':
         delta = Timedelta(seconds=elapsed_time)
 
         print("timer: %s" % JSONify.dumps(delta.as_json()).strip('"'), file=sys.stderr)
+
+        sys.stderr.close()
