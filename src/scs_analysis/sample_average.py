@@ -70,7 +70,7 @@ class SampleAverage(object):
         value = sample.node(self.__path)
         self.__func.append(value)
 
-        avg = self.__func.compute()
+        avg = self.__func.mid()
 
         if avg is None:
             return None

@@ -57,6 +57,7 @@ from scs_analysis.cmd.cmd_sample_aggregate import CmdSampleAggregate
 from scs_core.data.aggregate import Aggregate
 from scs_core.data.checkpoint_generator import CheckpointGenerator
 from scs_core.data.datetime import LocalizedDatetime
+from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 
@@ -134,7 +135,8 @@ if __name__ == '__main__':
             # report and reset...
             if rec > checkpoint:
                 if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.interval, checkpoint - prev_checkpoint):
-                    aggregate.print(checkpoint)
+                    print(JSONify.dumps(aggregate.report(checkpoint)))
+                    sys.stdout.flush()
                     output_count += 1
 
                 else:
@@ -162,7 +164,8 @@ if __name__ == '__main__':
         # report remainder...
         if aggregate.has_value():
             if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.interval, checkpoint - prev_checkpoint):
-                aggregate.print(checkpoint)
+                print(JSONify.dumps(aggregate.report(checkpoint)))
+                sys.stdout.flush()
                 output_count += 1
 
             else:
