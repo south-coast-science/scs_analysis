@@ -22,7 +22,8 @@ class CmdAWSTopicHistory(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
-                                                    "-s START [-e END] } [-r] [-w] [-v] TOPIC", version="%prog 1.0")
+                                                    "-s START [-e END] } { [-c HH:MM:SS] | [-w] } [-r] [-v] TOPIC",
+                                              version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -39,6 +40,9 @@ class CmdAWSTopicHistory(object):
 
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="ISO 8601 datetime END")
+
+        self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
+                                 help="a time specification as **:/05:00")
 
         self.__parser.add_option("--rec-only", "-r", action="store_true", dest="rec_only", default=False,
                                  help="retrieve only the rec field")
@@ -76,6 +80,9 @@ class CmdAWSTopicHistory(object):
             count += 1
 
         if count != 1:
+            return False
+
+        if self.checkpoint and self.include_wrapper:
             return False
 
         return True
@@ -142,6 +149,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def checkpoint(self):
+        return self.__opts.checkpoint
+
+
+    @property
     def rec_only(self):
         return self.__opts.rec_only
 
@@ -163,7 +175,7 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, rec_only:%s, " \
-               "include_wrapper:%s, verbose:%s, topic:%s}" % \
-                    (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.rec_only,
-                     self.include_wrapper, self.verbose, self.topic)
+        return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, end:%s, " \
+               "rec_only:%s, include_wrapper:%s, verbose:%s, topic:%s}" % \
+                    (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.checkpoint,
+                     self.rec_only, self.include_wrapper, self.verbose, self.topic)
