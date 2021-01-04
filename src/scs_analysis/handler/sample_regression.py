@@ -27,7 +27,7 @@ class SampleRegression(object):
         self.__path = path
         self.__precision = precision
 
-        self.__func = LinearRegression(tally, time_relative=True)
+        self.__func = LinearRegression(tally=tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
