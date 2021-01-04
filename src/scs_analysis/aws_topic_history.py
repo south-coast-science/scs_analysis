@@ -145,7 +145,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.latest_at:
-            message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at)
+            message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, cmd.include_wrapper)
             document = message if cmd.include_wrapper else message.payload
 
             if document:
@@ -178,10 +178,9 @@ if __name__ == '__main__':
 
         # messages...
         try:
-            for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.rec_only):
-                document = message if cmd.include_wrapper else message.payload
-
-                print(JSONify.dumps(document))
+            for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.checkpoint,
+                                                          cmd.include_wrapper, cmd.rec_only):
+                print(JSONify.dumps(message))
                 sys.stdout.flush()
 
         except HTTPException as ex:
@@ -191,6 +190,7 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
+
     except (ConnectionError, HTTPException) as ex:
         print("aws_topic_history: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
 
