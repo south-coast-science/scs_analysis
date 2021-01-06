@@ -27,7 +27,7 @@ class SampleMidpoint(object):
         self.__path = path
         self.__precision = precision
 
-        self.__func = LinearRegression(tally, time_relative=False)
+        self.__func = LinearRegression(tally=tally, time_relative=False)
 
 
     # ----------------------------------------------------------------------------------------------------------------
