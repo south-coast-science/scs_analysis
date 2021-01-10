@@ -1,5 +1,6 @@
 """
 Created on 4 Sep 2020
+Updated 23 Dec 2020
 
 @author: Jade Page (jade.page@southcoastscience.com)
 https://packaging.python.org/tutorials/packaging-projects/
@@ -15,7 +16,7 @@ with open('requirements.txt') as req_txt:
 
 setuptools.setup(
     name="scs-analysis",
-    version="1.0.5",
+    version="1.0.6",
     author="South Coast Science",
     author_email="contact@southcoastscience.com",
     description="Information management and analysis utilities for South Coast Science data consumers.",
