@@ -17,7 +17,7 @@ class CmdMQTTPeers(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -i [-e] | -l [-n HOSTNAME] [-t TOPIC] | "
-                                                    "-s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } [-v]",
+                                                    "-s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } [-a] [-v]",
                                               version="%prog 1.0")
 
         # optional...
@@ -41,6 +41,9 @@ class CmdMQTTPeers(object):
 
         self.__parser.add_option("--delete", "-d", type="string", nargs=1, action="store", dest="delete",
                                  help="delete an MQTT peer")
+
+        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
+                                 help="Use AWS S3 instead of local storage")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -139,6 +142,11 @@ class CmdMQTTPeers(object):
 
 
     @property
+    def aws(self):
+        return self.__opts.aws
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -151,6 +159,6 @@ class CmdMQTTPeers(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdMQTTPeers:{import:%s, echo:%s, list:%s, for_hostname:%s, for_topic:%s, set:%s, " \
-               "delete:%s, verbose:%s}" %  \
+               "delete:%s, aws:%s, verbose:%s}" %  \
                (self.__opts.import_peers, self.echo, self.list, self.for_hostname, self.for_topic, self.__opts.peer,
-                self.__opts.delete, self.verbose)
+                self.__opts.delete, self.aws, self.verbose)
