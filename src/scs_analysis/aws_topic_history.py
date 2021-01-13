@@ -179,7 +179,7 @@ if __name__ == '__main__':
         # messages...
         try:
             for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.checkpoint,
-                                                          cmd.include_wrapper, cmd.rec_only):
+                                                          cmd.include_wrapper, cmd.rec_only, cmd.fetch_latest):
                 print(JSONify.dumps(message))
                 sys.stdout.flush()
 
