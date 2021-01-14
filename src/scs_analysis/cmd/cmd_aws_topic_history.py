@@ -22,7 +22,7 @@ class CmdAWSTopicHistory(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
-                                                    "-s START [-e END] } { [-c HH:MM:SS] | [-w] [-f] }  [-r] [-v] TOPIC",
+                                                    "-s START [-e END] } { [-c HH:MM:SS] | [-w] [-f] } [-r] [-v] TOPIC",
                                               version="%prog 1.0")
 
         # optional...
