@@ -22,7 +22,7 @@ class CmdAWSTopicHistory(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
-                                                    "-s START [-e END] } { [-c HH:MM:SS] | [-w] } [-r] [-v] TOPIC",
+                                                    "-s START [-e END] } { [-c HH:MM:SS] | [-w] [-f] } [-r] [-v] TOPIC",
                                               version="%prog 1.0")
 
         # optional...
@@ -46,6 +46,9 @@ class CmdAWSTopicHistory(object):
 
         self.__parser.add_option("--rec-only", "-r", action="store_true", dest="rec_only", default=False,
                                  help="retrieve only the rec field")
+
+        self.__parser.add_option("--fetch-last", "-f", action="store_true", dest="fetch_last", default=False,
+                                 help="fetch the last available hour of data if the requested data is unavailable")
 
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include storage wrapper")
@@ -83,6 +86,9 @@ class CmdAWSTopicHistory(object):
             return False
 
         if self.checkpoint and self.include_wrapper:
+            return False
+
+        if self.checkpoint and self.fetch_latest:
             return False
 
         return True
@@ -162,10 +168,16 @@ class CmdAWSTopicHistory(object):
     def verbose(self):
         return self.__opts.verbose
 
+    @property
+    def fetch_latest(self):
+        return self.__opts.fetch_last
+
 
     @property
     def topic(self):
         return self.__args[0] if len(self.__args) > 0 else None
+
+
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -176,6 +188,6 @@ class CmdAWSTopicHistory(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, end:%s, " \
-               "rec_only:%s, include_wrapper:%s, verbose:%s, topic:%s}" % \
+               "rec_only:%s, include_wrapper:%s, verbose:%s, topic:%s, fetch_last:%s}" % \
                     (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.checkpoint,
-                     self.rec_only, self.include_wrapper, self.verbose, self.topic)
+                     self.rec_only, self.include_wrapper, self.verbose, self.topic, self.fetch_latest)
