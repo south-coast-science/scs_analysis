@@ -191,8 +191,6 @@ class CmdAWSTopicHistory(object):
         return self.__args[0] if len(self.__args) > 0 else None
 
 
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
