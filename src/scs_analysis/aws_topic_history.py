@@ -74,6 +74,7 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     agent = None
+    reporter = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -201,3 +202,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if cmd.verbose:
             print("aws_topic_history: KeyboardInterrupt", file=sys.stderr)
+
+    finally:
+        if cmd.verbose and reporter:
+            print("aws_topic_history: blocks: %s" % reporter.block_count, file=sys.stderr)
