@@ -29,7 +29,7 @@ FILES
 ~/SCS/aws/mqtt_peers.json
 
 DOCUMENT EXAMPLE
-{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDEemnaqB4",
+{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDB4",
 "topic": "south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control"}}
 
 SEE ALSO
@@ -45,7 +45,7 @@ from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
 from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.client import Client
-from scs_core.aws.manager.s3_manager import S3Manager, S3PersistenceManager
+from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
 from scs_core.data.json import JSONify
 from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
