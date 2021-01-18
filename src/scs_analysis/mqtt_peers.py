@@ -29,7 +29,7 @@ FILES
 ~/SCS/aws/mqtt_peers.json
 
 DOCUMENT EXAMPLE
-{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDEemnaqB4",
+{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDB4",
 "topic": "south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control"}}
 
 SEE ALSO
@@ -44,7 +44,8 @@ import sys
 from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
 from scs_core.aws.client.access_key import AccessKey
-from scs_core.aws.manager.s3_manager import S3Manager, S3PersistenceManager
+from scs_core.aws.client.client import Client
+from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
 from scs_core.data.json import JSONify
 from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
@@ -56,7 +57,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    access_key = None
+    key = None
     document_count = 0
 
     try:
@@ -83,12 +84,14 @@ if __name__ == '__main__':
                 exit(1)
 
             try:
-                access_key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
+                key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
             except KeyError:
                 print("aws_bucket: incorrect password", file=sys.stderr)
                 exit(1)
 
-            client, resource_client = S3Manager.create_clients(access_key=access_key)
+            client = Client.construct('s3', key)
+            resource_client = Client.resource('s3', key)
+
             manager = S3PersistenceManager(client, resource_client)
 
         else:
