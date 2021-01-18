@@ -98,6 +98,9 @@ class CmdAWSTopicHistory(object):
         if self.rec_only and self.fetch_last:
             return False
 
+        if self.rec_only and self.min_max:
+            return False
+
         return True
 
 
