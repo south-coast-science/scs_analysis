@@ -61,6 +61,7 @@ from scs_core.aws.manager.lambda_message_manager import MessageManager
 from scs_core.client.network import Network
 from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
+from scs_core.data.checkpoint_generator import CheckpointGenerator
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
@@ -94,6 +95,10 @@ if __name__ == '__main__':
         exit(2)
 
     if not cmd.is_valid_end():
+        print("aws_topic_history: invalid format for end datetime.", file=sys.stderr)
+        exit(2)
+
+    if cmd.checkpoint is not None and cmd.checkpoint != 'auto' and not CheckpointGenerator.is_valid(cmd.checkpoint):
         print("aws_topic_history: invalid format for end datetime.", file=sys.stderr)
         exit(2)
 
