@@ -80,13 +80,13 @@ if __name__ == '__main__':
 
         if cmd.aws:
             if not AccessKey.exists(Host):
-                print("aws_bucket: access key not available", file=sys.stderr)
+                print("mqtt_peers: access key not available", file=sys.stderr)
                 exit(1)
 
             try:
                 key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
-            except KeyError:
-                print("aws_bucket: incorrect password", file=sys.stderr)
+            except (KeyError, ValueError):
+                print("mqtt_peers: incorrect password", file=sys.stderr)
                 exit(1)
 
             client = Client.construct('s3', key)

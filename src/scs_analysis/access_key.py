@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
             try:
                 access_key = AccessKey.load(Host, encryption_key=password)
-            except ValueError:
+            except (KeyError, ValueError):
                 print("access_key: incorrect password", file=sys.stderr)
                 exit(1)
 

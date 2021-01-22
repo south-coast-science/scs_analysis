@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
             try:
                 key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
-            except KeyError:
+            except (KeyError, ValueError):
                 print("aws_mqtt_control: incorrect password", file=sys.stderr)
                 exit(1)
 
