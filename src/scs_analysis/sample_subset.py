@@ -125,20 +125,26 @@ if __name__ == '__main__':
                 value = Datum.datetime(value_node)
 
                 if value is None:
-                    print("sample_subset: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
-                    exit(1)
+                    if cmd.strict:
+                        print("sample_subset: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
+                        exit(1)
+                    else:
+                        continue
 
             elif cmd.numeric:
                 value = Datum.float(value_node)
 
                 if value is None:
-                    print("sample_subset: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
-                    exit(1)
+                    if cmd.strict:
+                        print("sample_subset: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
+                        exit(1)
+                    else:
+                        continue
 
             else:
                 value = value_node
 
-                if not value:
+                if value is None or value == '':
                     continue
 
             processed_count += 1
@@ -150,10 +156,14 @@ if __name__ == '__main__':
                 else:
                     in_bounds = (lower_bound is None or value >= lower_bound) and \
                                 (upper_bound is None or value < upper_bound)
+
             except TypeError as ex:
-                in_bounds = None
-                print("sample_subset: TypeError: %s" % jstr, file=sys.stderr)
-                exit(1)
+                if cmd.strict:
+                    in_bounds = None
+                    print("sample_subset: TypeError: %s" % jstr, file=sys.stderr)
+                    exit(1)
+                else:
+                    continue
 
             if (cmd.inclusions and not in_bounds) or (cmd.exclusions and in_bounds):
                 continue
