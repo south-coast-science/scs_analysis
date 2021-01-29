@@ -21,14 +21,17 @@ class CmdSampleSubset(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ -i | -n }] { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
-                                                    "[-x] [-v] PATH", version="%prog 1.0")
+                                                    "[-s] [-x] [-v] PATH", version="%prog 1.0")
 
-        # compulsory...
+        # interpretation...
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,
                                  help="interpret the value as an ISO 8601 datetime")
 
         self.__parser.add_option("--numeric", "-n", action="store_true", dest="numeric", default=False,
                                  help="interpret the value as a number")
+
+        self.__parser.add_option("--strict", "-s", action="store_true", dest="strict", default=False,
+                                 help="halt on type errors")
 
         # optional...
         self.__parser.add_option("--equal", "-e", type="string", nargs=1, action="store", dest="equal",
@@ -87,6 +90,11 @@ class CmdSampleSubset(object):
 
 
     @property
+    def strict(self):
+        return self.__opts.strict
+
+
+    @property
     def equal(self):
         return self.__cast(self.__opts.equal)
 
@@ -141,6 +149,6 @@ class CmdSampleSubset(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdSampleSubset:{iso8601:%s, numeric:%s, equal:%s, lower:%s, upper:%s, " \
-               "exclusions:%s, verbose:%s, path:%s}" % \
+               "strict:%s, exclusions:%s, verbose:%s, path:%s}" % \
                (self.iso8601, self.numeric, self.__opts.equal, self.__opts.lower, self.__opts.upper,
-                self.exclusions, self.verbose, self.path)
+                self.strict, self.exclusions, self.verbose, self.path)
