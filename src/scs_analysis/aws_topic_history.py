@@ -66,6 +66,7 @@ from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
+from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
 
@@ -82,32 +83,34 @@ if __name__ == '__main__':
 
     cmd = CmdAWSTopicHistory()
 
+    Logging.config('aws_topic_history', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
     if not cmd.is_valid_latest_at():
-        print("aws_topic_history: invalid format for latest-to datetime.", file=sys.stderr)
+        logger.error("invalid format for latest-to datetime.")
         exit(2)
 
     if not cmd.is_valid_timedelta():
-        print("aws_topic_history: invalid format for timedelta.", file=sys.stderr)
+        logger.error("invalid format for timedelta.")
         exit(2)
 
     if not cmd.is_valid_start():
-        print("aws_topic_history: invalid format for start datetime.", file=sys.stderr)
+        logger.error("invalid format for start datetime.")
         exit(2)
 
     if not cmd.is_valid_end():
-        print("aws_topic_history: invalid format for end datetime.", file=sys.stderr)
+        logger.error("invalid format for end datetime.")
         exit(2)
 
     if cmd.checkpoint is not None and cmd.checkpoint != 'auto' and not CheckpointGenerator.is_valid(cmd.checkpoint):
-        print("aws_topic_history: invalid format for end datetime.", file=sys.stderr)
+        logger.error("invalid format for end datetime.")
         exit(2)
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("aws_topic_history: %s" % cmd, file=sys.stderr)
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -117,11 +120,10 @@ if __name__ == '__main__':
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
-            print("aws_topic_history: APIAuth not available.", file=sys.stderr)
+            logger.error("APIAuth not available.")
             exit(1)
 
-        if cmd.verbose:
-            print("aws_topic_history: %s" % api_auth, file=sys.stderr)
+        logger.info(api_auth)
 
         # reporter...
         reporter = AWSTopicHistoryReporter(cmd.verbose)
@@ -132,19 +134,13 @@ if __name__ == '__main__':
         # message manager...
         message_manager = MessageManager(api_auth, reporter)
 
-        if cmd.verbose:
-            print("aws_topic_history: %s" % message_manager, file=sys.stderr)
-            sys.stderr.flush()
-
+        logger.info(message_manager)
 
         # ------------------------------------------------------------------------------------------------------------
         # check...
 
         if not Network.is_available():
-            if cmd.verbose:
-                print("aws_topic_history: waiting for network.", file=sys.stderr)
-                sys.stderr.flush()
-
+            logger.info("waiting for network.")
             Network.wait()
 
 
@@ -167,8 +163,8 @@ if __name__ == '__main__':
             if byline is None:
                 exit(0)
 
-            end = byline.rec
-            start = byline.rec.timedelta(seconds=-0.1)
+            end = byline.rec.timedelta(seconds=1)
+            start = byline.rec.timedelta(seconds=-1)        # TODO: should not need this
 
         elif cmd.timedelta:
             end = LocalizedDatetime.now()
@@ -178,36 +174,28 @@ if __name__ == '__main__':
             end = LocalizedDatetime.now() if cmd.end is None else cmd.end
             start = cmd.start
 
-        if cmd.verbose:
-            print("aws_topic_history: start: %s" % start, file=sys.stderr)
-            print("aws_topic_history: end: %s" % end, file=sys.stderr)
-            sys.stderr.flush()
+        logger.info("start: %s" % start)
+        logger.info("end: %s" % end)
 
         # messages...
-        try:
-            for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.fetch_last, cmd.checkpoint,
-                                                          cmd.include_wrapper, cmd.rec_only, cmd.min_max):
-                print(JSONify.dumps(message))
-                sys.stdout.flush()
-
-        except HTTPException as ex:
-            print("aws_topic_history: %s" % ex, file=sys.stderr)
-            exit(1)
+        for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.fetch_last, cmd.checkpoint,
+                                                      cmd.include_wrapper, cmd.rec_only, cmd.min_max):
+            print(JSONify.dumps(message))
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
     except (ConnectionError, HTTPException) as ex:
-        print("aws_topic_history: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
+        logger.error("%s: %s" % (ex.__class__.__name__, ex))
 
     except ResourceUnavailableException as ex:
-        print("aws_topic_history: %s" % repr(ex), file=sys.stderr)
+        logger.error(repr(ex))
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("aws_topic_history: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
-        if cmd.verbose and reporter:
-            print("aws_topic_history: blocks: %s" % reporter.block_count, file=sys.stderr)
+        if reporter:
+            logger.info("blocks: %s" % reporter.block_count)
