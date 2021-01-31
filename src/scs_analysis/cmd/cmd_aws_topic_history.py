@@ -89,13 +89,16 @@ class CmdAWSTopicHistory(object):
         if count != 1:
             return False
 
-        if self.checkpoint and self.include_wrapper:
-            return False
-
-        if self.checkpoint and self.fetch_last:
-            return False
-
         if self.min_max and not self.checkpoint:
+            return False
+
+        if self.include_wrapper and self.checkpoint:
+            return False
+
+        if self.rec_only and self.fetch_last:
+            return False
+
+        if self.rec_only and self.min_max:
             return False
 
         return True
@@ -189,8 +192,6 @@ class CmdAWSTopicHistory(object):
     @property
     def topic(self):
         return self.__args[0] if len(self.__args) > 0 else None
-
-
 
 
     # ----------------------------------------------------------------------------------------------------------------

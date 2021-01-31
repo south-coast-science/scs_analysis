@@ -20,7 +20,7 @@ Certificates are available on request from South Coast Science. The certificate 
 aws_client_auth utility.
 
 SYNOPSIS
-aws_mqtt_control.py { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD] } [-t TIMEOUT] [-v]
+aws_mqtt_control.py { -p HOSTNAME [-a] | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD_TOKENS] } [-t TIMEOUT] [-v]
 
 EXAMPLES
 aws_mqtt_control.py -p scs-bbe-002 -r "disk_usage"
@@ -46,8 +46,12 @@ from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeout
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 from scs_analysis.handler.aws_mqtt_control_handler import AWSMQTTControlHandler
 
+from scs_core.aws.client.access_key import AccessKey
+from scs_core.aws.client.client import Client
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
+
+from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
 from scs_core.control.control_datum import ControlDatum
 
@@ -65,6 +69,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    key = None
     client = None
     pub_comms = None
 
@@ -85,8 +90,27 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        if cmd.aws:
+            if not AccessKey.exists(Host):
+                print("aws_mqtt_control: access key not available", file=sys.stderr)
+                exit(1)
+
+            try:
+                key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
+            except (KeyError, ValueError):
+                print("aws_mqtt_control: incorrect password", file=sys.stderr)
+                exit(1)
+
+            s3_client = Client.construct('s3', key)
+            s3_resource_client = Client.resource('s3', key)
+
+            manager = S3PersistenceManager(s3_client, s3_resource_client)
+
+        else:
+            manager = Host
+
         if cmd.is_stored_peer():
-            peer_group = MQTTPeerSet.load(Host)
+            peer_group = MQTTPeerSet.load(manager)
             peer = peer_group.peer(cmd.peer_hostname)
 
             if peer is None:

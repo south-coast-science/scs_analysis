@@ -65,6 +65,10 @@ class CmdNode(object):
         return self.exclude
 
 
+    def has_sub_paths(self):
+        return bool(self.__args)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -99,7 +103,7 @@ class CmdNode(object):
 
     @property
     def sub_paths(self):
-        return self.__args
+        return self.__args if self.__args else [None]           # if empty return only the root node
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -110,4 +114,4 @@ class CmdNode(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdNode:{exclude:%s, array:%s, sequence:%s, filename:%s, indent:%s, verbose:%s, sub_paths:%s}" %  \
-               (self.exclude, self.array, self.sequence, self.filename, self.indent, self.verbose, self.sub_paths)
+               (self.exclude, self.array, self.sequence, self.filename, self.indent, self.verbose, self.__args)

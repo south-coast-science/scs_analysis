@@ -5,6 +5,8 @@ Detailed information at the [scs_analysis wiki](https://github.com/south-coast-s
 #
 **Installation:**
 
+The package can be installed either by git clone, or as a [pypi project](https://pypi.org/project/scs-analysis/):
+
 ```
 pip install scs-analysis
 ```

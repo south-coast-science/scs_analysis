@@ -106,11 +106,11 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            if cmd.exclude and not cmd.sub_paths:
+            if cmd.exclude and not cmd.has_sub_paths():
                 continue                                # everything is excluded
 
             # build...
-            if not cmd.sub_paths:
+            if not cmd.has_sub_paths():
                 target = datum                          # everything is included
 
             else:
@@ -139,8 +139,11 @@ if __name__ == '__main__':
                     try:
                         for item in node:
                             print(JSONify.dumps(item))
+                            sys.stdout.flush()
+                            output_count += 1
+
                     except TypeError as ex:
-                        print(ex)
+                        print(ex, file=sys.stderr)
                         print(JSONify.dumps(node))
 
             else:
@@ -154,10 +157,8 @@ if __name__ == '__main__':
 
                 else:
                     print(JSONify.dumps(target, indent=cmd.indent))
-
-            sys.stdout.flush()
-
-            output_count += 1
+                    sys.stdout.flush()
+                    output_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -173,6 +174,7 @@ if __name__ == '__main__':
     finally:
         if cmd.array:
             print(']')
+            output_count = 1
 
         if cmd.verbose:
             print("node: documents: %d output: %d" % (document_count, output_count), file=sys.stderr)

@@ -23,7 +23,7 @@ class CmdMQTTControl(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -p HOSTNAME | -d TAG SHARED_SECRET TOPIC } "
+        self.__parser = optparse.OptionParser(usage="%prog { -p HOSTNAME [-a] | -d TAG SHARED_SECRET TOPIC } "
                                                     "{ -i | -r [CMD_TOKENS] } [-t TIMEOUT] [-v]", version="%prog 1.0")
 
         # compulsory...
@@ -34,6 +34,9 @@ class CmdMQTTControl(object):
                                  help="specify a tag, shared secret and topic for the peer")
 
         # optional...
+        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
+                                 help="Use AWS S3 instead of local storage for peer")
+
         self.__parser.add_option("--receipt", "-r", action="store_true", dest="receipt", default=False,
                                  help="wait for receipt from target peer")
 
@@ -62,6 +65,9 @@ class CmdMQTTControl(object):
         if self.interactive and self.cmd_tokens is not None:
             return False
 
+        if self.aws and not self.is_stored_peer():
+            return False
+
         return True
 
 
@@ -80,6 +86,11 @@ class CmdMQTTControl(object):
     @property
     def peer_hostname(self):
         return self.__opts.peer
+
+
+    @property
+    def aws(self):
+        return self.__opts.aws
 
 
     @property
@@ -129,7 +140,7 @@ class CmdMQTTControl(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMQTTControl:{peer:%s, device:%s, cmd_tokens:%s, receipt:%s, interactive:%s, timeout:%s, " \
-               "verbose:%s}" % \
-               (self.__opts.peer, self.__opts.device, self.cmd_tokens, self.receipt, self.interactive, self.timeout,
-                self.verbose)
+        return "CmdMQTTControl:{peer:%s, device:%s, aws:%s, cmd_tokens:%s, receipt:%s, interactive:%s, " \
+               "timeout:%s, verbose:%s}" % \
+               (self.__opts.peer, self.__opts.device, self.aws, self.cmd_tokens, self.receipt, self.interactive,
+                self.timeout, self.verbose)
