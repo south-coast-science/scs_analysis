@@ -7,8 +7,9 @@ Created on 27 Sep 2018
 import json
 import sys
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
-from scs_core.data.publication import Publication
+from scs_core.data.publication import Publication, ReceivedPublication
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -21,13 +22,14 @@ class AWSMQTTSubscriptionHandler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, reporter, comms=None, wrap=True, echo=False):
+    def __init__(self, reporter, comms=None, wrap=True, timed=False, echo=False):
         """
         Constructor
         """
         self.__reporter = reporter
         self.__comms = comms
         self.__wrap = wrap
+        self.__timed = timed
         self.__echo = echo
 
 
@@ -38,6 +40,9 @@ class AWSMQTTSubscriptionHandler(object):
         payload_jdict = json.loads(payload)
 
         publication = Publication(message.topic, payload_jdict) if self.__wrap else payload_jdict
+
+        if self.__timed:
+            publication = ReceivedPublication(LocalizedDatetime.now(), publication)
 
         try:
             self.__comms.connect()
@@ -59,7 +64,7 @@ class AWSMQTTSubscriptionHandler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSMQTTSubscriptionHandler:{reporter:%s, comms:%s, wrap:%s, echo:%s}" % \
-               (self.__reporter, self.__comms, self.__wrap, self.__echo)
+        return "AWSMQTTSubscriptionHandler:{reporter:%s, comms:%s, wrap:%s, timed:%s, echo:%s}" % \
+               (self.__reporter, self.__comms, self.__wrap, self.__timed, self.__echo)
 
 

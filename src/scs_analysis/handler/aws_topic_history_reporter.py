@@ -27,6 +27,7 @@ class AWSTopicHistoryReporter(object):
         """
         self.__verbose = verbose
 
+        self.__block_count = 0
         self.__document_count = 0
         self.__start_time = time.time()
 
@@ -37,6 +38,7 @@ class AWSTopicHistoryReporter(object):
         if not self.__verbose:
             return
 
+        self.__block_count += 1
         self.__document_count += block_length
         elapsed_time = int(round(time.time() - self.__start_time))
         elapsed_delta = Timedelta(seconds=elapsed_time)
@@ -49,6 +51,13 @@ class AWSTopicHistoryReporter(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    @property
+    def block_count(self):
+        return self.__block_count
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
-        return "AWSTopicHistoryReporter:{verbose:%s, document_count:%d, start_time:%d}" % \
-               (self.__verbose, self.__document_count, self.__start_time)
+        return "AWSTopicHistoryReporter:{verbose:%s, block_count:%d, document_count:%d, start_time:%d}" % \
+               (self.__verbose, self.block_count, self.__document_count, self.__start_time)

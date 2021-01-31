@@ -15,8 +15,8 @@ Likewise, documents gained from subscription are written to stdout, or a specifi
 Subscriptions can be specified either by a project channel name, or by an explicit messaging topic path. Documents
 gained by subscription may be delivered either to stdout, or to a specified Unix domain socket.
 
-In order to operate effectively in environments with unreliable communications, the aws_mqtt_client buffers messages
-prior to publication. The size of the buffer is set by the scs_mfr/mqtt_conf utility.
+The --timed mode is provided so that the difference between the payload's recorded ('rec') datetime and the
+received datetime can be monitored. This is useful in assessing network performance.
 
 The aws_mqtt_client utility requires the AWS client authorisation to operate.
 
@@ -24,10 +24,11 @@ Only one MQTT client should run at any one time, per TCP/IP host.
 
 SYNOPSIS
 Usage: aws_mqtt_client.py [-p UDS_PUB] [-s] { -c { C | G | P | S | X } (UDS_SUB_1) |
-[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } [-n] [-e] [-v]
+[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } [-n] [-t] [-e] [-v]
 
 EXAMPLES
 aws_mqtt_client.py -n south-coast-science-dev/production-test/loc/1/gases
+aws_mqtt_client.py -nt south-coast-science-dev/cube/loc/1/climate | node.py received payload.rec
 
 FILES
 ~/SCS/aws/aws_client_auth.json
@@ -143,7 +144,8 @@ if __name__ == '__main__':
             # subscriber...
             sub_comms = UDSWriter(cmd.channel_uds)
 
-            handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms, wrap=cmd.wrap, echo=cmd.echo)
+            handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms,
+                                                 wrap=cmd.wrap, timed=cmd.timed, echo=cmd.echo)
 
             subscribers.append(MQTTSubscriber(topic, handler.handle))
 
@@ -152,7 +154,8 @@ if __name__ == '__main__':
                 sub_comms = UDSWriter(subscription.address)
 
                 # subscriber...
-                handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms, wrap=cmd.wrap, echo=cmd.echo)
+                handler = AWSMQTTSubscriptionHandler(reporter, comms=sub_comms,
+                                                     wrap=cmd.wrap, timed=cmd.timed, echo=cmd.echo)
 
                 if cmd.verbose:
                     print("aws_mqtt_client: %s" % handler, file=sys.stderr)
