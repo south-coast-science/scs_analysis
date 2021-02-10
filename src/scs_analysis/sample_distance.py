@@ -8,11 +8,11 @@ Created on 10 Feb 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_distance utility is used to find the distance (in metres) between a given position, and the position in each
-of the input GPS JSON documents. A command parameter specifies the path to the node within the document that is to be
-examined.
+The sample_distance utility is used to find the distance (in kilometres, to the nearest metre) between a given position,
+and the position in each of the input GPS JSON documents. A command flag specifies the path to the node within the
+document that is to be examined.
 
-The quality of the GPS fix may be taken into account - if a quality is specified then any GPS fix with a quality
+The quality of the GPS fix may be taken into account: if a quality is specified, then any GPS fix with a quality
 (rounded to the nearest integer) below that level is reported as a null distance.
 
 A simple, spherical model of the earth is used.
@@ -30,7 +30,7 @@ DOCUMENT EXAMPLE - INPUT
 "tag": "scs-ph1-10"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"rec": "2020-12-09T21:00:00Z", "gps": {"pos": [51.48877673, -0.44155907], "elv": 33.3, "qual": 1}, "dist": 31.1}
+{"rec": "2020-12-09T21:00:00Z", "gps": {"pos": [51.48877673, -0.44155907], "elv": 33.3, "qual": 1}, "dist": 0.031}
 
 RESOURCES
 Getting distance between two points based on latitude/longitude
