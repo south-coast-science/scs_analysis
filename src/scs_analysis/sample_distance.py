@@ -92,11 +92,11 @@ if __name__ == '__main__':
             document_count += 1
 
             if not datum.has_sub_path(cmd.iso):
-                logger.error("node '%s' not present: %s" % (cmd.iso, line.strip()))
+                logger.error("ISO node '%s' not present: %s" % (cmd.iso, line.strip()))
                 exit(1)
 
             if not datum.has_sub_path(cmd.path):
-                logger.error("node '%s' not present: %s" % (cmd.path, line.strip()))
+                logger.error("GPS node '%s' not present: %s" % (cmd.path, line.strip()))
                 exit(1)
 
             gps_node = datum.node(cmd.path)
@@ -105,8 +105,7 @@ if __name__ == '__main__':
                 gps = GPSDatum.construct_from_jdict(gps_node)
                 distance = gps.distance(origin, minimum_acceptable_quality=cmd.quality)
 
-            except TypeError as ex:
-                print(ex)
+            except TypeError:
                 gps = None
                 distance = None
 
