@@ -20,7 +20,7 @@ class CmdSampleSubset(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -i | -n }] { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
+        self.__parser = optparse.OptionParser(usage="%prog { -i | -n  | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
                                                     "[-s] [-x] [-v] PATH", version="%prog 1.0")
 
         # interpretation...
@@ -30,7 +30,10 @@ class CmdSampleSubset(object):
         self.__parser.add_option("--numeric", "-n", action="store_true", dest="numeric", default=False,
                                  help="interpret the value as a number")
 
-        self.__parser.add_option("--strict", "-s", action="store_true", dest="strict", default=False,
+        self.__parser.add_option("--string", "-s", action="store_true", dest="string", default=False,
+                                 help="interpret the value as a string")
+
+        self.__parser.add_option("--strict", "-t", action="store_true", dest="strict", default=False,
                                  help="halt on type errors")
 
         # optional...
@@ -55,7 +58,18 @@ class CmdSampleSubset(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.iso8601 and self.numeric:
+        count = 0
+
+        if self.iso8601:
+            count += 1
+
+        if self.numeric:
+            count += 1
+
+        if self.string:
+            count += 1
+
+        if count != 1:
             return False
 
         if self.equal is not None and (self.lower is not None or self.upper is not None):
@@ -87,6 +101,11 @@ class CmdSampleSubset(object):
     @property
     def numeric(self):
         return self.__opts.numeric
+
+
+    @property
+    def string(self):
+        return self.__opts.string
 
 
     @property
@@ -130,7 +149,7 @@ class CmdSampleSubset(object):
         if value is None:
             return None
 
-        if not self.iso8601 and not self.numeric:
+        if self.string:
             return str(value)
 
         cast_value = Datum.datetime(value) if self.iso8601 else Datum.float(value)
@@ -148,7 +167,7 @@ class CmdSampleSubset(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleSubset:{iso8601:%s, numeric:%s, equal:%s, lower:%s, upper:%s, " \
+        return "CmdSampleSubset:{iso8601:%s, numeric:%s, string:%s, equal:%s, lower:%s, upper:%s, " \
                "strict:%s, exclusions:%s, verbose:%s, path:%s}" % \
-               (self.iso8601, self.numeric, self.__opts.equal, self.__opts.lower, self.__opts.upper,
+               (self.iso8601, self.numeric, self.string, self.__opts.equal, self.__opts.lower, self.__opts.upper,
                 self.strict, self.exclusions, self.verbose, self.path)
