@@ -41,7 +41,6 @@ scs_mfr/system_id
 import json
 import sys
 
-from scs_lambda.mqtt_missing_reporter import MQTTMissingReporter
 
 from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
@@ -50,6 +49,7 @@ from scs_core.aws.client.client import Client
 from scs_core.aws.manager.s3_manager import S3PersistenceManager, S3Manager
 
 from scs_core.data.json import JSONify
+from scs_core.estate.mqtt_device_poller import MQTTDevicePoller
 from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
 
 from scs_host.sys.host import Host
@@ -181,8 +181,8 @@ if __name__ == '__main__':
         # missing...
         if cmd.missing:
 
-            reporter = MQTTMissingReporter(manager)
-            res = reporter.run()
+            reporter = MQTTDevicePoller(manager)
+            res = reporter.get_missing_devices()
 
             print(JSONify.dumps(res))
 
