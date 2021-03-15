@@ -46,7 +46,7 @@ class CmdAWSTopicHistory(object):
                                  help="a time specification as **:/05:00")
 
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
-                                 help="min and max in addition to average")
+                                 help="include min and max in addition to midpoint")
 
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include storage wrapper")
