@@ -17,7 +17,7 @@ class CmdMQTTPeers(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -i [-e] | -l [-n HOSTNAME] [-t TOPIC] | -s "
-                                                    "HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } [-a] [-m] [-v]",
+                                                    "HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME | -m } [-a] [-v]",
                                               version="%prog 1.0")
 
         # optional...
@@ -46,7 +46,7 @@ class CmdMQTTPeers(object):
                                  help="Use AWS S3 instead of local storage")
 
         self.__parser.add_option("--missing", "-m", action="store_true", dest="missing", default=False,
-                                 help="Check for existing devices missing from S3 MQTT_Peers")
+                                 help="Report known devices missing from S3 MQTT peers")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -81,6 +81,9 @@ class CmdMQTTPeers(object):
             return False
 
         if self.__opts.list is None and (self.__opts.for_hostname is not None or self.__opts.for_topic is not None):
+            return False
+
+        if self.missing and not self.aws:
             return False
 
         return True
@@ -148,12 +151,13 @@ class CmdMQTTPeers(object):
 
 
     @property
-    def aws(self):
-        return self.__opts.aws
-
-    @property
     def missing(self):
         return self.__opts.missing
+
+
+    @property
+    def aws(self):
+        return self.__opts.aws
 
 
     @property
@@ -169,7 +173,7 @@ class CmdMQTTPeers(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdMQTTPeers:{import:%s, echo:%s, list:%s, for_hostname:%s, for_topic:%s, set:%s, " \
-               "delete:%s, aws:%s, missing:%s, verbose:%s}" %  \
+               "delete:%s, missing:%s, aws:%s, verbose:%s}" %  \
                (self.__opts.import_peers, self.echo, self.list, self.for_hostname, self.for_topic, self.__opts.peer,
-                self.__opts.delete, self.aws, self.missing, self.verbose)
+                self.__opts.delete, self.missing, self.aws, self.verbose)
 

@@ -17,7 +17,8 @@ Authentication details for specific devices are available on request from South 
 using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-mqtt_peers.py { -i [-e] | -l [-n HOSTNAME] [-t TOPIC] | -s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } [-a] [-v]
+mqtt_peers.py { -i [-e] | -l [-n HOSTNAME] [-t TOPIC] | -s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME | -m } \
+[-a] [-v]
 
 EXAMPLES
 mqtt_peers.py -s scs-bbe-002 scs-be2-2 secret1 \
@@ -49,8 +50,11 @@ from scs_core.aws.client.client import Client
 from scs_core.aws.manager.s3_manager import S3PersistenceManager, S3Manager
 
 from scs_core.data.json import JSONify
+
 from scs_core.estate.mqtt_device_poller import MQTTDevicePoller
 from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
+
+from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
 
@@ -58,6 +62,9 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+
+    manager = None
+    group = None
 
     key = None
     document_count = 0
@@ -72,25 +79,23 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        if cmd.verbose:
-            print("mqtt_peers: %s" % cmd, file=sys.stderr)
-            sys.stderr.flush()
+        Logging.config('mqtt_peers', verbose=cmd.verbose)
+        logger = Logging.getLogger()
 
+        logger.info(cmd)
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
-        manager = None
-        group = None
 
         if cmd.aws or cmd.missing:
             if not AccessKey.exists(Host):
-                print("mqtt_peers: access key not available", file=sys.stderr)
+                logger.error('access key not available')
                 exit(1)
 
             try:
                 key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
             except (KeyError, ValueError):
-                print("mqtt_peers: incorrect password", file=sys.stderr)
+                logger.error('incorrect password')
                 exit(1)
 
             client = Client.construct('s3', key)
@@ -125,7 +130,7 @@ if __name__ == '__main__':
                 peer = MQTTPeer.construct_from_jdict(json.loads(jstr))
 
                 if peer is None:
-                    print("mqtt_peers: invalid document: %s" % jstr, file=sys.stderr)
+                    logger.error('invalid document: %s' % jstr)
                     exit(1)
 
                 group.insert(peer)
@@ -135,26 +140,15 @@ if __name__ == '__main__':
                     sys.stdout.flush()
 
             group.save(manager)
-
-            if cmd.verbose:
-                print("mqtt_peers: inserted: %d" % document_count, file=sys.stderr)
-
-            exit(0)
+            logger.info('inserted: %d' % document_count)
 
         # list...
         if cmd.list:
             if group is not None:
-                subset = group.subset(hostname_substring=cmd.for_hostname, topic_substring=cmd.for_topic)
-                document_count = len(subset)
+                report = group.subset(hostname_substring=cmd.for_hostname, topic_substring=cmd.for_topic)
 
-                for peer in subset:
-                    print(JSONify.dumps(peer))
-                    sys.stdout.flush()
-
-            if cmd.verbose:
-                print("mqtt_peers: found: %d" % document_count, file=sys.stderr)
-
-            exit(0)
+                print(JSONify.dumps(report))
+                logger.info('found: %d' % len(report))
 
         # set...
         if cmd.is_set_peer():
@@ -164,30 +158,22 @@ if __name__ == '__main__':
 
             print(JSONify.dumps(peer))
 
-            exit(0)
-
         # delete...
         if cmd.is_delete_peer():
             deleted = group.remove(cmd.delete_hostname)
             document_count = 1 if deleted else 0
 
             group.save(manager)
-
-            if cmd.verbose:
-                print("mqtt_peers: deleted: %d" % document_count, file=sys.stderr)
-
-            exit(0)
+            logger.info('deleted: %d' % document_count)
 
         # missing...
         if cmd.missing:
-
             reporter = MQTTDevicePoller(manager)
-            res = reporter.get_missing_devices()
+            report = reporter.missing_devices()
 
-            print(JSONify.dumps(res))
-
-            exit(0)
+            print(JSONify.dumps(report))
+            logger.info('missing: %d' % len(report))
 
     except KeyboardInterrupt:
-        print()
+        print(file=sys.stderr)
 
