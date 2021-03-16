@@ -44,7 +44,6 @@ from AWSIoTPythonSDK.exception.operationError import operationError
 from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeoutException
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
-from scs_analysis.handler.aws_mqtt_control_handler import AWSMQTTControlHandler
 
 from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.client import Client
@@ -54,6 +53,7 @@ from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
 from scs_core.control.control_datum import ControlDatum
+from scs_core.control.control_handler import ControlHandler
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.publication import Publication
@@ -141,7 +141,7 @@ if __name__ == '__main__':
             print("aws_mqtt_control: %s" % auth, file=sys.stderr)
 
         # responder...
-        handler = AWSMQTTControlHandler()
+        handler = ControlHandler()
         subscriber = MQTTSubscriber(topic, handler.handle)
 
         # client...
