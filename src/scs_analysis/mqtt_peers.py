@@ -41,13 +41,15 @@ scs_mfr/system_id
 import json
 import sys
 
+
 from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
 from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.client import Client
-from scs_core.aws.manager.s3_manager import S3PersistenceManager
+from scs_core.aws.manager.s3_manager import S3PersistenceManager, S3Manager
 
 from scs_core.data.json import JSONify
+from scs_core.estate.mqtt_device_poller import MQTTDevicePoller
 from scs_core.estate.mqtt_peer import MQTTPeer, MQTTPeerSet
 
 from scs_host.sys.host import Host
@@ -77,8 +79,10 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+        manager = None
+        group = None
 
-        if cmd.aws:
+        if cmd.aws or cmd.missing:
             if not AccessKey.exists(Host):
                 print("mqtt_peers: access key not available", file=sys.stderr)
                 exit(1)
@@ -92,13 +96,17 @@ if __name__ == '__main__':
             client = Client.construct('s3', key)
             resource_client = Client.resource('s3', key)
 
-            manager = S3PersistenceManager(client, resource_client)
+            if cmd.aws:
+                manager = S3PersistenceManager(client, resource_client)
+            if cmd.missing:
+                manager = S3Manager(client, resource_client)
 
         else:
             manager = Host
 
-        # MQTTPeerSet...
-        group = MQTTPeerSet.load(manager)
+        if not cmd.missing:
+            # MQTTPeerSet...
+            group = MQTTPeerSet.load(manager)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -170,5 +178,16 @@ if __name__ == '__main__':
 
             exit(0)
 
+        # missing...
+        if cmd.missing:
+
+            reporter = MQTTDevicePoller(manager)
+            res = reporter.get_missing_devices()
+
+            print(JSONify.dumps(res))
+
+            exit(0)
+
     except KeyboardInterrupt:
         print()
+
