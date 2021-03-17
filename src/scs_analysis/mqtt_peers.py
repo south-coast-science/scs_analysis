@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
         # missing...
         if cmd.missing:
-            reporter = MQTTDevicePoller(manager)
+            reporter = MQTTDevicePoller(Host, manager)
             report = reporter.missing_devices()
 
             print(JSONify.dumps(report))
