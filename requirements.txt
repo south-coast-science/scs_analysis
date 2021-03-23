@@ -9,5 +9,5 @@ pytz~=2020.1
 scipy~=1.5.2
 setuptools~=50.3.0
 tzlocal~=2.1
-scs-core~=1.0.3
-scs-host-posix~=1.0.4
+scs-core~=1.0.4
+scs-host-posix~=1.0.5

@@ -16,7 +16,7 @@ with open('requirements.txt') as req_txt:
 
 setuptools.setup(
     name="scs-analysis",
-    version="1.0.9",
+    version="1.0.10",
     author="South Coast Science",
     author_email="contact@southcoastscience.com",
     description="Information management and analysis utilities for South Coast Science data consumers.",
