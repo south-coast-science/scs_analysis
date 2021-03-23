@@ -147,7 +147,7 @@ if __name__ == '__main__':
             if group is not None:
                 report = group.subset(hostname_substring=cmd.for_hostname, topic_substring=cmd.for_topic)
 
-                print(JSONify.dumps(report))
+                print(JSONify.dumps(report, indent=cmd.indent))
                 logger.info('found: %d' % len(report))
 
         # set...
@@ -156,7 +156,7 @@ if __name__ == '__main__':
             group.insert(peer)
             group.save(manager)
 
-            print(JSONify.dumps(peer))
+            print(JSONify.dumps(peer, indent=cmd.indent))
 
         # delete...
         if cmd.is_delete_peer():
@@ -171,7 +171,7 @@ if __name__ == '__main__':
             reporter = MQTTDevicePoller(Host, manager)
             report = reporter.missing_devices()
 
-            print(JSONify.dumps(report))
+            print(JSONify.dumps(report, indent=cmd.indent))
             logger.info('missing: %d' % len(report))
 
     except KeyboardInterrupt:
