@@ -49,7 +49,7 @@ class CmdMQTTPeers(object):
 
         # output...
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo import stdin to stdout")
+                                 help="echo stdin to stdout (import only)")
 
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT (not with echo)")

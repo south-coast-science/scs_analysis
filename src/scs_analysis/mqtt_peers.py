@@ -17,8 +17,8 @@ Authentication details for specific devices are available on request from South 
 using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-mqtt_peers.py { -i [-e] | -l [-n HOSTNAME] [-t TOPIC] | -s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME | -m } \
-[-a] [-v]
+mqtt_peers.py { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | -s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } \
+[-a] [-i INDENT] [-v]
 
 EXAMPLES
 mqtt_peers.py -s scs-bbe-002 scs-be2-2 secret1 \
@@ -34,6 +34,8 @@ DOCUMENT EXAMPLE
 "topic": "south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control"}}
 
 SEE ALSO
+scs_dev/aws_mqtt_control
+
 scs_mfr/aws_project
 scs_mfr/shared_secret
 scs_mfr/system_id
@@ -41,7 +43,6 @@ scs_mfr/system_id
 
 import json
 import sys
-
 
 from scs_analysis.cmd.cmd_mqtt_peers import CmdMQTTPeers
 
