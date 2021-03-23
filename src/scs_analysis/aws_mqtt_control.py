@@ -90,6 +90,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        # tag...
+        host_tag = Host.name()
+
         if cmd.aws:
             if not AccessKey.exists(Host):
                 print("aws_mqtt_control: access key not available", file=sys.stderr)
@@ -141,7 +144,7 @@ if __name__ == '__main__':
             print("aws_mqtt_control: %s" % auth, file=sys.stderr)
 
         # responder...
-        handler = ControlHandler()
+        handler = ControlHandler(host_tag, device_tag)
         subscriber = MQTTSubscriber(topic, handler.handle)
 
         # client...
@@ -150,9 +153,6 @@ if __name__ == '__main__':
         if cmd.verbose:
             print("aws_mqtt_control: %s" % client, file=sys.stderr)
             sys.stderr.flush()
-
-        # tag...
-        host_tag = Host.name()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
             publication = Publication(topic, datum)
 
-            handler.set(publication)
+            handler.set_outgoing(publication)
 
             if cmd.verbose:
                 print(datum, file=sys.stderr)
