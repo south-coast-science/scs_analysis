@@ -43,8 +43,11 @@ A --rule flag is available. If used, individual aggregates are rejected if less 
 are present. In this case, a timedelta must be supplied, indicating indicating the expected interval between the
 input samples. The interval may be found using the aws_topic_history utility.
 
+If the --exclude-remainder flag is used, then all of the input documents after the last complete checkpoint period
+are ignored.
+
 SYNOPSIS
-sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] [-v] [PATH_1 .. PATH_N]
+sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] [-x] [-v] [PATH_1 .. PATH_N]
 
 EXAMPLES
 csv_reader.py gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
@@ -162,7 +165,7 @@ if __name__ == '__main__':
             processed_count += 1
 
         # report remainder...
-        if aggregate.has_value():
+        if aggregate.has_value() and not cmd.exclude_remainder:
             if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.interval, checkpoint - prev_checkpoint):
                 print(JSONify.dumps(aggregate.report(checkpoint)))
                 sys.stdout.flush()
