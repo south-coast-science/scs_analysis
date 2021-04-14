@@ -21,10 +21,9 @@ do not contain a field that is in the header, then this field is given the null 
 
 header-scan mode:
 
-All input documents are scanned in order to build an inclusive hearer row. The utility will terminate if
-paths in the input documents are not compatible with one another. Any documents that do not contain a header
-fields are given a null value for that field. Warning: the header-scan mode requires memory proportional to the
-size of its input.
+All input documents are scanned in order to build an inclusive hearer row. Any documents that do not contain a header
+fields are given a null value for that field. Any values bound to paths that become internal nodes are discarded.
+Warning: the header-scan mode requires memory proportional to the size of its input.
 
 SYNOPSIS
 csv_writer.py [{ -a | -x | -s }] [-e] [-v] [FILENAME]
@@ -107,8 +106,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("csv_writer: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if writer is not None:
