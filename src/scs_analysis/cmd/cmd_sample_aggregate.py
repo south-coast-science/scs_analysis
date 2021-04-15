@@ -21,7 +21,7 @@ class CmdSampleAggregate(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] "
-                                                    "[-v] [PATH_1 .. PATH_N]", version="%prog 1.0")
+                                                    "[-x] [-v] [PATH_1 .. PATH_N]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
@@ -36,6 +36,9 @@ class CmdSampleAggregate(object):
 
         self.__parser.add_option("--rule", "-r", type="string", nargs=1, action="store", dest="rule",
                                  help="apply 75% rule with sampling INTERVAL")
+
+        self.__parser.add_option("--exclude-remainder", "-x", action="store_true", dest="exclude_remainder",
+                                 help="ignore data points after the last complete period")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -86,6 +89,11 @@ class CmdSampleAggregate(object):
 
 
     @property
+    def exclude_remainder(self):
+        return self.__opts.exclude_remainder
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -102,5 +110,7 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, iso:%s, interval:%s, verbose:%s, nodes:%s}" %  \
-               (self.checkpoint, self.min_max, self.iso, self.interval, self.verbose, self.nodes)
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, iso:%s, interval:%s, exclude_remainder:%s, " \
+               "verbose:%s, nodes:%s}" %  \
+               (self.checkpoint, self.min_max, self.iso, self.interval, self.exclude_remainder,
+                self.verbose, self.nodes)
