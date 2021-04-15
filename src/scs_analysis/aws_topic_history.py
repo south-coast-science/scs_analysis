@@ -26,8 +26,8 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
-aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
-{ -c HH:MM:SS [-m] | [-w] [-f] } [-r] [-v] TOPIC
+Usage: aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
+{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [-v] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -179,7 +179,8 @@ if __name__ == '__main__':
 
         # messages...
         for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.fetch_last, cmd.checkpoint,
-                                                      cmd.include_wrapper, cmd.rec_only, cmd.min_max):
+                                                      cmd.include_wrapper, cmd.rec_only,
+                                                      cmd.min_max, cmd.exclude_remainder):
             print(JSONify.dumps(message))
             sys.stdout.flush()
 

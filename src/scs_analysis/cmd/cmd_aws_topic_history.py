@@ -22,8 +22,9 @@ class CmdAWSTopicHistory(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
-                                                    "-s START [-e END] } { -c HH:MM:SS [-m] | [-w] [-f] } [-r] [-v] "
-                                                    "TOPIC", version="%prog 1.0")
+                                                    "-s START [-e END] } "
+                                                    "{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [-v] TOPIC",
+                                              version="%prog 1.0")
 
         # compulsory (from selection)...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -41,13 +42,17 @@ class CmdAWSTopicHistory(object):
         self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
                                  help="ISO 8601 datetime END")
 
-        # optional...
+        # aggregation...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
                                  help="a time specification as **:/05:00")
 
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="include min and max in addition to midpoint")
 
+        self.__parser.add_option("--exclude-remainder", "-x", action="store_true", dest="exclude_remainder",
+                                 help="ignore data points after the last complete period")
+
+        # output...
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
                                  help="include storage wrapper")
 
@@ -89,9 +94,6 @@ class CmdAWSTopicHistory(object):
         if count != 1:
             return False
 
-        if self.min_max and not self.checkpoint:
-            return False
-
         if self.include_wrapper and self.checkpoint:
             return False
 
@@ -99,6 +101,12 @@ class CmdAWSTopicHistory(object):
             return False
 
         if self.rec_only and self.min_max:
+            return False
+
+        if self.min_max and not self.checkpoint:
+            return False
+
+        if self.exclude_remainder and not self.checkpoint:
             return False
 
         return True
@@ -185,6 +193,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def exclude_remainder(self):
+        return self.__opts.exclude_remainder
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -202,6 +215,8 @@ class CmdAWSTopicHistory(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, fetch_last:%s, " \
-               "checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, verbose:%s, topic:%s}" % \
+               "checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, exclude_remainder:%s, " \
+               "verbose:%s, topic:%s}" % \
                     (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.fetch_last,
-                     self.checkpoint, self.include_wrapper, self.rec_only, self.min_max, self.verbose, self.topic)
+                     self.checkpoint, self.include_wrapper, self.rec_only, self.min_max, self.exclude_remainder,
+                     self.verbose, self.topic)
