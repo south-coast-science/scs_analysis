@@ -26,7 +26,7 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
-Usage: aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
+aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
 { -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [-v] TOPIC
 
 EXAMPLES
