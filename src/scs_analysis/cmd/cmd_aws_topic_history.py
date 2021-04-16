@@ -50,7 +50,7 @@ class CmdAWSTopicHistory(object):
                                  help="include min and max in addition to midpoint")
 
         self.__parser.add_option("--exclude-remainder", "-x", action="store_true", dest="exclude_remainder",
-                                 help="ignore data points after the last complete period")
+                                 help="ignore documents after the last complete period")
 
         # output...
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="include_wrapper", default=False,
