@@ -27,7 +27,7 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 
 SYNOPSIS
 aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
-{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [-v] TOPIC
+{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     cmd = CmdAWSTopicHistory()
 
-    Logging.config('aws_topic_history', verbose=cmd.verbose)
+    Logging.config('aws_topic_history', level=cmd.log_level())
     logger = Logging.getLogger()
 
     if not cmd.is_valid_latest_at():
