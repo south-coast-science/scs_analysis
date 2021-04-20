@@ -95,4 +95,4 @@ if __name__ == '__main__':
             print(JSONify.dumps(auth))
 
     except KeyboardInterrupt:
-        print()
+        print(file=sys.stderr)

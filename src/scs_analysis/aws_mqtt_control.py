@@ -228,8 +228,7 @@ if __name__ == '__main__':
         # end...
 
     except KeyboardInterrupt:
-        if cmd.interactive:
-            print(file=sys.stderr)
+        print(file=sys.stderr)
 
         if cmd.verbose:
             print("aws_mqtt_control: KeyboardInterrupt", file=sys.stderr)
