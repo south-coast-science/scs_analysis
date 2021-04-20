@@ -68,6 +68,11 @@ if __name__ == '__main__':
 
         if cmd.set:
             auth = ConfigurationAuth.from_user()
+
+            if not auth.has_valid_email_address():
+                logger.error("invalid email address: %s" % auth.email_address)
+                exit(1)
+
             auth.save(Host, encryption_key=auth.password)
 
         elif cmd.delete:
