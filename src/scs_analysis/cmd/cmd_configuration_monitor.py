@@ -16,7 +16,7 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [{ -o | -h }] [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [{ -o | -l }] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # filters..
