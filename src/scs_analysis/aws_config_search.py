@@ -32,8 +32,14 @@ if __name__ == '__main__':
     config_searcher = ConfigurationSearcher()
     data = config_searcher.get_data()
 
-    if cmd.hostname:
-        data = config_searcher.get_by_name(cmd.hostname)
+    # if cmd.hostname:
+    #     data = config_searcher.get_by_name(cmd.hostname)
+
+    if type(data) == int:
+        if data == 1 or data == 2:
+            data = "invalid auth"
+        if data == 3:
+            data = "server error"
 
     if cmd.indent:
         print(JSONify.dumps(data, indent=3))
