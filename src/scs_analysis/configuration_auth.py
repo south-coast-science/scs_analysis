@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
 
 """
-Created on 17 Oct 2020
+Created on 20 Apr 2021
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The access_key utility is used to manage an AWS access key. The key is made up of a key ID (AWS_ACCESS_KEY_ID)
-and a secret key (AWS_SECRET_ACCESS_KEY). The JSON key document managed by this utility is encrypted.
+The configuration_auth utility is used to
 
 A password must be specified when the key is created and is required when the key is accessed.
 
 SYNOPSIS
-access_key.py [{ -s | -d }] [-v]
+configuration_auth.py [{ -s | -d }] [-v]
 
 EXAMPLES
-./access_key.py -s
+./configuration_auth.py -s
 
 FILES
-~/SCS/aws/access_key.json
+~/SCS/aws/configuration_auth.json
 
 DOCUMENT EXAMPLE
-{"key-id": "123", "secret-key": "456"}
+{"email": "bruno.beloff@southcoastscience.com", "password": "XXX"}
 
 SEE ALSO
-scs_analysis/aws_bucket
+scs_analysis/configuration_monitor
+scs_analysis/configuration_monitor_status
 
 RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
@@ -32,9 +32,9 @@ https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password
 
 import sys
 
-from scs_analysis.cmd.cmd_access_key import CmdAccessKey
+from scs_analysis.cmd.cmd_configuration_auth import CmdConfigurationAuth
 
-from scs_core.aws.client.access_key import AccessKey
+from scs_core.aws.client.configuration_auth import ConfigurationAuth
 from scs_core.data.json import JSONify
 from scs_core.sys.logging import Logging
 
@@ -45,19 +45,19 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    access_key = None
+    auth = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdAccessKey()
+        cmd = CmdConfigurationAuth()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('access_key', verbose=cmd.verbose)
+        Logging.config('configuration_auth', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -67,19 +67,17 @@ if __name__ == '__main__':
         # run...
 
         if cmd.set:
-            access_key = AccessKey.from_user()
-            password = AccessKey.password_from_user()
-
-            access_key.save(Host, encryption_key=password)
+            auth = ConfigurationAuth.from_user()
+            auth.save(Host, encryption_key=auth.password)
 
         elif cmd.delete:
-            AccessKey.delete(Host)
+            ConfigurationAuth.delete(Host)
 
         else:
-            password = AccessKey.password_from_user()
+            password = ConfigurationAuth.password_from_user()
 
             try:
-                access_key = AccessKey.load(Host, encryption_key=password)
+                auth = ConfigurationAuth.load(Host, encryption_key=password)
             except (KeyError, ValueError):
                 logger.error("incorrect password")
                 exit(1)
@@ -88,8 +86,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # end...
 
-        if access_key:
-            print(JSONify.dumps(access_key))
+        if auth:
+            print(JSONify.dumps(auth))
 
     except KeyboardInterrupt:
         print()
