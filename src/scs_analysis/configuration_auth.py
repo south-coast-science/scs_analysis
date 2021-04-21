@@ -68,6 +68,11 @@ if __name__ == '__main__':
 
         if cmd.set:
             auth = ConfigurationAuth.from_user()
+
+            if not auth.has_valid_email_address():
+                logger.error("invalid email address: %s." % auth.email_address)
+                exit(1)
+
             auth.save(Host, encryption_key=auth.password)
 
         elif cmd.delete:
@@ -79,7 +84,7 @@ if __name__ == '__main__':
             try:
                 auth = ConfigurationAuth.load(Host, encryption_key=password)
             except (KeyError, ValueError):
-                logger.error("incorrect password")
+                logger.error("incorrect password.")
                 exit(1)
 
 
@@ -90,4 +95,4 @@ if __name__ == '__main__':
             print(JSONify.dumps(auth))
 
     except KeyboardInterrupt:
-        print()
+        print(file=sys.stderr)

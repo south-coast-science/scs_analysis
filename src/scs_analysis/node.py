@@ -168,8 +168,7 @@ if __name__ == '__main__':
         print("node: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("node: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if cmd.array:

@@ -82,4 +82,4 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        pass
+        print(file=sys.stderr)
