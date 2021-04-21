@@ -54,7 +54,6 @@ class CmdConfigurationMonitor(object):
     def tag(self):
         return self.__opts.tag
 
-
     @property
     def tags_only(self):
         return self.__opts.tags_only
@@ -63,6 +62,10 @@ class CmdConfigurationMonitor(object):
     @property
     def history(self):
         return self.__opts.history
+
+    @property
+    def indent(self):
+        return self.__opts.indent
 
 
     @property
@@ -77,5 +80,5 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag:%s, tags_only:%s, history:%s, verbose:%s}" % \
-               (self.tag, self.tags_only, self.history, self.verbose)
+        return "CmdConfigurationMonitor:{tag:%s, tags_only:%s, history:%s, indent:%s, verbose:%s}" % \
+               (self.tag, self.tags_only, self.history, self.indent, self.verbose)
