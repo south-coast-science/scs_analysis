@@ -6,6 +6,8 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_core.aws.manager.configuration_finder import ConfigurationRequest
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -46,6 +48,16 @@ class CmdConfigurationMonitor(object):
             return False
 
         return True
+
+
+    def response_mode(self):
+        if self.tags_only:
+            return ConfigurationRequest.MODE.TAGS_ONLY
+
+        if self.history:
+            return ConfigurationRequest.MODE.HISTORY
+
+        return ConfigurationRequest.MODE.FULL
 
 
     # ----------------------------------------------------------------------------------------------------------------

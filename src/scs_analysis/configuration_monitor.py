@@ -22,12 +22,13 @@ scs_analysis/configuration_monitor_status
 """
 
 # import json
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
+from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
 from scs_core.data.json import JSONify
 
@@ -70,23 +71,19 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            pass
+            # auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
         except (KeyError, ValueError):
             logger.error('incorrect password')
             exit(1)
 
-        finder = ConfigurationFinder(auth)
+        finder = ConfigurationFinder(requests, auth)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-        search_filter = None
-        if cmd.tags_only:
-            search_filter = "tags_only"
-        if cmd.history:
-            search_filter = "history"
 
-        data = finder.find(cmd.tag_filter, ConfigurationRequest.MODE.FULL)
+        data = finder.find(cmd.tag_filter, cmd.response_mode())
 
         if type(data) == int:
             if data == 1 or data == 2:
