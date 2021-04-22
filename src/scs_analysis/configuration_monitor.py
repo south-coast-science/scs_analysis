@@ -80,8 +80,27 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+        search_filter = None
+        if cmd.tags_only:
+            search_filter = "tags_only"
+        if cmd.history:
+            search_filter = "history"
 
-        # TODO: code goes here
+        data = config_searcher.get_data(cmd.tag, search_filter)
+
+        if type(data) == int:
+            if data == 1 or data == 2:
+                data = "invalid auth"
+            if data == 3:
+                data = "server error"
+
+        # TODO make into a sample in core sample sample
+        if cmd.indent:
+            print(JSONify.dumps(data, indent=3))
+        else:
+            print(JSONify.dumps(data))
+
+
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
