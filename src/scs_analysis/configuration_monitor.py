@@ -85,6 +85,9 @@ if __name__ == '__main__':
 
         data = finder.find(cmd.tag_filter, cmd.response_mode())
 
+        print("jdata: %s" % data)
+        print("-")
+
         if type(data) == int:
             if data == 1 or data == 2:
                 data = "invalid auth"
