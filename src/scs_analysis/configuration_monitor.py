@@ -83,9 +83,11 @@ if __name__ == '__main__':
         # run...
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
-        report = response.items if response.is_ok() else response
 
-        print(JSONify.dumps(report, indent=cmd.indent))
+        if response.is_ok():
+            print(JSONify.dumps(response.items, indent=cmd.indent))
+        else:
+            logger.error("HTTP response: %s (%s)." % (response.status.value, response.status.phrase))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

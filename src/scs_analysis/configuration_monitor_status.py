@@ -21,14 +21,11 @@ scs_analysis/configuration_auth
 scs_analysis/configuration_monitor
 """
 
-import json
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_status import CmdConfigurationMonitorStatus
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
-
-from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
 
