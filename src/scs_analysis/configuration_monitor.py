@@ -21,7 +21,6 @@ scs_analysis/configuration_auth
 scs_analysis/configuration_monitor_status
 """
 
-# import json
 import requests
 import sys
 
@@ -83,21 +82,10 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        data = finder.find(cmd.tag_filter, cmd.response_mode())
+        response = finder.find(cmd.tag_filter, cmd.response_mode())
+        report = response.items if response.is_ok() else response
 
-        print("jdata: %s" % data)
-        print("-")
-
-        if type(data) == int:
-            if data == 1 or data == 2:
-                data = "invalid auth"
-            if data == 3:
-                data = "server error"
-
-        # TODO make into a sample in core sample sample
-
-        print(JSONify.dumps(data, indent=cmd.indent))
-
+        print(JSONify.dumps(report, indent=cmd.indent))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
