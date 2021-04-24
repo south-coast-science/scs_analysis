@@ -31,6 +31,7 @@ from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
 from scs_core.data.json import JSONify
 
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -39,6 +40,8 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+
+    logger = None
 
     auth = None
     manager = None
@@ -83,11 +86,10 @@ if __name__ == '__main__':
         # run...
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
-
-        if response.is_ok():
-            print(JSONify.dumps(response.items, indent=cmd.indent))
-        else:
-            logger.error("HTTP response: %s (%s)." % (response.status.value, response.status.phrase))
+        print(JSONify.dumps(response.items, indent=cmd.indent))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except HTTPException as ex:
+        logger.error("HTTP response: %s (%s) %s" % (ex.status, ex.reason, ex.data))
