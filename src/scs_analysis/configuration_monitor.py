@@ -29,6 +29,7 @@ from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
@@ -92,4 +93,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPException as ex:
-        logger.error("HTTP response: %s (%s) %s" % (ex.status, ex.reason, ex.data))
+        now = LocalizedDatetime.now().utc().as_iso8601()
+        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
