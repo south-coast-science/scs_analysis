@@ -89,6 +89,8 @@ if __name__ == '__main__':
         response = finder.find(cmd.tag_filter, cmd.response_mode())
         print(JSONify.dumps(response.items, indent=cmd.indent))
 
+        logger.info('retrieved: %s' % len(response.items))
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
