@@ -6,6 +6,8 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_core.aws.manager.configuration_finder import ConfigurationRequest
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +22,7 @@ class CmdConfigurationMonitor(object):
                                               version="%prog 1.0")
 
         # filters..
-        self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
+        self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
         # output..
@@ -48,11 +50,21 @@ class CmdConfigurationMonitor(object):
         return True
 
 
+    def response_mode(self):
+        if self.tags_only:
+            return ConfigurationRequest.MODE.TAGS_ONLY
+
+        if self.history:
+            return ConfigurationRequest.MODE.HISTORY
+
+        return ConfigurationRequest.MODE.FULL
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def tag(self):
-        return self.__opts.tag
+    def tag_filter(self):
+        return self.__opts.tag_filter
 
     @property
     def tags_only(self):
@@ -62,6 +74,7 @@ class CmdConfigurationMonitor(object):
     @property
     def history(self):
         return self.__opts.history
+
 
     @property
     def indent(self):
@@ -80,5 +93,5 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag:%s, tags_only:%s, history:%s, indent:%s, verbose:%s}" % \
-               (self.tag, self.tags_only, self.history, self.indent, self.verbose)
+        return "CmdConfigurationMonitor:{tag_filter:%s, tags_only:%s, history:%s, indent:%s, verbose:%s}" % \
+               (self.tag_filter, self.tags_only, self.history, self.indent, self.verbose)

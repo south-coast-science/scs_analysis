@@ -20,7 +20,7 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ [-x] [-a] | -s }] [-f FILE] [-i INDENT] [-v] "
+        self.__parser = optparse.OptionParser(usage="%prog [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] "
                                                     "[SUB_PATH_1 .. SUB_PATH_N]", version="%prog 1.0")
 
         # optional...
@@ -47,13 +47,8 @@ class CmdNode(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_valid(self):
-        if self.exclude and self.sequence:
-            return False
-
-        if self.array and self.sequence:
-            return False
-
+    @classmethod
+    def is_valid(cls):
         return True
 
 

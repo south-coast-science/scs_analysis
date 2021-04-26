@@ -21,17 +21,18 @@ scs_analysis/configuration_auth
 scs_analysis/configuration_monitor_status
 """
 
-import json
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
+from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
-from scs_core.estate.config_search import ConfigurationSearcher
-
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -41,6 +42,9 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    logger = None
+
+    auth = None
     manager = None
     group = None
 
@@ -70,37 +74,26 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            key = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            pass
+            # auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
         except (KeyError, ValueError):
             logger.error('incorrect password')
             exit(1)
 
-        config_searcher = ConfigurationSearcher()
+        finder = ConfigurationFinder(requests, auth)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
-        search_filter = None
-        if cmd.tags_only:
-            search_filter = "tags_only"
-        if cmd.history:
-            search_filter = "history"
 
-        data = config_searcher.get_data(cmd.tag, search_filter)
+        response = finder.find(cmd.tag_filter, cmd.response_mode())
+        print(JSONify.dumps(response.items, indent=cmd.indent))
 
-        if type(data) == int:
-            if data == 1 or data == 2:
-                data = "invalid auth"
-            if data == 3:
-                data = "server error"
-
-        # TODO make into a sample in core sample sample
-        if cmd.indent:
-            print(JSONify.dumps(data, indent=3))
-        else:
-            print(JSONify.dumps(data))
-
-
+        logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except HTTPException as ex:
+        now = LocalizedDatetime.now().utc().as_iso8601()
+        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
