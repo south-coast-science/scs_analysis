@@ -35,6 +35,8 @@ scs_analysis/mqtt_peer
 scs_mfr/aws_project
 scs_mfr/shared_secret
 scs_mfr/system_id
+
+https://code-maven.com/interactive-shell-with-cmd-in-python
 """
 
 import sys
