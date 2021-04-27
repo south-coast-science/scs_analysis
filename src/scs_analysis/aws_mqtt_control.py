@@ -21,7 +21,7 @@ aws_client_auth utility.
 
 In the interactive mode, the aws_mqtt_control command-line interpreter supports history [UP] and [DOWN] keys.
 The mode supports command completion with the [TAB] key and command listing with [TAB][TAB]. Exit from the interactive
-mode with [CTRL]-D.
+mode with [CTRL-D].
 
 SYNOPSIS
 aws_mqtt_control.py { -p HOSTNAME [-a] | -d TAG SHARED_SECRET TOPIC } { -i | -r [CMD_TOKENS] } [-t TIMEOUT] [-v]
