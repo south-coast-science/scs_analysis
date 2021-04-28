@@ -27,7 +27,7 @@ import sys
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder
+from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -87,9 +87,15 @@ if __name__ == '__main__':
         # run...
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
-        print(JSONify.dumps(response.items, indent=cmd.indent))
+        if response is None:
+            if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
+                logger.error("Could not retrieve history, please check tag is entered correctly ")
+            else:
+                logger.error("Something went wrong ")
 
-        logger.info('retrieved: %s' % len(response.items))
+        else:
+            print(JSONify.dumps(response.items, indent=cmd.indent))
+            logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
