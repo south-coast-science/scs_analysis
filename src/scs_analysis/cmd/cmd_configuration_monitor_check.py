@@ -6,12 +6,14 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckRequest
+
 from scs_core.estate.configuration_check import ConfigurationCheck
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdConfigurationMonitorStatus(object):
+class CmdConfigurationMonitorCheck(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -24,7 +26,7 @@ class CmdConfigurationMonitorStatus(object):
                                               version="%prog 1.0")
 
         # filters..
-        self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
+        self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
         self.__parser.add_option("--result", "-r", type="string", nargs=1, action="store", dest="result_code",
@@ -56,11 +58,15 @@ class CmdConfigurationMonitorStatus(object):
         return ConfigurationCheck.result_string(self.result_code)
 
 
+    def response_mode(self):
+        return ConfigurationCheckRequest.MODE.TAGS_ONLY if self.tags_only else ConfigurationCheckRequest.MODE.FULL
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def tag(self):
-        return self.__opts.tag
+    def tag_filter(self):
+        return self.__opts.tag_filter
 
 
     @property
@@ -71,6 +77,11 @@ class CmdConfigurationMonitorStatus(object):
     @property
     def tags_only(self):
         return self.__opts.tags_only
+
+
+    @property
+    def indent(self):
+        return self.__opts.indent
 
 
     @property
@@ -85,5 +96,5 @@ class CmdConfigurationMonitorStatus(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitorStatus:{tag:%s, result_code:%s, tags_only:%s, verbose:%s}" % \
-               (self.tag, self.result_code, self.tags_only, self.verbose)
+        return "CmdConfigurationMonitorCheck:{tag_filter:%s, result_code:%s, tags_only:%s, indent:%s, verbose:%s}" % \
+               (self.tag_filter, self.result_code, self.tags_only, self.indent, self.verbose)
