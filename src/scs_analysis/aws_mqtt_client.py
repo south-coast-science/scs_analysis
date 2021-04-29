@@ -216,7 +216,7 @@ if __name__ == '__main__':
         print("aws_mqtt_client: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        pass
+        print(file=sys.stderr)
 
     finally:
         if cmd and cmd.verbose:

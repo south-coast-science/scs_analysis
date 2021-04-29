@@ -120,8 +120,7 @@ if __name__ == '__main__':
         print("csv_collator: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("csv_collator: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if collator is not None:

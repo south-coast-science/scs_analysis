@@ -134,8 +134,7 @@ if __name__ == '__main__':
         print("sample_collator: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("sample_collator: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if cmd.verbose:

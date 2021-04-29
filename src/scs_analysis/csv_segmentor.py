@@ -130,8 +130,7 @@ if __name__ == '__main__':
         print("csv_segmentor: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("csv_segmentor: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if segmentor is not None:

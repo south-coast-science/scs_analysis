@@ -153,8 +153,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("sample_noise: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if cmd.verbose:

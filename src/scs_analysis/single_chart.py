@@ -114,8 +114,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("single_chart: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
 
     # ----------------------------------------------------------------------------------------------------------------

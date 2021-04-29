@@ -122,5 +122,4 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("osio_topic_history: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)

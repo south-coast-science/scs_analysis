@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        print("timer: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     except (BrokenPipeError, IOError):
         pass
