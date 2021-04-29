@@ -1,7 +1,7 @@
 """
-Created on 17 Oct 2020
+Created on 20 Apr 2021
 
-@author: Jade Page (jade.page@southcoastscience.com)
+@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
 import optparse
@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAccessKey(object):
+class CmdConfigurationAuth(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -20,10 +20,10 @@ class CmdAccessKey(object):
 
         # commands..
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
-                                 help="set the key")
+                                 help="set the authentication")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
-                                 help="delete the key")
+                                 help="delete the authentication")
 
         # reporting flag..
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -39,7 +39,6 @@ class CmdAccessKey(object):
             return False
 
         return True
-
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -65,5 +64,5 @@ class CmdAccessKey(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAccessKey:{set:%s, delete:%s, verbose:%s}" % \
+        return "CmdConfigurationAuth:{set:%s, delete:%s, verbose:%s}" % \
                (self.set, self.delete, self.verbose)

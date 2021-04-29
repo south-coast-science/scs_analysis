@@ -43,6 +43,7 @@ array mode:
 {"val": {"hmd": 73.6, "tmp": 10.8}, "rec": "2019-02-17T08:57:53Z"}]
 """
 
+import json
 import sys
 
 from scs_analysis.cmd.cmd_node import CmdNode
@@ -87,6 +88,11 @@ if __name__ == '__main__':
         else:
             source = sys.stdin
 
+        if cmd.sequence:
+            for document in source:
+                source = [json.dumps(item) for item in json.loads(document)]
+                break
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -98,8 +104,7 @@ if __name__ == '__main__':
         first = True
 
         for document in source:
-            jstr = document.strip()
-            datum = PathDict.construct_from_jstr(jstr)
+            datum = PathDict.construct_from_jstr(document)
 
             if datum is None:
                 continue
@@ -132,33 +137,18 @@ if __name__ == '__main__':
             if not target:
                 continue                                # skip empty outputs
 
-            if cmd.sequence:
-                for path in cmd.sub_paths:
-                    node = target.node(path)
-
-                    try:
-                        for item in node:
-                            print(JSONify.dumps(item))
-                            sys.stdout.flush()
-                            output_count += 1
-
-                    except TypeError as ex:
-                        print(ex, file=sys.stderr)
-                        print(JSONify.dumps(node))
-
-            else:
-                if cmd.array:
-                    if first:
-                        print(JSONify.dumps(target), end='')
-                        first = False
-
-                    else:
-                        print(", %s" % JSONify.dumps(target), end='')
+            if cmd.array:
+                if first:
+                    print(JSONify.dumps(target), end='')
+                    first = False
 
                 else:
-                    print(JSONify.dumps(target, indent=cmd.indent))
-                    sys.stdout.flush()
-                    output_count += 1
+                    print(", %s" % JSONify.dumps(target), end='')
+
+            else:
+                print(JSONify.dumps(target, indent=cmd.indent))
+                sys.stdout.flush()
+                output_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -168,8 +158,7 @@ if __name__ == '__main__':
         print("node: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("node: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if cmd.array:

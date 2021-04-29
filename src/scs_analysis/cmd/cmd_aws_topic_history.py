@@ -6,6 +6,7 @@ Created on 20 Feb 2017
 source repo: scs_analysis
 """
 
+import logging
 import optparse
 
 from scs_core.data.datetime import LocalizedDatetime
@@ -23,7 +24,7 @@ class CmdAWSTopicHistory(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
                                                     "-s START [-e END] } "
-                                                    "{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [-v] TOPIC",
+                                                    "{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC",
                                               version="%prog 1.0")
 
         # compulsory (from selection)...
@@ -64,6 +65,9 @@ class CmdAWSTopicHistory(object):
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
+
+        self.__parser.add_option("--debug", "-d", action="store_true", dest="debug", default=False,
+                                 help="report narrative and request / response to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
 
@@ -109,6 +113,9 @@ class CmdAWSTopicHistory(object):
         if self.exclude_remainder and not self.checkpoint:
             return False
 
+        if self.verbose and self.debug:
+            return False
+
         return True
 
 
@@ -138,6 +145,16 @@ class CmdAWSTopicHistory(object):
             return True
 
         return self.end is not None
+
+
+    def log_level(self):
+        if self.debug:
+            return logging.DEBUG
+
+        if self.verbose:
+            return logging.INFO
+
+        return logging.ERROR
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -203,6 +220,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def debug(self):
+        return self.__opts.debug
+
+
+    @property
     def topic(self):
         return self.__args[0] if len(self.__args) > 0 else None
 
@@ -216,7 +238,7 @@ class CmdAWSTopicHistory(object):
     def __str__(self, *args, **kwargs):
         return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, fetch_last:%s, " \
                "checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, exclude_remainder:%s, " \
-               "verbose:%s, topic:%s}" % \
+               "verbose:%s, debug:%s, topic:%s}" % \
                     (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.fetch_last,
                      self.checkpoint, self.include_wrapper, self.rec_only, self.min_max, self.exclude_remainder,
-                     self.verbose, self.topic)
+                     self.verbose, self.debug, self.topic)

@@ -102,8 +102,7 @@ if __name__ == '__main__':
         print("sample_midpoint: KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
-        if cmd.verbose:
-            print("sample_midpoint: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if cmd.verbose:
