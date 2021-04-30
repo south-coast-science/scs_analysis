@@ -188,7 +188,9 @@ if __name__ == '__main__':
                         logger.error("%s device problem: %s." % (device_tag, handler.receipt.command.stderr[0]))
                         exit(1)
 
-                    vocabulary = json.loads(handler.receipt.command.stdout[0])
+                    commands = json.loads(handler.receipt.command.stdout[0])
+                    vocabulary = [command + ' ' for command in commands]
+
                     StdIO.set(vocabulary=vocabulary, history_filename=history_filename)
                     break
 
