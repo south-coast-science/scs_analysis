@@ -81,8 +81,6 @@ if __name__ == '__main__':
 
     key = None
     client = None
-    pub_comms = None
-
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -97,7 +95,6 @@ if __name__ == '__main__':
     logger = Logging.getLogger()
 
     logger.info(cmd)
-
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -169,7 +166,8 @@ if __name__ == '__main__':
         client.connect(auth, False)
 
         if cmd.interactive:
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), '?', key)
+            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), '?',
+                                           cmd.DEFAULT_TIMEOUT, key)
             publication = Publication(topic, datum)
 
             handler.set_outgoing(publication)
@@ -218,7 +216,8 @@ if __name__ == '__main__':
                 cmd_tokens = cmd.cmd_tokens
 
             # datum...
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), cmd_tokens, key)
+            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), cmd_tokens,
+                                           cmd.timeout, key)
             publication = Publication(topic, datum)
 
             handler.set_outgoing(publication)

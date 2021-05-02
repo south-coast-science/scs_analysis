@@ -14,7 +14,7 @@ import optparse
 class CmdMQTTControl(object):
     """unix command line handler"""
 
-    DEFAULT_TIMEOUT = 20                # seconds
+    DEFAULT_TIMEOUT = 30                # seconds
 
 
     # ----------------------------------------------------------------------------------------------------------------
