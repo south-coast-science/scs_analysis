@@ -43,12 +43,7 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-
     auth = None
-    manager = None
-    group = None
-
-    document_count = 0
 
     try:
         # ------------------------------------------------------------------------------------------------------------

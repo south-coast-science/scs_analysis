@@ -81,8 +81,6 @@ if __name__ == '__main__':
 
     key = None
     client = None
-    pub_comms = None
-
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -97,7 +95,6 @@ if __name__ == '__main__':
     logger = Logging.getLogger()
 
     logger.info(cmd)
-
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -169,7 +166,8 @@ if __name__ == '__main__':
         client.connect(auth, False)
 
         if cmd.interactive:
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), '?', key)
+            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), '?',
+                                           cmd.DEFAULT_TIMEOUT, key)
             publication = Publication(topic, datum)
 
             handler.set_outgoing(publication)
@@ -188,7 +186,9 @@ if __name__ == '__main__':
                         logger.error("%s device problem: %s." % (device_tag, handler.receipt.command.stderr[0]))
                         exit(1)
 
-                    vocabulary = json.loads(handler.receipt.command.stdout[0])
+                    commands = json.loads(handler.receipt.command.stdout[0])
+                    vocabulary = [command + ' ' for command in commands]
+
                     StdIO.set(vocabulary=vocabulary, history_filename=history_filename)
                     break
 
@@ -216,7 +216,8 @@ if __name__ == '__main__':
                 cmd_tokens = cmd.cmd_tokens
 
             # datum...
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), cmd_tokens, key)
+            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), cmd_tokens,
+                                           cmd.timeout, key)
             publication = Publication(topic, datum)
 
             handler.set_outgoing(publication)

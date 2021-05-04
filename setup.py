@@ -1,12 +1,37 @@
 """
 Created on 4 Sep 2020
-Updated 23 Dec 2020
+Updated 23 Mar 2021
 
 @author: Jade Page (jade.page@southcoastscience.com)
+
 https://packaging.python.org/tutorials/packaging-projects/
+https://packaging.python.org/guides/single-sourcing-package-version/
 """
 
+import codecs
+import os
 import setuptools
+
+
+# TODO: update scripts
+
+# --------------------------------------------------------------------------------------------------------------------
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            return line.split("'")[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
+
+# --------------------------------------------------------------------------------------------------------------------
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -14,9 +39,10 @@ with open("README.md", "r") as fh:
 with open('requirements.txt') as req_txt:
     required = [line for line in req_txt.read().splitlines() if line]
 
+
 setuptools.setup(
     name="scs-analysis",
-    version="1.0.10",
+    version=get_version("src/scs_analysis/__init__.py"),
     author="South Coast Science",
     author_email="contact@southcoastscience.com",
     description="Information management and analysis utilities for South Coast Science data consumers.",
@@ -80,8 +106,7 @@ setuptools.setup(
         'src/scs_analysis/sample_collator.py',
         'src/scs_analysis/sample_concentration.py',
         'src/scs_analysis/sample_median.py',
-        'src/scs_analysis/sample_timezone.py',
-
+        'src/scs_analysis/sample_timezone.py'
     ],
     install_requires=required,
     platforms=['any'],
