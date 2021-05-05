@@ -18,7 +18,7 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [{ -o | -l }] [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [{ -o | -l [-d] }] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # filters..
@@ -31,6 +31,9 @@ class CmdConfigurationMonitor(object):
 
         self.__parser.add_option("--history", "-l", action="store_true", dest="history", default=False,
                                  help="report the history of one device")
+
+        self.__parser.add_option("--diff", "-d", action="store_true", dest="diff", default=False,
+                                 help="report differences only (for history)")
 
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
@@ -45,6 +48,9 @@ class CmdConfigurationMonitor(object):
 
     def is_valid(self):
         if self.tags_only and self.history:
+            return False
+
+        if self.diff and not self.history:
             return False
 
         return True
@@ -77,6 +83,11 @@ class CmdConfigurationMonitor(object):
 
 
     @property
+    def diff(self):
+        return self.__opts.diff
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -93,5 +104,5 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag_filter:%s, tags_only:%s, history:%s, indent:%s, verbose:%s}" % \
-               (self.tag_filter, self.tags_only, self.history, self.indent, self.verbose)
+        return "CmdConfigurationMonitor:{tag_filter:%s, tags_only:%s, history:%s, diff:%s, indent:%s, verbose:%s}" % \
+               (self.tag_filter, self.tags_only, self.history, self.diff, self.indent, self.verbose)
