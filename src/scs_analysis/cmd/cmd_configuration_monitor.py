@@ -18,23 +18,27 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [{ -o | -l [-d] }] [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] { -l | -f | -d | -o } [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # filters..
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
-        # output..
+        # mode..
+        self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
+                                 help="report latest configuration for each device")
+
+        self.__parser.add_option("--full-history", "-f", action="store_true", dest="history", default=False,
+                                 help="report full configuration history")
+
+        self.__parser.add_option("--diff-history", "-d", action="store_true", dest="diff", default=False,
+                                 help="report configuration differences")
+
         self.__parser.add_option("--tags-only", "-o", action="store_true", dest="tags_only", default=False,
                                  help="report device tags only")
 
-        self.__parser.add_option("--history", "-l", action="store_true", dest="history", default=False,
-                                 help="report the history of one device")
-
-        self.__parser.add_option("--diff", "-d", action="store_true", dest="diff", default=False,
-                                 help="report differences only (for history)")
-
+        # output..
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -47,23 +51,40 @@ class CmdConfigurationMonitor(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.tags_only and self.history:
-            return False
+        count = 0
 
-        if self.diff and not self.history:
+        if self.latest:
+            count += 1
+
+        if self.history:
+            count += 1
+
+        if self.diff:
+            count += 1
+
+        if self.tags_only:
+            count += 1
+
+        if count != 1:
             return False
 
         return True
 
 
     def response_mode(self):
-        if self.tags_only:
-            return ConfigurationRequest.MODE.TAGS_ONLY
+        if self.latest:
+            return ConfigurationRequest.MODE.LATEST
 
         if self.history:
             return ConfigurationRequest.MODE.HISTORY
 
-        return ConfigurationRequest.MODE.FULL
+        if self.diff:
+            return ConfigurationRequest.MODE.DIFF
+
+        if self.tags_only:
+            return ConfigurationRequest.MODE.TAGS_ONLY
+
+        return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -72,9 +93,10 @@ class CmdConfigurationMonitor(object):
     def tag_filter(self):
         return self.__opts.tag_filter
 
+
     @property
-    def tags_only(self):
-        return self.__opts.tags_only
+    def latest(self):
+        return self.__opts.latest
 
 
     @property
@@ -85,6 +107,11 @@ class CmdConfigurationMonitor(object):
     @property
     def diff(self):
         return self.__opts.diff
+
+
+    @property
+    def tags_only(self):
+        return self.__opts.tags_only
 
 
     @property
@@ -104,5 +131,7 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag_filter:%s, tags_only:%s, history:%s, diff:%s, indent:%s, verbose:%s}" % \
-               (self.tag_filter, self.tags_only, self.history, self.diff, self.indent, self.verbose)
+        return "CmdConfigurationMonitor:{tag_filter:%s, latest:%s, history:%s, diff:%s, tags_only:%s, " \
+               "indent:%s, verbose:%s}" % \
+               (self.tag_filter, self.latest, self.history, self.diff, self.tags_only,
+                self.indent, self.verbose)
