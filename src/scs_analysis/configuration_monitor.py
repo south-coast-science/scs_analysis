@@ -9,7 +9,7 @@ DESCRIPTION
 The configuration_monitor utility is used to
 
 SYNOPSIS
-configuration_monitor.py [-t TAG] [{ -o | -h }] [-i INDENT] [-v]
+configuration_monitor.py [-t TAG] [{ -o | -l [-d] }] [-i INDENT] [-v]
 
 EXAMPLES
 
@@ -82,15 +82,17 @@ if __name__ == '__main__':
         # run...
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
-        if response is None:
-            if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
-                logger.error("Could not retrieve history, please check tag is entered correctly ")
-            else:
-                logger.error("Something went wrong ")
 
-        else:
-            print(JSONify.dumps(response.items, indent=cmd.indent))
-            logger.info('retrieved: %s' % len(response.items))
+        # if response is None:
+        #     if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
+        #         logger.error("Could not retrieve history, please check tag is entered correctly ")
+        #     else:
+        #         logger.error("Something went wrong ")
+        #
+        # else:
+
+        print(JSONify.dumps(response.items, indent=cmd.indent))
+        logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
