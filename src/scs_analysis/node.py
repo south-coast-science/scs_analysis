@@ -51,6 +51,8 @@ from scs_analysis.cmd.cmd_node import CmdNode
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
+from scs_core.sys.logging import Logging
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -68,9 +70,10 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("node: %s" % cmd, file=sys.stderr)
-        sys.stderr.flush()
+    Logging.config('node', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -82,7 +85,7 @@ if __name__ == '__main__':
                     source = [file.read()]
 
             except FileNotFoundError:
-                print("node: file not found: %s" % cmd.filename, file=sys.stderr)
+                logger.error("file not found: %s" % cmd.filename)
                 exit(1)
 
         else:
@@ -90,7 +93,11 @@ if __name__ == '__main__':
 
         if cmd.sequence:
             for document in source:
-                source = [json.dumps(item) for item in json.loads(document)]
+                try:
+                    source = [json.dumps(item) for item in json.loads(document)]
+                except json.JSONDecodeError:
+                    logger.error("invalid document: '%s'" % document.strip())
+                    exit(1)
                 break
 
 
@@ -155,7 +162,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyError as ex:
-        print("node: KeyError: %s" % ex, file=sys.stderr)
+        logger.error("KeyError: %s" % ex)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
@@ -166,4 +173,4 @@ if __name__ == '__main__':
             output_count = 1
 
         if cmd.verbose:
-            print("node: documents: %d output: %d" % (document_count, output_count), file=sys.stderr)
+            logger.info("documents: %d output: %d" % (document_count, output_count))
