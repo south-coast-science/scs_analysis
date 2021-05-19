@@ -83,16 +83,14 @@ if __name__ == '__main__':
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
 
-        # if response is None:
-        #     if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
-        #         logger.error("Could not retrieve history, please check tag is entered correctly ")
-        #     else:
-        #         logger.error("Something went wrong ")
-        #
-        # else:
-
-        print(JSONify.dumps(response.items, indent=cmd.indent))
-        logger.info('retrieved: %s' % len(response.items))
+        if response is None:
+            if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
+                logger.error("Could not retrieve history, please check tag is entered correctly ")
+            else:
+                logger.error("Something went wrong ")
+        else:
+            print(JSONify.dumps(response.items, indent=cmd.indent))
+            logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
