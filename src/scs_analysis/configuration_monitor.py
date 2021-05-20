@@ -27,7 +27,7 @@ import sys
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
+from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         #
         # else:
 
-        print(JSONify.dumps(response.items, indent=cmd.indent))
+        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
