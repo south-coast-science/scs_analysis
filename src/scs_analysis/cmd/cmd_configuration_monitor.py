@@ -25,7 +25,7 @@ class CmdConfigurationMonitor(object):
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
-        # mode..
+        # mode...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="report latest configuration for each device")
 
@@ -38,7 +38,7 @@ class CmdConfigurationMonitor(object):
         self.__parser.add_option("--tags-only", "-o", action="store_true", dest="tags_only", default=False,
                                  help="report device tags only")
 
-        # output..
+        # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
