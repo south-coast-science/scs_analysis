@@ -10,8 +10,10 @@ The configuration_monitor_check utility is used to
 
 * NOR - NO RESPONSE
 * ERR - ERROR
+* M - MALFORMED:
 * MSA - MALFORMED:SAMPLE
 * MCO - MALFORMED:CONFIG
+* R - RECEIVED:
 * RNS - RECEIVED:NOT SUPPORTED
 * RNW - RECEIVED:NEW
 * RUN - RECEIVED:UNCHANGED
@@ -91,7 +93,7 @@ if __name__ == '__main__':
 
         response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
 
-        print(JSONify.dumps(response.items, indent=cmd.indent))
+        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
