@@ -6,19 +6,22 @@ Created on 20 Apr 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The configuration_monitor utility is used to
+The configuration_monitor utility is used to retrieve configuration information relating to one or more devices.
+Flags enable the selection of either the latest recorded configuration for the device(s), or a history of
+configuration changes. In the case of historical reports, either all the field values can be returned, or
+only those that changed from the previous recording.
 
 SYNOPSIS
-configuration_monitor.py [-t TAG] [{ -o | -l [-d] }] [-i INDENT] [-v]
+configuration_monitor.py [-t TAG] { -l | -f | -d | -o } [-i INDENT] [-v]
 
 EXAMPLES
-
-DOCUMENT EXAMPLE
-
+configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s
 
 SEE ALSO
 scs_analysis/configuration_auth
-scs_analysis/configuration_monitor_status
+scs_analysis/configuration_monitor_check
+
+scs_mfr/configuration
 """
 
 import requests
