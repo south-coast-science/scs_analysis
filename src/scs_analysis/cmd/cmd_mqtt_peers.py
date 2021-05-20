@@ -16,9 +16,10 @@ class CmdMQTTPeers(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | -s "
-                                                    "HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } "
-                                                    "[-a] [-i INDENT] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | "
+                                                    "-c HOSTNAME TAG SHARED_SECRET TOPIC | "
+                                                    "-u HOSTNAME { -s SHARED_SECRET | -t TOPIC } | "
+                                                    "-r HOSTNAME } [-a] [-i INDENT] [-v]", version="%prog 1.0")
 
         # functions...
         self.__parser.add_option("--import", "-p", action="store_true", dest="import_peers", default=False,
@@ -30,18 +31,24 @@ class CmdMQTTPeers(object):
         self.__parser.add_option("--missing", "-m", action="store_true", dest="missing", default=False,
                                  help="list known devices missing from S3 MQTT peers")
 
-        self.__parser.add_option("--set", "-s", type="string", nargs=4, action="store", dest="peer",
-                                 help="insert or update an MQTT peer")
+        self.__parser.add_option("--create", "-c", type="string", nargs=4, action="store", dest="create",
+                                 help="create an MQTT peer")
 
-        self.__parser.add_option("--delete", "-d", type="string", nargs=1, action="store", dest="delete",
+        self.__parser.add_option("--update", "-u", type="string", nargs=1, action="store", dest="update",
+                                 help="update an MQTT peer")
+
+        self.__parser.add_option("--remove", "-r", type="string", nargs=1, action="store", dest="remove",
                                  help="delete an MQTT peer")
 
         # filters...
-        self.__parser.add_option("--hostname", "-n", type="string", nargs=1, action="store", dest="for_hostname",
+        self.__parser.add_option("--hostname", "-n", type="string", nargs=1, action="store", dest="hostname",
                                  help="filter peers with the given hostname substring")
 
-        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="for_topic",
-                                 help="filter peers with the given topic substring")
+        self.__parser.add_option("--shared-secret", "-s", type="string", nargs=1, action="store", dest="shared_secret",
+                                 help="specify shared secret")
+
+        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+                                 help="specify topic")
 
         # source...
         self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
@@ -65,7 +72,7 @@ class CmdMQTTPeers(object):
     def is_valid(self):
         count = 0
 
-        if self.__opts.import_peers:
+        if self.is_import():
             count += 1
 
         if self.missing:
@@ -74,19 +81,22 @@ class CmdMQTTPeers(object):
         if self.list:
             count += 1
 
-        if self.__opts.peer is not None:
+        if self.is_create():
             count += 1
 
-        if self.__opts.delete is not None:
+        if self.is_update():
+            count += 1
+
+        if self.is_remove():
             count += 1
 
         if count != 1:
             return False
 
-        if not self.__opts.import_peers and self.echo:
+        if not self.is_import() and self.echo:
             return False
 
-        if self.__opts.list is None and (self.__opts.for_hostname is not None or self.__opts.for_topic is not None):
+        if self.__opts.list is None and (self.__opts.hostname is not None or self.__opts.for_topic is not None):
             return False
 
         if self.missing and not self.aws:
@@ -95,21 +105,28 @@ class CmdMQTTPeers(object):
         if self.echo and self.indent is not None:
             return False
 
+        if self.is_update() and not self.shared_secret and not self.topic:
+            return False
+
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_import_peers(self):
+    def is_import(self):
         return self.__opts.import_peers
 
 
-    def is_set_peer(self):
-        return self.__opts.peer is not None
+    def is_create(self):
+        return self.__opts.create is not None
 
 
-    def is_delete_peer(self):
-        return self.__opts.delete is not None
+    def is_update(self):
+        return self.__opts.update is not None
+
+
+    def is_remove(self):
+        return self.__opts.remove is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -125,38 +142,48 @@ class CmdMQTTPeers(object):
 
 
     @property
-    def set_hostname(self):
-        return None if self.__opts.peer is None else self.__opts.peer[0]
+    def create_hostname(self):
+        return None if self.__opts.create is None else self.__opts.create[0]
 
 
     @property
-    def set_tag(self):
-        return None if self.__opts.peer is None else self.__opts.peer[1]
+    def create_tag(self):
+        return None if self.__opts.create is None else self.__opts.create[1]
 
 
     @property
-    def set_shared_secret(self):
-        return None if self.__opts.peer is None else self.__opts.peer[2]
+    def create_shared_secret(self):
+        return None if self.__opts.create is None else self.__opts.create[2]
 
 
     @property
-    def set_topic(self):
-        return None if self.__opts.peer is None else self.__opts.peer[3]
+    def create_topic(self):
+        return None if self.__opts.create is None else self.__opts.create[3]
 
 
     @property
-    def delete_hostname(self):
-        return self.__opts.delete
+    def update_hostname(self):
+        return self.__opts.update
 
 
     @property
-    def for_hostname(self):
-        return self.__opts.for_hostname
+    def remove_hostname(self):
+        return self.__opts.remove
 
 
     @property
-    def for_topic(self):
-        return self.__opts.for_topic
+    def hostname(self):
+        return self.__opts.hostname
+
+
+    @property
+    def shared_secret(self):
+        return self.__opts.shared_secret
+
+
+    @property
+    def topic(self):
+        return self.__opts.topic
 
 
     @property
@@ -185,8 +212,9 @@ class CmdMQTTPeers(object):
         self.__parser.print_help(file)
 
     def __str__(self, *args, **kwargs):
-        return "CmdMQTTPeers:{import:%s, list:%s, for_hostname:%s, for_topic:%s, missing:%s, set:%s, " \
-               "delete:%s, aws:%s, echo:%s, indent:%s, verbose:%s}" %  \
-               (self.__opts.import_peers, self.list, self.for_hostname, self.for_topic, self.missing, self.__opts.peer,
-                self.__opts.delete, self.aws, self.echo, self.indent, self.verbose)
-
+        return "CmdMQTTPeers:{import:%s, list:%s, missing:%s, create:%s, update:%s, " \
+               "remove:%s, hostname:%s, shared_secret:%s, topic:%s, aws:%s, echo:%s, indent:%s, " \
+               "verbose:%s}" %  \
+               (self.__opts.import_peers, self.list, self.missing, self.__opts.create, self.__opts.update,
+                self.__opts.remove, self.hostname, self.shared_secret, self.topic, self.aws, self.echo, self.indent,
+                self.verbose)
