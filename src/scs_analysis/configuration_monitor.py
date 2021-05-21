@@ -6,19 +6,22 @@ Created on 20 Apr 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The configuration_monitor utility is used to
+The configuration_monitor utility is used to retrieve configuration information relating to one or more devices.
+Flags enable the selection of either the latest recorded configuration for the device(s), or a history of
+configuration changes. In the case of historical reports, either all the field values can be returned, or
+only those that changed from the previous recording.
 
 SYNOPSIS
-configuration_monitor.py [-t TAG] [{ -o | -l [-d] }] [-i INDENT] [-v]
+configuration_monitor.py [-t TAG] { -l | -f | -d | -o } [-i INDENT] [-v]
 
 EXAMPLES
-
-DOCUMENT EXAMPLE
-
+configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s
 
 SEE ALSO
 scs_analysis/configuration_auth
-scs_analysis/configuration_monitor_status
+scs_analysis/configuration_monitor_check
+
+scs_mfr/configuration
 """
 
 import requests
@@ -27,7 +30,7 @@ import sys
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
+from scs_core.aws.manager.configuration_finder import ConfigurationFinder
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -83,14 +86,8 @@ if __name__ == '__main__':
 
         response = finder.find(cmd.tag_filter, cmd.response_mode())
 
-        if response is None:
-            if cmd.response_mode() == ConfigurationRequest.MODE.HISTORY:
-                logger.error("Could not retrieve history, please check tag is entered correctly ")
-            else:
-                logger.error("Something went wrong ")
-        else:
-            print(JSONify.dumps(response.items, indent=cmd.indent))
-            logger.info('retrieved: %s' % len(response.items))
+        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
+        logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

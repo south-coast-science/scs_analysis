@@ -6,13 +6,16 @@ Created on 20 Apr 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The configuration_monitor_check utility is used to
+The configuration_monitor_check utility is used to report on the configuration monitor's attempt to access all of
+the devices known to the system. Status levels are:
 
 * NOR - NO RESPONSE
 * ERR - ERROR
+* M - MALFORMED:
 * MSA - MALFORMED:SAMPLE
 * MCO - MALFORMED:CONFIG
-* RNS - RECEIVED:NOT SUPPORTED
+* NSP - NOT SUPPORTED
+* R - RECEIVED:
 * RNW - RECEIVED:NEW
 * RUN - RECEIVED:UNCHANGED
 * RUP - RECEIVED:UPDATED
@@ -21,13 +24,17 @@ SYNOPSIS
 configuration_monitor_check.py [-t TAG] [-r RESULT] [-o] [-i INDENT] [-v]
 
 EXAMPLES
+configuration_monitor_check.py -r ERR | node.py -s | csv_writer.py
 
 DOCUMENT EXAMPLE
-{"tag": "scs-bgx-003", "rec": "2021-04-14T08:49:22Z, "result": "ERROR", "context": "stderr output"}
+{"tag": "scs-ph1-26", "rec": "2021-05-18T14:36:00Z", "result": "ERROR",
+"context": ["TimeoutExpired(['./configuration'], 30)"]}
 
 SEE ALSO
 scs_analysis/configuration_auth
 scs_analysis/configuration_monitor
+
+scs_mfr/configuration
 """
 
 import requests
@@ -91,7 +98,7 @@ if __name__ == '__main__':
 
         response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
 
-        print(JSONify.dumps(response.items, indent=cmd.indent))
+        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
