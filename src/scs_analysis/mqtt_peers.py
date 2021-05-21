@@ -17,12 +17,11 @@ Authentication details for specific devices are available on request from South 
 using the appropriate scs_mfr command-line utilities.
 
 SYNOPSIS
-mqtt_peers.py { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | -s HOSTNAME TAG SHARED_SECRET TOPIC | -d HOSTNAME } \
-[-a] [-i INDENT] [-v]
+Usage: mqtt_peers.py { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | -c HOSTNAME TAG SHARED_SECRET TOPIC |
+-u HOSTNAME { -s SHARED_SECRET | -t TOPIC } | -r HOSTNAME } [-a] [-i INDENT] [-v]
 
 EXAMPLES
-mqtt_peers.py -s scs-bbe-002 scs-be2-2 secret1 \
-south-coast-science-dev/production-test/device/alpha-bb-eng-000002/status
+mqtt_peers.py -i scs-bbe-002 scs-be2-2 secret1 scs/production-test/device/alpha-bb-eng-000002/status
 
 csv_reader.py -v mqtt_peers.json | mqtt_peers.py -vie
 
@@ -30,8 +29,8 @@ FILES
 ~/SCS/aws/mqtt_peers.json
 
 DOCUMENT EXAMPLE
-{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDB4",
-"topic": "south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control"}}
+[{"peers": {"scs-bbe-002": {"hostname": "scs-bbe-002", "tag": "scs-be2-2", "shared-secret": "T9o7CMvDB4",
+"topic": "south-coast-science-dev/production-test/device/alpha-bb-eng-000002/control"}}]
 
 SEE ALSO
 scs_dev/aws_mqtt_control
@@ -119,7 +118,7 @@ if __name__ == '__main__':
         # run...
 
         # import...
-        if cmd.is_import_peers():
+        if cmd.is_import():
             for line in sys.stdin:
                 jstr = line.strip()
 
@@ -146,22 +145,47 @@ if __name__ == '__main__':
         # list...
         if cmd.list:
             if group is not None:
-                report = group.subset(hostname_substring=cmd.for_hostname, topic_substring=cmd.for_topic)
+                report = group.subset(hostname_substring=cmd.hostname, topic_substring=cmd.topic)
 
-                print(JSONify.dumps(report, indent=cmd.indent))
+                print(JSONify.dumps(report.peers, indent=cmd.indent))
                 logger.info('found: %d' % len(report))
 
-        # set...
-        if cmd.is_set_peer():
-            peer = MQTTPeer(cmd.set_hostname, cmd.set_tag, cmd.set_shared_secret, cmd.set_topic)
+        # create...
+        if cmd.is_create():
+            peer = MQTTPeer(cmd.create_hostname, cmd.create_tag, cmd.create_shared_secret, cmd.create_topic)
+            group.insert(peer)
+            group.save(manager)
+
+            print(JSONify.dumps(peer, indent=cmd.indent))
+
+        # update...
+        if cmd.is_update():
+            report = group.subset(hostname_substring=cmd.update_hostname)
+
+            if len(report) == 0:
+                logger.error("no peer matching '%s'." % cmd.update_hostname)
+                exit(2)
+
+            if len(report) > 1:
+                logger.error("more than one peer matching '%s'." % cmd.update_hostname)
+                exit(2)
+
+            peer = report.peer(cmd.update_hostname)
+
+            if cmd.shared_secret:
+                peer.shared_secret = cmd.shared_secret
+
+            if cmd.topic:
+                peer.topic = cmd.topic
+
             group.insert(peer)
             group.save(manager)
 
             print(JSONify.dumps(peer, indent=cmd.indent))
 
         # delete...
-        if cmd.is_delete_peer():
-            deleted = group.remove(cmd.delete_hostname)
+        if cmd.is_remove():
+            deleted = group.remove(cmd.remove_hostname)
             document_count = 1 if deleted else 0
 
             group.save(manager)

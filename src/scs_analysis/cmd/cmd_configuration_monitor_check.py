@@ -25,14 +25,14 @@ class CmdConfigurationMonitorCheck(object):
         self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-r RESULT] [-o] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
-        # filters..
+        # filters...
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
         self.__parser.add_option("--result", "-r", type="string", nargs=1, action="store", dest="result_code",
                                  help="match the result { %s }" % codes)
 
-        # output..
+        # output...
         self.__parser.add_option("--tags-only", "-o", action="store_true", dest="tags_only", default=False,
                                  help="report device tags only")
 
