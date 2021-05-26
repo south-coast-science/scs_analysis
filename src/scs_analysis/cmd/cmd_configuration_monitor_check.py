@@ -22,8 +22,12 @@ class CmdConfigurationMonitorCheck(object):
         """
         codes = ' | '.join(ConfigurationCheck.result_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-r RESULT] [-o] [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -c TAG | [-t TAG] [-r RESULT] [-o] } [-i INDENT] [-v]",
                                               version="%prog 1.0")
+
+        # operations...
+        self.__parser.add_option("--check", "-c", type="string", action="store", dest="check",
+                                 help="check the device with TAG now")
 
         # filters...
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
@@ -48,6 +52,9 @@ class CmdConfigurationMonitorCheck(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.check_tag and (self.tag_filter or self.result_code or self.tags_only):
+            return False
+
         if self.result_code and self.result_code not in ConfigurationCheck.result_codes():
             return False
 
@@ -63,6 +70,11 @@ class CmdConfigurationMonitorCheck(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def check_tag(self):
+        return self.__opts.check
+
 
     @property
     def tag_filter(self):
@@ -96,5 +108,6 @@ class CmdConfigurationMonitorCheck(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitorCheck:{tag_filter:%s, result_code:%s, tags_only:%s, indent:%s, verbose:%s}" % \
-               (self.tag_filter, self.result_code, self.tags_only, self.indent, self.verbose)
+        return "CmdConfigurationMonitorCheck:{check:%s, tag_filter:%s, result_code:%s, tags_only:%s, indent:%s, " \
+               "verbose:%s}" % \
+               (self.check_tag, self.tag_filter, self.result_code, self.tags_only, self.indent, self.verbose)
