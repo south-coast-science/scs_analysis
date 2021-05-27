@@ -100,13 +100,12 @@ if __name__ == '__main__':
 
         if cmd.check_tag:
             response = requester.request(cmd.check_tag)
-            print(response)
-            # print(JSONify.dumps(response, indent=cmd.indent))
+            print(response.result, file=sys.stderr)
+            exit(0 if response.result == 'OK' else 1)
 
-        else:
-            response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
-            print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
-            logger.info('retrieved: %s' % len(response.items))
+        response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
+        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
+        logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
@@ -114,3 +113,4 @@ if __name__ == '__main__':
     except HTTPException as ex:
         now = LocalizedDatetime.now().utc().as_iso8601()
         logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        exit(1)

@@ -94,3 +94,4 @@ if __name__ == '__main__':
     except HTTPException as ex:
         now = LocalizedDatetime.now().utc().as_iso8601()
         logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        exit(1)
