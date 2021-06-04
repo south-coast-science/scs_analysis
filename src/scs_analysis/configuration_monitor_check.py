@@ -21,7 +21,7 @@ the devices known to the system. Status levels are:
 * RUP - RECEIVED:UPDATED
 
 SYNOPSIS
-configuration_monitor_check.py [-t TAG] [-r RESULT] [-o] [-i INDENT] [-v]
+configuration_monitor_check.py { -c TAG | [-t TAG] [-r RESULT] [-o] } [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor_check.py -r ERR | node.py -s | csv_writer.py
@@ -44,6 +44,7 @@ from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMon
 
 from scs_core.aws.client.configuration_auth import ConfigurationAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder
+from scs_core.aws.manager.configuration_check_requester import ConfigurationCheckRequester
 
 from scs_core.data.json import JSONify
 from scs_core.data.datetime import LocalizedDatetime
@@ -85,19 +86,24 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            pass
-            # key = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
         except (KeyError, ValueError):
             logger.error('incorrect password')
             exit(1)
 
         finder = ConfigurationCheckFinder(requests, auth)
+        requester = ConfigurationCheckRequester(requests, auth)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
+        if cmd.check_tag:
+            response = requester.request(cmd.check_tag)
+            print(response.result, file=sys.stderr)
+            exit(0 if response.result == 'OK' else 1)
 
+        response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
         print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
@@ -107,3 +113,4 @@ if __name__ == '__main__':
     except HTTPException as ex:
         now = LocalizedDatetime.now().utc().as_iso8601()
         logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        exit(1)

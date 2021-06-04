@@ -75,6 +75,10 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
+EXIT_COMMANDS = ['reboot', 'shutdown']
+
+# --------------------------------------------------------------------------------------------------------------------
+
 if __name__ == '__main__':
 
     history_filename = os.path.join(Host.scs_path(), AccessKey.aws_dir(), 'aws_mqtt_control_history')
@@ -258,6 +262,9 @@ if __name__ == '__main__':
                     time.sleep(0.1)
 
             if not cmd.interactive:
+                break
+
+            if cmd_tokens and cmd_tokens[0] in EXIT_COMMANDS:
                 break
 
 
