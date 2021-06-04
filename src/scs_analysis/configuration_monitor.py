@@ -72,8 +72,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            pass
-            # auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
         except (KeyError, ValueError):
             logger.error('incorrect password')
             exit(1)
@@ -95,3 +94,4 @@ if __name__ == '__main__':
     except HTTPException as ex:
         now = LocalizedDatetime.now().utc().as_iso8601()
         logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        exit(1)
