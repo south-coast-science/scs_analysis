@@ -18,12 +18,15 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] { -l | -f | -d | -o } [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG [-e]] { -l | -f | -d | -o } [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
-        # filters..
+        # filters...
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
+
+        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+                                 help="exact match for tag")
 
         # mode...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -68,6 +71,9 @@ class CmdConfigurationMonitor(object):
         if count != 1:
             return False
 
+        if self.exact_match and self.tag_filter is None:
+            return False
+
         return True
 
 
@@ -92,6 +98,11 @@ class CmdConfigurationMonitor(object):
     @property
     def tag_filter(self):
         return self.__opts.tag_filter
+
+
+    @property
+    def exact_match(self):
+        return self.__opts.exact_match
 
 
     @property
@@ -131,7 +142,7 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag_filter:%s, latest:%s, history:%s, diff:%s, tags_only:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.tag_filter, self.latest, self.history, self.diff, self.tags_only,
-                self.indent, self.verbose)
+        return "CmdConfigurationMonitor:{tag_filter:%s, exact_match:%s, latest:%s, history:%s, diff:%s, " \
+               "tags_only:%s, indent:%s, verbose:%s}" % \
+               (self.tag_filter, self.exact_match, self.latest, self.history, self.diff,
+                self.tags_only, self.indent, self.verbose)
