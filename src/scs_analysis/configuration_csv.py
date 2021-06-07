@@ -6,17 +6,24 @@ Created on 7 Jul 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The configuration_monitor utility is used to
+The configuration_monitor utility is used to download configuration information from all devices accessible to the
+user, and render this in CSV form. Two modes are available:
+
+* --latest - download the latest configuration for all devices, and save this in the named CSV file.
+
+* --histories - download the history of configuration changes for all devices. Where there has been at least one
+change in the configuration for each device, save the history files in the named directory.
 
 SYNOPSIS
 configuration_csv.py { -l LATEST_CSV | -d HISTORY_CSV_DIR } [-v]
 
 EXAMPLES
-configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s
+configuration_csv.py -vl configs.csv
 
 SEE ALSO
 scs_analysis/configuration_auth
 scs_analysis/configuration_monitor
+scs_analysis/configuration_monitor_check
 
 scs_mfr/configuration
 """
@@ -35,8 +42,8 @@ from scs_core.aws.manager.configuration_finder import ConfigurationFinder, Confi
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.filesystem import Filesystem
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -82,29 +89,33 @@ if __name__ == '__main__':
 
         csv_args = '-vs' if cmd.verbose else '-s'
 
+
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.latest:
             response = finder.find(None, False, ConfigurationRequest.MODE.LATEST)
-            jstr = '\n'.join([JSONify.dumps(config) for config in sorted(response.items)])
+            configs = sorted(response.items)
 
-            p = Popen(['csv_writer.py', csv_args, cmd.latest], stdin=PIPE)
+            jstr = '\n'.join([JSONify.dumps(config) for config in configs])
+            path = cmd.latest
+
+            p = Popen(['csv_writer.py', csv_args, path], stdin=PIPE)
             p.communicate(input=jstr.encode())
 
-        if cmd.history:
-            Filesystem.mkdir(cmd.history)
+        if cmd.histories:
+            Filesystem.mkdir(cmd.histories)
             tag_response = finder.find(None, False, ConfigurationRequest.MODE.TAGS_ONLY)
 
             for tag in sorted(tag_response.items):
                 response = finder.find(tag, True, ConfigurationRequest.MODE.DIFF)
                 configs = sorted(response.items)
 
-                if len(configs) < 2:
+                if len(configs) < 2:                # ignore single-row histories
                     continue
 
                 jstr = '\n'.join([JSONify.dumps(config) for config in configs])
-                path = os.path.join(cmd.history, tag + '-configs.csv')
+                path = os.path.join(cmd.histories, tag + '-configs.csv')
 
                 p = Popen(['csv_writer.py', csv_args, path], stdin=PIPE)
                 p.communicate(input=jstr.encode())

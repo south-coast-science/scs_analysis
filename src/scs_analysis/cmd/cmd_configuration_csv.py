@@ -16,14 +16,14 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l LATEST_CSV | -d HISTORY_CSV_DIR } [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -l LATEST_CSV | -d HISTORIES_CSV_DIR } [-v]",
                                               version="%prog 1.0")
 
         # mode...
         self.__parser.add_option("--latest", "-l", type="string", action="store", dest="latest",
                                  help="retrieve latest configurations")
 
-        self.__parser.add_option("--history", "-d", type="string", action="store", dest="history",
+        self.__parser.add_option("--histories", "-d", type="string", action="store", dest="histories",
                                  help="retrieve configuration histories")
 
         # output...
@@ -32,10 +32,11 @@ class CmdConfigurationCSV(object):
 
         self.__opts, self.__args = self.__parser.parse_args()
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return bool(self.latest) != bool(self.history)
+        return bool(self.latest) != bool(self.histories)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -46,8 +47,8 @@ class CmdConfigurationCSV(object):
 
 
     @property
-    def history(self):
-        return self.__opts.history
+    def histories(self):
+        return self.__opts.histories
 
 
     @property
@@ -62,4 +63,5 @@ class CmdConfigurationCSV(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationCSV:{latest:%s, history:%s, verbose:%s}" %  (self.latest, self.history, self.verbose)
+        return "CmdConfigurationCSV:{latest:%s, histories:%s, verbose:%s}" %  \
+               (self.latest, self.histories, self.verbose)
