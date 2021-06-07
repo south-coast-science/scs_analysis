@@ -12,7 +12,7 @@ configuration changes. In the case of historical reports, either all the field v
 only those that changed from the previous recording.
 
 SYNOPSIS
-configuration_monitor.py [-t TAG] { -l | -f | -d | -o } [-i INDENT] [-v]
+configuration_monitor.py [-t TAG [-e]] { -l | -f | -d | -o } [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        response = finder.find(cmd.tag_filter, cmd.response_mode())
+        response = finder.find(cmd.tag_filter, cmd.exact_match, cmd.response_mode())
 
         print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
