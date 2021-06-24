@@ -40,6 +40,10 @@ scs_analysis/mqtt_peer
 scs_mfr/aws_project
 scs_mfr/shared_secret
 scs_mfr/system_id
+
+BUGS
+If the device is currently uploading a backlog of data, then the control receipt will be held in the device's
+message queue, and the interaction will time out.
 """
 
 import json
