@@ -253,9 +253,11 @@ if __name__ == '__main__':
 
                         if handler.receipt.command.stderr:
                             print(*handler.receipt.command.stderr, sep='\n')
+                            sys.stderr.flush()
 
                         if handler.receipt.command.stdout:
                             print(*handler.receipt.command.stdout, sep='\n')
+                            sys.stdout.flush()
 
                         break
 
