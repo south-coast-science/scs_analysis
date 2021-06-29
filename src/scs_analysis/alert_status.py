@@ -16,8 +16,10 @@ SYNOPSIS
 alert_status.py { -l | -d [-c CAUSE] } [-i INDENT] [-v] ID
 
 EXAMPLES
+alert_status.py -d -cL 123
 
 DOCUMENT EXAMPLE
+{"id": 123, "rec": "2021-06-17T15:58:23Z", "cause": ">U", "value": 101.5}
 
 SEE ALSO
 scs_analysis/alert
@@ -47,6 +49,7 @@ if __name__ == '__main__':
 
     logger = None
     auth = None
+    response = None
     report = None
 
     try:
@@ -95,6 +98,9 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        if cmd.history:
+            logger.info('retrieved: %s' % len(response.items))
 
 
     except KeyboardInterrupt:

@@ -16,6 +16,9 @@ EXAMPLES
 alert.py -c -o my/topic -e my.field -l 10 -a 10:00 -v
 
 DOCUMENT EXAMPLE
+{"id": 123, "topic": "my/topic", "field": "my.field", "lower-threshold": 10.0, "upper-threshold": 100.0,
+"alert-on-none": true, "aggregation-period": "00-01:00:00", "test-interval": "00-00:05:00",
+"creator-email-address": "bruno.beloff@southcoastscience.com", "cc-list": ["bbeloff@me.com"], "suspended": false}
 
 SEE ALSO
 scs_analysis/alert_status
@@ -47,6 +50,7 @@ if __name__ == '__main__':
 
     logger = None
     auth = None
+    response = None
     report = None
 
     try:
@@ -161,6 +165,9 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        if cmd.find:
+            logger.info('retrieved: %s' % len(response.items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
