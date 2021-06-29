@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdConfigurationAuth(object):
+class CmdMonitorAuth(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -20,7 +20,7 @@ class CmdConfigurationAuth(object):
 
         # commands..
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
-                                 help="set the authentication")
+                                 help="set the authentication interactively")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the authentication")
@@ -64,5 +64,5 @@ class CmdConfigurationAuth(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationAuth:{set:%s, delete:%s, verbose:%s}" % \
+        return "CmdMonitorAuth:{set:%s, delete:%s, verbose:%s}" % \
                (self.set, self.delete, self.verbose)
