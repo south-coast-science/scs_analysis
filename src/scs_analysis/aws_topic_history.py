@@ -132,7 +132,7 @@ if __name__ == '__main__':
         byline_manager = BylineManager(api_auth)
 
         # message manager...
-        message_manager = MessageManager(api_auth, reporter)
+        message_manager = MessageManager(api_auth, reporter=reporter)
 
         logger.info(message_manager)
 

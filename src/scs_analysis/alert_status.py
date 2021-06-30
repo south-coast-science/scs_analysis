@@ -82,6 +82,7 @@ if __name__ == '__main__':
             exit(1)
 
         finder = AlertStatusFinder(requests, auth)
+        logger.info(finder)
 
 
         # ------------------------------------------------------------------------------------------------------------
