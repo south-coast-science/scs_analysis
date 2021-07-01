@@ -8,6 +8,7 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 
 
@@ -152,7 +153,7 @@ class CmdSampleSubset(object):
         if self.string:
             return str(value)
 
-        cast_value = Datum.datetime(value) if self.iso8601 else Datum.float(value)
+        cast_value = LocalizedDatetime.construct_from_iso8601(value) if self.iso8601 else Datum.float(value)
 
         if cast_value is None:
             raise ValueError(value)
