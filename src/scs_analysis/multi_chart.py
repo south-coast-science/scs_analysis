@@ -18,11 +18,11 @@ received.
 Note that the chart is a simple approximation to a timeline chart - values are plotted successively, with no account
 taken of the interval between samples.
 
-Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
+Depending on operating system, it may be necessary to use a matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.
 
 SYNOPSIS
-multi_chart.py [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N
+multi_chart.py [-b] [-x POINTS] [-y MIN MAX] [-e] [-t TITLE] [-v] PATH_1 .. PATH_N
 
 EXAMPLES
 socket_receiver.py | multi_chart.py val.opc_n2.pm10 val.opc_n2.pm2p5 val.opc_n2.pm1 -x 120 -e
@@ -33,6 +33,9 @@ FILES
 SEE ALSO
 scs_analysis/histo_chart
 scs_analysis/single_chart
+
+BUGS
+The chart will remain as the uppermost window until all data have been received.
 """
 
 import sys
@@ -46,12 +49,16 @@ from scs_core.data.path_dict import PathDict
 
 from scs_core.sync.line_reader import LineReader
 
+from scs_core.sys.logging import Logging
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
     warnings.filterwarnings("ignore", module="matplotlib")
+
+    chart = None
+    proc = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -62,11 +69,10 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("multi_chart: %s" % cmd, file=sys.stderr)
+    Logging.config('multi_chart', verbose=cmd.verbose)
+    logger = Logging.getLogger()
 
-    chart = None
-    proc = None
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -74,16 +80,14 @@ if __name__ == '__main__':
 
         # reader...
         reader = LineReader(sys.stdin.fileno())
-
-        if cmd.verbose:
-            print("multi_chart: %s" % reader, file=sys.stderr)
+        logger.info(reader)
 
         # chart...
-        chart = MultiChart(cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], *cmd.paths)
+        chart = MultiChart(cmd.title, cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], *cmd.paths)
+        logger.info(chart)
+        logger.info("backend: %s" % chart.backend())
 
-        if cmd.verbose:
-            print("multi_chart: %s" % chart, file=sys.stderr)
-            sys.stderr.flush()
+        logger.error("terminate this utility by closing the chart window.")
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -114,6 +118,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+        if not chart.closed:
+            chart.render(block=True)
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
@@ -126,13 +133,5 @@ if __name__ == '__main__':
             proc.terminate()
 
         if chart is not None and not chart.closed:
-            if cmd.verbose:
-                print("multi_chart: holding", file=sys.stderr)
-
-            # noinspection PyBroadException
-
-            try:
-                chart.hold()
-
-            except Exception:
-                pass
+            logger.info("closing.")
+            chart.close(None)

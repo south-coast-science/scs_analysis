@@ -27,16 +27,18 @@ class HistoChart(Chart):
     classdocs
     """
 
-    def __init__(self, batch_mode, x_min, x_max, bin_count, precision, path, outfile=None):
+    def __init__(self, title, batch_mode, x_min, x_max, bin_count, precision, path, outfile=None):
         """
         Constructor
         """
-        Chart.__init__(self, batch_mode)
+        Chart.__init__(self, title, batch_mode)
 
         # fields...
         self.__x_min = x_min
         self.__x_max = x_max
         self.__y_max = 1
+
+        self.__bin_count = bin_count
 
         self.__path = path
 
@@ -46,11 +48,9 @@ class HistoChart(Chart):
         self.__histogram = Histogram(x_min, x_max, bin_count, precision, path)
 
         # plotter...
-        plt.ion()                   # set plot to animated
-
         self.__fig, self.__ax = plt.subplots()
-
-        self.__fig.canvas.set_window_title(self.__path)
+        self.__fig.canvas.set_window_title(self.title(path))
+        self.__fig.tight_layout()
 
         self.__fig.canvas.mpl_connect('close_event', self.close)
 
@@ -58,25 +58,22 @@ class HistoChart(Chart):
         self.__ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         self.__ax.yaxis.grid(True)
 
-        self.__fig.tight_layout()
+        if not batch_mode:
+            domain_width = abs(self.__x_max - self.__x_min)
+            bar_width = domain_width / bin_count
 
-        domain_width = abs(self.__x_max - self.__x_min)
-        bar_width = domain_width / bin_count
-
-        self.__rects = plt.bar(self.__histogram.bins, self.__histogram.counts, bar_width)
-
-        plt.pause(0.001)
+            self.__rects = plt.bar(self.__histogram.bins, self.__histogram.counts, bar_width)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def plot(self, dictionary):
+    def plot(self, path_dict):
         if self.closed:
             return
 
         # datum...
         try:
-            value = dictionary.node(self.__path)
+            value = path_dict.node(self.__path)
         except KeyError:
             return
 
@@ -90,22 +87,35 @@ class HistoChart(Chart):
             index, count = self.__histogram.append(datum)
             max_count = self.__histogram.max_count
 
-            self.__rects[index].set_height(count)
+            if not self.batch_mode:
+                self.__rects[index].set_height(count)
 
             # render...
             if max_count > self.__y_max:
                 self.__y_max = max_count
                 self.__ax.set(ylim=[0, self.__y_max + (self.__y_max * 0.10)])
 
-                if not self._batch_mode:
+                if not self.batch_mode:
                     plt.pause(0.001)
             else:
-                if not self._batch_mode:
+                if not self.batch_mode:
                     self.__ax.draw_artist(self.__rects[index])
                     self.__fig.canvas.flush_events()                # may need self.__fig.canvas.update()
 
         except ValueError:
             pass
+
+
+    def render(self, block=True):
+        if self.batch_mode:
+            domain_width = abs(self.__x_max - self.__x_min)
+            bar_width = domain_width / self.__bin_count
+
+            plt.bar(self.__histogram.bins, self.__histogram.counts, bar_width)
+
+        plt.draw()
+        plt.show(block=block)
+        plt.pause(0.001)
 
 
     def close(self, _):
@@ -148,4 +158,4 @@ class HistoChart(Chart):
 
     def __str__(self, *args, **kwargs):
         return "HistoChart:{batch_mode:%s, x_min:%0.3f, x_max:%0.3f, y_max:%0.3f, path:%s, outfile:%s}" % \
-                (self._batch_mode, self.x_min, self.x_max, self.y_max, self.__path, self.outfile)
+                (self.batch_mode, self.x_min, self.x_max, self.y_max, self.__path, self.outfile)
