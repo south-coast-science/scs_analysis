@@ -35,7 +35,7 @@ scs_analysis/histo_chart
 scs_analysis/single_chart
 
 BUGS
-The chart will remain as the uppermost window until all data have been received.
+On some operating systems, the chart will remain as the uppermost window until all data have been received.
 """
 
 import sys
