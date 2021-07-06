@@ -33,7 +33,7 @@ class Chart(ABC):
         self.__title = title                        # string
         self.__batch_mode = batch_mode              # bool
 
-        self._closed = False
+        self._closed = False                        # bool
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -59,15 +59,15 @@ class Chart(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    @property
-    def closed(self):
-        return self._closed
-
-
     def title(self, content):
-        return content if self.__title is None else self.__title + ': ' + content
+        return content if self.__title is None else ': '.join((self.__title, content))
 
 
     @property
     def batch_mode(self):
         return self.__batch_mode
+
+
+    @property
+    def closed(self):
+        return self._closed

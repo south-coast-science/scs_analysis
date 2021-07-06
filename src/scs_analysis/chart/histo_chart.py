@@ -118,7 +118,7 @@ class HistoChart(Chart):
         plt.pause(0.001)
 
 
-    def close(self, _):
+    def close(self, _event):
         self._closed = True
 
         if self.__outfile is None:
