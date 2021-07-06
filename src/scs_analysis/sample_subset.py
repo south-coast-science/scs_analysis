@@ -46,6 +46,7 @@ import sys
 
 from scs_analysis.cmd.cmd_sample_subset import CmdSampleSubset
 
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 from scs_core.data.path_dict import PathDict
 
@@ -122,7 +123,7 @@ if __name__ == '__main__':
                 continue
 
             if cmd.iso8601:
-                value = Datum.datetime(value_node)
+                value = LocalizedDatetime.construct_from_iso8601(value_node)
 
                 if value is None:
                     if cmd.strict:

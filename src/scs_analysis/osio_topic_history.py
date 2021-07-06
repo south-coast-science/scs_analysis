@@ -78,7 +78,7 @@ if __name__ == '__main__':
         topic_manager = TopicManager(api_auth.api_key)
 
         # message manager...
-        message_manager = MessageManager(api_auth.api_key, cmd.verbose)
+        message_manager = MessageManager(api_auth.api_key, verbose=cmd.verbose)
 
         if cmd.verbose:
             print("osio_topic_history: %s" % message_manager, file=sys.stderr)
