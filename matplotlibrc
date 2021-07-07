@@ -1,0 +1,7 @@
+# https://matplotlib.org/faq/usage_faq.html
+
+# put this file in scs_analysis/src/scs_analysis if required
+# available backends: ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo']
+
+
+backend : TKAgg
