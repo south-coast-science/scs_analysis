@@ -35,7 +35,7 @@ from scs_analysis.cmd.cmd_alert import CmdAlert
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.client.monitor_auth import MonitorAuth
 
-from scs_core.aws.data.alert import Alert
+from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_finder import AlertFinder
 from scs_core.aws.manager.byline_manager import BylineManager
@@ -139,11 +139,16 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
-            alert = Alert(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold, cmd.alert_on_none,
-                          cmd.aggregation_period, cmd.test_interval, auth.email_address, [], cmd.suspended)
+            alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
+                                       cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
+                                       [], cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
+                exit(2)
+
+            if not alert.has_valid_aggregation_period():
+                logger.error("the aggregation period is invalid.")
                 exit(2)
 
             # TODO: do create (and retrieve)
@@ -185,11 +190,16 @@ if __name__ == '__main__':
             if cmd.remove_cc is not None:
                 alert.remove_from_cc_list(cmd.remove_cc)
 
-            alert = Alert(alert.update_id, alert.topic, alert.field, lower_threshold, upper_threshold, alert_on_none,
-                          aggregation_period, test_interval, alert.creator_email_address, alert.cc_list, suspended)
+            alert = AlertSpecification(alert.update_id, alert.topic, alert.field, lower_threshold, upper_threshold,
+                                       alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
+                                       alert.cc_list, suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
+                exit(2)
+
+            if not alert.has_valid_aggregation_period():
+                logger.error("the aggregation period is invalid.")
                 exit(2)
 
             # TODO: do update

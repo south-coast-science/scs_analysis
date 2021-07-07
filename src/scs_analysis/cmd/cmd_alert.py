@@ -6,6 +6,8 @@ Created on 29 Jun 2021
 
 import optparse
 
+from scs_core.data.aggregation_period import AggregationPeriod
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class CmdAlert(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog  { -f TOPIC | -r ID | -c | -u ID | -d ID } "
                                                     "[-o TOPIC] [-e FIELD] [-l LOWER] [-p UPPER] "
-                                                    "[-n { 1 | 0 }] [-a AGGREGATION] [-t INTERVAL] [-s { 1 | 0 }] "
+                                                    "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
                                                     "[-m EMAIL_ADDR] [-x EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
@@ -54,8 +56,8 @@ class CmdAlert(object):
         self.__parser.add_option("--alert-on-none", "-n", type="int", action="store", dest="alert_on_none",
                                  default=False, help="alert on none (default false)")
 
-        self.__parser.add_option("--aggregation-period", "-a", type="string", action="store", dest="aggregation_period",
-                                 help="aggregation period")
+        self.__parser.add_option("--aggregation-period", "-a", type="string", nargs=1, action="store",
+                                 dest="aggregation_period", help="aggregation interval and units { D | H | M }")
 
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",
                                  help="test interval")
@@ -102,6 +104,12 @@ class CmdAlert(object):
 
         if count != 1:
             return False
+
+        if self.__opts.aggregation_period is not None:
+            try:
+                int(self.__opts.aggregation_period[0])
+            except ValueError:
+                return False
 
         if self.alert_on_none is not None and self.alert_on_none != 0 and self.alert_on_none != 1:
             return False
@@ -199,7 +207,8 @@ class CmdAlert(object):
 
     @property
     def aggregation_period(self):
-        return self.__opts.aggregation_period
+        period = self.__opts.aggregation_period
+        return None if period is None else AggregationPeriod.construct(period[0], period[1])
 
 
     @property
