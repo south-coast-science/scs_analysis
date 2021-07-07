@@ -116,7 +116,8 @@ if __name__ == '__main__':
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            response = finder.retrieve(cmd.retrieve_id, auth.email_address)
+            response = finder.retrieve(cmd.retrieve_id)
+            print("response: %s" % response)
             report = response.alerts[0] if response.alerts else None
 
         if cmd.create:
@@ -161,7 +162,7 @@ if __name__ == '__main__':
                 logger.error("topic and field may not be changed.")
                 exit(2)
 
-            response = finder.retrieve(cmd.retrieve_id, auth.email_address)
+            response = finder.retrieve(cmd.retrieve_id)
             alert = response.alerts[0] if response.alerts else None
 
             if alert is None:
@@ -207,7 +208,7 @@ if __name__ == '__main__':
             report = alert
 
             if cmd.delete:
-                response = finder.retrieve(cmd.retrieve_id, auth.email_address)
+                response = finder.retrieve(cmd.retrieve_id)
                 alert = response.alerts[0] if response.alerts else None
 
                 if alert is None:
