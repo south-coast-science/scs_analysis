@@ -117,6 +117,7 @@ if __name__ == '__main__':
 
         if cmd.retrieve:
             response = finder.retrieve(cmd.retrieve_id)
+            print("response: %s" % response)
             report = response.alerts[0] if response.alerts else None
 
         if cmd.create:
