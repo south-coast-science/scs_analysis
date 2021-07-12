@@ -56,7 +56,7 @@ class CmdAlert(object):
         self.__parser.add_option("--alert-on-none", "-n", type="int", action="store", dest="alert_on_none",
                                  default=False, help="alert on none (default false)")
 
-        self.__parser.add_option("--aggregation-period", "-a", type="string", nargs=1, action="store",
+        self.__parser.add_option("--aggregation-period", "-a", type="string", nargs=2, action="store",
                                  dest="aggregation_period", help="aggregation interval and units { D | H | M }")
 
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",

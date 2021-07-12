@@ -13,7 +13,8 @@ alert.py  { -f TOPIC | -r ID | -c | -u ID | -d ID } [-o TOPIC] [-e FIELD] [-l LO
 [-a AGGREGATION] [-t INTERVAL] [-s { 1 | 0 }] [-m EMAIL_ADDR] [-x EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
-alert.py -c -o south-coast-science-dev/development/loc/1/gases -e val.H2S.cn -n1 -a 1:00:00 -i4 -v
+alert.py -c -o south-coast-science-demo/brighton/loc/1/gases -e val.NO2.cnc -p 10 -a 5 M \
+-m bruno.beloff@southcoastscience.com -i4 -v
 
 DOCUMENT EXAMPLE
 {"id": 123, "topic": "my/topic", "field": "my.field", "lower-threshold": 10.0, "upper-threshold": 100.0,
@@ -116,9 +117,7 @@ if __name__ == '__main__':
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            response = finder.retrieve(cmd.retrieve_id)
-            print("response: %s" % response)
-            report = response.alerts[0] if response.alerts else None
+            report = finder.retrieve(cmd.retrieve_id)
 
         if cmd.create:
             # validate...
@@ -140,9 +139,10 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
+            cc_list = [cmd.add_cc] if cmd.add_cc else []
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
-                                       [], cmd.suspended)
+                                       cc_list, cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -152,9 +152,7 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            # TODO: do create (and retrieve)
-
-            report = alert
+            report = finder.create(alert)
 
         if cmd.update:
             # validate...
@@ -207,15 +205,14 @@ if __name__ == '__main__':
 
             report = alert
 
-            if cmd.delete:
-                response = finder.retrieve(cmd.retrieve_id)
-                alert = response.alerts[0] if response.alerts else None
+        if cmd.delete:
+            alert = finder.retrieve(cmd.delete_id)
 
-                if alert is None:
-                    logger.error("no alert found with ID %s." % cmd.update_id)
-                    exit(2)
+            if alert is None:
+                logger.error("no alert found with ID %s." % cmd.delete_id)
+                exit(2)
 
-            # TODO: do delete
+            finder.delete(cmd.delete_id)
 
         # report...
         if report is not None:
