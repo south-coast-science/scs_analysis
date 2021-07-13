@@ -6,7 +6,7 @@ Created on 29 Jun 2021
 
 import optparse
 
-from scs_core.data.aggregation_period import AggregationPeriod
+from scs_core.data.recurring_period import RecurringPeriod
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ class CmdAlert(object):
     @property
     def aggregation_period(self):
         period = self.__opts.aggregation_period
-        return None if period is None else AggregationPeriod.construct(period[0], period[1])
+        return None if period is None else RecurringPeriod.construct(period[0], period[1])
 
 
     @property
