@@ -6,14 +6,15 @@ Created on 29 Jun 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The alert utility is used to
+The alert utility is used to create, update, delete and find alert specifications.
 
 SYNOPSIS
 alert.py  { -f TOPIC | -r ID | -c | -u ID | -d ID } [-o TOPIC] [-e FIELD] [-l LOWER] [-p UPPER] [-n { 1 | 0 }]
 [-a AGGREGATION] [-t INTERVAL] [-s { 1 | 0 }] [-m EMAIL_ADDR] [-x EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
-alert.py -c -o south-coast-science-dev/development/loc/1/gases -e val.H2S.cn -n1 -a 1:00:00 -i4 -v
+alert.py -c -o south-coast-science-demo/brighton/loc/1/gases -e val.NO2.cnc -p 10 -a 5 M \
+-m bruno.beloff@southcoastscience.com -i4 -v
 
 DOCUMENT EXAMPLE
 {"id": 123, "topic": "my/topic", "field": "my.field", "lower-threshold": 10.0, "upper-threshold": 100.0,
@@ -37,7 +38,7 @@ from scs_core.aws.client.monitor_auth import MonitorAuth
 
 from scs_core.aws.data.alert import AlertSpecification
 
-from scs_core.aws.manager.alert_finder import AlertFinder
+from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.data.datetime import LocalizedDatetime
@@ -91,8 +92,8 @@ if __name__ == '__main__':
             logger.error('incorrect password')
             exit(1)
 
-        finder = AlertFinder(requests, auth)
-        logger.info(finder)
+        alert_manager = AlertSpecificationManager(requests, auth)
+        logger.info(alert_manager)
 
         # APIAuth...
         api_auth = APIAuth.load(Host)
@@ -112,13 +113,11 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            response = finder.find(cmd.find_topic, cmd.field, auth.email_address)
+            response = alert_manager.find(cmd.find_topic, cmd.field, auth.email_address)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            response = finder.retrieve(cmd.retrieve_id)
-            print("response: %s" % response)
-            report = response.alerts[0] if response.alerts else None
+            report = alert_manager.retrieve(cmd.retrieve_id)
 
         if cmd.create:
             # validate...
@@ -143,6 +142,8 @@ if __name__ == '__main__':
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
                                        [], cmd.suspended)
+            if cmd.add_cc:
+                alert.append_to_cc_list(cmd.add_cc)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -152,9 +153,7 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            # TODO: do create (and retrieve)
-
-            report = alert
+            report = alert_manager.create(alert)
 
         if cmd.update:
             # validate...
@@ -162,8 +161,7 @@ if __name__ == '__main__':
                 logger.error("topic and field may not be changed.")
                 exit(2)
 
-            response = finder.retrieve(cmd.retrieve_id)
-            alert = response.alerts[0] if response.alerts else None
+            alert = alert_manager.retrieve(cmd.update_id)
 
             if alert is None:
                 logger.error("no alert found with ID %s." % cmd.update_id)
@@ -191,31 +189,28 @@ if __name__ == '__main__':
             if cmd.remove_cc is not None:
                 alert.remove_from_cc_list(cmd.remove_cc)
 
-            alert = AlertSpecification(alert.update_id, alert.topic, alert.field, lower_threshold, upper_threshold,
-                                       alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
-                                       alert.cc_list, suspended)
+            updated = AlertSpecification(alert.id, alert.topic, alert.field, lower_threshold, upper_threshold,
+                                         alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
+                                         alert.cc_list, suspended)
 
-            if not alert.has_valid_thresholds():
+            if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
                 exit(2)
 
-            if not alert.has_valid_aggregation_period():
+            if not updated.has_valid_aggregation_period():
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            # TODO: do update
+            report = alert_manager.update(updated)
 
-            report = alert
+        if cmd.delete:
+            alert = alert_manager.retrieve(cmd.delete_id)
 
-            if cmd.delete:
-                response = finder.retrieve(cmd.retrieve_id)
-                alert = response.alerts[0] if response.alerts else None
+            if alert is None:
+                logger.error("no alert found with ID %s." % cmd.delete_id)
+                exit(2)
 
-                if alert is None:
-                    logger.error("no alert found with ID %s." % cmd.update_id)
-                    exit(2)
-
-            # TODO: do delete
+            alert_manager.delete(cmd.delete_id)
 
         # report...
         if report is not None:
