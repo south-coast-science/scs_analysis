@@ -31,8 +31,9 @@ DOCUMENT EXAMPLE
 "context": ["TimeoutExpired(['./configuration'], 30)"]}
 
 SEE ALSO
-scs_analysis/configuration_auth
+scs_analysis/configuration_csv
 scs_analysis/configuration_monitor
+scs_analysis/monitor_auth
 
 scs_mfr/configuration
 """
@@ -42,7 +43,7 @@ import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMonitorCheck
 
-from scs_core.aws.client.configuration_auth import ConfigurationAuth
+from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder
 from scs_core.aws.manager.configuration_check_requester import ConfigurationCheckRequester
 
@@ -81,12 +82,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if not ConfigurationAuth.exists(Host):
+        if not MonitorAuth.exists(Host):
             logger.error('access key not available')
             exit(1)
 
         try:
-            auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
         except (KeyError, ValueError):
             logger.error('incorrect password')
             exit(1)

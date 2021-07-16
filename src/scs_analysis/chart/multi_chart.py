@@ -23,11 +23,11 @@ class MultiChart(Chart):
     classdocs
     """
 
-    def __init__(self, batch_mode, x_count, y_min, y_max, *paths):
+    def __init__(self, title, batch_mode, x_count, y_min, y_max, *paths):
         """
         Constructor
         """
-        Chart.__init__(self, batch_mode)
+        Chart.__init__(self, title, batch_mode)
 
         # fields...
         self.__y_min = y_min
@@ -36,16 +36,14 @@ class MultiChart(Chart):
         self.__paths = paths
 
         # data...
-        x_data = range(x_count)
+        self.__x_data = range(x_count)
 
         self.__y_data = self.__init_data(x_count)
 
         # plotter...
-        plt.ion()               # set plot to animated
-
         fig = plt.figure()
-
-        fig.canvas.set_window_title(', '.join(self.__paths))
+        fig.canvas.set_window_title(self.title(', '.join(self.__paths)))
+        fig.tight_layout()
 
         fig.canvas.mpl_connect('close_event', self.close)
 
@@ -54,19 +52,16 @@ class MultiChart(Chart):
 
         plt.grid()
 
-        plot_data = self.__plot_data(x_data)
-        self.__lines = plt.plot(*plot_data)
-
         plt.ylim([y_min, y_max])
 
-        fig.tight_layout()
-
-        plt.pause(0.001)
+        if not batch_mode:
+            plot_data = self.__plot_data(self.__x_data)
+            self.__lines = plt.plot(*plot_data)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def plot(self, dictionary):
+    def plot(self, path_dict):
         if self.closed:
             return
 
@@ -75,11 +70,11 @@ class MultiChart(Chart):
 
         for path in self.__paths:
             try:
-                value = dictionary.node(path)
+                value = path_dict.node(path)
             except KeyError:
                 return
 
-            if value is None:       # TODO: test whether the system can survive missing values
+            if value is None:
                 return
 
             datum.append(float(value))
@@ -89,7 +84,8 @@ class MultiChart(Chart):
             del self.__y_data[i][0]
             self.__y_data[i].append(datum[i])
 
-            self.__lines[i].set_ydata(self.__y_data[i])
+            if not self.batch_mode:
+                self.__lines[i].set_ydata(self.__y_data[i])
 
         # min / max...
         min_data_y = float(min(self.__flat_y_data))
@@ -100,8 +96,23 @@ class MultiChart(Chart):
 
         plt.ylim([min_axis_y, max_axis_y])
 
-        if not self._batch_mode:
-            plt.pause(0.001)
+        if not self.batch_mode:
+            self.render(block=False)
+
+
+    def render(self, block=True):
+        if self.batch_mode:
+            plot_data = self.__plot_data(self.__x_data)
+            plt.plot(*plot_data)
+
+        plt.draw()
+        plt.show(block=block)
+        plt.pause(0.001)
+
+
+    def close(self, _event):
+        self._closed = True
+        plt.close()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -151,4 +162,4 @@ class MultiChart(Chart):
 
     def __str__(self, *args, **kwargs):
         return "MultiChart:{batch_mode:%s, y_min:%s, y_max:%s, paths:%s}" % \
-                (self._batch_mode, self.y_min, self.y_max, self.__paths)
+                (self.batch_mode, self.y_min, self.y_max, self.__paths)

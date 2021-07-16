@@ -132,7 +132,7 @@ if __name__ == '__main__':
         byline_manager = BylineManager(api_auth)
 
         # message manager...
-        message_manager = MessageManager(api_auth, reporter)
+        message_manager = MessageManager(api_auth, reporter=reporter)
 
         logger.info(message_manager)
 
@@ -148,7 +148,8 @@ if __name__ == '__main__':
         # run...
 
         if cmd.latest_at:
-            message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, cmd.include_wrapper, cmd.rec_only)
+            message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, None, cmd.include_wrapper,
+                                                            cmd.rec_only)
             document = message if cmd.include_wrapper else message.payload
 
             if document:
@@ -178,7 +179,7 @@ if __name__ == '__main__':
         logger.info("end: %s" % end)
 
         # messages...
-        for message in message_manager.find_for_topic(cmd.topic, start, end, cmd.fetch_last, cmd.checkpoint,
+        for message in message_manager.find_for_topic(cmd.topic, start, end, None, cmd.fetch_last, cmd.checkpoint,
                                                       cmd.include_wrapper, cmd.rec_only,
                                                       cmd.min_max, cmd.exclude_remainder):
             print(JSONify.dumps(message))

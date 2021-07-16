@@ -14,11 +14,11 @@ The utility analyses a given path to a leaf node of the input JSON data stream.
 An optional "batch" ("-b") flag can be set, causing the plotting only to take place when all data points have been
 received.
 
-Depending on operating system, it may be necessary to edit the matplotlibrc file, which specifies the Matplotlib
+Depending on operating system, it may be necessary to use a matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.
 
 SYNOPSIS
-histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] [-o FILENAME] [-e] [-v] PATH
+histo_chart.py [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] [-o FILENAME] [-e] [-t TITLE] [-v] PATH
 
 EXAMPLES
 socket_receiver.py | histo_chart.py val.CO2.cnc -x -10 10 -e -o CO2.csv
@@ -29,6 +29,9 @@ FILES
 SEE ALSO
 scs_analysis/multi_chart
 scs_analysis/single_chart
+
+BUGS
+On some operating systems, the chart will remain as the uppermost window until all data have been received.
 """
 
 import sys
@@ -42,12 +45,16 @@ from scs_core.data.path_dict import PathDict
 
 from scs_core.sync.line_reader import LineReader
 
+from scs_core.sys.logging import Logging
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
     warnings.filterwarnings("ignore", module="matplotlib")
+
+    chart = None
+    proc = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -58,11 +65,10 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("histo_chart: %s" % cmd, file=sys.stderr)
+    Logging.config('histo_chart', verbose=cmd.verbose)
+    logger = Logging.getLogger()
 
-    chart = None
-    proc = None
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -70,17 +76,15 @@ if __name__ == '__main__':
 
         # reader...
         reader = LineReader(sys.stdin.fileno())
-
-        if cmd.verbose:
-            print("histo_chart: %s" % reader, file=sys.stderr)
+        logger.info(reader)
 
         # chart...
-        chart = HistoChart(cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.precision, cmd.path,
+        chart = HistoChart(cmd.title, cmd.batch_mode, cmd.x[0], cmd.x[1], cmd.bin_count, cmd.precision, cmd.path,
                            outfile=cmd.outfile)
+        logger.info(chart)
+        logger.info("backend: %s" % chart.backend())
 
-        if cmd.verbose:
-            print("histo_chart: %s" % chart, file=sys.stderr)
-            sys.stderr.flush()
+        logger.error("terminate this utility by closing the chart window.")
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -111,6 +115,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+        if not chart.closed:
+            chart.render(block=True)
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
@@ -123,13 +130,5 @@ if __name__ == '__main__':
             proc.terminate()
 
         if chart is not None and not chart.closed:
-            if cmd.verbose:
-                print("histo_chart: holding", file=sys.stderr)
-
-            # noinspection PyBroadException
-
-            try:
-                chart.hold()
-
-            except Exception:
-                pass
+            logger.info("closing.")
+            chart.close(None)
