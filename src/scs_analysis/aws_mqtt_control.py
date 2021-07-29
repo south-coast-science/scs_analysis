@@ -77,6 +77,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: when in non-interactive mode, exit return code should be the same as the command
 # --------------------------------------------------------------------------------------------------------------------
 
 EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
@@ -113,7 +114,7 @@ if __name__ == '__main__':
 
         if cmd.aws:
             if not AccessKey.exists(Host):
-                logger.error("access key not available")
+                logger.error("AccessKey not available.")
                 exit(1)
 
             try:

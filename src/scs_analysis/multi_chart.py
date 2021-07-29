@@ -119,7 +119,7 @@ if __name__ == '__main__':
     # end...
 
         if not chart.closed:
-            chart.render(block=True)
+            chart.render()
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

@@ -89,13 +89,13 @@ if __name__ == '__main__':
 
         if cmd.aws or cmd.missing:
             if not AccessKey.exists(Host):
-                logger.error('access key not available')
+                logger.error('AccessKey not available.')
                 exit(1)
 
             try:
                 key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
             except (KeyError, ValueError):
-                logger.error('incorrect password')
+                logger.error('incorrect password.')
                 exit(1)
 
             client = Client.construct('s3', key)
