@@ -49,7 +49,11 @@ class AWSMQTTSubscriptionHandler(object):
             self.__comms.write(JSONify.dumps(publication), False)
 
         except ConnectionError:
-            self.__reporter.print("handle: ConnectionError: %s" % self.__comms.address)
+            try:
+                self.__reporter.print("handle: ConnectionError: %s." % self.__comms.address)
+            except AttributeError:
+                self.__reporter.print("handle: ConnectionError.")
+                exit(0)
 
         finally:
             self.__comms.close()

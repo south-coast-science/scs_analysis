@@ -18,8 +18,8 @@ class CmdMultiChart(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x POINTS] [-y MIN MAX] [-e] [-v] PATH_1 .. PATH_N",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-b] [-x POINTS] [-y MIN MAX] [-e] [-t TITLE] [-v] "
+                                                    "PATH_1 .. PATH_N", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
@@ -33,6 +33,9 @@ class CmdMultiChart(object):
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
+
+        self.__parser.add_option("--title", "-t", type="string", nargs=1, action="store", dest="title",
+                                 help="chart title")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -72,13 +75,18 @@ class CmdMultiChart(object):
 
 
     @property
+    def title(self):
+        return self.__opts.title
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
 
     @property
     def paths(self):
-        return set(self.__args)
+        return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -88,5 +96,5 @@ class CmdMultiChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, verbose:%s, paths:%s}" % \
-                    (self.batch_mode, self.x, self.y, self.echo, self.verbose, self.paths)
+        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, title:%s, verbose:%s, paths:%s}" % \
+                    (self.batch_mode, self.x, self.y, self.echo, self.title, self.verbose, self.paths)

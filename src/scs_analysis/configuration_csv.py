@@ -21,9 +21,9 @@ EXAMPLES
 configuration_csv.py -vl configs.csv
 
 SEE ALSO
-scs_analysis/configuration_auth
 scs_analysis/configuration_monitor
 scs_analysis/configuration_monitor_check
+scs_analysis/monitor_auth
 
 scs_mfr/configuration
 """
@@ -36,7 +36,7 @@ from subprocess import Popen, PIPE
 
 from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
 
-from scs_core.aws.client.configuration_auth import ConfigurationAuth
+from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 
 from scs_core.data.datetime import LocalizedDatetime
@@ -75,14 +75,14 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if not ConfigurationAuth.exists(Host):
-            logger.error('access key not available')
+        if not MonitorAuth.exists(Host):
+            logger.error('MonitorAuth not available.')
             exit(1)
 
         try:
-            auth = ConfigurationAuth.load(Host, encryption_key=ConfigurationAuth.password_from_user())
+            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
         except (KeyError, ValueError):
-            logger.error('incorrect password')
+            logger.error('incorrect password.')
             exit(1)
 
         finder = ConfigurationFinder(requests, auth)

@@ -31,7 +31,7 @@ class CmdSampleISO8601(object):
                                  help="datetime format is OLE Automation date")
 
         self.__parser.add_option("--format", "-f", type="string", nargs=1, action="store", dest="format",
-                                 help="specifies format of input date string, i.e. YYYY-MM-DD")
+                                 help="specifies format of input date string, e.g. YYYY-MM-DD")
 
         self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store",
                                  dest="timezone", help="source timezone (default 'UTC')")

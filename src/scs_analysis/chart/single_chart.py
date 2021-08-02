@@ -8,7 +8,9 @@ source repo: scs_analysis
 uses matplotlibrc configuration file
 
 https://matplotlib.org/faq/usage_faq.html
+https://matplotlib.org/stable/users/interactive_guide.html
 https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
+http://physicalmodelingwithpython.blogspot.com/2015/07/raising-figure-window-to-foreground.html
 """
 
 from matplotlib import pyplot as plt
@@ -25,11 +27,11 @@ class SingleChart(Chart):
     classdocs
     """
 
-    def __init__(self, batch_mode, x_count, y_min, y_max, is_relative, path):
+    def __init__(self, title, batch_mode, x_count, y_min, y_max, is_relative, path):
         """
         Constructor
         """
-        Chart.__init__(self, batch_mode)
+        super().__init__(title, batch_mode)
 
         # fields...
         self.__y_min = y_min
@@ -45,11 +47,9 @@ class SingleChart(Chart):
         self.__y_data = [initial_datum] * x_count
 
         # plotter...
-        plt.ion()               # set plot to animated
-
         fig = plt.figure()
-
-        fig.canvas.set_window_title(self.__path)
+        fig.canvas.set_window_title(self.title(path))
+        fig.tight_layout()
 
         fig.canvas.mpl_connect('close_event', self.close)
 
@@ -58,23 +58,21 @@ class SingleChart(Chart):
 
         plt.grid()
 
-        self.__line, = plt.plot(self.__y_data)
         plt.ylim([y_min, y_max])
 
-        fig.tight_layout()
-
-        plt.pause(0.001)
+        if not batch_mode:
+            self.__line, = plt.plot(self.__y_data)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def plot(self, dictionary):
+    def plot(self, path_dict):
         if self.closed:
             return
 
         # datum...
         try:
-            value = dictionary.node(self.__path)
+            value = path_dict.node(self.__path)
         except KeyError:
             return
 
@@ -97,7 +95,8 @@ class SingleChart(Chart):
         del self.__y_data[0]
         self.__y_data.append(display_datum)
 
-        self.__line.set_ydata(self.__y_data)
+        if not self.batch_mode:
+            self.__line.set_ydata(self.__y_data)
 
         # min / max...
         min_data_y = float(min(self.__y_data))
@@ -108,8 +107,22 @@ class SingleChart(Chart):
 
         plt.ylim([min_axis_y, max_axis_y])
 
-        if not self._batch_mode:
-            plt.pause(0.001)
+        if not self.batch_mode:
+            self.render(block=False)
+
+
+    def render(self, block=True):
+        if self.batch_mode:
+            plt.plot(self.__y_data)
+
+        plt.draw()
+        plt.show(block=block)
+        plt.pause(0.001)
+
+
+    def close(self, _event):
+        self._closed = True
+        plt.close()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -143,5 +156,5 @@ class SingleChart(Chart):
 
     def __str__(self, *args, **kwargs):
         return "SingleChart:{batch_mode:%s, y_min:%s, y_max:%s, is_relative:%s, path:%s, index:%s, first_datum:%s}" % \
-                (self._batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index,
+                (self.batch_mode, self.y_min, self.y_max, self.__is_relative, self.__path, self.index,
                  self.first_datum)
