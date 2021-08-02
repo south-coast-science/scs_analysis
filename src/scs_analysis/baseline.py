@@ -6,41 +6,76 @@ Created on 28 Jul 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The baseline utility is used to
+The baseline utility is use to set the baseline of a device's electrochemical and CO2 sensors according to estimated
+low environmental gas concentrations. It does this by downloading device data, finding minimums, then adjusting the
+device's baseline offsets by the difference between the estimated and reported values. Any changes in NO2
+baselines are incorporated into O3 (Ox) baselining.
+
+The device must be online during the baselining operation - a number of MQTT messages are passes between the
+utility and the device. If any changes are made to the device's baseline settings, then the gases_sampler process
+is restarted. How the restart happens is specified by the --uptake flag.
+
+If the --rehearse flag is used, the baseline utility shows what changes would be made, but does not make the changes.
+
+Operating parameters are specified by the baseline_conf utility, and may be overriden by the baseline utility flags.
+Any number of separate baseline_conf files may be stored.
+
+The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py { -l | -d [-c CAUSE] } [-i INDENT] [-v] ID
+baseline.py -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-a AGGREGATION] [-m GAS MINIMUM] \
+[{ -o GAS  | -x GAS }] [-v]
 
 EXAMPLES
-baseline.py -d -cL 123
+baseline.py -c freshfield -t scs-opc-1 -r
 
-DOCUMENT EXAMPLE
+FILES
+~/SCS/conf/baseline_conf.json
 
 SEE ALSO
-scs_analysis/baseline_baseline_conf
+scs_analysis/access_key
+scs_analysis/aws_api_auth
+scs_analysis/aws_client_auth
+scs_analysis/baseline_conf
+
+scs_dev/gases_sampler
+
+scs_mfr/afe_baseline
+scs_mfr/gas_baseline
+scs_mfr/scd30_baseline
 """
 
-import requests
+import json
+
 import sys
 
 from scs_analysis.cmd.cmd_baseline import CmdBaseline
 
 from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
 
+from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.api_auth import APIAuth
-from scs_core.aws.client.monitor_auth import MonitorAuth
+from scs_core.aws.client.client import Client
+from scs_core.aws.client.client_auth import ClientAuth
+from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
 
 from scs_core.aws.manager.byline_manager import BylineManager
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 from scs_core.aws.manager.lambda_message_manager import MessageManager
+from scs_core.aws.manager.s3_manager import S3PersistenceManager
+
+from scs_core.control.control_handler import ControlHandler
 
 from scs_core.data.datetime import LocalizedDatetime
-from scs_core.data.json import JSONify
-from scs_core.data.path_dict import PathDict
 
 from scs_core.estate.baseline_conf import BaselineConf
+from scs_core.estate.configuration import Configuration
+from scs_core.estate.mqtt_peer import MQTTPeerSet
 
-from scs_core.sys.http_exception import HTTPException
+from scs_core.gas.afe_calib import AFECalib
+from scs_core.gas.minimum import Minimum
+
+from scs_core.sample.gases_sample import GasesSample
+
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -50,11 +85,13 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    latest_rec = None
-    topic = None
+    MQTT_TIMEOUT = 30           # seconds
 
     logger = None
-    auth = None
+
+    key = None
+    monitor_auth = None
+    mqtt_client = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -69,41 +106,44 @@ if __name__ == '__main__':
         Logging.config('baseline', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
-        logger.info(cmd)
-
 
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
+        # authentication...
 
-        # ConfigurationFinder...
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth key not available.')
+        # AccessKey (for S3PersistenceManager)...
+        if not AccessKey.exists(Host):
+            logger.error("AccessKey not available.")
             exit(1)
 
         try:
-            # auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
-            auth = MonitorAuth.load(Host, encryption_key='beloff')
+            key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
         except (KeyError, ValueError):
-            logger.error('incorrect password.')
+            logger.error("incorrect password")
             exit(1)
 
-        finder = ConfigurationFinder(requests, auth)
-
-        # BaselineConf...
-        baseline_conf = BaselineConf.load(Host)
-
-        if baseline_conf is None:
-            logger.error("BaselineConf is not available")
-            exit(1)
-
-        logger.info(baseline_conf)
-
-        # APIAuth...
+        # APIAuth (for BylineManager)...
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
             logger.error("APIAuth is not available")
             exit(1)
+
+        # ClientAuth (for MQTTClient)...
+        client_auth = ClientAuth.load(Host)
+
+        if client_auth is None:
+            logger.error("ClientAuth not available.")
+            exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        # S3PersistenceManager...
+        s3_client = Client.construct('s3', key)
+        s3_resource_client = Client.resource('s3', key)
+
+        s3_manager = S3PersistenceManager(s3_client, s3_resource_client)
 
         # BylineManager...
         byline_manager = BylineManager(api_auth)
@@ -116,84 +156,223 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # run...
-
         # configuration...
-        # response = finder.find(cmd.device_tag, True, ConfigurationRequest.MODE.LATEST)
-        # print(response)
-        # print("-")
 
-        # bylines...
+        logger.error("configuration...")
+
+        # BaselineConf...
+        baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
+
+        if baseline_conf is None:
+            logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
+            exit(1)
+
+        try:
+            baseline_conf = cmd.override(baseline_conf)
+        except KeyError as ex:
+            logger.error("the gas %s is not in the baseline configuration." % ex)
+            exit(2)
+
+        logger.error(baseline_conf)
+
+        # device_conf...
+        host_tag = Host.name()
+
+        # topics...
         group = byline_manager.find_bylines_for_device(cmd.device_tag)
 
         if group is None:
             logger.error("no bylines found for %s." % cmd.device_tag)
             exit(1)
 
-        for byline in group.bylines:
-            if not byline.topic.endswith("/gases"):
-                continue
+        gases_topic = group.latest_topic('/gases')
+        control_topic = group.latest_topic('/control')
 
-            if latest_rec is None or byline.rec > latest_rec:
-                latest_rec = byline.rec
-                topic = byline.topic
-
-        if topic is None:
+        if gases_topic is None:
             logger.error("no gases topic found for %s." % cmd.device_tag)
             exit(1)
 
-        logger.info("topic: %s" % topic)
-        print("-")
+        if control_topic is None:
+            logger.error("no control topic found for %s." % cmd.device_tag)
+            exit(1)
+
+        logger.error("gases_topic: %s" % gases_topic)
+        logger.error("control_topic: %s" % control_topic)
+
+        # MQTT peer...
+        peer_group = MQTTPeerSet.load(s3_manager)
+        peer = peer_group.peer_by_tag(cmd.device_tag)
+
+        if peer is None:
+            logger.error("no MQTT peer found for tag '%s'." % cmd.device_tag)
+            exit(1)
+
+        logger.error("hostname: %s" % peer.hostname)
+
+        # MQTTClient...
+        handler = ControlHandler(host_tag, cmd.device_tag)
+        subscriber = MQTTSubscriber(control_topic, handler.handle)
+
+        mqtt_client = MQTTClient(subscriber)
+        mqtt_client.connect(client_auth, False)
+
+        # Configuration...
+        stdout, stderr = handler.publish(mqtt_client, control_topic, ['configuration'], MQTT_TIMEOUT,
+                                         peer.shared_secret)
+
+        if stderr:
+            logger.error("Configuration cannot be retrieved: %s" % stderr)
+            exit(1)
+
+        jdict = json.loads(stdout[0])
+        device_conf = Configuration.construct_from_jdict(jdict.get('val'))
+
+        ox_index = device_conf.afe_id.sensor_index('Ox')
+
+        # AFECAlib...
+        if ox_index is None:
+            ox_sensor = None
+
+        else:
+            stdout, stderr = handler.publish(mqtt_client, control_topic, ['afe_calib'], MQTT_TIMEOUT,
+                                             peer.shared_secret)
+            if stderr:
+                logger.error("AFECAlib cannot be retrieved: %s" % stderr)
+                exit(1)
+
+            jdict = json.loads(stdout[0])
+            afe_calib = AFECalib.construct_from_jdict(jdict)
+            ox_baseline = device_conf.afe_baseline.sensor_baseline(ox_index)
+            ox_calib = afe_calib.sensor_calib(ox_index)
+
+            ox_sensor = ox_calib.sensor(ox_baseline)
+            logger.error(ox_sensor)
+
+        logger.error("-")
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # run...
 
         # data...
+        logger.error("data...")
+
         now = LocalizedDatetime.now()
+
         start = baseline_conf.start_datetime(now)
         end = baseline_conf.end_datetime(now)
 
-        data = list(message_manager.find_for_topic(topic, start, end, None, False, baseline_conf.checkpoint(),
-                                                   False, False, False, False))
+        logger.error("start: %s end: %s" % (start, end))
 
-        if not data:
-            logger.error("no data found for %s." % topic)
+        if start == end:
+            logger.error("the start and end hours may not be the same.")
             exit(1)
 
-        # minimums...
-        minimums = {path: None for path in PathDict(data[0]).paths() if path.endswith(".cnc")}
+        if end > now:
+            logger.error("baselining cannot take place during the test period.")
+            exit(1)
 
-        for i in range(len(data)):
-            dictionary = PathDict(data[i])
+        data = list(message_manager.find_for_topic(gases_topic, start, end, None, False, baseline_conf.checkpoint(),
+                                                   False, False, False, False))
+        if not data:
+            logger.error("no data found for %s." % gases_topic)
+            exit(1)
 
-            for path in minimums:
-                value = int(round(float(dictionary.node(path))))
-                if minimums[path] is None or value < minimums[path]['value']:
-                    minimums[path] = {'index': i, 'value': value, 'datum': data[i]}
-
-        print(JSONify.dumps(minimums, indent=4))
-        print("-")
-
-        for path, minimum in minimums.items():
-            if minimum['index'] == 0:
-                logger.error("warning: the first value for %s was the minimum value." % path)
-
-            elif minimum['index'] == len(data) - 1:
-                logger.error("warning: the last value for %s was the minimum value." % path)
+        logger.error("expected: %s retrieved: %s" % (baseline_conf.expected_data_points(start, end), len(data)))
+        logger.error("-")
 
         # corrections...
-        gas_offsets = baseline_conf.gas_offsets
+        logger.error("correction...")
 
-        for path in minimums:
-            pieces = path.split(".")
-            gas = pieces[len(pieces) - 2]       # TODO: distinguish between 'val' and 'exg' fields
-            if gas in baseline_conf.gas_offsets:
-                print(gas)
+        conf_minimums = baseline_conf.minimums
+        correction_applied = False
+        no2_correction = None
+
+        for minimum in Minimum.find_minimums(data):
+            logger.error("-")
+
+            if minimum.gas == cmd.exclude_gas:
+                logger.error("%s is excluded - skipping" % minimum.gas)
+                continue
+
+            if minimum.gas not in conf_minimums:
+                logger.error("%s has no specified minimum - skipping" % minimum.gas)
+                continue
+
+            try:
+                if minimum.update_already_done(device_conf, end):
+                    logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
+                    continue
+
+            except ValueError as ex:
+                logger.error("sensor with serial number %s is not supported - skipping" % ex)
+                continue
+
+            # NO2...
+            if minimum.path == 'val.NO2.cnc':
+                no2_correction = conf_minimums['NO2'] - minimum.value
+
+            # Ox...
+            if minimum.path == 'val.Ox.cnc':
+                if no2_correction is None:
+                    logger.error('NO2 minimum required for Ox, but none available - skipping')
+                    continue
+
+                sample = GasesSample.construct_from_jdict(minimum.sample)
+
+                temp = sample.sht_datum.temp
+                no2_sample = sample.electrochem_datum.sns['NO2']
+                ox_sample = sample.electrochem_datum.sns['Ox']
+
+                no2_cnc = no2_sample.cnc + no2_correction
+                corrected = ox_sensor.datum(temp, ox_sample.we_v, ox_sample.ae_v, no2_cnc=no2_cnc)
+                minimum.value = corrected.cnc
+
+            if minimum.value == conf_minimums[minimum.gas]:
+                logger.error("%s matches the required minimum - skipping" % minimum.path)
+                continue
+
+            if minimum.index == 0:
+                logger.error("WARNING: the first datum for %s is the minimum value" % minimum.path)
+
+            elif minimum.index == len(data) - 1:
+                logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
+
+            cmd_tokens = minimum.cmd_tokens(conf_minimums)
+            logger.error(' '.join([str(token) for token in cmd_tokens]))
+
+            if cmd.rehearse:
+                continue
+
+            stdout, stderr = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT, peer.shared_secret)
+            correction_applied = True
+
+            if stdout:
+                print(*stdout, sep='\n', file=sys.stdout)
+            if stderr:
+                print(*stderr, sep='\n', file=sys.stderr)
+
+        if not correction_applied:
+            exit(0)
+
+        logger.error("-")
 
         # reboot...
+        logger.error(cmd.uptake)
 
+        handler.publish(mqtt_client, control_topic, [cmd.uptake], MQTT_TIMEOUT, peer.shared_secret)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # end...
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except HTTPException as ex:
-        now = LocalizedDatetime.now().utc().as_iso8601()
-        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+    except TimeoutError:
+        logger.error("device is not available.")
         exit(1)
+
+    finally:
+        if mqtt_client:
+            mqtt_client.disconnect()
