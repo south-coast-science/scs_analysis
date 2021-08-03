@@ -118,7 +118,8 @@ if __name__ == '__main__':
                     latest = byline
 
             else:
-                print(JSONify.dumps(byline))
+                jdict = byline.as_json(include_message=cmd.include_messages)
+                print(JSONify.dumps(jdict))
                 sys.stdout.flush()
 
         if cmd.latest and latest is not None:
