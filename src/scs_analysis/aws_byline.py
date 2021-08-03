@@ -123,7 +123,8 @@ if __name__ == '__main__':
                 sys.stdout.flush()
 
         if cmd.latest and latest is not None:
-            print(JSONify.dumps(latest))
+            jdict = latest.as_json(include_message=cmd.include_messages)
+            print(JSONify.dumps(jdict))
 
 
     # ----------------------------------------------------------------------------------------------------------------
