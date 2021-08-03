@@ -95,7 +95,7 @@ class CmdBaseline(object):
         aggregation_period = conf.aggregation_period if self.aggregation_period is None else \
             RecurringMinutes(self.aggregation_period)
 
-        minimums = {self.only_gas: conf.minimums(self.only_gas)} if self.only_gas else conf.minimums
+        minimums = {self.only_gas: conf.minimum(self.only_gas)} if self.only_gas else conf.minimums
 
         conf = BaselineConf(conf.name, conf.lab_timezone, start_hour, end_hour, aggregation_period, minimums)
 

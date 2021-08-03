@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
         logger.error(baseline_conf)
 
-        # device_conf...
+        # host name...
         host_tag = Host.name()
 
         # topics...
@@ -289,6 +289,9 @@ if __name__ == '__main__':
         no2_correction = None
 
         for minimum in Minimum.find_minimums(data):
+            if cmd.only_gas is not None and minimum.gas != cmd.only_gas:
+                continue
+
             logger.error("-")
 
             if minimum.gas == cmd.exclude_gas:
