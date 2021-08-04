@@ -9,7 +9,7 @@ DESCRIPTION
 The baseline utility is use to set the baseline of a device's electrochemical and CO2 sensors according to estimated
 low environmental gas concentrations. It does this by downloading device data, finding minimums, then adjusting the
 device's baseline offsets by the difference between the estimated and reported values. Any changes in NO2
-baselines are incorporated into O3 (Ox) baselining.
+baselines are incorporated into O3 ('Ox') baselining.
 
 The device must be online during the baselining operation - a number of MQTT messages are passes between the
 utility and the device. If any changes are made to the device's baseline settings, then the gases_sampler process
@@ -18,7 +18,7 @@ is restarted. How the restart happens is specified by the --uptake flag.
 If the --rehearse flag is used, the baseline utility shows what changes would be made, but does not make the changes.
 
 Operating parameters are specified by the baseline_conf utility, and may be overriden by the baseline utility flags.
-Any number of separate baseline_conf files may be stored.
+Any number of named baseline_conf files may be stored.
 
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
@@ -237,7 +237,7 @@ if __name__ == '__main__':
             stdout, stderr = handler.publish(mqtt_client, control_topic, ['afe_calib'], MQTT_TIMEOUT,
                                              peer.shared_secret)
             if stderr:
-                logger.error("AFECAlib cannot be retrieved: %s" % stderr)
+                logger.error("AFECAlib cannot be retrieved: %s" % stderr[0])
                 exit(1)
 
             jdict = json.loads(stdout[0])
@@ -350,10 +350,10 @@ if __name__ == '__main__':
             stdout, stderr = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT, peer.shared_secret)
             correction_applied = True
 
-            if stdout:
-                print(*stdout, sep='\n', file=sys.stdout)
             if stderr:
                 print(*stderr, sep='\n', file=sys.stderr)
+            if stdout:
+                print(*stdout, sep='\n', file=sys.stdout)
 
         if not correction_applied:
             exit(0)
