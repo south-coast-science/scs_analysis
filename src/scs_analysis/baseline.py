@@ -221,7 +221,7 @@ if __name__ == '__main__':
                                          peer.shared_secret)
 
         if stderr:
-            logger.error("Configuration cannot be retrieved: %s" % stderr)
+            logger.error("Configuration cannot be retrieved: %s" % stderr[0])
             exit(1)
 
         jdict = json.loads(stdout[0])
