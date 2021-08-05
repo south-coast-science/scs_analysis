@@ -23,7 +23,7 @@ EXAMPLES
 ./baseline_conf.py -c freshfield -t Europe/London -s 23 -e 8 -a 5 -g NO2 10
 
 DOCUMENT EXAMPLE
-{"lab-timezone": "Europe/London", "start-hour": 17, "end-hour": 8, "aggregation-period": {"interval": 5, "units": "M"},
+{"timezone": "Europe/London", "start-hour": 17, "end-hour": 8, "aggregation-period": {"interval": 5, "units": "M"},
 "gas-minimums": {"CO": 200, "CO2": 420, "H2S": 5, "NO": 10, "NO2": 10, "SO2": 5}}
 
 FILES
@@ -94,15 +94,15 @@ if __name__ == '__main__':
             logger.error("no configuration is stored - you must therefore set all fields.")
             exit(2)
 
-        if cmd.lab_timezone and not Timezone.is_valid(cmd.lab_timezone):
-            logger.error("unrecognised timezone name: %s." % cmd.lab_timezone)
+        if cmd.timezone and not Timezone.is_valid(cmd.timezone):
+            logger.error("unrecognised timezone name: %s." % cmd.timezone)
             exit(2)
 
         if cmd.aggregation_period and cmd.aggregation_period not in RecurringMinutes.valid_intervals():
             logger.error("aggregation period must be one of: %s." % str(RecurringMinutes.valid_intervals()))
             exit(2)
 
-        lab_timezone = conf.lab_timezone if cmd.lab_timezone is None else cmd.lab_timezone
+        timezone = conf.timezone if cmd.timezone is None else cmd.timezone
         start_hour = conf.start_hour if cmd.start_hour is None else cmd.start_hour
         end_hour = conf.end_hour if cmd.end_hour is None else cmd.end_hour
         aggregation_period = conf.aggregation_period if cmd.aggregation_period is None else \
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
         minimums = {} if conf is None else conf.minimums
 
-        conf = BaselineConf(cmd.conf_name, lab_timezone, start_hour, end_hour, aggregation_period, minimums)
+        conf = BaselineConf(cmd.conf_name, timezone, start_hour, end_hour, aggregation_period, minimums)
 
         if cmd.set_gas_name:
             if cmd.set_gas_name not in BaselineConf.supported_gases():
