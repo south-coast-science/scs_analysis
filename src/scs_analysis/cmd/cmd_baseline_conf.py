@@ -33,7 +33,7 @@ class CmdBaselineConf(object):
                                  help="the name of the baseline configuration")
 
         # fields...
-        self.__parser.add_option("--lab-timezone", "-t", type="string", nargs=1, action="store", dest="lab_timezone",
+        self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store", dest="timezone",
                                  help="set the timezone for the tests")
 
         self.__parser.add_option("--start-hour", "-s", type="int", nargs=1, action="store", dest="start_hour",
@@ -87,7 +87,7 @@ class CmdBaselineConf(object):
 
 
     def is_complete(self):
-        if self.lab_timezone is None or self.start_hour is None or self.end_hour is None or \
+        if self.timezone is None or self.start_hour is None or self.end_hour is None or \
                 self.aggregation_period is None:
             return False
 
@@ -95,7 +95,7 @@ class CmdBaselineConf(object):
 
 
     def set(self):
-        return self.lab_timezone is not None or self.start_hour is not None or self.end_hour is not None or \
+        return self.timezone is not None or self.start_hour is not None or self.end_hour is not None or \
                self.aggregation_period is not None or self.__opts.set_gas is not None or self.remove_gas is not None
 
 
@@ -117,8 +117,8 @@ class CmdBaselineConf(object):
 
 
     @property
-    def lab_timezone(self):
-        return self.__opts.lab_timezone
+    def timezone(self):
+        return self.__opts.timezone
 
 
     @property
@@ -168,7 +168,7 @@ class CmdBaselineConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaselineConf:{zones:%s, list:%s, conf_name:%s, lab_timezone:%s, start_hour:%s, end_hour:%s, " \
+        return "CmdBaselineConf:{zones:%s, list:%s, conf_name:%s, timezone:%s, start_hour:%s, end_hour:%s, " \
                "aggregation_period:%s, set_gas:%s, remove_gas:%s, indent:%s, verbose:%s}" % \
-               (self.zones, self.list, self.conf_name, self.lab_timezone, self.start_hour, self.end_hour,
+               (self.zones, self.list, self.conf_name, self.timezone, self.start_hour, self.end_hour,
                 self.aggregation_period, self.__opts.set_gas, self.remove_gas, self.indent, self.verbose)

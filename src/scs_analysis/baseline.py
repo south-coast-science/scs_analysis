@@ -17,7 +17,7 @@ is restarted. How the restart happens is specified by the --uptake flag.
 
 If the --rehearse flag is used, the baseline utility shows what changes would be made, but does not make the changes.
 
-Operating parameters are specified by the baseline_conf utility, and may be overriden by the baseline utility flags.
+Operating parameters are specified by the baseline_conf utility, and may be overridden by the baseline utility flags.
 Any number of named baseline_conf files may be stored.
 
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
