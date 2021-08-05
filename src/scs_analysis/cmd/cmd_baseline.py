@@ -97,7 +97,7 @@ class CmdBaseline(object):
 
         minimums = {self.only_gas: conf.minimum(self.only_gas)} if self.only_gas else conf.minimums
 
-        conf = BaselineConf(conf.name, conf.lab_timezone, start_hour, end_hour, aggregation_period, minimums)
+        conf = BaselineConf(conf.name, conf.timezone, start_hour, end_hour, aggregation_period, minimums)
 
         if self.minimum_gas is not None:
             conf.set_minimum(self.minimum_gas, self.minimum_value)
