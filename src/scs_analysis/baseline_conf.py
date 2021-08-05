@@ -27,7 +27,7 @@ DOCUMENT EXAMPLE
 "gas-minimums": {"CO": 200, "CO2": 420, "H2S": 5, "NO": 10, "NO2": 10, "SO2": 5}}
 
 FILES
-~/SCS/conf/baseline_conf.json
+~/SCS/conf/NAME_baseline_conf.json
 
 SEE ALSO
 scs_analysis/baseline
