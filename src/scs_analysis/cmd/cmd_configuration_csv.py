@@ -6,6 +6,8 @@ Created on 7 Jul 2021
 
 import optparse
 
+from scs_core.aws.manager.configuration_finder import ConfigurationRequest
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,15 +18,18 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l LATEST_CSV | -d HISTORIES_CSV_DIR } [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] "
+                                                    "[NODE_1..NODE_N]", version="%prog 1.0")
 
         # mode...
         self.__parser.add_option("--latest", "-l", type="string", action="store", dest="latest",
                                  help="retrieve latest configurations")
 
-        self.__parser.add_option("--histories", "-d", type="string", action="store", dest="histories",
-                                 help="retrieve configuration histories")
+        self.__parser.add_option("--diff-histories", "-d", type="string", action="store", dest="diff_histories",
+                                 help="retrieve configuration history differences")
+
+        self.__parser.add_option("--full-histories", "-f", type="string", action="store", dest="full_histories",
+                                 help="retrieve full configuration histories")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -36,7 +41,45 @@ class CmdConfigurationCSV(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        return bool(self.latest) != bool(self.histories)
+        count = 0
+
+        if self.latest:
+            count += 1
+
+        if self.diff_histories:
+            count += 1
+
+        if self.full_histories:
+            count += 1
+
+        if count != 1:
+            return False
+
+        return True
+
+
+    def request_mode(self):
+        if self.latest:
+            return ConfigurationRequest.MODE.LATEST
+
+        if self.diff_histories:
+            return ConfigurationRequest.MODE.DIFF
+
+        if self.full_histories:
+            return ConfigurationRequest.MODE.HISTORY
+
+        return None
+
+
+    @property
+    def histories(self):
+        if self.diff_histories:
+            return self.diff_histories
+
+        if self.full_histories:
+            return self.full_histories
+
+        return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -47,13 +90,23 @@ class CmdConfigurationCSV(object):
 
 
     @property
-    def histories(self):
-        return self.__opts.histories
+    def diff_histories(self):
+        return self.__opts.diff_histories
+
+
+    @property
+    def full_histories(self):
+        return self.__opts.full_histories
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def nodes(self):
+        return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -63,5 +116,5 @@ class CmdConfigurationCSV(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationCSV:{latest:%s, histories:%s, verbose:%s}" %  \
-               (self.latest, self.histories, self.verbose)
+        return "CmdConfigurationCSV:{latest:%s, diff_histories:%s, full_histories:%s, verbose:%s, nodes:%s}" %  \
+               (self.latest, self.diff_histories, self.full_histories, self.verbose, self.nodes)
