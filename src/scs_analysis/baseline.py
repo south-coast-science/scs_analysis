@@ -30,7 +30,7 @@ EXAMPLES
 baseline.py -c freshfield -t scs-opc-1 -r
 
 FILES
-~/SCS/conf/baseline_conf.json
+~/SCS/conf/NAME_baseline_conf.json
 
 SEE ALSO
 scs_analysis/access_key
