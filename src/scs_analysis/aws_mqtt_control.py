@@ -49,10 +49,6 @@ message queue, and the interaction will time out.
 import json
 import os
 import sys
-import time
-
-from AWSIoTPythonSDK.exception.operationError import operationError
-from AWSIoTPythonSDK.exception.operationTimeoutException import operationTimeoutException
 
 from scs_analysis.cmd.cmd_mqtt_control import CmdMQTTControl
 
@@ -60,14 +56,9 @@ from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.client import Client
 from scs_core.aws.client.client_auth import ClientAuth
 from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
-
 from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
-from scs_core.control.control_datum import ControlDatum
 from scs_core.control.control_handler import ControlHandler
-
-from scs_core.data.datetime import LocalizedDatetime
-from scs_core.data.publication import Publication
 
 from scs_core.estate.mqtt_peer import MQTTPeerSet
 
@@ -77,6 +68,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: when in non-interactive mode, exit return code should be the same as the command
 # --------------------------------------------------------------------------------------------------------------------
 
 EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
@@ -88,7 +80,10 @@ if __name__ == '__main__':
     history_filename = os.path.join(Host.scs_path(), AccessKey.aws_dir(), 'aws_mqtt_control_history')
 
     key = None
-    client = None
+    mqtt_client = None
+
+    stdout = None
+    stderr = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -113,7 +108,7 @@ if __name__ == '__main__':
 
         if cmd.aws:
             if not AccessKey.exists(Host):
-                logger.error("access key not available")
+                logger.error("AccessKey not available.")
                 exit(1)
 
             try:
@@ -163,48 +158,31 @@ if __name__ == '__main__':
         subscriber = MQTTSubscriber(topic, handler.handle)
 
         # client...
-        client = MQTTClient(subscriber)
+        mqtt_client = MQTTClient(subscriber)
 
-        logger.info(client)
+        logger.info(mqtt_client)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # StdIO settings...
 
-        client.connect(auth, False)
+        mqtt_client.connect(auth, False)
 
         if cmd.interactive:
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), '?',
-                                           cmd.DEFAULT_TIMEOUT, key)
-            publication = Publication(topic, datum)
-
-            handler.set_outgoing(publication)
-
             try:
-                client.publish(publication)
-            except (OSError, operationError, operationTimeoutException) as ex:
-                logger.error(ex.__class__.__name__)
+                stdout, stderr = handler.publish(mqtt_client, topic, ['?'], cmd.DEFAULT_TIMEOUT, key)
+            except TimeoutError:
+                logger.error("%s is not available." % device_tag)
                 exit(1)
 
-            timeout = time.time() + cmd.timeout
+            if stderr:
+                logger.error("%s device problem: %s." % (device_tag, stderr[0]))
+                exit(1)
 
-            while True:
-                if handler.receipt:
-                    if handler.receipt.command.stderr:
-                        logger.error("%s device problem: %s." % (device_tag, handler.receipt.command.stderr[0]))
-                        exit(1)
+            commands = json.loads(stdout[0])
+            vocabulary = [command + ' ' for command in commands]
 
-                    commands = json.loads(handler.receipt.command.stdout[0])
-                    vocabulary = [command + ' ' for command in commands]
-
-                    StdIO.set(vocabulary=vocabulary, history_filename=history_filename)
-                    break
-
-                if time.time() > timeout:
-                    logger.error("%s is not available." % device_tag)
-                    exit(1)
-
-                time.sleep(0.1)
+            StdIO.set(vocabulary=vocabulary, history_filename=history_filename)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -223,49 +201,20 @@ if __name__ == '__main__':
             else:
                 cmd_tokens = cmd.cmd_tokens
 
-            # datum...
-            datum = ControlDatum.construct(host_tag, device_tag, LocalizedDatetime.now().utc(), cmd_tokens,
-                                           cmd.timeout, key)
-            publication = Publication(topic, datum)
-
-            handler.set_outgoing(publication)
-
-            logger.info(datum)
-
             # publish...
             try:
-                success = client.publish(publication)
-                logger.info("paho: %s" % "1" if success else "0")
+                stdout, stderr = handler.publish(mqtt_client, topic, cmd_tokens, cmd.timeout, key)
+            except TimeoutError:
+                logger.error("%s is not available." % device_tag)
+                exit(1)
 
-            except (OSError, operationError, operationTimeoutException) as ex:
-                logger.error(ex.__class__.__name__)
+            if stdout:
+                print(*stdout, sep='\n')
+                sys.stdout.flush()
 
-            # subscribe...
-            timeout = time.time() + cmd.timeout
-
-            if cmd.receipt or cmd.interactive:
-                while True:
-                    if handler.receipt:
-                        if not handler.receipt.is_valid(key):
-                            raise ValueError("invalid digest: %s" % handler.receipt)
-
-                        logger.info(handler.receipt)
-
-                        if handler.receipt.command.stderr:
-                            print(*handler.receipt.command.stderr, sep='\n')
-                            sys.stderr.flush()
-
-                        if handler.receipt.command.stdout:
-                            print(*handler.receipt.command.stdout, sep='\n')
-                            sys.stdout.flush()
-
-                        break
-
-                    if time.time() > timeout:
-                        logger.error("timeout.")
-                        break
-
-                    time.sleep(0.1)
+            if stderr:
+                print(*stderr, sep='\n', file=sys.stderr)
+                sys.stderr.flush()
 
             if not cmd.interactive:
                 break
@@ -277,11 +226,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
+    except (OSError, TimeoutError):
+        logger.error("device is not available.")
+
     except (EOFError, KeyboardInterrupt):
         print(file=sys.stderr)
 
     finally:
         StdIO.save_history(history_filename)
 
-        if client:
-            client.disconnect()
+        if mqtt_client:
+            mqtt_client.disconnect()

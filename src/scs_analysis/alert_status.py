@@ -72,13 +72,13 @@ if __name__ == '__main__':
         # resources...
 
         if not MonitorAuth.exists(Host):
-            logger.error('access key not available')
+            logger.error('MonitorAuth not available.')
             exit(1)
 
         try:
             auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
         except (KeyError, ValueError):
-            logger.error('incorrect password')
+            logger.error('incorrect password.')
             exit(1)
 
         finder = AlertStatusFinder(requests, auth)
