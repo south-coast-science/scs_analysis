@@ -9,8 +9,8 @@ DESCRIPTION
 The alert utility is used to create, update, delete and find alert specifications.
 
 SYNOPSIS
-alert.py  { -f TOPIC | -r ID | -c | -u ID | -d ID } [-o TOPIC] [-e FIELD] [-l LOWER] [-p UPPER] [-n { 1 | 0 }]
-[-a AGGREGATION] [-t INTERVAL] [-s { 1 | 0 }] [-m EMAIL_ADDR] [-x EMAIL_ADDR] [-i INDENT] [-v]
+alert.py  { -F TOPIC | -R ID | -C | -U ID | -D ID } [-t TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
+[-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
 alert.py -c -o south-coast-science-demo/brighton/loc/1/gases -e val.NO2.cnc -p 10 -a 5 M \
@@ -141,7 +141,7 @@ if __name__ == '__main__':
             # create...
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
-                                       [], cmd.suspended)
+                                       cmd.to, [], cmd.suspended)
             if cmd.add_cc:
                 alert.append_to_cc_list(cmd.add_cc)
 
@@ -178,6 +178,7 @@ if __name__ == '__main__':
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
+            to = alert.to if cmd.to is None else cmd.to
 
             if cmd.add_cc is not None:
                 if not Datum.is_email_address(cmd.add_cc):
@@ -191,7 +192,7 @@ if __name__ == '__main__':
 
             updated = AlertSpecification(alert.id, alert.topic, alert.field, lower_threshold, upper_threshold,
                                          alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
-                                         alert.cc_list, suspended)
+                                         to, alert.cc_list, suspended)
 
             if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
