@@ -16,7 +16,7 @@ on the previous day.
 Any number of separate baseline_conf files may be stored. The --list flag lists those that are available.
 
 SYNOPSIS
-Usage: baseline_conf.py [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] [-p AGGREGATION]
+baseline_conf.py [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] [-p AGGREGATION]
 [-g GAS MINIMUM] [-r GAS] } [-i INDENT] [-v]
 
 EXAMPLES
