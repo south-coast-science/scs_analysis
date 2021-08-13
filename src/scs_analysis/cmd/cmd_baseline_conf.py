@@ -17,9 +17,13 @@ class CmdBaselineConf(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
-        self.__parser = optparse.OptionParser(usage="%prog { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] "
-                                                    "[-a AGGREGATION] [-g GAS MINIMUM] [-r GAS] } [-i INDENT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] "
+                                                    "[-s START] [-e END] [-p AGGREGATION] [-g GAS MINIMUM] [-r GAS] } "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # source...
+        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
+                                 help="Use AWS S3 instead of local storage for configuration")
 
         # helpers...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
@@ -42,7 +46,7 @@ class CmdBaselineConf(object):
         self.__parser.add_option("--end-hour", "-e", type="int", nargs=1, action="store", dest="end_hour",
                                  help="test ends at the beginning of end hour")
 
-        self.__parser.add_option("--aggregation-period", "-a", type="int", nargs=1, action="store",
+        self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
                                  dest="aggregation_period", help="aggregation in minutes")
 
         self.__parser.add_option("--set-gas", "-g", type="string", nargs=2, action="store", dest="set_gas",
@@ -100,6 +104,11 @@ class CmdBaselineConf(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def aws(self):
+        return self.__opts.aws
+
 
     @property
     def zones(self):
@@ -168,7 +177,7 @@ class CmdBaselineConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaselineConf:{zones:%s, list:%s, conf_name:%s, timezone:%s, start_hour:%s, end_hour:%s, " \
+        return "CmdBaselineConf:{aws:%s, zones:%s, list:%s, conf_name:%s, timezone:%s, start_hour:%s, end_hour:%s, " \
                "aggregation_period:%s, set_gas:%s, remove_gas:%s, indent:%s, verbose:%s}" % \
-               (self.zones, self.list, self.conf_name, self.timezone, self.start_hour, self.end_hour,
+               (self.aws, self.zones, self.list, self.conf_name, self.timezone, self.start_hour, self.end_hour,
                 self.aggregation_period, self.__opts.set_gas, self.remove_gas, self.indent, self.verbose)

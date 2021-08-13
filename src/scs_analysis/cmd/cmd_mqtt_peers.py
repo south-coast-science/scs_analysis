@@ -16,10 +16,14 @@ class CmdMQTTPeers(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | "
+        self.__parser = optparse.OptionParser(usage="%prog [-a] { -p [-e] | -l [-n HOSTNAME] [-t TOPIC] | -m | "
                                                     "-c HOSTNAME TAG SHARED_SECRET TOPIC | "
                                                     "-u HOSTNAME { -s SHARED_SECRET | -t TOPIC } | "
-                                                    "-r HOSTNAME } [-a] [-i INDENT] [-v]", version="%prog 1.0")
+                                                    "-r HOSTNAME } [-i INDENT] [-v]", version="%prog 1.0")
+
+        # source...
+        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
+                                 help="Use AWS S3 instead of local storage")
 
         # functions...
         self.__parser.add_option("--import", "-p", action="store_true", dest="import_peers", default=False,
@@ -49,10 +53,6 @@ class CmdMQTTPeers(object):
 
         self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
                                  help="specify topic")
-
-        # source...
-        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
-                                 help="Use AWS S3 instead of local storage")
 
         # output...
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,

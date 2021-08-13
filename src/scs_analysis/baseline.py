@@ -23,7 +23,7 @@ Any number of named baseline_conf files may be stored.
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-a AGGREGATION] [-m GAS MINIMUM] \
+baseline.py [-a] -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM]
 [{ -o GAS  | -x GAS }] [-v]
 
 EXAMPLES
@@ -154,6 +154,9 @@ if __name__ == '__main__':
         # message manager...
         message_manager = MessageManager(api_auth, reporter=reporter)
 
+        # PersistenceManager...
+        persistence_manager = s3_manager if cmd.aws else Host
+
 
         # ------------------------------------------------------------------------------------------------------------
         # configuration...
@@ -161,7 +164,7 @@ if __name__ == '__main__':
         logger.error("configuration...")
 
         # BaselineConf...
-        baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
+        baseline_conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
 
         if baseline_conf is None:
             logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
