@@ -16,8 +16,8 @@ on the previous day.
 Any number of separate baseline_conf files may be stored. The --list flag lists those that are available.
 
 SYNOPSIS
-baseline_conf.py { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] [-a AGGREGATION] [-g GAS MINIMUM] \
-[-r GAS] } [-i INDENT] [-v]
+baseline_conf.py [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] [-p AGGREGATION]
+[-g GAS MINIMUM] [-r GAS] } [-i INDENT] [-v]
 
 EXAMPLES
 ./baseline_conf.py -c freshfield -t Europe/London -s 23 -e 8 -a 5 -g NO2 10
@@ -38,6 +38,10 @@ import sys
 
 from scs_analysis.cmd.cmd_baseline_conf import CmdBaselineConf
 
+from scs_core.aws.client.access_key import AccessKey
+from scs_core.aws.client.client import Client
+from scs_core.aws.manager.s3_manager import S3PersistenceManager
+
 from scs_core.data.json import JSONify
 from scs_core.data.recurring_period import RecurringMinutes
 
@@ -53,6 +57,8 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+
+    key = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -72,8 +78,28 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # resources...
 
+    # PersistenceManager...
+    if cmd.aws:
+        if not AccessKey.exists(Host):
+            logger.error('AccessKey not available.')
+            exit(1)
+
+        try:
+            key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
+        except (KeyError, ValueError):
+            logger.error('incorrect password.')
+            exit(1)
+
+        client = Client.construct('s3', key)
+        resource_client = Client.resource('s3', key)
+
+        persistence_manager = S3PersistenceManager(client, resource_client)
+
+    else:
+        persistence_manager = Host
+
     # GasModelConf...
-    conf = BaselineConf.load(Host, name=cmd.conf_name)
+    conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,7 +111,7 @@ if __name__ == '__main__':
         exit(0)
 
     if cmd.list:
-        for conf_name in BaselineConf.list(Host):
+        for conf_name in BaselineConf.list(persistence_manager):
             print(conf_name, file=sys.stderr)
         exit(0)
 
@@ -126,7 +152,7 @@ if __name__ == '__main__':
         if cmd.remove_gas:
             conf.remove_minimum(cmd.remove_gas)
 
-        conf.save(Host)
+        conf.save(persistence_manager)
 
     if conf:
         print(JSONify.dumps(conf, indent=cmd.indent))

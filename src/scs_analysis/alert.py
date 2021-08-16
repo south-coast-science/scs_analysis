@@ -14,7 +14,7 @@ alert.py  { -F TOPIC | -R ID | -C | -U ID | -D ID } [-t TOPIC] [-f FIELD] [-l LO
 
 EXAMPLES
 alert.py -c -o south-coast-science-demo/brighton/loc/1/gases -e val.NO2.cnc -p 10 -a 5 M \
--m bruno.beloff@southcoastscience.com -i4 -v
+-e bruno.beloff@southcoastscience.com -i4 -v
 
 DOCUMENT EXAMPLE
 {"id": 123, "topic": "my/topic", "field": "my.field", "lower-threshold": 10.0, "upper-threshold": 100.0,
