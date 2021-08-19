@@ -218,7 +218,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
-            logger.info('retrieved: %s' % len(response.items))
+            logger.info('retrieved: %s' % len(response.alerts))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
