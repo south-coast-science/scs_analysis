@@ -351,12 +351,14 @@ if __name__ == '__main__':
                 continue
 
             stdout, stderr = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT, peer.shared_secret)
-            correction_applied = True
 
             if stderr:
                 print(*stderr, sep='\n', file=sys.stderr)
             if stdout:
                 print(*stdout, sep='\n', file=sys.stdout)
+
+            if not stderr:
+                correction_applied = True
 
         if not correction_applied:
             exit(0)
