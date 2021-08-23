@@ -71,6 +71,7 @@ from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
 from scs_core.estate.mqtt_peer import MQTTPeerSet
 
+from scs_core.gas.afe_baseline import AFEBaseline
 from scs_core.gas.afe_calib import AFECalib
 from scs_core.gas.minimum import Minimum
 
@@ -245,7 +246,12 @@ if __name__ == '__main__':
 
             jdict = json.loads(stdout[0])
             afe_calib = AFECalib.construct_from_jdict(jdict)
-            ox_baseline = device_conf.afe_baseline.sensor_baseline(ox_index)
+
+            afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else device_conf.afe_baseline
+
+            print("afe_baseline: %s" % afe_baseline)
+
+            ox_baseline = afe_baseline.sensor_baseline(ox_index)
             ox_calib = afe_calib.sensor_calib(ox_index)
 
             ox_sensor = ox_calib.sensor(ox_baseline)
