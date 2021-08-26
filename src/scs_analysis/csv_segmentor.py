@@ -113,7 +113,11 @@ if __name__ == '__main__':
             if rec is None:
                 continue
 
-            segmentor.collate(rec, line)
+            try:
+                segmentor.collate(rec, line)
+            except FileNotFoundError as ex:
+                print("csv_segmentor: %s" % ex, file=sys.stderr)
+                exit(1)
 
             processed_count += 1
 
