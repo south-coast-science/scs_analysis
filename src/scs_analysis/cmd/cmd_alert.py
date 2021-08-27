@@ -19,7 +19,7 @@ class CmdAlert(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  { -F TOPIC | -R ID | -C | -U ID | -D ID } "
-                                                    "[-t TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
+                                                    "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
                                                     "[-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
@@ -104,8 +104,6 @@ class CmdAlert(object):
 
         if self.delete:
             count += 1
-
-        print("count: %s" % count)
 
         if count != 1:
             return False
