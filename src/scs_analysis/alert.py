@@ -9,7 +9,7 @@ DESCRIPTION
 The alert utility is used to create, update, delete and find alert specifications.
 
 SYNOPSIS
-alert.py  { -F TOPIC | -R ID | -C | -U ID | -D ID } [-t TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
+alert.py  { -F TOPIC | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
 [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
