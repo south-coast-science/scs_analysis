@@ -25,9 +25,13 @@ class CmdBaseline(object):
         """
         cmds = ' | '.join(self.__UPTAKE_CMDS)
 
-        self.__parser = optparse.OptionParser(usage="%prog -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] "
-                                                    "[-e END] [-a AGGREGATION] [-m GAS MINIMUM] [{ -o GAS  | -x GAS }] "
+        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] "
+                                                    "[-e END] [-p AGGREGATION] [-m GAS MINIMUM] [{ -o GAS  | -x GAS }] "
                                                     "[-v]", version="%prog 1.0")
+
+        # source...
+        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
+                                 help="Use AWS S3 instead of local storage for configuration")
 
         # identity...
         self.__parser.add_option("--conf-name", "-c", type="string", nargs=1, action="store", dest="conf_name",
@@ -50,7 +54,7 @@ class CmdBaseline(object):
         self.__parser.add_option("--end-hour", "-e", type="int", nargs=1, action="store", dest="end_hour",
                                  help="override the default end hour")
 
-        self.__parser.add_option("--aggregation-period", "-a", type="int", nargs=1, action="store",
+        self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
                                  dest="aggregation_period", help="override the default aggregation period")
 
         self.__parser.add_option("--minimum", "-m", type="string", nargs=2, action="store", dest="minimum",
@@ -109,6 +113,11 @@ class CmdBaseline(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def aws(self):
+        return self.__opts.aws
+
 
     @property
     def conf_name(self):
@@ -177,7 +186,7 @@ class CmdBaseline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaseline:{conf_name:%s, device_tag:%s, rehearse:%s, uptake:%s, start_hour:%s, end_hour:%s,  " \
-               "aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, verbose:%s}" % \
-               (self.conf_name, self.device_tag, self.rehearse, self.uptake, self.start_hour, self.end_hour,
+        return "CmdBaseline:{aws:%s, conf_name:%s, device_tag:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
+               "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, verbose:%s}" % \
+               (self.aws, self.conf_name, self.device_tag, self.rehearse, self.uptake, self.start_hour, self.end_hour,
                 self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas, self.verbose)

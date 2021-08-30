@@ -18,39 +18,39 @@ class CmdAlert(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -f TOPIC | -r ID | -c | -u ID | -d ID } "
-                                                    "[-o TOPIC] [-e FIELD] [-l LOWER] [-p UPPER] "
+        self.__parser = optparse.OptionParser(usage="%prog  { -F TOPIC | -R ID | -C | -U ID | -D ID } "
+                                                    "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-m EMAIL_ADDR] [-x EMAIL_ADDR] [-i INDENT] [-v]",
+                                                    "[-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--find", "-f", type="string", action="store", dest="find_topic",
+        self.__parser.add_option("--find", "-F", type="string", action="store", dest="find_topic",
                                  help="find alerts for given TOPIC (and FIELD)")
 
-        self.__parser.add_option("--retrieve", "-r", type="int", action="store", dest="retrieve_id",
+        self.__parser.add_option("--retrieve", "-R", type="int", action="store", dest="retrieve_id",
                                  help="retrieve alert with given ID")
 
-        self.__parser.add_option("--create", "-c", action="store_true", dest="create", default=False,
+        self.__parser.add_option("--create", "-C", action="store_true", dest="create", default=False,
                                  help="create alert")
 
-        self.__parser.add_option("--update", "-u", type="int", action="store", dest="update_id",
+        self.__parser.add_option("--update", "-U", type="int", action="store", dest="update_id",
                                  help="update alert with given ID")
 
-        self.__parser.add_option("--delete", "-d", type="int", action="store", dest="delete_id",
+        self.__parser.add_option("--delete", "-D", type="int", action="store", dest="delete_id",
                                  help="delete alert with given ID")
 
         # fields...
-        self.__parser.add_option("--topic-path", "-o", type="string", action="store", dest="topic",
+        self.__parser.add_option("--topic-path", "-p", type="string", action="store", dest="topic",
                                  help="topic path")
 
-        self.__parser.add_option("--field", "-e", type="string", action="store", dest="field",
+        self.__parser.add_option("--field", "-f", type="string", action="store", dest="field",
                                  help="field")
 
         self.__parser.add_option("--lower-threshold", "-l", type="float", action="store", dest="lower_threshold",
                                  help="lower threshold")
 
-        self.__parser.add_option("--upper-threshold", "-p", type="float", action="store", dest="upper_threshold",
+        self.__parser.add_option("--upper-threshold", "-u", type="float", action="store", dest="upper_threshold",
                                  help="upper threshold")
 
         self.__parser.add_option("--alert-on-none", "-n", type="int", action="store", dest="alert_on_none",
@@ -65,11 +65,14 @@ class CmdAlert(object):
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
                                  default=False, help="suspended (default false)")
 
-        # email cc...
-        self.__parser.add_option("--add-cc", "-m", type="string", action="store", dest="add_cc",
+        # email...
+        self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
+                                 help="email To address")
+
+        self.__parser.add_option("--add-cc", "-c", type="string", action="store", dest="add_cc",
                                  help="add CC email address")
 
-        self.__parser.add_option("--remove-cc", "-x", type="string", action="store", dest="remove_cc",
+        self.__parser.add_option("--remove-cc", "-r", type="string", action="store", dest="remove_cc",
                                  help="remove CC email address")
 
         # output...
@@ -222,6 +225,11 @@ class CmdAlert(object):
 
 
     @property
+    def to(self):
+        return self.__opts.to
+
+
+    @property
     def add_cc(self):
         return self.__opts.add_cc
 
@@ -250,7 +258,7 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, topic:%s, field:%s, " \
                "lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, aggregation_period:%s, " \
-               "test_interval:%s, suspended:%s, add_cc:%s, remove_cc:%s, indent:%s, verbose:%s}" % \
+               "test_interval:%s, suspended:%s, to:%s, add_cc:%s, remove_cc:%s, indent:%s, verbose:%s}" % \
                (self.find_topic, self.retrieve_id, self.create, self.update_id, self.delete_id, self.topic, self.field,
                 self.lower_threshold, self.upper_threshold, self.alert_on_none, self.aggregation_period,
-                self.test_interval, self.suspended, self.add_cc, self.remove_cc, self.indent, self.verbose)
+                self.test_interval, self.suspended, self.to, self.add_cc, self.remove_cc, self.indent, self.verbose)
