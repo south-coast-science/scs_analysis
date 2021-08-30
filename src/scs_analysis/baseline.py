@@ -23,7 +23,7 @@ Any number of named baseline_conf files may be stored.
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-a AGGREGATION] [-m GAS MINIMUM] \
+baseline.py [-a] -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM]
 [{ -o GAS  | -x GAS }] [-v]
 
 EXAMPLES
@@ -71,6 +71,7 @@ from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
 from scs_core.estate.mqtt_peer import MQTTPeerSet
 
+from scs_core.gas.afe_baseline import AFEBaseline
 from scs_core.gas.afe_calib import AFECalib
 from scs_core.gas.minimum import Minimum
 
@@ -154,6 +155,9 @@ if __name__ == '__main__':
         # message manager...
         message_manager = MessageManager(api_auth, reporter=reporter)
 
+        # PersistenceManager...
+        persistence_manager = s3_manager if cmd.aws else Host
+
 
         # ------------------------------------------------------------------------------------------------------------
         # configuration...
@@ -161,7 +165,7 @@ if __name__ == '__main__':
         logger.error("configuration...")
 
         # BaselineConf...
-        baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
+        baseline_conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
 
         if baseline_conf is None:
             logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
@@ -242,7 +246,12 @@ if __name__ == '__main__':
 
             jdict = json.loads(stdout[0])
             afe_calib = AFECalib.construct_from_jdict(jdict)
-            ox_baseline = device_conf.afe_baseline.sensor_baseline(ox_index)
+
+            afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else device_conf.afe_baseline
+
+            print("afe_baseline: %s" % afe_baseline)
+
+            ox_baseline = afe_baseline.sensor_baseline(ox_index)
             ox_calib = afe_calib.sensor_calib(ox_index)
 
             ox_sensor = ox_calib.sensor(ox_baseline)
