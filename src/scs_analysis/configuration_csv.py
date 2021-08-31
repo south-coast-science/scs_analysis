@@ -115,7 +115,7 @@ if __name__ == '__main__':
         csv_args = '-vs' if cmd.verbose else '-s'
         node_args = '-v' if cmd.verbose else ''
 
-        nodes = ['tag', 'rec'] + ['val.' + node for node in node_names]
+        nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.nodes]
 
 
         # ------------------------------------------------------------------------------------------------------------
