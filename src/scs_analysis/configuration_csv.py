@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
         finder = ConfigurationFinder(requests, auth)
 
-        csv_args = '-vs' if cmd.verbose else '-s'
+        csv_args = '-vsq' if cmd.verbose else '-sq'
         node_args = '-v' if cmd.verbose else ''
 
         nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.nodes]

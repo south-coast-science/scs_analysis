@@ -18,10 +18,10 @@ class CmdCSVWriter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-e] [-v] [FILENAME]",
+        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]",
                                               version="%prog 1.0")
 
-        # optional...
+        # functions...
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,
                                  help="append rows to existing file")
 
@@ -30,6 +30,10 @@ class CmdCSVWriter(object):
 
         self.__parser.add_option("--header-scan", "-s", action="store_true", dest="header_scan", default=False,
                                  help="scan all documents before building the header row")
+
+        # output...
+        self.__parser.add_option("--quote-all", "-q", action="store_true", dest="quote_all", default=False,
+                                 help="wrap all CSV cell values in quotes")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
@@ -78,6 +82,11 @@ class CmdCSVWriter(object):
 
 
     @property
+    def quote_all(self):
+        return self.__opts.quote_all
+
+
+    @property
     def echo(self):
         return self.__opts.echo
 
@@ -99,5 +108,7 @@ class CmdCSVWriter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVWriter:{append:%s, exclude_header:%s, header_scan:%s, echo:%s, verbose:%s, filename:%s}" % \
-                    (self.append, self.exclude_header, self.header_scan, self.echo, self.verbose, self.filename)
+        return "CmdCSVWriter:{append:%s, exclude_header:%s, header_scan:%s, quote_all:%s, echo:%s, " \
+               "verbose:%s, filename:%s}" % \
+                    (self.append, self.exclude_header, self.header_scan, self.quote_all, self.echo,
+                     self.verbose, self.filename)
