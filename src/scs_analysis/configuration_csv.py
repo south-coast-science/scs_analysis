@@ -53,6 +53,8 @@ from scs_core.aws.manager.configuration_finder import ConfigurationFinder, Confi
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
+from scs_core.estate.configuration import Configuration
+
 from scs_core.sys.filesystem import Filesystem
 from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
@@ -91,8 +93,11 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        configuration = Configuration.construct_from_jdict(None, skeleton=True)
+        node_names = list(configuration.as_json().keys())
+
         if cmd.node_names:
-            print(cmd.node_names, file=sys.stderr)
+            print(node_names, file=sys.stderr)
             exit(0)
 
         if not MonitorAuth.exists(Host):
@@ -110,7 +115,7 @@ if __name__ == '__main__':
         csv_args = '-vs' if cmd.verbose else '-s'
         node_args = '-v' if cmd.verbose else ''
 
-        nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.node_names]
+        nodes = ['tag', 'rec'] + ['val.' + node for node in node_names]
 
 
         # ------------------------------------------------------------------------------------------------------------
