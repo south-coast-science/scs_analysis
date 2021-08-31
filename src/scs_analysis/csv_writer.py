@@ -26,7 +26,7 @@ fields are given a null value for that field. Any values bound to paths that bec
 Warning: the header-scan mode requires memory proportional to the size of its input.
 
 SYNOPSIS
-csv_writer.py [{ -a | -x | -s }] [-e] [-v] [FILENAME]
+csv_writer.py [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]
 
 EXAMPLES
 socket_receiver.py | csv_writer.py temp.csv -e
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         # resources...
 
         writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header,
-                           header_scan=cmd.header_scan)
+                           header_scan=cmd.header_scan, quote_all=cmd.quote_all)
 
         if cmd.verbose:
             print("csv_writer: %s" % writer, file=sys.stderr)
