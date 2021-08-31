@@ -66,6 +66,9 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    configuration = Configuration.construct_from_jdict(None, skeleton=True)
+    node_names = list(configuration.as_json().keys())
+
     logger = None
     auth = None
 
@@ -83,8 +86,8 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         for node in cmd.nodes:
-            if node not in cmd.node_names:
-                logger.error('nodes must be in: %s' % str(cmd.node_names))
+            if node not in node_names:
+                logger.error('nodes must be in: %s' % str(node_names))
                 exit(2)
 
         logger.info(cmd)
@@ -92,9 +95,6 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
-
-        configuration = Configuration.construct_from_jdict(None, skeleton=True)
-        node_names = list(configuration.as_json().keys())
 
         if cmd.node_names:
             print(node_names, file=sys.stderr)
