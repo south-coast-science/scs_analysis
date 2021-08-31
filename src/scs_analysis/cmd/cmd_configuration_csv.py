@@ -7,7 +7,6 @@ Created on 7 Jul 2021
 import optparse
 
 from scs_core.aws.manager.configuration_finder import ConfigurationRequest
-from scs_core.estate.configuration import Configuration
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -94,8 +93,7 @@ class CmdConfigurationCSV(object):
 
     @property
     def node_names(self):
-        configuration = Configuration.construct_from_jdict(None, skeleton=True)
-        return list(configuration.as_json().keys())
+        return self.__opts.node_names
 
 
     @property
@@ -132,5 +130,5 @@ class CmdConfigurationCSV(object):
     def __str__(self, *args, **kwargs):
         return "CmdConfigurationCSV:{node_names:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
                "verbose:%s, nodes:%s}" %  \
-               (self.__opts.node_names, self.latest, self.diff_histories, self.full_histories,
+               (self.node_names, self.latest, self.diff_histories, self.full_histories,
                 self.verbose, self.nodes)
