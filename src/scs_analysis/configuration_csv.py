@@ -25,6 +25,8 @@ schedule, shared-secret, sht-conf, sht-conf, networks, modem, sim, system-id, ti
 
 If no nodes are specified, then the full configuration is reported.
 
+Output CSV cell values are always wrapped in quotes ('"').
+
 SYNOPSIS
 configuration_csv.py { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
 
