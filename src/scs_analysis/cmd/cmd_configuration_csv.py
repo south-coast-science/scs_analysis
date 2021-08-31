@@ -7,6 +7,7 @@ Created on 7 Jul 2021
 import optparse
 
 from scs_core.aws.manager.configuration_finder import ConfigurationRequest
+from scs_core.estate.configuration import Configuration
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -18,8 +19,12 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] "
+        self.__parser = optparse.OptionParser(usage="%prog { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] "
                                                     "[NODE_1..NODE_N]", version="%prog 1.0")
+
+        # help...
+        self.__parser.add_option("--node-names", "-n", action="store_true", dest="node_names", default=False,
+                                 help="list available nodes")
 
         # mode...
         self.__parser.add_option("--latest", "-l", type="string", action="store", dest="latest",
@@ -42,6 +47,9 @@ class CmdConfigurationCSV(object):
 
     def is_valid(self):
         count = 0
+
+        if self.node_names:
+            count += 1
 
         if self.latest:
             count += 1
@@ -85,6 +93,12 @@ class CmdConfigurationCSV(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def node_names(self):
+        configuration = Configuration.construct_from_jdict(None, skeleton=True)
+        return list(configuration.as_json().keys())
+
+
+    @property
     def latest(self):
         return self.__opts.latest
 
@@ -116,5 +130,7 @@ class CmdConfigurationCSV(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationCSV:{latest:%s, diff_histories:%s, full_histories:%s, verbose:%s, nodes:%s}" %  \
-               (self.latest, self.diff_histories, self.full_histories, self.verbose, self.nodes)
+        return "CmdConfigurationCSV:{node_names:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
+               "verbose:%s, nodes:%s}" %  \
+               (self.__opts.node_names, self.latest, self.diff_histories, self.full_histories,
+                self.verbose, self.nodes)

@@ -26,7 +26,7 @@ schedule, shared-secret, sht-conf, sht-conf, networks, modem, sim, system-id, ti
 If no nodes are specified, then the full configuration is reported.
 
 SYNOPSIS
-configuration_csv.py { -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
+configuration_csv.py { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
 
 EXAMPLES
 configuration_csv.py -vl configs.csv
@@ -53,8 +53,6 @@ from scs_core.aws.manager.configuration_finder import ConfigurationFinder, Confi
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
-from scs_core.estate.configuration import Configuration
-
 from scs_core.sys.filesystem import Filesystem
 from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
@@ -65,9 +63,6 @@ from scs_host.sys.host import Host
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
-    configuration = Configuration.construct_from_jdict(None, skeleton=True)
-    nodes = list(configuration.as_json().keys())
 
     logger = None
     auth = None
@@ -86,8 +81,8 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         for node in cmd.nodes:
-            if node not in nodes:
-                logger.error('nodes must be in: %s' % str(nodes))
+            if node not in cmd.node_names:
+                logger.error('nodes must be in: %s' % str(cmd.node_names))
                 exit(2)
 
         logger.info(cmd)
@@ -95,6 +90,10 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        if cmd.node_names:
+            print(cmd.node_names, file=sys.stderr)
+            exit(0)
 
         if not MonitorAuth.exists(Host):
             logger.error('MonitorAuth not available.')
@@ -111,7 +110,7 @@ if __name__ == '__main__':
         csv_args = '-vs' if cmd.verbose else '-s'
         node_args = '-v' if cmd.verbose else ''
 
-        nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.nodes]
+        nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.node_names]
 
 
         # ------------------------------------------------------------------------------------------------------------
