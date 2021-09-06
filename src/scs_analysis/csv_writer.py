@@ -13,6 +13,10 @@ The csv_writer utility is used to convert from JSON format to comma-separated va
 The path into the JSON document is used to name the column in the header row: dictionary fields are separated
 from their container by a period ('.') character, and array members are separated by a colon (':') character.
 
+The --quote-all flag forces quote ('"') characters around all cell values. This is useful when long numeric
+codes such as IMEI numbers are included in the data, such codes should not be interpreted as floats by
+spreadsheet applications. The default behaviour is to quote only where necessary.
+
 default mode:
 
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
