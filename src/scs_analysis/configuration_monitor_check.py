@@ -21,7 +21,7 @@ the devices known to the system. Status levels are:
 * RUP - RECEIVED:UPDATED
 
 SYNOPSIS
-configuration_monitor_check.py { -c TAG | [-t TAG] [-r RESULT] [-o] } [-i INDENT] [-v]
+configuration_monitor_check.py { -c TAG | [-t TAG [-e]] [-r RESULT] [-o] } [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor_check.py -r ERR | node.py -s | csv_writer.py
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             print(response.result, file=sys.stderr)
             exit(0 if response.result == 'OK' else 1)
 
-        response = finder.find(cmd.tag_filter, cmd.result_code, cmd.response_mode())
+        response = finder.find(cmd.tag_filter, cmd.exact_match, cmd.result_code, cmd.response_mode())
         print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
