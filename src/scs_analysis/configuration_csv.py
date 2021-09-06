@@ -25,8 +25,10 @@ schedule, shared-secret, sht-conf, sht-conf, networks, modem, sim, system-id, ti
 
 If no nodes are specified, then the full configuration is reported.
 
+Output CSV cell values are always wrapped in quotes ('"').
+
 SYNOPSIS
-configuration_csv.py { -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
+configuration_csv.py { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
 
 EXAMPLES
 configuration_csv.py -vl configs.csv
@@ -62,12 +64,13 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: --all mode
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
     configuration = Configuration.construct_from_jdict(None, skeleton=True)
-    nodes = list(configuration.as_json().keys())
+    node_names = list(configuration.as_json().keys())
 
     logger = None
     auth = None
@@ -86,8 +89,8 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         for node in cmd.nodes:
-            if node not in nodes:
-                logger.error('nodes must be in: %s' % str(nodes))
+            if node not in node_names:
+                logger.error('nodes must be in: %s' % str(node_names))
                 exit(2)
 
         logger.info(cmd)
@@ -95,6 +98,10 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        if cmd.node_names:
+            print(node_names, file=sys.stderr)
+            exit(0)
 
         if not MonitorAuth.exists(Host):
             logger.error('MonitorAuth not available.')
@@ -108,7 +115,7 @@ if __name__ == '__main__':
 
         finder = ConfigurationFinder(requests, auth)
 
-        csv_args = '-vs' if cmd.verbose else '-s'
+        csv_args = '-vsq' if cmd.verbose else '-sq'
         node_args = '-v' if cmd.verbose else ''
 
         nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.nodes]

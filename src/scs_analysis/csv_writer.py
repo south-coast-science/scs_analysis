@@ -13,6 +13,10 @@ The csv_writer utility is used to convert from JSON format to comma-separated va
 The path into the JSON document is used to name the column in the header row: dictionary fields are separated
 from their container by a period ('.') character, and array members are separated by a colon (':') character.
 
+The --quote-all flag forces quote ('"') characters around all cell values. This is useful when long numeric
+codes such as IMEI numbers are included in the data, such codes should not be interpreted as floats by
+spreadsheet applications. The default behaviour is to quote only where necessary.
+
 default mode:
 
 All the leaf nodes of the first JSON document are included in the CSV. If subsequent JSON documents in the input stream
@@ -26,7 +30,7 @@ fields are given a null value for that field. Any values bound to paths that bec
 Warning: the header-scan mode requires memory proportional to the size of its input.
 
 SYNOPSIS
-csv_writer.py [{ -a | -x | -s }] [-e] [-v] [FILENAME]
+csv_writer.py [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]
 
 EXAMPLES
 socket_receiver.py | csv_writer.py temp.csv -e
@@ -77,7 +81,7 @@ if __name__ == '__main__':
         # resources...
 
         writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header,
-                           header_scan=cmd.header_scan)
+                           header_scan=cmd.header_scan, quote_all=cmd.quote_all)
 
         if cmd.verbose:
             print("csv_writer: %s" % writer, file=sys.stderr)
