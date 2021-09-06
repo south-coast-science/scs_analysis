@@ -18,16 +18,19 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] "
-                                                    "[NODE_1..NODE_N]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } "
+                                                    "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
 
         # help...
         self.__parser.add_option("--node-names", "-n", action="store_true", dest="node_names", default=False,
                                  help="list available nodes")
 
         # mode...
+        self.__parser.add_option("--separate", "-s", action="store_true", dest="separate", default=False,
+                                 help="retrieve latest configurations to separate CSVs (ignores NODEs)")
+
         self.__parser.add_option("--latest", "-l", type="string", action="store", dest="latest",
-                                 help="retrieve latest configurations")
+                                 help="retrieve latest configurations to single CSV")
 
         self.__parser.add_option("--diff-histories", "-d", type="string", action="store", dest="diff_histories",
                                  help="retrieve configuration history differences")
@@ -50,6 +53,9 @@ class CmdConfigurationCSV(object):
         if self.node_names:
             count += 1
 
+        if self.separate:
+            count += 1
+
         if self.latest:
             count += 1
 
@@ -66,7 +72,7 @@ class CmdConfigurationCSV(object):
 
 
     def request_mode(self):
-        if self.latest:
+        if self.separate or self.latest:
             return ConfigurationRequest.MODE.LATEST
 
         if self.diff_histories:
@@ -94,6 +100,11 @@ class CmdConfigurationCSV(object):
     @property
     def node_names(self):
         return self.__opts.node_names
+
+
+    @property
+    def separate(self):
+        return self.__opts.separate
 
 
     @property
@@ -128,7 +139,7 @@ class CmdConfigurationCSV(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationCSV:{node_names:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
+        return "CmdConfigurationCSV:{node_names:%s, separate:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
                "verbose:%s, nodes:%s}" %  \
-               (self.node_names, self.latest, self.diff_histories, self.full_histories,
+               (self.node_names, self.separate, self.latest, self.diff_histories, self.full_histories,
                 self.verbose, self.nodes)

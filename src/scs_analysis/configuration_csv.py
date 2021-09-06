@@ -7,7 +7,10 @@ Created on 7 Jul 2021
 
 DESCRIPTION
 The configuration_monitor utility is used to download configuration information from all devices accessible to the
-user, and render this in CSV form. Three modes are available:
+user, and render this in CSV form. Four modes are available:
+
+* --separate - download the latest configuration for all devices, and save this to separate CSV files, each named
+for a node. Any nodes specified on the command line are ignored.
 
 * --latest - download the latest configuration for all devices, and save this in the named CSV file.
 
@@ -16,17 +19,17 @@ change in the configuration for each device, save the history files in the named
 
 * --full-histories - download the history of all configuration changes for all devices.
 
-Nodes fields may be any of:
+Nodes are:
 
 hostname, packs, afe-baseline, afe-id, aws-api-auth, aws-client-auth, aws-group-config, aws-project, csv-logger-conf,
 display-conf, gas-baseline, gas-model-conf, gps-conf, interface-conf, greengrass-identity, mpl115a2-calib, mqtt-conf,
 ndir-conf, opc-conf, pmx-model-conf, pressure-conf, psu-conf, psu-version, pt1000-calib, scd30-baseline, scd30-conf,
 schedule, shared-secret, sht-conf, sht-conf, networks, modem, sim, system-id, timezone-conf
 
-If no nodes are specified, then the full configuration is reported.
+Output CSV cell values are always wrapped in quotes ('"').
 
 SYNOPSIS
-configuration_csv.py { -n | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
+configuration_csv.py { -n | -s | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
 
 EXAMPLES
 configuration_csv.py -vl configs.csv
@@ -64,6 +67,22 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
+def generate_csv(selected_configs, selected_nodes, file_path):
+    jstr = '\n'.join([JSONify.dumps(config) for config in selected_configs])
+    node_args = ['tag', 'rec'] + ['val.' + selected_node for selected_node in selected_nodes]
+
+    if selected_nodes:
+        p = Popen(['node.py', node_opts] + node_args, stdin=PIPE, stdout=PIPE)
+        csv_data, _ = p.communicate(input=jstr.encode())
+    else:
+        csv_data = jstr.encode()
+
+    p = Popen(['csv_writer.py', csv_opts, file_path], stdin=PIPE)
+    p.communicate(input=csv_data)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
 if __name__ == '__main__':
 
     configuration = Configuration.construct_from_jdict(None, skeleton=True)
@@ -71,6 +90,7 @@ if __name__ == '__main__':
 
     logger = None
     auth = None
+    configs = []
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -112,30 +132,26 @@ if __name__ == '__main__':
 
         finder = ConfigurationFinder(requests, auth)
 
-        csv_args = '-vsq' if cmd.verbose else '-sq'
-        node_args = '-v' if cmd.verbose else ''
-
-        nodes = ['tag', 'rec'] + ['val.' + node for node in cmd.nodes]
-
+        csv_opts = '-vsq' if cmd.verbose else '-sq'
+        node_opts = '-v' if cmd.verbose else ''
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.latest:
+        if cmd.separate or cmd.latest:
             response = finder.find(None, False, cmd.request_mode())
             configs = sorted(response.items)
 
-            jstr = '\n'.join([JSONify.dumps(config) for config in configs])
-            path = cmd.latest
+        if cmd.separate:
+            for node in node_names:
+                path = node + '.csv'
+                logger.info(path)
 
-            if cmd.nodes:
-                p = Popen(['node.py', node_args] + nodes, stdin=PIPE, stdout=PIPE)
-                csv_data, _ = p.communicate(input=jstr.encode())
-            else:
-                csv_data = jstr.encode()
+                generate_csv(configs, [node], path)
 
-            p = Popen(['csv_writer.py', csv_args, path], stdin=PIPE)
-            p.communicate(input=csv_data)
+        if cmd.latest:
+            logger.info(cmd.latest)
+            generate_csv(configs, cmd.nodes, cmd.latest)
 
         if cmd.histories:
             Filesystem.mkdir(cmd.histories)
@@ -148,17 +164,10 @@ if __name__ == '__main__':
                 if len(configs) < 2:                # ignore single-row histories
                     continue
 
-                jstr = '\n'.join([JSONify.dumps(config) for config in configs])
                 path = os.path.join(cmd.histories, tag + '-configs.csv')
+                logger.info(path)
 
-                if cmd.nodes:
-                    p = Popen(['node.py', node_args] + nodes, stdin=PIPE, stdout=PIPE)
-                    csv_data, _ = p.communicate(input=jstr.encode())
-                else:
-                    csv_data = jstr.encode()
-
-                p = Popen(['csv_writer.py', csv_args, path], stdin=PIPE)
-                p.communicate(input=csv_data)
+                generate_csv(configs, cmd.nodes, path)
 
 
     except KeyboardInterrupt:
