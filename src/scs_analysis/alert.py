@@ -148,9 +148,11 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
+            to = auth.email_address if cmd.to is None else cmd.to
+
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
-                                       cmd.to, [], cmd.suspended)
+                                       to, [], cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
