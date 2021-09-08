@@ -105,11 +105,11 @@ class CmdAlert(object):
         if count != 1:
             return False
 
-        if self.find and (self.topic is None and self.creator is None):
-            return False
+        # if self.find and (self.topic is None and self.creator is None):
+        #     return False
 
-        if self.find and (self.topic is None and self.field is not None):
-            return False
+        # if self.topic is None and self.field is not None:
+        #     return False
 
         if self.__opts.aggregation_period is not None:
             try:
