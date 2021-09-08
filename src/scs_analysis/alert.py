@@ -12,6 +12,8 @@ Alerts take the form of emails, sent when a parameter falls below or above speci
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
 the aggregartion period (usually in minutes). The minimum period is one minute.
 
+In --find mode, results can be filtered by topic, field or creator email address.
+
 SYNOPSIS
 alert.py  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
 [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]
@@ -109,8 +111,6 @@ if __name__ == '__main__':
         if api_auth is None:
             logger.error("APIAuth not available.")
             exit(1)
-
-        logger.info(api_auth)
 
         # byline manager...
         byline_manager = BylineManager(api_auth)
