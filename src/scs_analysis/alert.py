@@ -8,22 +8,31 @@ Created on 29 Jun 2021
 DESCRIPTION
 The alert utility is used to create, update, delete and find alert specifications.
 
+Alerts take the form of emails, sent when a parameter falls below or above specified bounds, or when the value is null
+(a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
+the aggregartion period (usually in minutes). The minimum period is one minute.
+
 SYNOPSIS
-alert.py  { -F TOPIC | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
-[-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]
+alert.py  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
+[-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
-alert.py -c -o south-coast-science-demo/brighton/loc/1/gases -e val.NO2.cnc -p 10 -a 5 M \
--e bruno.beloff@southcoastscience.com -i4 -v
+alert.py -v -C -p south-coast-science-dev/development/loc/1/gases -f val.NO2.cnc -u 1000.0 -a 1 M \
+-e someone@me.com -i4
 
 DOCUMENT EXAMPLE
-{"id": 123, "topic": "my/topic", "field": "my.field", "lower-threshold": 10.0, "upper-threshold": 100.0,
-"alert-on-none": true, "aggregation-period": "00-01:00:00", "test-interval": "00-00:05:00",
-"creator-email-address": "bruno.beloff@southcoastscience.com", "cc-list": ["bbeloff@me.com"], "suspended": false}
+{"id": 77, "topic": "south-coast-science-dev/development/loc/1/gases", "field": "val.CO.cnc", "lower-threshold": null,
+"upper-threshold": 1000.0, "alert-on-none": true, "aggregation-period": {"interval": 1, "units": "M"},
+"test-interval": null, "creator-email-address": "authorization@southcoastscience.com",
+"to": "someone@me.com", "cc-list": [], "suspended": false}
 
 SEE ALSO
 scs_analysis/alert_status
 scs_analysis/monitor_auth
+
+BUGS
+* The --test-interval flag is not currently in use, and is ignored.
+* Email CC addresses cannot be added or removed.
 """
 
 import json
@@ -42,7 +51,6 @@ from scs_core.aws.manager.alert_specification_manager import AlertSpecificationM
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.data.datetime import LocalizedDatetime
-from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
@@ -113,7 +121,8 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            response = alert_manager.find(cmd.find_topic, cmd.field, auth.email_address)
+            creator_filter = auth.email_address if cmd.creator is None else cmd.creator
+            response = alert_manager.find(cmd.topic, cmd.field, creator_filter)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
@@ -142,8 +151,6 @@ if __name__ == '__main__':
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
                                        cmd.to, [], cmd.suspended)
-            if cmd.add_cc:
-                alert.append_to_cc_list(cmd.add_cc)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -179,16 +186,6 @@ if __name__ == '__main__':
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.to is None else cmd.to
-
-            if cmd.add_cc is not None:
-                if not Datum.is_email_address(cmd.add_cc):
-                    logger.error("the email address '%s' is not valid." % cmd.add_cc)
-                    exit(1)
-
-                alert.append_to_cc_list(cmd.add_cc)
-
-            if cmd.remove_cc is not None:
-                alert.remove_from_cc_list(cmd.remove_cc)
 
             updated = AlertSpecification(alert.id, alert.topic, alert.field, lower_threshold, upper_threshold,
                                          alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
