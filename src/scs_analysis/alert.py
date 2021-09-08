@@ -12,6 +12,9 @@ Alerts take the form of emails, sent when a parameter falls below or above speci
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
 the aggregartion period (usually in minutes). The minimum period is one minute.
 
+In --find mode, at least one of topic or (for administrator use only) creator email address must be specified. If
+topic is specified, field may also be specified.
+
 SYNOPSIS
 alert.py  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
 [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]
