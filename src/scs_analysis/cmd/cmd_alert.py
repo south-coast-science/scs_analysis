@@ -18,15 +18,15 @@ class CmdAlert(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F TOPIC | -R ID | -C | -U ID | -D ID } "
+        self.__parser = optparse.OptionParser(usage="%prog  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-e EMAIL_ADDR] [-c EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
+                                                    "[-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--find", "-F", type="string", action="store", dest="find_topic",
-                                 help="find alerts for given TOPIC (and FIELD)")
+        self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
+                                 help="find alerts for given TOPIC (and FIELD) or creator email")
 
         self.__parser.add_option("--retrieve", "-R", type="int", action="store", dest="retrieve_id",
                                  help="retrieve alert with given ID")
@@ -66,14 +66,11 @@ class CmdAlert(object):
                                  default=False, help="suspended (default false)")
 
         # email...
+        self.__parser.add_option("--creator", "-c", type="string", action="store", dest="creator",
+                                 help="email address of alert creator (admin use only)")
+
         self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
                                  help="email To address")
-
-        self.__parser.add_option("--add-cc", "-c", type="string", action="store", dest="add_cc",
-                                 help="add CC email address")
-
-        self.__parser.add_option("--remove-cc", "-r", type="string", action="store", dest="remove_cc",
-                                 help="remove CC email address")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -108,6 +105,12 @@ class CmdAlert(object):
         if count != 1:
             return False
 
+        if self.find and (self.topic is None and self.creator is None):
+            return False
+
+        if self.find and (self.topic is None and self.field is not None):
+            return False
+
         if self.__opts.aggregation_period is not None:
             try:
                 int(self.__opts.aggregation_period[0])
@@ -139,13 +142,8 @@ class CmdAlert(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def find_topic(self):
-        return self.__opts.find_topic
-
-
-    @property
     def find(self):
-        return self.__opts.find_topic is not None
+        return self.__opts.find
 
 
     @property
@@ -225,18 +223,13 @@ class CmdAlert(object):
 
 
     @property
+    def creator(self):
+        return self.__opts.creator
+
+
+    @property
     def to(self):
         return self.__opts.to
-
-
-    @property
-    def add_cc(self):
-        return self.__opts.add_cc
-
-
-    @property
-    def remove_cc(self):
-        return self.__opts.remove_cc
 
 
     @property
@@ -258,7 +251,7 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, topic:%s, field:%s, " \
                "lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, aggregation_period:%s, " \
-               "test_interval:%s, suspended:%s, to:%s, add_cc:%s, remove_cc:%s, indent:%s, verbose:%s}" % \
-               (self.find_topic, self.retrieve_id, self.create, self.update_id, self.delete_id, self.topic, self.field,
+               "test_interval:%s, suspended:%s, creator:%s, to:%s, indent:%s, verbose:%s}" % \
+               (self.find, self.retrieve_id, self.create, self.update_id, self.delete_id, self.topic, self.field,
                 self.lower_threshold, self.upper_threshold, self.alert_on_none, self.aggregation_period,
-                self.test_interval, self.suspended, self.to, self.add_cc, self.remove_cc, self.indent, self.verbose)
+                self.test_interval, self.suspended, self.creator, self.to, self.indent, self.verbose)

@@ -19,7 +19,7 @@ EXAMPLES
 alert_status.py -d -cL 123
 
 DOCUMENT EXAMPLE
-{"id": 123, "rec": "2021-06-17T15:58:23Z", "cause": ">U", "value": 101.5}
+{"id": 77, "rec": "2021-09-07T11:40:00Z", "cause": null, "val": 589.6}
 
 SEE ALSO
 scs_analysis/alert
