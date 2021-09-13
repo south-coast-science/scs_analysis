@@ -12,8 +12,7 @@ Alerts take the form of emails, sent when a parameter falls below or above speci
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
 the aggregartion period (usually in minutes). The minimum period is one minute.
 
-In --find mode, at least one of topic or (for administrator use only) creator email address must be specified. If
-topic is specified, field may also be specified.
+In --find mode, results can be filtered by topic, field or creator email address.
 
 SYNOPSIS
 alert.py  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
@@ -113,8 +112,6 @@ if __name__ == '__main__':
             logger.error("APIAuth not available.")
             exit(1)
 
-        logger.info(api_auth)
-
         # byline manager...
         byline_manager = BylineManager(api_auth)
         logger.info(byline_manager)
@@ -151,9 +148,11 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
+            to = auth.email_address if cmd.to is None else cmd.to
+
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
                                        cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
-                                       cmd.to, [], cmd.suspended)
+                                       to, [], cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
