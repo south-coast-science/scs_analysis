@@ -59,6 +59,8 @@ setuptools.setup(
     ],
     scripts=[
         'src/scs_analysis/access_key.py',
+        'src/scs_analysis/alert.py',
+        'src/scs_analysis/alert_status.py',
         'src/scs_analysis/aws_api_auth.py',
         'src/scs_analysis/aws_byline.py',
         'src/scs_analysis/aws_client_auth.py',
@@ -67,7 +69,9 @@ setuptools.setup(
         'src/scs_analysis/aws_topic_history.py',
         'src/scs_analysis/aws_topic_publisher.py',
         'src/scs_analysis/aws_upload_interval.py',
-        'src/scs_analysis/configuration_auth.py',
+        'src/scs_analysis/baseline.py',
+        'src/scs_analysis/baseline_conf.py',
+        'src/scs_analysis/configuration_csv.py',
         'src/scs_analysis/configuration_monitor.py',
         'src/scs_analysis/configuration_monitor_check.py',
         'src/scs_analysis/csv_collation_summary.py',
@@ -78,6 +82,7 @@ setuptools.setup(
         'src/scs_analysis/csv_writer.py',
         'src/scs_analysis/histo_chart.py',
         'src/scs_analysis/localised_datetime.py',
+        'src/scs_analysis/monitor_auth.py',
         'src/scs_analysis/mqtt_peers.py',
         'src/scs_analysis/multi_chart.py',
         'src/scs_analysis/node.py',
@@ -114,7 +119,7 @@ setuptools.setup(
     ],
     install_requires=required,
     platforms=['any'],
-    python_requires='>3.5',
+    python_requires='>3.6',
     extras_require={
         'dev': [
             'pypandoc'
