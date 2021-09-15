@@ -1,2 +1,2 @@
-include README.md
 include *.txt
+include README.md
