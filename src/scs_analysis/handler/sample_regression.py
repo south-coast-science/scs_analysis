@@ -11,6 +11,7 @@ from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.path_dict import PathDict
 
 
+# TODO: use named input_path and response_pth
 # --------------------------------------------------------------------------------------------------------------------
 
 class SampleRegression(object):
