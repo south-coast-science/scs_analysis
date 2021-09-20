@@ -98,7 +98,7 @@ def generate_csv(selected_configs, selected_nodes, file_path):
 if __name__ == '__main__':
 
     configuration = Configuration.construct_from_jdict(None, skeleton=True)
-    node_names = list(configuration.as_json().keys())
+    node_names = sorted(list(configuration.as_json().keys()))
 
     logger = None
     auth = None
