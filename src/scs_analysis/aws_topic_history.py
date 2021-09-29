@@ -150,10 +150,9 @@ if __name__ == '__main__':
         if cmd.latest_at:
             message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, None, cmd.include_wrapper,
                                                             cmd.rec_only, None)
-            document = message if cmd.include_wrapper else message.payload
 
-            if document:
-                print(JSONify.dumps(document))
+            if message:
+                print(JSONify.dumps(message))
 
             exit(0)
 
