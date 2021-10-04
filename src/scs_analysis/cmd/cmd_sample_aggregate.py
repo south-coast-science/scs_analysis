@@ -25,7 +25,7 @@ class CmdSampleAggregate(object):
 
         # compulsory...
         self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
-                                 help="a time specification as **:/05:00")
+                                 help="a time specification i.e. **:/05:00")
 
         # optional...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
