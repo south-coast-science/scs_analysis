@@ -79,9 +79,14 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
+COMMON_NODES = ['tag', 'rec.report', 'rec.update', 'ver']
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
 def generate_csv(selected_configs, selected_nodes, file_path):
     jstr = '\n'.join([JSONify.dumps(config) for config in selected_configs])
-    node_args = ['tag', 'rec.report', 'rec.update'] + ['val.' + selected_node for selected_node in selected_nodes]
+    node_args = COMMON_NODES + ['val.' + selected_node for selected_node in selected_nodes]
 
     if selected_nodes:
         p = Popen(['node.py', node_opts] + node_args, stdin=PIPE, stdout=PIPE)

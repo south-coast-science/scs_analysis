@@ -164,14 +164,16 @@ if __name__ == '__main__':
                     if cmd.skip_malformed:
                         continue
 
-                    print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    print("sample_iso_8601: malformed datetime (AttributeError) '%s' in %s" % (cmd.datetime_path, jstr),
+                          file=sys.stderr)
                     exit(1)
 
                 if len(pieces) != 2:
                     if cmd.skip_malformed:
                         continue
 
-                    print("sample_iso_8601: malformed datetime '%s' in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    print("sample_iso_8601: 2: malformed datetime (field count) '%s' in %s" % (cmd.datetime_path, jstr),
+                          file=sys.stderr)
                     exit(1)
 
                 date = pieces[0].strip()
