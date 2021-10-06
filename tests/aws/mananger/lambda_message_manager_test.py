@@ -34,6 +34,6 @@ reporter = AWSTopicHistoryReporter(False)
 message_manager = MessageManager(api_auth, reporter=reporter)
 print(message_manager)
 
-document = message_manager.find_latest_for_topic(topic, up_to, None, True, False)
+document = message_manager.find_latest_for_topic(topic, up_to, None, True, False, None)
 print(JSONify.dumps(document))
 
