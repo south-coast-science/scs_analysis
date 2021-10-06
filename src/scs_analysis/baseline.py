@@ -249,8 +249,6 @@ if __name__ == '__main__':
 
             afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else device_conf.afe_baseline
 
-            print("afe_baseline: %s" % afe_baseline)
-
             ox_baseline = afe_baseline.sensor_baseline(ox_index)
             ox_calib = afe_calib.sensor_calib(ox_index)
 
@@ -282,7 +280,7 @@ if __name__ == '__main__':
             exit(1)
 
         data = list(message_manager.find_for_topic(gases_topic, start, end, None, False, baseline_conf.checkpoint(),
-                                                   False, False, False, False))
+                                                   False, False, False, False, False, None))
         if not data:
             logger.error("no data found for %s." % gases_topic)
             exit(1)

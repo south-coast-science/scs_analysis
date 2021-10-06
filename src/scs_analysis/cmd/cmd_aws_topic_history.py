@@ -13,6 +13,7 @@ from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.timedelta import Timedelta
 
 
+# TODO: add backoff limit flag
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdAWSTopicHistory(object):
@@ -22,17 +23,20 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | "
-                                                    "-s START [-e END] } "
+        self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT [-b BACK-OFF] | "
+                                                    "-t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } "
                                                     "{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC",
                                               version="%prog 1.0")
 
-        # compulsory (from selection)...
+        # functions...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="the most recent document")
 
         self.__parser.add_option("--latest-at", "-a", type="string", nargs=1, action="store", dest="latest_at",
-                                 help="the most recent document up to ISO 8601 datetime LATEST_AT")
+                                 help="the most recent document before ISO 8601 datetime")
+
+        self.__parser.add_option("--back-off", "-b", type="int", nargs=1, action="store", dest="back_off",
+                                 help="maximum look-back period (seconds)")
 
         self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
                                  help="starting days / hours / minutes / seconds ago, and ending now")
@@ -96,6 +100,9 @@ class CmdAWSTopicHistory(object):
             count += 1
 
         if count != 1:
+            return False
+
+        if self.back_off is not None and not self.latest_at:
             return False
 
         if self.include_wrapper and self.checkpoint:
@@ -170,6 +177,11 @@ class CmdAWSTopicHistory(object):
 
 
     @property
+    def back_off(self):
+        return self.__opts.back_off
+
+
+    @property
     def timedelta(self):
         return Timedelta.construct_from_flag(self.__opts.timedelta)
 
@@ -236,9 +248,9 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, fetch_last:%s, " \
-               "checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, exclude_remainder:%s, " \
-               "verbose:%s, debug:%s, topic:%s}" % \
-                    (self.latest, self.__opts.latest_at, self.__opts.timedelta, self.start, self.end, self.fetch_last,
-                     self.checkpoint, self.include_wrapper, self.rec_only, self.min_max, self.exclude_remainder,
-                     self.verbose, self.debug, self.topic)
+        return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, " \
+               "fetch_last:%s, checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, " \
+               "exclude_remainder:%s, verbose:%s, debug:%s, topic:%s}" % \
+                    (self.latest, self.__opts.latest_at, self.back_off, self.__opts.timedelta, self.start, self.end,
+                     self.fetch_last, self.checkpoint, self.include_wrapper, self.rec_only, self.min_max,
+                     self.exclude_remainder, self.verbose, self.debug, self.topic)

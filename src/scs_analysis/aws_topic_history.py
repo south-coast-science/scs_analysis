@@ -149,11 +149,10 @@ if __name__ == '__main__':
 
         if cmd.latest_at:
             message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, None, cmd.include_wrapper,
-                                                            cmd.rec_only)
-            document = message if cmd.include_wrapper else message.payload
+                                                            cmd.rec_only, None)
 
-            if document:
-                print(JSONify.dumps(document))
+            if message:
+                print(JSONify.dumps(message))
 
             exit(0)
 
@@ -180,8 +179,8 @@ if __name__ == '__main__':
 
         # messages...
         for message in message_manager.find_for_topic(cmd.topic, start, end, None, cmd.fetch_last, cmd.checkpoint,
-                                                      cmd.include_wrapper, cmd.rec_only,
-                                                      cmd.min_max, cmd.exclude_remainder):
+                                                      cmd.include_wrapper, cmd.rec_only, cmd.min_max,
+                                                      cmd.exclude_remainder, False, None):
             print(JSONify.dumps(message))
             sys.stdout.flush()
 
