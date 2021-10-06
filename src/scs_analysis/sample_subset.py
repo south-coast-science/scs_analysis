@@ -31,7 +31,7 @@ If the --exclusions flag is used, the sample_subset utility outputs only the doc
 specification. Note that, in this case, documents with missing or empty fields are still discarded.
 
 SYNOPSIS
-sample_subset.py [{ -i | -n }] { [-e EQUAL] | [-l LOWER] [-u UPPER] } [-x] [-v] PATH
+sample_subset.py { -i | -n  | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } [-s] [-x] [-v] PATH
 
 EXAMPLES
 csv_reader.py praxis_303.csv | \
