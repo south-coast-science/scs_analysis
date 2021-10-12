@@ -177,8 +177,6 @@ if __name__ == '__main__':
             logger.error("the gas %s is not in the baseline configuration." % ex)
             exit(2)
 
-        logger.error(baseline_conf)
-
         # host name...
         host_tag = Host.name()
 
