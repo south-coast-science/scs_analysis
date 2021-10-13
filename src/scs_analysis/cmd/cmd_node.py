@@ -36,6 +36,7 @@ class CmdNode(object):
         self.__parser.add_option("--file", "-f", type="string", nargs=1, action="store", dest="filename",
                                  help="read from FILE instead of stdin")
 
+        # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
