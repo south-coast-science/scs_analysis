@@ -109,7 +109,7 @@ if __name__ == '__main__':
             group = manager.find_bylines_for_device(cmd.device, excluded=cmd.excluded)
 
         else:
-            group = manager.find_bylines_for_topic('', excluded=cmd.excluded)
+            group = manager.find_bylines(excluded=cmd.excluded)     # all
 
         # report...
         for byline in group.bylines:
