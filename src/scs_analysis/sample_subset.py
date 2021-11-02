@@ -50,6 +50,8 @@ from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 from scs_core.data.path_dict import PathDict
 
+from scs_core.sys.logging import Logging
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -73,8 +75,10 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("sample_subset: %s" % cmd, file=sys.stderr)
+    Logging.config('sample_subset (%s)' % cmd.path, verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -83,19 +87,19 @@ if __name__ == '__main__':
         try:
             equal_bound = cmd.equal
         except ValueError as ex:
-            print("sample_subset: invalid value for equal: %s" % ex, file=sys.stderr)
+            logger.error("invalid value for equal: %s" % ex)
             exit(2)
 
         try:
             lower_bound = cmd.lower
         except ValueError as ex:
-            print("sample_subset: invalid value for lower bound: %s" % ex, file=sys.stderr)
+            logger.error("invalid value for lower bound: %s" % ex)
             exit(2)
 
         try:
             upper_bound = cmd.upper
         except ValueError as ex:
-            print("sample_subset: invalid value for upper bound: %s" % ex, file=sys.stderr)
+            logger.error("invalid value for upper bound: %s" % ex)
             exit(2)
 
 
@@ -127,7 +131,7 @@ if __name__ == '__main__':
 
                 if value is None:
                     if cmd.strict:
-                        print("sample_subset: invalid ISO 8601 value '%s' in %s" % (value_node, jstr), file=sys.stderr)
+                        logger.error("invalid ISO 8601 value '%s' in %s" % (value_node, jstr))
                         exit(1)
                     else:
                         continue
@@ -137,7 +141,7 @@ if __name__ == '__main__':
 
                 if value is None:
                     if cmd.strict:
-                        print("sample_subset: invalid numeric value '%s' in %s" % (value_node, jstr), file=sys.stderr)
+                        logger.error("invalid numeric value '%s' in %s" % (value_node, jstr))
                         exit(1)
                     else:
                         continue
@@ -161,7 +165,7 @@ if __name__ == '__main__':
             except TypeError as ex:
                 if cmd.strict:
                     in_bounds = None
-                    print("sample_subset: TypeError: %s" % jstr, file=sys.stderr)
+                    logger.error("TypeError: %s" % jstr)
                     exit(1)
                 else:
                     continue
@@ -180,12 +184,10 @@ if __name__ == '__main__':
     # end...
 
     except KeyError as ex:
-        print("sample_subset: KeyError: %s" % ex, file=sys.stderr)
+        logger.error("KeyError: %s" % ex, file=sys.stderr)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
     finally:
-        if cmd.verbose:
-            print("sample_subset: documents: %d processed: %d output: %d" %
-                  (document_count, processed_count, output_count), file=sys.stderr)
+        logger.info("documents: %d processed: %d output: %d" % (document_count, processed_count, output_count))
