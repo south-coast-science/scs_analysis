@@ -86,7 +86,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    MQTT_TIMEOUT = 30           # seconds
+    MQTT_TIMEOUT = 60           # seconds
 
     logger = None
 
