@@ -11,6 +11,11 @@ low environmental gas concentrations. It does this by downloading device data, f
 device's baseline offsets by the difference between the estimated and reported values. Any changes in NO2
 baselines are incorporated into O3 ('Ox') baselining.
 
+Baselining can be applied to either:
+
+* Val fields - including val.GGG.cnc and val.GGG.vCal (the model inputs)
+* Exg fields - of the form exg.val.GGG.cnc or exg.MMM.GGG.cnc (the model outputs)
+
 The device must be online during the baselining operation - a number of MQTT messages are passes between the
 utility and the device. If any changes are made to the device's baseline settings, then the gases_sampler process
 is restarted. How the restart happens is specified by the --uptake flag.
@@ -23,11 +28,11 @@ Any number of named baseline_conf files may be stored.
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py [-a] -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM]
-[{ -o GAS  | -x GAS }] [-v]
+baseline.py [-a] -c NAME -t DEVICE_TAG -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION]
+[-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v]
 
 EXAMPLES
-baseline.py -c freshfield -t scs-opc-1 -r
+baseline.py -ac freshfield -t scs-be2-3 -f E -r
 
 FILES
 ~/SCS/conf/NAME_baseline_conf.json
@@ -82,6 +87,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: review Ox handling
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -251,7 +257,7 @@ if __name__ == '__main__':
             ox_calib = afe_calib.sensor_calib(ox_index)
 
             ox_sensor = ox_calib.sensor(ox_baseline)
-            logger.error(ox_sensor)
+            # logger.error(ox_sensor)
 
         logger.error("-")
 
@@ -293,8 +299,8 @@ if __name__ == '__main__':
         correction_applied = False
         no2_correction = None
 
-        for minimum in Minimum.find_minimums(data):
-            if cmd.only_gas is not None and minimum.gas != cmd.only_gas:
+        for minimum in Minimum.find_minimums(data, cmd.fields):
+            if cmd.excludes_gas(minimum.gas):
                 continue
 
             logger.error("-")
@@ -336,6 +342,7 @@ if __name__ == '__main__':
                 corrected = ox_sensor.datum(temp, ox_sample.we_v, ox_sample.ae_v, no2_cnc=no2_cnc)
                 minimum.value = corrected.cnc
 
+            # minimums...
             if minimum.value == conf_minimums[minimum.gas]:
                 logger.error("%s matches the required minimum - skipping" % minimum.path)
                 continue
