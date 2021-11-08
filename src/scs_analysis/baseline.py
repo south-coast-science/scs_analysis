@@ -95,7 +95,6 @@ if __name__ == '__main__':
     MQTT_TIMEOUT = 60           # seconds
 
     logger = None
-
     key = None
     monitor_auth = None
     mqtt_client = None
@@ -344,7 +343,7 @@ if __name__ == '__main__':
 
             # minimums...
             if minimum.value == conf_minimums[minimum.gas]:
-                logger.error("%s matches the required minimum - skipping" % minimum.path)
+                logger.error("%s matches the specified minimum - skipping" % minimum.path)
                 continue
 
             if minimum.index == 0:
