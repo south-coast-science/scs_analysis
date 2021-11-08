@@ -8,6 +8,7 @@ import optparse
 
 from scs_core.data.recurring_period import RecurringMinutes
 from scs_core.estate.baseline_conf import BaselineConf
+from scs_core.gas.minimum import Minimum
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,9 +26,9 @@ class CmdBaseline(object):
         """
         cmds = ' | '.join(self.__UPTAKE_CMDS)
 
-        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -t DEVICE_TAG [{ -r | -u COMMAND }] [-s START] "
-                                                    "[-e END] [-p AGGREGATION] [-m GAS MINIMUM] [{ -o GAS  | -x GAS }] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -t DEVICE_TAG -f { V | E } "
+                                                    "[{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] "
+                                                    "[-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v]", version="%prog 1.0")
 
         # source...
         self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
@@ -41,6 +42,9 @@ class CmdBaseline(object):
                                  help="the device to be baselined")
 
         # function...
+        self.__parser.add_option("--fields", "-f", type="string", nargs=1, action="store", dest="fields",
+                                 help="baseline Val or Exg fields")
+
         self.__parser.add_option("--rehearse", "-r", action="store_true", dest="rehearse", default=False,
                                  help="show what actions should be performed")
 
@@ -49,16 +53,16 @@ class CmdBaseline(object):
 
         # fields...
         self.__parser.add_option("--start-hour", "-s", type="int", nargs=1, action="store", dest="start_hour",
-                                 help="override the default start hour")
+                                 help="override the configuration's start hour")
 
         self.__parser.add_option("--end-hour", "-e", type="int", nargs=1, action="store", dest="end_hour",
-                                 help="override the default end hour")
+                                 help="override the configuration's end hour")
 
         self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
-                                 dest="aggregation_period", help="override the default aggregation period")
+                                 dest="aggregation_period", help="override the configuration's aggregation period")
 
         self.__parser.add_option("--minimum", "-m", type="string", nargs=2, action="store", dest="minimum",
-                                 help="override default minimum for GAS")
+                                 help="override configuration's minimum for GAS")
 
         self.__parser.add_option("--only-gas", "-o", type="string", nargs=1, action="store", dest="only_gas",
                                  help="baseline only GAS")
@@ -77,6 +81,9 @@ class CmdBaseline(object):
 
     def is_valid(self):
         if self.conf_name is None or self.device_tag is None:
+            return False
+
+        if self.fields not in Minimum.FIELD_SELECTIONS:
             return False
 
         if self.uptake not in self.__UPTAKE_CMDS:
@@ -112,6 +119,10 @@ class CmdBaseline(object):
         return conf
 
 
+    def excludes_gas(self, gas):
+        return self.only_gas is not None and gas != self.only_gas
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -127,6 +138,11 @@ class CmdBaseline(object):
     @property
     def device_tag(self):
         return self.__opts.device_tag
+
+
+    @property
+    def fields(self):
+        return self.__opts.fields
 
 
     @property
@@ -186,7 +202,9 @@ class CmdBaseline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaseline:{aws:%s, conf_name:%s, device_tag:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
-               "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, verbose:%s}" % \
-               (self.aws, self.conf_name, self.device_tag, self.rehearse, self.uptake, self.start_hour, self.end_hour,
-                self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas, self.verbose)
+        return "CmdBaseline:{aws:%s, conf_name:%s, device_tag:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
+               "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, " \
+               "verbose:%s}" % \
+               (self.aws, self.conf_name, self.device_tag, self.fields, self.rehearse, self.uptake, self.start_hour,
+                self.end_hour, self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas,
+                self.verbose)
