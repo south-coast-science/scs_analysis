@@ -352,6 +352,9 @@ if __name__ == '__main__':
             elif minimum.index == len(data) - 1:
                 logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
 
+            logger.error("Acting on: %s" % minimum)
+            logger.error("...")
+
             cmd_tokens = minimum.cmd_tokens(conf_minimums)
             logger.error(' '.join([str(token) for token in cmd_tokens]))
 
