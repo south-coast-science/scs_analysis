@@ -58,6 +58,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    conf = None
     key = None
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -99,7 +100,8 @@ if __name__ == '__main__':
         persistence_manager = Host
 
     # GasModelConf...
-    conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
+    if not cmd.duplicate():
+        conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -114,6 +116,16 @@ if __name__ == '__main__':
         for conf_name in BaselineConf.list(persistence_manager):
             print(conf_name, file=sys.stderr)
         exit(0)
+
+    if cmd.duplicate():
+        source = BaselineConf.load(persistence_manager, name=cmd.duplicate_from)
+
+        if source is None:
+            logger.error("no configuration found for '%s'" % cmd.duplicate_from)
+            exit(2)
+
+        conf = source.duplicate(cmd.duplicate_to)
+        conf.save(persistence_manager)
 
     if cmd.set():
         if conf is None and not cmd.is_complete():
