@@ -23,7 +23,7 @@ FILES
 ~/SCS/aws/cognito_user_credentials.json
 
 DOCUMENT EXAMPLE
-{"email-address": "bruno.beloff@southcoastscience.com", "password": "hello"}
+{"email": "bruno.beloff@southcoastscience.com", "password": "hello"}
 
 SEE ALSO
 
@@ -35,7 +35,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito import CmdCognito
 
-from scs_core.aws.client.cognito_user_credentials import CognitoUserCredentials
+from scs_core.aws.security.cognito_user_credentials import CognitoUserCredentials
 from scs_core.data.json import JSONify
 from scs_core.sys.logging import Logging
 
