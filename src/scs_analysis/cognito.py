@@ -31,15 +31,30 @@ RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
 """
 
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito import CmdCognito
 
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user_credentials import CognitoUserCredentials
+
 from scs_core.data.json import JSONify
+
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+def load_credentials():
+    try:
+        return CognitoUserCredentials.load(Host, encryption_key=CognitoUserCredentials.password_from_user())
+    except (KeyError, ValueError):
+        logger.error("incorrect password")
+        exit(1)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -76,17 +91,29 @@ if __name__ == '__main__':
 
             credentials.save(Host, encryption_key=credentials.password)
 
+        elif cmd.test:
+            credentials = load_credentials()
+
+            if credentials is None:
+                logger.error("no credentials are available")
+                exit(1)
+
+            manager = CognitoLoginManager(requests)
+
+            try:
+                manager.login(credentials)
+                logger.error("OK")
+                exit(0)
+
+            except HTTPException as ex:
+                logger.error(ex.data)
+                exit(1)
+
         elif cmd.delete:
             CognitoUserCredentials.delete(Host)
 
         else:
-            password = CognitoUserCredentials.password_from_user()
-
-            try:
-                credentials = CognitoUserCredentials.load(Host, encryption_key=password)
-            except (KeyError, ValueError):
-                logger.error("incorrect password")
-                exit(1)
+            credentials = load_credentials()
 
         if credentials:
             print(JSONify.dumps(credentials))

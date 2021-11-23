@@ -16,11 +16,14 @@ class CmdCognito(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -d }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -t | -d }] [-v]", version="%prog 1.0")
 
         # commands..
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
                                  help="set the identity")
+
+        self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
+                                 help="test the identity")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the identity")
@@ -35,7 +38,18 @@ class CmdCognito(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.set and self.delete:
+        count = 0
+
+        if self.set:
+            count += 1
+
+        if self.test:
+            count += 1
+
+        if self.delete:
+            count += 1
+
+        if count > 1:
             return False
 
         return True
@@ -46,6 +60,11 @@ class CmdCognito(object):
     @property
     def set(self):
         return self.__opts.set
+
+
+    @property
+    def test(self):
+        return self.__opts.test
 
 
     @property
@@ -65,5 +84,5 @@ class CmdCognito(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognito:{set:%s, delete:%s, verbose:%s}" % \
-               (self.set, self.delete, self.verbose)
+        return "CmdCognito:{set:%s, test:%s, delete:%s, verbose:%s}" % \
+               (self.set, self.test, self.delete, self.verbose)
