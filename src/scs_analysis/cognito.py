@@ -14,7 +14,7 @@ email address and a password. The JSON identity document managed by this utility
 The password must be specified when the credentials are created and is required when the credentials are accessed.
 
 SYNOPSIS
-cognito.py [{ -s | -d }] [-v]
+cognito.py [{ -s | -t | -d }] [-v]
 
 EXAMPLES
 ./cognito.py -s
@@ -101,7 +101,12 @@ if __name__ == '__main__':
             manager = CognitoLoginManager(requests)
 
             try:
-                manager.login(credentials)
+                authentication = manager.login(credentials)
+
+                if authentication is None:
+                    logger.error("invalid authentication")
+                    exit(0)
+
                 logger.error("OK")
                 exit(0)
 
