@@ -8,24 +8,23 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_manager utility is used to manage the AWS Cognito credentials for the user. The credentials are
-composed of an email address and a password. The JSON identity document managed by this utility is encrypted.
+The cognito_manager utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception of
+superusers) can only access their own identity.
 
-The password must be specified when the credentials are created and is required when the credentials are accessed.
+With the exception of the --create function, the user's credentials must have previously been entered using the
+cognito_credentials utility.
 
 SYNOPSIS
-cognito_manager.py [{ -s | -t | -d }] [-v]
+cognito_manager.py  { -f [-e EMAIL_ADDR] | -r | -c | -u } [-i INDENT] [-v]
 
 EXAMPLES
 ./cognito_manager.py -s
 
-FILES
-~/SCS/aws/cognito_user_credentials.json
-
 DOCUMENT EXAMPLE
-{"email": "bruno.beloff@southcoastscience.com", "password": "hello"}
+{"email": "bruno.beloff@southcoastscience.com", "given_name": "bruno", "family_name": "beloff", "is_super": false}
 
 SEE ALSO
+scs_analysis/cognito_credentials
 """
 
 import requests
@@ -35,8 +34,9 @@ from scs_analysis.cmd.cmd_cognito_manager import CmdCognitoManager
 
 from scs_core.aws.security.cognito_finder import CognitoFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
+from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
+from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
@@ -62,6 +62,8 @@ if __name__ == '__main__':
 
     credentials = None
     authentication = None
+    finder = None
+    report = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -78,9 +80,6 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
-
-        # ------------------------------------------------------------------------------------------------------------
-        # resources...
 
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
@@ -109,6 +108,14 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        if not cmd.create:
+            finder = CognitoFinder(requests, authentication.id_token)
+            logger.error(finder)
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.create:
@@ -117,10 +124,34 @@ if __name__ == '__main__':
             email = StdIO.prompt("Enter email address: ")
             password = StdIO.prompt("Enter password: ")
 
-        if cmd.find:
-            finder = CognitoFinder(requests)
-            finder.find(authentication.id_token)
+            if not Datum.is_email_address(email):
+                logger.error("The email address '%s' is not valid." % email)
+                exit(1)
 
+            report = CognitoUserIdentity(None, email, given_name, family_name, password)
+
+            # TODO: do the create
+            # TODO: is email address in use?
+
+        if cmd.update:
+            identity = finder.find_self()
+
+            given_name = StdIO.prompt("Enter given name (%s): " % identity.given_name, default=identity.given_name)
+            family_name = StdIO.prompt("Enter family name (%s): " % identity.family_name, default=identity.family_name)
+            email = StdIO.prompt("Enter email (%s): " % identity.email, default=identity.email)
+
+            report = CognitoUserIdentity(identity.username, email, given_name, family_name, None)
+
+            # TODO: do the update
+
+        if cmd.find:
+            report = sorted(finder.find_by_email(cmd.email) if cmd.email else finder.find_all())
+
+        if cmd.retrieve:
+            report = finder.find_self()
+
+        if report:
+            print(JSONify.dumps(report, indent=cmd.indent))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

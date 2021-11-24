@@ -16,11 +16,11 @@ class CmdCognitoManager(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -l [-e EMAIL_ADDR] | -r | -c | -u } [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog  { -f [-e EMAIL_ADDR] | -r | -c | -u } [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--list", "-l", action="store_true", dest="find", default=False,
+        self.__parser.add_option("--find", "-f", action="store_true", dest="find", default=False,
                                  help="list the identities visible to me")
 
         self.__parser.add_option("--retrieve", "-r", action="store_true", dest="retrieve", default=False,
@@ -34,7 +34,7 @@ class CmdCognitoManager(object):
 
         # email...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
-                                 help="email address (partial match)")
+                                 help="filter list by email address (partial match)")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
