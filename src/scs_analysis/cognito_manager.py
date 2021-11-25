@@ -36,7 +36,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_manager import CmdCognitoManager
 
-from scs_core.aws.security.cognito_creation_manager import CognitoCreationManager
+from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager
 from scs_core.aws.security.cognito_finder import CognitoFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.create:
-            creator = CognitoCreationManager(requests)
+            manager = CognitoCreateManager(requests)
 
             given_name = StdIO.prompt("Enter given name: ")
             family_name = StdIO.prompt("Enter family name: ")
@@ -141,12 +141,14 @@ if __name__ == '__main__':
 
             identity = CognitoUserIdentity(None, None, email, given_name, family_name, password)
 
-            report = creator.create(identity)
+            report = manager.create(identity)
 
             # TODO: do the create
             # TODO: is email address in use?
 
         if cmd.update:
+            manager = CognitoUpdateManager(requests, authentication.id_token)
+
             identity = finder.find_self()
 
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
