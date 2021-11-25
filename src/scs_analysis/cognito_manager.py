@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, email, given_name, family_name, password)
+            identity = CognitoUserIdentity(None, None, email, given_name, family_name, password)
 
             report = creator.create(identity)
 
@@ -157,7 +157,8 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, email, given_name, family_name, None)
+            report = CognitoUserIdentity(identity.username, identity.creation_date, email, given_name, family_name,
+                                         None)
 
             # TODO: do the update
             # TODO: was email address in use by another user?
