@@ -52,7 +52,9 @@ from scs_host.sys.host import Host
 
 def load_credentials():
     try:
-        return CognitoUserCredentials.load(Host, encryption_key=CognitoUserCredentials.password_from_user())
+        password = CognitoUserCredentials.password_from_user()
+        return CognitoUserCredentials.load(Host, encryption_key=password)
+
     except (KeyError, ValueError):
         logger.error("incorrect password")
         exit(1)

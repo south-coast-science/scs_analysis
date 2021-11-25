@@ -11,8 +11,9 @@ DESCRIPTION
 The cognito_manager utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception of
 superusers) can only access their own identity.
 
-With the exception of the --create function, the user's credentials must have previously been entered using the
-cognito_credentials utility.
+Typically, once a create has been successfully performed, the user should store their email address and password using
+the cognito_credentials utility. With the exception of the create function, the user's credentials must have previously
+been entered using the cognito_credentials utility.
 
 SYNOPSIS
 cognito_manager.py  { -f [-e EMAIL_ADDR] | -r | -c | -u } [-i INDENT] [-v]
@@ -25,6 +26,9 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+
+RESOURCES
+https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
 import requests
@@ -32,6 +36,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_manager import CmdCognitoManager
 
+from scs_core.aws.security.cognito_creation_manager import CognitoCreationManager
 from scs_core.aws.security.cognito_finder import CognitoFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
@@ -112,13 +117,15 @@ if __name__ == '__main__':
 
         if not cmd.create:
             finder = CognitoFinder(requests, authentication.id_token)
-            logger.error(finder)
+            logger.info(finder)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.create:
+            creator = CognitoCreationManager(requests)
+
             given_name = StdIO.prompt("Enter given name: ")
             family_name = StdIO.prompt("Enter family name: ")
             email = StdIO.prompt("Enter email address: ")
@@ -128,7 +135,13 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            report = CognitoUserIdentity(None, email, given_name, family_name, password)
+            if not CognitoUserIdentity.is_valid_password(password):
+                logger.error("The password '%s' is not valid." % password)
+                exit(1)
+
+            identity = CognitoUserIdentity(None, email, given_name, family_name, password)
+
+            report = creator.create(identity)
 
             # TODO: do the create
             # TODO: is email address in use?
@@ -136,13 +149,18 @@ if __name__ == '__main__':
         if cmd.update:
             identity = finder.find_self()
 
-            given_name = StdIO.prompt("Enter given name (%s): " % identity.given_name, default=identity.given_name)
-            family_name = StdIO.prompt("Enter family name (%s): " % identity.family_name, default=identity.family_name)
-            email = StdIO.prompt("Enter email (%s): " % identity.email, default=identity.email)
+            given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
+            family_name = StdIO.prompt("Enter family name (%s): ", default=identity.family_name)
+            email = StdIO.prompt("Enter email (%s): ", default=identity.email)
+
+            if not Datum.is_email_address(email):
+                logger.error("The email address '%s' is not valid." % email)
+                exit(1)
 
             report = CognitoUserIdentity(identity.username, email, given_name, family_name, None)
 
             # TODO: do the update
+            # TODO: was email address in use by another user?
 
         if cmd.find:
             report = sorted(finder.find_by_email(cmd.email) if cmd.email else finder.find_all())
