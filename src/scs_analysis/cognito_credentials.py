@@ -64,6 +64,7 @@ def load_credentials():
 
 if __name__ == '__main__':
 
+    logger = None
     credentials = None
 
     try:
@@ -95,26 +96,18 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.password)
 
         elif cmd.test:
+            manager = CognitoLoginManager(requests)
+
             credentials = load_credentials()
 
             if credentials is None:
                 logger.error("no credentials are available")
                 exit(1)
 
-            manager = CognitoLoginManager(requests)
+            authentication = manager.login(credentials)
 
-            try:
-                authentication = manager.login(credentials)
-
-                if authentication is None:
-                    logger.error("invalid authentication")
-                    exit(0)
-
-                logger.error("OK")
-                exit(0)
-
-            except HTTPException as ex:
-                logger.error(ex.data)
+            if authentication is None:
+                logger.error("invalid authentication")
                 exit(1)
 
         elif cmd.delete:
@@ -126,5 +119,13 @@ if __name__ == '__main__':
         if credentials:
             print(JSONify.dumps(credentials))
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # end...
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except HTTPException as ex:
+        logger.error(ex.data)
+        exit(1)
