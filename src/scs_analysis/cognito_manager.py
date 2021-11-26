@@ -90,7 +90,7 @@ if __name__ == '__main__':
         # authentication...
 
         if not cmd.create:
-            login_manager = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host):
@@ -105,7 +105,7 @@ if __name__ == '__main__':
                 exit(1)
 
             try:
-                authentication = login_manager.login(credentials)
+                authentication = gatekeeper.login(credentials)
 
             except HTTPException as ex:
                 logger.error(ex.data)
@@ -154,6 +154,7 @@ if __name__ == '__main__':
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
             family_name = StdIO.prompt("Enter family name (%s): ", default=identity.family_name)
             email = StdIO.prompt("Enter email (%s): ", default=identity.email)
+            password = StdIO.prompt("Enter password (return to keep existing): ", default=None)
 
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
