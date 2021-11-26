@@ -26,7 +26,7 @@ DOCUMENT EXAMPLE
 {"email": "bruno.beloff@southcoastscience.com", "password": "hello"}
 
 SEE ALSO
-scs_analysis/cognito_manager
+scs_analysis/cognito_identity
 
 RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
@@ -116,12 +116,12 @@ if __name__ == '__main__':
         else:
             credentials = load_credentials()
 
-        if credentials:
-            print(JSONify.dumps(credentials))
-
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
+
+        if credentials:
+            print(JSONify.dumps(credentials))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

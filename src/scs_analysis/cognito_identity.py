@@ -8,18 +8,18 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_manager utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception of
-superusers) can only access their own identity.
+The cognito_identity utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
+of superusers) can only access their own identity.
 
-Typically, once a create has been successfully performed, the user should store their email address and password using
-the cognito_credentials utility. With the exception of the create function, the user's credentials must have previously
-been entered using the cognito_credentials utility.
+Typically, once a --create has been successfully performed, the user should store their email address and password
+using the cognito_credentials utility. With the exception of the create function, the user's credentials must have
+previously been entered before using the cognito_credentials utility.
 
 SYNOPSIS
-cognito_manager.py  { -f [-e EMAIL_ADDR] | -c | -r | -u  | -d EMAIL_ADDR } [-i INDENT] [-v]
+cognito_identity.py  { -f [-e EMAIL_ADDR] | -c | -r | -u  | -d EMAIL_ADDR } [-i INDENT] [-v]
 
 EXAMPLES
-./cognito_manager.py -r
+./cognito_identity.py -r
 
 DOCUMENT EXAMPLE
 {"username": "8", "creation_date": "2021-11-24T12:51:12Z", "email": "bruno.beloff@southcoastscience.com",
@@ -35,7 +35,7 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-pol
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_cognito_manager import CmdCognitoManager
+from scs_analysis.cmd.cmd_cognito_identity import CmdCognitoIdentity
 
 from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager, \
     CognitoDeleteManager
@@ -69,13 +69,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdCognitoManager()
+        cmd = CmdCognitoIdentity()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('cognito_manager', verbose=cmd.verbose)
+        Logging.config('cognito_identity', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
