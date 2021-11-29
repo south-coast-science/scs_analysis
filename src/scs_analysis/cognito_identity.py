@@ -80,6 +80,7 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
+
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
@@ -138,10 +139,13 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, None, email, given_name, family_name, password)
+            identity = CognitoUserIdentity(None, None, None, None, email,
+                                           given_name, family_name, password)
 
             manager = CognitoCreateManager(requests)
             report = manager.create(identity)
+
+            # TODO: update stored credentials?
 
         if cmd.retrieve:
             report = finder.find_self()
@@ -154,10 +158,6 @@ if __name__ == '__main__':
             email = StdIO.prompt("Enter email (%s): ", default=identity.email)
             password = StdIO.prompt("Enter password (RETURN to keep existing): ", default=None)
 
-            if not given_name or not given_name:
-                logger.error("Given name and family name are required." % email)
-                exit(1)
-
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
@@ -166,11 +166,14 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, None, email, given_name, family_name, password)
+            report = CognitoUserIdentity(identity.username, identity.confirmation_status, identity.enabled, None, email,
+                                         given_name, family_name, password)
 
             authentication = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUpdateManager(requests, authentication.id_token)
             manager.update(report)
+
+            # TODO: update stored credentials?
 
         if cmd.delete:
             manager = CognitoDeleteManager(requests, authentication.id_token)
