@@ -6,6 +6,8 @@ Created on 24 Nov 2021
 
 import optparse
 
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,28 +18,37 @@ class CmdCognitoIdentity(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -f [-e EMAIL_ADDR] | -c | -r | -u  | -d EMAIL_ADDR } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+        confirmations = ' | '.join(CognitoUserIdentity.STATUSES.keys())
+
+        self.__parser = optparse.OptionParser(usage="%prog  { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] "
+                                                    "| -C | -R | -U  | -D EMAIL_ADDR } [-i INDENT] [-v]",
+                                              version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--find", "-f", action="store_true", dest="find", default=False,
+        self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
                                  help="list the identities visible to me")
 
-        self.__parser.add_option("--create", "-c", action="store_true", dest="create", default=False,
+        self.__parser.add_option("--create", "-C", action="store_true", dest="create", default=False,
                                  help="create an identity")
 
-        self.__parser.add_option("--retrieve", "-r", action="store_true", dest="retrieve", default=False,
+        self.__parser.add_option("--retrieve", "-R", action="store_true", dest="retrieve", default=False,
                                  help="retrieve my identity")
 
-        self.__parser.add_option("--update", "-u", action="store_true", dest="update", default=False,
+        self.__parser.add_option("--update", "-U", action="store_true", dest="update", default=False,
                                  help="update my identity")
 
-        self.__parser.add_option("--delete", "-d", type="string", action="store", dest="delete",
+        self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
                                  help="delete identity (superuser only)")
 
-        # email...
+        # filters...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
                                  help="filter list by email address (partial match)")
+
+        self.__parser.add_option("--confirmation", "-c", type="string", action="store", dest="confirmation",
+                                 help="filter list by confirmation status { %s }" % confirmations)
+
+        self.__parser.add_option("--status", "-s", type="int", action="store", dest="status",
+                                 help="filter list by enabled status { 1 | 0 }")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -72,6 +83,26 @@ class CmdCognitoIdentity(object):
         if count != 1:
             return False
 
+        count = 0
+
+        if self.find_email is not None:
+            count += 1
+
+        if self.find_confirmation is not None:
+            count += 1
+
+        if self.find_status is not None:
+            count += 1
+
+        if count > 1:
+            return False
+
+        if self.find_confirmation is not None and self.find_confirmation not in CognitoUserIdentity.STATUSES.keys():
+            return False
+
+        if self.find_status is not None and self.find_status not in (0, 1):
+            return None
+
         if self.find_email is not None and not self.find:
             return False
 
@@ -88,6 +119,16 @@ class CmdCognitoIdentity(object):
     @property
     def find_email(self):
         return self.__opts.email
+
+
+    @property
+    def find_confirmation(self):
+        return self.__opts.confirmation
+
+
+    @property
+    def find_status(self):
+        return self.__opts.status
 
 
     @property
@@ -132,7 +173,7 @@ class CmdCognitoIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoIdentity:{find:%s, find_email:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.find, self.find_email, self.retrieve, self.create, self.update, self.__opts.delete,
-                self.indent, self.verbose)
+        return "CmdCognitoIdentity:{find:%s, find_email:%s, find_confirmation:%s, find_status:%s, " \
+               "retrieve:%s, create:%s, update:%s, delete:%s, indent:%s, verbose:%s}" % \
+               (self.find, self.find_email, self.find_confirmation, self.find_status,
+                self.retrieve, self.create, self.update, self.__opts.delete, self.indent, self.verbose)

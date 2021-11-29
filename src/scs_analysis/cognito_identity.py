@@ -22,8 +22,8 @@ EXAMPLES
 ./cognito_identity.py -r
 
 DOCUMENT EXAMPLE
-{"username": "8", "creation_date": "2021-11-24T12:51:12Z", "email": "bruno.beloff@southcoastscience.com",
-"given_name": "bruno", "family_name": "beloff", "is_super": true}
+{"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
+"email": "bruno.beloff@southcoastscience.com", "given-name": "Bruno", "family-name": "Beloff", "is-super": true}
 
 SEE ALSO
 scs_analysis/cognito_credentials
@@ -119,7 +119,17 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = sorted(finder.find_by_email(cmd.find_email) if cmd.find_email else finder.find_all())
+            if cmd.find_email is not None:
+                report = sorted(finder.find_by_email(cmd.find_email))
+
+            elif cmd.find_confirmation is not None:
+                report = sorted(finder.find_by_email(CognitoUserIdentity.STATUSES[cmd.find_confirmation]))
+
+            elif cmd.find_status is not None:
+                report = sorted(finder.find_by_email(cmd.find_status))
+
+            else:
+                report = sorted(finder.find_all())
 
         if cmd.create:
             given_name = StdIO.prompt("Enter given name: ")
@@ -172,6 +182,10 @@ if __name__ == '__main__':
             authentication = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUpdateManager(requests, authentication.id_token)
             manager.update(report)
+
+            # update credentials...
+            # if credentials.email !=
+            # credentials
 
             # TODO: update stored credentials?
 
