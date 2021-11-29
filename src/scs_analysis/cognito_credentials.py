@@ -105,6 +105,7 @@ if __name__ == '__main__':
                 exit(1)
 
             authentication = manager.login(credentials)
+            logger.info(authentication)
 
             if authentication is None:
                 logger.error("invalid authentication")

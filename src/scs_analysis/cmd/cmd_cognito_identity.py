@@ -18,26 +18,26 @@ class CmdCognitoIdentity(object):
         """
         Constructor
         """
-        confirmations = ' | '.join(CognitoUserIdentity.STATUSES.keys())
+        confirmations = ' | '.join(CognitoUserIdentity.status_codes())
 
         self.__parser = optparse.OptionParser(usage="%prog  { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] "
                                                     "| -C | -R | -U  | -D EMAIL_ADDR } [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
+        self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
                                  help="list the identities visible to me")
 
-        self.__parser.add_option("--create", "-C", action="store_true", dest="create", default=False,
+        self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create an identity")
 
-        self.__parser.add_option("--retrieve", "-R", action="store_true", dest="retrieve", default=False,
+        self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
                                  help="retrieve my identity")
 
-        self.__parser.add_option("--update", "-U", action="store_true", dest="update", default=False,
+        self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
                                  help="update my identity")
 
-        self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
+        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
                                  help="delete identity (superuser only)")
 
         # filters...
@@ -97,7 +97,7 @@ class CmdCognitoIdentity(object):
         if count > 1:
             return False
 
-        if self.find_confirmation is not None and self.find_confirmation not in CognitoUserIdentity.STATUSES.keys():
+        if self.find_confirmation is not None and self.find_confirmation not in CognitoUserIdentity.status_codes():
             return False
 
         if self.find_status is not None and self.find_status not in (0, 1):
@@ -128,7 +128,7 @@ class CmdCognitoIdentity(object):
 
     @property
     def find_status(self):
-        return self.__opts.status
+        return None if self.__opts.status is None else bool(self.__opts.status)
 
 
     @property
@@ -175,5 +175,5 @@ class CmdCognitoIdentity(object):
     def __str__(self, *args, **kwargs):
         return "CmdCognitoIdentity:{find:%s, find_email:%s, find_confirmation:%s, find_status:%s, " \
                "retrieve:%s, create:%s, update:%s, delete:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.find_email, self.find_confirmation, self.find_status,
+               (self.find, self.find_email, self.find_confirmation, self.__opts.status,
                 self.retrieve, self.create, self.update, self.__opts.delete, self.indent, self.verbose)

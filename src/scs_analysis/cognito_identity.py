@@ -9,17 +9,21 @@ source repo: scs_analysis
 
 DESCRIPTION
 The cognito_identity utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
-of superusers) can only access their own identity.
+of administrators and superusers) can only access their own identity.
 
-Typically, once a --create has been successfully performed, the user should store their email address and password
-using the cognito_credentials utility. With the exception of the create function, the user's credentials must have
-previously been entered before using the cognito_credentials utility.
+If the --Create function is used and there are no credentials currently stored on the host, then these are saved. The
+credentials can be retrieved with the cognito_credentials utility. Likewise, if the --Update function is used,
+the credentials are updated to reflect any change in email address or password.
+
+If the --Create function is used, an email is sent to the new user. The verification link in the email must be
+excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_identity.py  { -f [-e EMAIL_ADDR] | -c | -r | -u  | -d EMAIL_ADDR } [-i INDENT] [-v]
+cognito_identity.py  { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U  | -D EMAIL_ADDR } \
+[-i INDENT] [-v]
 
 EXAMPLES
-./cognito_identity.py -r
+./cognito_identity.py -R
 
 DOCUMENT EXAMPLE
 {"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
@@ -29,6 +33,7 @@ SEE ALSO
 scs_analysis/cognito_credentials
 
 RESOURCES
+https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html
 https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
@@ -112,7 +117,6 @@ if __name__ == '__main__':
 
         if not cmd.create:
             finder = CognitoFinder(requests, authentication.id_token)
-            logger.info(finder)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -123,22 +127,23 @@ if __name__ == '__main__':
                 report = sorted(finder.find_by_email(cmd.find_email))
 
             elif cmd.find_confirmation is not None:
-                report = sorted(finder.find_by_email(CognitoUserIdentity.STATUSES[cmd.find_confirmation]))
+                report = sorted(finder.find_by_status(CognitoUserIdentity.status(cmd.find_confirmation)))
 
             elif cmd.find_status is not None:
-                report = sorted(finder.find_by_email(cmd.find_status))
+                report = sorted(finder.find_by_enabled(cmd.find_status))
 
             else:
                 report = sorted(finder.find_all())
 
         if cmd.create:
+            # create...
             given_name = StdIO.prompt("Enter given name: ")
             family_name = StdIO.prompt("Enter family name: ")
             email = StdIO.prompt("Enter email address: ")
             password = StdIO.prompt("Enter password: ")
 
             if not given_name or not given_name:
-                logger.error("Given name and family name are required." % email)
+                logger.error("Given name and family name are required.")
                 exit(1)
 
             if not Datum.is_email_address(email):
@@ -149,20 +154,25 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, None, None, None, email,
-                                           given_name, family_name, password)
+            identity = CognitoUserIdentity(None, None, None, None,
+                                           email, given_name, family_name, password)
 
             manager = CognitoCreateManager(requests)
             report = manager.create(identity)
 
-            # TODO: update stored credentials?
+            # store credentials...
+            if not CognitoUserCredentials.exists(Host):
+                credentials = CognitoUserCredentials(email, password)
+                credentials.save(Host, encryption_key=credentials.password)
 
         if cmd.retrieve:
             report = finder.find_self()
 
         if cmd.update:
+            # find...
             identity = finder.find_self()
 
+            # update identity...
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
             family_name = StdIO.prompt("Enter family name (%s): ", default=identity.family_name)
             email = StdIO.prompt("Enter email (%s): ", default=identity.email)
@@ -176,18 +186,24 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, identity.confirmation_status, identity.enabled, None, email,
-                                         given_name, family_name, password)
+            identity = CognitoUserIdentity(identity.username, None, None, None,
+                                           email, given_name, family_name, password)
 
             authentication = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUpdateManager(requests, authentication.id_token)
-            manager.update(report)
+            manager.update(identity)
+
+            # confirm updated...
+            report = finder.find_self()
 
             # update credentials...
-            # if credentials.email !=
-            # credentials
+            if email != credentials.email:
+                credentials.email = email
 
-            # TODO: update stored credentials?
+            if password is not None:
+                credentials.password = password
+
+            credentials.save(Host, encryption_key=credentials.password)
 
         if cmd.delete:
             manager = CognitoDeleteManager(requests, authentication.id_token)
