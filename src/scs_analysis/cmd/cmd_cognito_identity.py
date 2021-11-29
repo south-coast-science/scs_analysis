@@ -9,28 +9,31 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoManager(object):
+class CmdCognitoIdentity(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -f [-e EMAIL_ADDR] | -r | -c | -u } [-i INDENT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog  { -f [-e EMAIL_ADDR] | -c | -r | -u  | -d EMAIL_ADDR } "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
 
         # operations...
         self.__parser.add_option("--find", "-f", action="store_true", dest="find", default=False,
                                  help="list the identities visible to me")
 
+        self.__parser.add_option("--create", "-c", action="store_true", dest="create", default=False,
+                                 help="create an identity")
+
         self.__parser.add_option("--retrieve", "-r", action="store_true", dest="retrieve", default=False,
                                  help="retrieve my identity")
 
-        self.__parser.add_option("--create", "-c", action="store_true", dest="create", default=False,
-                                 help="create my identity")
-
         self.__parser.add_option("--update", "-u", action="store_true", dest="update", default=False,
                                  help="update my identity")
+
+        self.__parser.add_option("--delete", "-d", type="string", action="store", dest="delete",
+                                 help="delete identity (superuser only)")
 
         # email...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
@@ -54,19 +57,22 @@ class CmdCognitoManager(object):
         if self.find:
             count += 1
 
-        if self.retrieve:
+        if self.create:
             count += 1
 
-        if self.create:
+        if self.retrieve:
             count += 1
 
         if self.update:
             count += 1
 
+        if self.delete:
+            count += 1
+
         if count != 1:
             return False
 
-        if self.email is not None and not self.find:
+        if self.find_email is not None and not self.find:
             return False
 
         return True
@@ -80,13 +86,18 @@ class CmdCognitoManager(object):
 
 
     @property
-    def retrieve(self):
-        return self.__opts.retrieve
+    def find_email(self):
+        return self.__opts.email
 
 
     @property
     def create(self):
         return self.__opts.create
+
+
+    @property
+    def retrieve(self):
+        return self.__opts.retrieve
 
 
     @property
@@ -96,12 +107,12 @@ class CmdCognitoManager(object):
 
     @property
     def delete(self):
-        return self.__opts.delete_id is not None
+        return self.__opts.delete is not None
 
 
     @property
-    def email(self):
-        return self.__opts.email
+    def delete_email(self):
+        return self.__opts.delete
 
 
     @property
@@ -121,5 +132,7 @@ class CmdCognitoManager(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoManager:{find:%s, retrieve:%s, create:%s, update:%s, email:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.retrieve, self.create, self.update, self.email, self.indent, self.verbose)
+        return "CmdCognitoIdentity:{find:%s, find_email:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
+               "indent:%s, verbose:%s}" % \
+               (self.find, self.find_email, self.retrieve, self.create, self.update, self.__opts.delete,
+                self.indent, self.verbose)
