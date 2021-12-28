@@ -16,7 +16,7 @@ Output is in the form of zero or more JSON documents, indicating the device, top
 latest sense event.
 
 SYNOPSIS
-aws_byline.py { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-v]
+aws_byline.py { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-m] [-v]
 
 EXAMPLES
 aws_byline.py -t south-coast-science-demo -v -x /control
