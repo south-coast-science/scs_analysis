@@ -17,7 +17,7 @@ class CmdBaselineConf(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
-        self.__parser = optparse.OptionParser(usage="%prog [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] "
+        self.__parser = optparse.OptionParser(usage="%prog [-a] { -z | -l | -n FROM TO | -c NAME [-t TIMEZONE_NAME] "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-g GAS MINIMUM] [-r GAS] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
@@ -33,6 +33,9 @@ class CmdBaselineConf(object):
                                  help="list the available baseline configurations")
 
         # identity...
+        self.__parser.add_option("--duplicate", "-n", type="string", nargs=2, action="store", dest="duplicate",
+                                 help="create a new configuration based on FROM")
+
         self.__parser.add_option("--conf-name", "-c", type="string", nargs=1, action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
 
@@ -76,6 +79,9 @@ class CmdBaselineConf(object):
         if self.list:
             count += 1
 
+        if self.duplicate_from is not None:
+            count += 1
+
         if self.conf_name is not None:
             count += 1
 
@@ -98,6 +104,10 @@ class CmdBaselineConf(object):
         return True
 
 
+    def duplicate(self):
+        return self.__opts.duplicate is not None
+
+
     def set(self):
         return self.timezone is not None or self.start_hour is not None or self.end_hour is not None or \
                self.aggregation_period is not None or self.__opts.set_gas is not None or self.remove_gas is not None
@@ -118,6 +128,16 @@ class CmdBaselineConf(object):
     @property
     def list(self):
         return self.__opts.list
+
+
+    @property
+    def duplicate_from(self):
+        return self.__opts.duplicate[0] if self.__opts.duplicate else None
+
+
+    @property
+    def duplicate_to(self):
+        return self.__opts.duplicate[1] if self.__opts.duplicate else None
 
 
     @property
@@ -177,7 +197,7 @@ class CmdBaselineConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaselineConf:{aws:%s, zones:%s, list:%s, conf_name:%s, timezone:%s, start_hour:%s, end_hour:%s, " \
-               "aggregation_period:%s, set_gas:%s, remove_gas:%s, indent:%s, verbose:%s}" % \
-               (self.aws, self.zones, self.list, self.conf_name, self.timezone, self.start_hour, self.end_hour,
-                self.aggregation_period, self.__opts.set_gas, self.remove_gas, self.indent, self.verbose)
+        return "CmdBaselineConf:{aws:%s, zones:%s, list:%s, list:%s, conf_name:%s, timezone:%s, start_hour:%s, " \
+               "end_hour:%s, aggregation_period:%s, set_gas:%s, remove_gas:%s, indent:%s, verbose:%s}" % \
+               (self.aws, self.zones, self.list, self.__opts.duplicate, self.conf_name, self.timezone, self.start_hour,
+                self.end_hour, self.aggregation_period, self.__opts.set_gas, self.remove_gas, self.indent, self.verbose)
