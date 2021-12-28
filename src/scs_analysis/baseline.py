@@ -87,6 +87,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: optionally specify a closest datetime for low - in order to synchronise multiple devices
 # TODO: review Ox handling
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -234,7 +235,7 @@ if __name__ == '__main__':
         jdict = json.loads(stdout[0])
         device_conf = Configuration.construct_from_jdict(jdict.get('val'))
 
-        ox_index = device_conf.afe_id.sensor_index('Ox')
+        ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
 
         # AFECAlib...
         if ox_index is None:
