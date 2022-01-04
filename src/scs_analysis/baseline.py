@@ -235,7 +235,7 @@ if __name__ == '__main__':
         jdict = json.loads(stdout[0])
         device_conf = Configuration.construct_from_jdict(jdict.get('val'))
 
-        ox_index = device_conf.afe_id.sensor_index('Ox')
+        ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
 
         # AFECAlib...
         if ox_index is None:
@@ -313,6 +313,10 @@ if __name__ == '__main__':
                 logger.error("%s has no specified minimum - skipping" % minimum.gas)
                 continue
 
+            # NO2...
+            if minimum.path == 'val.NO2.cnc':
+                no2_correction = conf_minimums['NO2'] - minimum.value
+
             try:
                 if minimum.update_already_done(device_conf, end):
                     logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
@@ -321,10 +325,6 @@ if __name__ == '__main__':
             except ValueError as ex:
                 logger.error("sensor with serial number %s is not supported - skipping" % ex)
                 continue
-
-            # NO2...
-            if minimum.path == 'val.NO2.cnc':
-                no2_correction = conf_minimums['NO2'] - minimum.value
 
             # Ox...
             if minimum.path == 'val.Ox.cnc':
@@ -353,8 +353,8 @@ if __name__ == '__main__':
             elif minimum.index == len(data) - 1:
                 logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
 
-            logger.error("acting on: %s" % minimum)
-            logger.error("...")
+            # logger.error("acting on: %s" % minimum)
+            # logger.error("...")
 
             cmd_tokens = minimum.cmd_tokens(conf_minimums)
             logger.error(' '.join([str(token) for token in cmd_tokens]))
