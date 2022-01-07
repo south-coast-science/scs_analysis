@@ -40,7 +40,7 @@ class CmdSampleSlope(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.tally is not None and self.tally < 1:
+        if self.tally < 1:
             return False
 
         if self.path is None:
