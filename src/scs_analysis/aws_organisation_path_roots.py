@@ -136,7 +136,8 @@ if __name__ == '__main__':
                 logger.error("no organisation found for label: '%s'." % cmd.delete_org_label)
                 exit(1)
 
-            opr = manager.get_opr_by_organisation_path_root(authentication.id_token, org.org_id, cmd.delete_path_root)
+            opr = manager.get_opr_by_organisation_and_path_root(authentication.id_token, org.org_id,
+                                                                cmd.delete_path_root)
 
             if opr is None:
                 logger.error("no path root found for label: '%s' and path root: '%s'." %
