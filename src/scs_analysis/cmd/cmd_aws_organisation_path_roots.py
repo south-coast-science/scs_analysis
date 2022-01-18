@@ -1,5 +1,5 @@
 """
-Created on 10 Jan 2022
+Created on 18 Jan 2022
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,32 +9,26 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAWSOrganisationManager(object):
+class CmdAWSOrganisationPathRoots(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F | -R ORG_ID | -U ORG_ID [-n NAME] [-u URL] } "
+        self.__parser = optparse.OptionParser(usage="%prog  { -F ORG_LABEL | -C ORG_LABEL PATH_ROOT | "
+                                                    "-D ORG_LABEL PATH_ROOT } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # operations...
-        self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="find the organisations I belong to")
+        self.__parser.add_option("--Find", "-F", type="string", action="store", dest="find",
+                                 help="find the path roots for the given organisation")
 
-        self.__parser.add_option("--Retrieve", "-R", type="int", action="store", dest="retrieve",
-                                 help="retrieve the organisation with the given ID")
+        self.__parser.add_option("--Create", "-C", type="string", nargs=2, action="store", dest="create",
+                                 help="create a path root for the given organisation and path")
 
-        self.__parser.add_option("--Update", "-U", type="int", action="store", dest="update",
-                                 help="update the organisation with the given ID")
-
-        # fields...
-        self.__parser.add_option("--name", "-n", type="string", action="store", dest="name",
-                                 help="set the organisation name")
-
-        self.__parser.add_option("--url", "-u", type="string", action="store", dest="url",
-                                 help="set the organisation URL")
+        self.__parser.add_option("--Delete", "-D", type="string", nargs=2, action="store", dest="delete",
+                                 help="delete the path root with the given organisation and path")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -51,13 +45,13 @@ class CmdAWSOrganisationManager(object):
     def is_valid(self):
         count = 0
 
-        if self.find:
+        if self.find is not None:
             count += 1
 
-        if self.retrieve:
+        if self.create:
             count += 1
 
-        if self.update:
+        if self.delete:
             count += 1
 
         if count != 1:
@@ -74,23 +68,33 @@ class CmdAWSOrganisationManager(object):
 
 
     @property
-    def retrieve(self):
-        return self.__opts.retrieve
+    def create(self):
+        return self.__opts.create is not None
 
 
     @property
-    def update(self):
-        return self.__opts.update
+    def create_org_label(self):
+        return None if self.__opts.create is None else self.__opts.create[0]
 
 
     @property
-    def name(self):
-        return self.__opts.name
+    def create_path_root(self):
+        return None if self.__opts.create is None else self.__opts.create[1]
 
 
     @property
-    def url(self):
-        return self.__opts.url
+    def delete(self):
+        return self.__opts.delete is not None
+
+
+    @property
+    def delete_org_label(self):
+        return None if self.__opts.delete is None else self.__opts.delete[0]
+
+
+    @property
+    def delete_path_root(self):
+        return None if self.__opts.delete is None else self.__opts.delete[1]
 
 
     @property
@@ -110,5 +114,5 @@ class CmdAWSOrganisationManager(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSOrganisationManager:{find:%s, retrieve:%s, update:%s, name:%s, url:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.retrieve, self.update, self.name, self.url, self.indent, self.verbose)
+        return "CmdAWSOrganisationPathRoots:{find:%s, create:%s, delete:%s, indent:%s, verbose:%s}" % \
+               (self.find, self.__opts.create, self.__opts.delete, self.indent, self.verbose)
