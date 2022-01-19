@@ -75,11 +75,11 @@ if __name__ == '__main__':
             logger.error("email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+        if not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
             logger.error("path root '%s' is not valid." % cmd.path_root)
             exit(2)
 
-        if cmd.path_extension is not None and OrganisationUserPath.is_valid_path_extension(cmd.path_extension):
+        if cmd.path_extension is not None and not OrganisationUserPath.is_valid_path_extension(cmd.path_extension):
             logger.error("path extension '%s' is not valid." % cmd.path_extension)
             exit(2)
 
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
         if cmd.create:
             report = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
-            manager.assert_user(authentication.id_token, report)
+            manager.assert_oup(authentication.id_token, report)
 
         if cmd.delete:
             oup = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)

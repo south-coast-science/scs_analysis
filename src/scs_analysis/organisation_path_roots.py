@@ -11,10 +11,11 @@ DESCRIPTION
 The organisation_path_roots utility is used to
 
 SYNOPSIS
-organisation_path_roots.py  { -F ORG_LABEL | -C ORG_LABEL PATH_ROOT | -D ORG_LABEL PATH_ROOT } [-i INDENT] [-v]
+organisation_path_roots.py  { -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } \
+[-i INDENT] [-v]
 
 EXAMPLES
-organisation_path_roots.py -F NARA
+organisation_path_roots.py -F -l NARA
 
 DOCUMENT EXAMPLE
 {"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
@@ -31,7 +32,7 @@ from scs_analysis.cmd.cmd_organisation_path_roots import CmdOrganisationPathRoot
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
-from scs_core.aws.security.organisation import OrganisationPathRoot
+from scs_core.aws.security.organisation import Organisation, OrganisationPathRoot
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.json import JSONify
@@ -67,8 +68,12 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
-        if cmd.create_path_root is not None and not OrganisationPathRoot.is_valid_path_root(cmd.create_path_root):
-            logger.error("the path root '%s' is not valid." % cmd.create_path_root)
+        if not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+            logger.error("the path root '%s' is not valid." % cmd.path_root)
+            exit(2)
+
+        if cmd.org_label is not None and not Organisation.is_valid_label(cmd.org_label):
+            logger.error("the organisation label '%s' is not valid." % cmd.org_label)
             exit(2)
 
 
@@ -104,45 +109,31 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # validate...
+
+        if cmd.org_label is not None:
+            org = manager.get_organisation_by_label(authentication.id_token, cmd.org_label)
+
+            if org is None:
+                logger.error("no organisation found for label: '%s'." % cmd.org_label)
+                exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            # validate...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.find)
-
-            if org is None:
-                logger.error("no organisation found for label: '%s'." % cmd.find)
-                exit(1)
-
-            # find...
             report = manager.find_oprs_by_organisation(authentication.id_token, org.org_id)
 
         if cmd.create:
-            # validate...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.create_org_label)
-
-            if org is None:
-                logger.error("no organisation found for label: '%s'." % cmd.create_org_label)
-                exit(1)
-
-            # create...
-            org = OrganisationPathRoot(0, org.org_id, cmd.create_path_root)
+            org = OrganisationPathRoot(0, org.org_id, cmd.path_root)
             report = manager.insert_opr(authentication.id_token, org)
 
         if cmd.delete:
-            # validate...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.delete_org_label)
-
-            if org is None:
-                logger.error("no organisation found for label: '%s'." % cmd.delete_org_label)
-                exit(1)
-
-            opr = manager.get_opr_by_organisation_and_path_root(authentication.id_token, org.org_id,
-                                                                cmd.delete_path_root)
+            opr = manager.get_opr_by_path_root(authentication.id_token, cmd.path_root)
 
             if opr is None:
-                logger.error("no path root found for label: '%s' and path root: '%s'." %
-                             (cmd.delete_org_label, cmd.delete_path_root))
+                logger.error("no path root found for path: '%s'." % cmd.path_root)
                 exit(1)
 
             # delete...
