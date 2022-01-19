@@ -16,7 +16,7 @@ class CmdOrganisations(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F | -R LABEL | "
+        self.__parser = optparse.OptionParser(usage="%prog  { -F | "
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | "
                                                     "-D LABEL } "
@@ -25,9 +25,6 @@ class CmdOrganisations(object):
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
                                  help="find the organisations I belong to")
-
-        self.__parser.add_option("--Retrieve", "-R", type="string", action="store", dest="retrieve",
-                                 help="retrieve the organisation with the given LABEL")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create an organisation")
@@ -69,9 +66,6 @@ class CmdOrganisations(object):
         if self.find:
             count += 1
 
-        if self.retrieve is not None:
-            count += 1
-
         if self.create:
             count += 1
 
@@ -95,11 +89,6 @@ class CmdOrganisations(object):
     @property
     def find(self):
         return self.__opts.find
-
-
-    @property
-    def retrieve(self):
-        return self.__opts.retrieve
 
 
     @property
@@ -154,7 +143,7 @@ class CmdOrganisations(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisations:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
+        return "CmdOrganisations:{find:%s, create:%s, update:%s, delete:%s, " \
                "label:%s, long_name:%s, url:%s, owner:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.retrieve, self.create, self.update, self.delete,
+               (self.find, self.create, self.update, self.delete,
                 self.label, self.long_name, self.url, self.owner, self.indent, self.verbose)

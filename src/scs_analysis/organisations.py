@@ -11,7 +11,7 @@ DESCRIPTION
 The organisations utility is used to
 
 SYNOPSIS
-organisations.py  { -F | -R LABEL | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | \
+organisations.py  { -F | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | \
 -U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | -D LABEL } [-i INDENT] [-v]
 
 EXAMPLES
@@ -123,9 +123,6 @@ if __name__ == '__main__':
         if cmd.find:
             report = manager.find_organisations(authentication.id_token)
 
-        if cmd.retrieve:
-            report = manager.get_organisation_by_label(authentication.id_token, cmd.retrieve)
-
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner)
             report = manager.insert_organisation(authentication.id_token, org)
@@ -149,7 +146,7 @@ if __name__ == '__main__':
 
         if cmd.delete:
             # find...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.update)
+            org = manager.get_organisation_by_label(authentication.id_token, cmd.delete)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'" % cmd.delete)
