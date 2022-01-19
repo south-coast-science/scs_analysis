@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 
 """
-Created on 10 Jan 2022
+Created on 18 Jan 2022
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_user_manager utility is used to
+The organisation_user_paths utility is used to
 
 SYNOPSIS
-aws_user_manager.py  { -F ORG_ID | -C ORG_ID EMAIL -g GIVEN_NAME -f FAMILY_NAME -a { 1 | 0 } | -R ORG_ID EMAIL |
--U ORG_ID EMAIL [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL] [-a { 1 | 0 }] [-s { 1 | 0 }] } [-i INDENT] [-v]
+Usage: organisation_user_paths.py  { -F -e EMAIL -r PATH_ROOT | -C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | \
+-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } [-i INDENT] [-v]
 
 EXAMPLES
-./aws_user_manager.py -R
+organisation_user_paths.py -F -u NARA
 
 DOCUMENT EXAMPLE
-{"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
-"email": "bruno.beloff@southcoastscience.com", "given-name": "Bruno", "family-name": "Beloff", "is-super": true}
+{"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
 
 SEE ALSO
 scs_analysis/cognito_credentials
@@ -28,12 +27,14 @@ scs_analysis/cognito_credentials
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_aws_user_manager import CmdAWSUserManager
+from scs_analysis.cmd.cmd_organisation_user_paths import CmdOrganisationUserPaths
 
-from scs_core.aws.security.cognito_account_manager import CognitoUpdateManager
 from scs_core.aws.security.cognito_finder import CognitoFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user import CognitoUserCredentials
+
+from scs_core.aws.security.organisation import OrganisationPathRoot, OrganisationUserPath
+from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -41,7 +42,6 @@ from scs_core.data.json import JSONify
 from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
-from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
@@ -52,23 +52,36 @@ if __name__ == '__main__':
     logger = None
     credentials = None
     authentication = None
-    finder = None
+    cognito = None
+    org = None
     report = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdAWSUserManager()
+        cmd = CmdOrganisationUserPaths()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('aws_user_manager', verbose=cmd.verbose)
+        Logging.config('organisation_user_paths', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
+
+        if not Datum.is_email_address(cmd.email):
+            logger.error("email address '%s' is not valid." % cmd.email)
+            exit(2)
+
+        if OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+            logger.error("path root '%s' is not valid." % cmd.path_root)
+            exit(2)
+
+        if cmd.path_extension is not None and OrganisationUserPath.is_valid_path_extension(cmd.path_extension):
+            logger.error("path extension '%s' is not valid." % cmd.path_extension)
+            exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -100,53 +113,38 @@ if __name__ == '__main__':
         # resources...
 
         finder = CognitoFinder(requests, authentication.id_token)
+        manager = OrganisationManager(requests)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # validate...
+
+        cognito = finder.find_by_email(cmd.email)
+
+        if cognito is None:
+            logger.error("no Cognito user found for email: '%s'." % cmd.email)
+            exit(1)
+
+        opr = manager.get_opr_by_path_root(authentication.id_token, cmd.path_root)
+
+        if opr is None:
+            logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
+            exit(1)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = sorted(finder.find_all())
+            report = manager.find_oups(authentication.id_token, cognito.username, opr.opr_id)
 
-        if cmd.retrieve:
-            report = finder.find_self()
+        if cmd.create:
+            report = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            manager.assert_user(authentication.id_token, report)
 
-        if cmd.update:
-            # find...
-            identity = finder.find_self()
-
-            # update identity...
-            given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
-            family_name = StdIO.prompt("Enter family name (%s): ", default=identity.family_name)
-            email = StdIO.prompt("Enter email (%s): ", default=identity.email)
-            password = StdIO.prompt("Enter password (RETURN to keep existing): ", default=None)
-
-            if not Datum.is_email_address(email):
-                logger.error("The email address '%s' is not valid." % email)
-                exit(1)
-
-            if password and not CognitoUserIdentity.is_valid_password(password):
-                logger.error("The password '%s' is not valid." % password)
-                exit(1)
-
-            identity = CognitoUserIdentity(identity.username, None, None, None,
-                                           email, given_name, family_name, password)
-
-            authentication = gatekeeper.login(credentials)                          # renew credentials
-            manager = CognitoUpdateManager(requests, authentication.id_token)
-            manager.update(identity)
-
-            # confirm updated...
-            report = finder.find_self()
-
-            # update credentials...
-            if email != credentials.email:
-                credentials.email = email
-
-            if password is not None:
-                credentials.password = password
-
-            credentials.save(Host, encryption_key=credentials.password)
+        if cmd.delete:
+            oup = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            manager.delete_oup(authentication.id_token, oup)
 
 
     # ----------------------------------------------------------------------------------------------------------------

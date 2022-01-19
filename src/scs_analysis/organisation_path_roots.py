@@ -8,13 +8,13 @@ Created on 18 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_organisation_path_roots utility is used to
+The organisation_path_roots utility is used to
 
 SYNOPSIS
-aws_organisation_path_roots.py  { -F ORG_LABEL | -C ORG_LABEL PATH_ROOT | -D ORG_LABEL PATH_ROOT } [-i INDENT] [-v]
+organisation_path_roots.py  { -F ORG_LABEL | -C ORG_LABEL PATH_ROOT | -D ORG_LABEL PATH_ROOT } [-i INDENT] [-v]
 
 EXAMPLES
-aws_organisation_path_roots.py -F NARA
+organisation_path_roots.py -F NARA
 
 DOCUMENT EXAMPLE
 {"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
@@ -26,7 +26,7 @@ scs_analysis/cognito_credentials
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_aws_organisation_path_roots import CmdAWSOrganisationPathRoots
+from scs_analysis.cmd.cmd_organisation_path_roots import CmdOrganisationPathRoots
 
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
@@ -56,13 +56,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdAWSOrganisationPathRoots()
+        cmd = CmdOrganisationPathRoots()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('aws_organisation_path_roots', verbose=cmd.verbose)
+        Logging.config('organisation_path_roots', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -125,6 +125,7 @@ if __name__ == '__main__':
                 logger.error("no organisation found for label: '%s'." % cmd.create_org_label)
                 exit(1)
 
+            # create...
             org = OrganisationPathRoot(0, org.org_id, cmd.create_path_root)
             report = manager.insert_opr(authentication.id_token, org)
 
