@@ -8,14 +8,14 @@ Created on 10 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_organisations utility is used to
+The organisations utility is used to
 
 SYNOPSIS
-aws_organisations.py  { -F | -R LABEL | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | \
+organisations.py  { -F | -R LABEL | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | \
 -U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | -D LABEL } [-i INDENT] [-v]
 
 EXAMPLES
-aws_organisations.py -F
+organisations.py -F
 
 DOCUMENT EXAMPLE
 {"OrgID": 1, "Label": "SCS", "LongName": "South Coast Science", "URL": "https://www.southcoastscience.com",
@@ -28,7 +28,7 @@ scs_analysis/cognito_credentials
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_aws_organisations import CmdAWSOrganisations
+from scs_analysis.cmd.cmd_organisations import CmdOrganisations
 
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
@@ -58,13 +58,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdAWSOrganisations()
+        cmd = CmdOrganisations()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('aws_organisations', verbose=cmd.verbose)
+        Logging.config('organisations', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)

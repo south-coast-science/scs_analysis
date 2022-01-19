@@ -7,9 +7,10 @@ Created on 18 Jan 2022
 import optparse
 
 
+# TODO: use per-field flags
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAWSOrganisationPathRoots(object):
+class CmdOrganisationPathRoots(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -114,5 +115,5 @@ class CmdAWSOrganisationPathRoots(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSOrganisationPathRoots:{find:%s, create:%s, delete:%s, indent:%s, verbose:%s}" % \
+        return "CmdOrganisationPathRoots:{find:%s, create:%s, delete:%s, indent:%s, verbose:%s}" % \
                (self.find, self.__opts.create, self.__opts.delete, self.indent, self.verbose)

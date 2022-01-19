@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAWSOrganisations(object):
+class CmdOrganisations(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -40,16 +40,16 @@ class CmdAWSOrganisations(object):
 
         # fields...
         self.__parser.add_option("--label", "-l", type="string", action="store", dest="label",
-                                 help="set the organisation label")
+                                 help="the organisation label")
 
         self.__parser.add_option("--long-name", "-n", type="string", action="store", dest="long_name",
-                                 help="set the organisation long name")
+                                 help="the organisation long name")
 
         self.__parser.add_option("--url", "-u", type="string", action="store", dest="url",
-                                 help="set the organisation URL")
+                                 help="the organisation URL")
 
         self.__parser.add_option("--owner", "-o", type="string", action="store", dest="owner",
-                                 help="set the organisation owner email")
+                                 help="the organisation owner email")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -154,7 +154,7 @@ class CmdAWSOrganisations(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSOrganisations:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
+        return "CmdOrganisations:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
                "label:%s, long_name:%s, url:%s, owner:%s, indent:%s, verbose:%s}" % \
                (self.find, self.retrieve, self.create, self.update, self.delete,
                 self.label, self.long_name, self.url, self.owner, self.indent, self.verbose)
