@@ -127,7 +127,7 @@ class CmdOrganisationDevices(object):
 
 
     @property
-    def project_path_root(self):
+    def project_organisation(self):
         return None if self.__opts.project is None else self.__opts.project[0]
 
 

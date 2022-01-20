@@ -86,8 +86,9 @@ if __name__ == '__main__':
             logger.error("the device tag '%s' is not valid." % cmd.device_tag)
             exit(2)
 
-        if cmd.project_path_root is not None and not OrganisationPathRoot.is_valid_path_root(cmd.project_path_root):
-            logger.error("the path root '%s' is not valid." % cmd.project_path_root)
+        if cmd.project_organisation is not None and \
+                not OrganisationPathRoot.is_valid_path_root(cmd.project_organisation):
+            logger.error("the path root '%s' is not valid." % cmd.project_organisation)
             exit(2)
 
         if cmd.project_location is not None and not Datum.is_int(cmd.project_location):
@@ -151,24 +152,24 @@ if __name__ == '__main__':
                 report = manager.find_devices_by_tag(authentication.id_token, cmd.device_tag)
 
         if cmd.create:
-            project = Project.construct(cmd.project_path_root, cmd.project_group, cmd.project_location)
+            project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
             device_path = project.device_path + '/'
-            environment_path = project.location_path + '/'
+            location_path = project.location_path + '/'
 
             now = LocalizedDatetime.now()
 
-            report = OrganisationDevice(cmd.device_tag, org.org_id, device_path, environment_path, now, None,
+            report = OrganisationDevice(cmd.device_tag, org.org_id, device_path, location_path, now, None,
                                         cmd.deployment_label)
 
             manager.assert_device(authentication.id_token, report)
 
         if cmd.expire:
-            project = Project.construct(cmd.project_path_root, cmd.project_group, cmd.project_location)
+            project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
             device_path = project.device_path + '/'
-            environment_path = project.location_path + '/'
+            location_path = project.location_path + '/'
 
             report = manager.get_device(authentication.id_token, cmd.device_tag, org.org_id,
-                                        device_path, environment_path)
+                                        device_path, location_path)
 
             if report is None:
                 logger.error("no device found.")
@@ -178,11 +179,11 @@ if __name__ == '__main__':
             manager.assert_device(authentication.id_token, report)
 
         if cmd.delete:
-            project = Project.construct(cmd.project_path_root, cmd.project_group, cmd.project_location)
+            project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
             device_path = project.device_path + '/'
-            environment_path = project.location_path + '/'
+            location_path = project.location_path + '/'
 
-            manager.delete_device(authentication.id_token, cmd.device_tag, org.org_id, device_path, environment_path)
+            manager.delete_device(authentication.id_token, cmd.device_tag, org.org_id, device_path, location_path)
 
 
     # ----------------------------------------------------------------------------------------------------------------
