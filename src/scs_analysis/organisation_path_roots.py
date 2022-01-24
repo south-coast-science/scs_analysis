@@ -68,12 +68,12 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
-        if not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
-            logger.error("the path root '%s' is not valid." % cmd.path_root)
+        if not Organisation.is_valid_label(cmd.org_label):
+            logger.error("the organisation label '%s' is not valid." % cmd.org_label)
             exit(2)
 
-        if cmd.org_label is not None and not Organisation.is_valid_label(cmd.org_label):
-            logger.error("the organisation label '%s' is not valid." % cmd.org_label)
+        if cmd.path_root is not None and not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+            logger.error("the path root '%s' is not valid." % cmd.path_root)
             exit(2)
 
 
