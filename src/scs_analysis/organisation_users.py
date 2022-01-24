@@ -131,8 +131,6 @@ if __name__ == '__main__':
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
                 exit(1)
 
-        print("username: %s" % username)
-
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
