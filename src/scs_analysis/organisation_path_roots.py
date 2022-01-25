@@ -11,7 +11,9 @@ DESCRIPTION
 The organisation_path_roots utility is used to
 
 SYNOPSIS
-organisation_path_roots.py  { -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } \
+organisation_path_roots.py  [-c CREDENTIALS] { -F -l ORG_LABEL | \
+-C -l ORG_LABEL -r PATH_ROOT | \
+-D -l ORG_LABEL -r PATH_ROOT } \
 [-i INDENT] [-v]
 
 EXAMPLES
@@ -83,13 +85,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)

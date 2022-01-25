@@ -20,9 +20,14 @@ class CmdCognitoIdentity(object):
         """
         confirmations = ' | '.join(CognitoUserIdentity.status_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog  { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] "
-                                                    "| -C | -R | -U  | -D EMAIL_ADDR } [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
+                                                    "{ -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] "
+                                                    "| -C | -R | -U | -D EMAIL_ADDR } [-i INDENT] [-v]",
                                               version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -44,7 +49,7 @@ class CmdCognitoIdentity(object):
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
                                  help="filter list by email address (partial match)")
 
-        self.__parser.add_option("--confirmation", "-c", type="string", action="store", dest="confirmation",
+        self.__parser.add_option("--confirmation", "-o", type="string", action="store", dest="confirmation",
                                  help="filter list by confirmation status { %s }" % confirmations)
 
         self.__parser.add_option("--status", "-s", type="int", action="store", dest="status",
@@ -112,6 +117,11 @@ class CmdCognitoIdentity(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def find(self):
         return self.__opts.find
 
@@ -173,7 +183,7 @@ class CmdCognitoIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoIdentity:{find:%s, find_email:%s, find_confirmation:%s, find_status:%s, " \
-               "retrieve:%s, create:%s, update:%s, delete:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.find_email, self.find_confirmation, self.__opts.status,
+        return "CmdCognitoIdentity:{credentials_name:%s, find:%s, find_email:%s, find_confirmation:%s, " \
+               "find_status:%s, retrieve:%s, create:%s, update:%s, delete:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.find_email, self.find_confirmation, self.__opts.status,
                 self.retrieve, self.create, self.update, self.__opts.delete, self.indent, self.verbose)

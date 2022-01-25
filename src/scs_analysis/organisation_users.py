@@ -11,11 +11,11 @@ DESCRIPTION
 The organisation_users utility is used to
 
 SYNOPSIS
-organisation_users.py  { -F { -e EMAIL | -l ORG_LABEL } | \
+organisation_users.py  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | \
 -R -e EMAIL -l ORG_LABEL | \
--C -e EMAIL -l ORG_LABEL [-o { 1 | 0 }] [-d { 1 | 0 }] | \
+-C -e EMAIL -l ORG_LABEL -o { 1 | 0 } -d { 1 | 0 } | \
 -U -e EMAIL -l ORG_LABEL [-o { 1 | 0 }] [-d { 1 | 0 }] [-s { 1 | 0 }] | \
--D -e EMAIL -l ORG_LABEL }
+-D -e EMAIL -l ORG_LABEL } \
 [-i INDENT] [-v]
 
 EXAMPLES
@@ -86,13 +86,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)

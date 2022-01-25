@@ -16,13 +16,17 @@ class CmdOrganisationUsers(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F { -e EMAIL | -l ORG_LABEL } | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | "
                                                     "-R -e EMAIL -l ORG_LABEL | "
                                                     "-C -e EMAIL -l ORG_LABEL -o { 1 | 0 } -d { 1 | 0 } | "
                                                     "-U -e EMAIL -l ORG_LABEL [-o { 1 | 0 }] [-d { 1 | 0 }] "
                                                     "[-s { 1 | 0 }] | "
                                                     "-D -e EMAIL -l ORG_LABEL } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -111,6 +115,11 @@ class CmdOrganisationUsers(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def find(self):
         return self.__opts.find
 
@@ -177,7 +186,9 @@ class CmdOrganisationUsers(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisationUsers:{find:%s, create:%s, update:%s, delete:%s, email:%s, org_label:%s, " \
-               "org_admin:%s, device_admin:%s, suspended:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.create, self.update, self.delete, self.email, self.org_label,
-                self.__opts.org_admin, self.__opts.device_admin, self.__opts.suspended, self.indent, self.verbose)
+        return "CmdOrganisationUsers:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
+               "email:%s, org_label:%s, org_admin:%s, device_admin:%s, suspended:%s, " \
+               "indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.create, self.update, self.delete,
+                self.email, self.org_label, self.__opts.org_admin, self.__opts.device_admin, self.__opts.suspended,
+                self.indent, self.verbose)

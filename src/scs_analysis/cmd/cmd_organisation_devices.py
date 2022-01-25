@@ -16,12 +16,16 @@ class CmdOrganisationDevices(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F { -l ORG_LABEL | -t DEVICE_TAG } | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } | "
                                                     "-C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION"
                                                     " -d DEPLOYMENT_LABEL | "
                                                     "-E -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION | "
                                                     "-D -t DEVICE_TAG } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -30,7 +34,7 @@ class CmdOrganisationDevices(object):
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create a device")
 
-        self.__parser.add_option("--Expire", "-E", action="store_true", dest="create", default=False,
+        self.__parser.add_option("--Expire", "-E", action="store_true", dest="expire", default=False,
                                  help="set device's end datetime to the current time")
 
         self.__parser.add_option("--Delete", "-D", action="store_true", dest="delete", default=False,
@@ -95,6 +99,11 @@ class CmdOrganisationDevices(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
 
     @property
     def find(self):
@@ -163,7 +172,7 @@ class CmdOrganisationDevices(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisationDevices:{find:%s, create:%s, expire:%s, delete:%s, org_label:%s, device_tag:%s, " \
-               "project:%s, deployment_label:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.create, self.expire, self.delete, self.org_label, self.device_tag,
-                self.__opts.project, self.deployment_label, self.indent, self.verbose)
+        return "CmdOrganisationDevices:{credentials_name:%s, find:%s, create:%s, expire:%s, delete:%s, " \
+               "org_label:%s, device_tag:%s, project:%s, deployment_label:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.create, self.expire, self.delete,
+                self.org_label, self.device_tag, self.__opts.project, self.deployment_label, self.indent, self.verbose)

@@ -11,16 +11,12 @@ DESCRIPTION
 The cognito_identity utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
 of administrators and superusers) can only access their own identity.
 
-If the --Create function is used and there are no credentials currently stored on the host, then these are saved. The
-credentials can be retrieved with the cognito_credentials utility. Likewise, if the --Update function is used,
-the credentials are updated to reflect any change in email address or password.
-
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_identity.py  { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U  | -D EMAIL_ADDR } \
-[-i INDENT] [-v]
+cognito_identity.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U | \
+-D EMAIL_ADDR } [-i INDENT] [-v]
 
 EXAMPLES
 ./cognito_identity.py -R
@@ -93,13 +89,13 @@ if __name__ == '__main__':
             gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
-            if not CognitoUserCredentials.exists(Host):
+            if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
                 logger.error("Cognito credentials not available.")
                 exit(1)
 
             try:
                 password = CognitoUserCredentials.password_from_user()
-                credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+                credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
             except (KeyError, ValueError):
                 logger.error("incorrect password")
                 exit(1)
@@ -154,23 +150,17 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, None, None, None,
-                                           email, given_name, family_name, password)
+            identity = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
 
             manager = CognitoCreateManager(requests)
             report = manager.create(identity)
 
-            # store credentials...
-            if not CognitoUserCredentials.exists(Host):
-                credentials = CognitoUserCredentials(email, password)
-                credentials.save(Host, encryption_key=credentials.password)
-
         if cmd.retrieve:
-            report = finder.find_self()
+            report = finder.get_self()
 
         if cmd.update:
             # find...
-            identity = finder.find_self()
+            identity = finder.get_self()
 
             # update identity...
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
@@ -186,24 +176,11 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(identity.username, None, None, None,
-                                           email, given_name, family_name, password)
+            report = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name, password)
 
             authentication = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUpdateManager(requests, authentication.id_token)
             manager.update(identity)
-
-            # confirm updated...
-            report = finder.find_self()
-
-            # update credentials...
-            if email != credentials.email:
-                credentials.email = email
-
-            if password is not None:
-                credentials.password = password
-
-            credentials.save(Host, encryption_key=credentials.password)
 
         if cmd.delete:
             manager = CognitoDeleteManager(requests, authentication.id_token)

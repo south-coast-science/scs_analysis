@@ -16,10 +16,14 @@ class CmdOrganisationUserPaths(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F -e EMAIL -r PATH_ROOT | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -e EMAIL -r PATH_ROOT | "
                                                     "-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | "
                                                     "-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -80,6 +84,11 @@ class CmdOrganisationUserPaths(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def find(self):
         return self.__opts.find
 
@@ -126,7 +135,7 @@ class CmdOrganisationUserPaths(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisationUserPaths:{find:%s, create:%s, delete:%s, email:%s, path_root:%s, path_extension:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.find, self.create, self.delete, self.email, self.path_root, self.path_extension,
-                self.indent, self.verbose)
+        return "CmdOrganisationUserPaths:{credentials_name:%s, find:%s, create:%s, delete:%s, " \
+               "email:%s, path_root:%s, path_extension:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.create, self.delete,
+                self.email, self.path_root, self.path_extension, self.indent, self.verbose)
