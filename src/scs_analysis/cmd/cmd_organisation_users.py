@@ -46,7 +46,7 @@ class CmdOrganisationUsers(object):
 
         # fields...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
-                                 help="the user's email address'")
+                                 help="the user's email address (exact match)")
 
         self.__parser.add_option("--org-label", "-l", type="string", action="store", dest="org_label",
                                  help="the organisation label")
