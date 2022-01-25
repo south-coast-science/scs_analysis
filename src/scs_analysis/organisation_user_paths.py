@@ -11,8 +11,10 @@ DESCRIPTION
 The organisation_user_paths utility is used to
 
 SYNOPSIS
-Usage: organisation_user_paths.py  { -F -e EMAIL -r PATH_ROOT | -C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | \
--D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } [-i INDENT] [-v]
+organisation_user_paths.py  [-c CREDENTIALS] { -F -e EMAIL -r PATH_ROOT | \
+-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | \
+-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } \
+[-i INDENT] [-v]
 
 EXAMPLES
 organisation_user_paths.py -F -u NARA
@@ -90,13 +92,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)

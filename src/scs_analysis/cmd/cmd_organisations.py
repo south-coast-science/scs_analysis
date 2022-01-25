@@ -16,11 +16,15 @@ class CmdOrganisations(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F | "
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | "
                                                     "-D LABEL } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -87,6 +91,11 @@ class CmdOrganisations(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def find(self):
         return self.__opts.find
 
@@ -143,7 +152,7 @@ class CmdOrganisations(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisations:{find:%s, create:%s, update:%s, delete:%s, " \
+        return "CmdOrganisations:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
                "label:%s, long_name:%s, url:%s, owner:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.create, self.update, self.delete,
+               (self.credentials_name, self.find, self.create, self.update, self.delete,
                 self.label, self.long_name, self.url, self.owner, self.indent, self.verbose)

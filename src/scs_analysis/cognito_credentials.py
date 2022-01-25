@@ -14,7 +14,7 @@ composed of an email address and a password. The JSON identity document managed 
 The password must be specified when the credentials are created and is required when the credentials are accessed.
 
 SYNOPSIS
-cognito_credentials.py [{ -s | -t | -d }] [-v]
+cognito_credentials.py [-c CREDENTIALS] [{ -s | -t | -d }] [-v]
 
 EXAMPLES
 ./cognito_credentials.py -s
@@ -50,10 +50,10 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-def load_credentials():
+def load_credentials(credentials_name):
     try:
         password = CognitoUserCredentials.password_from_user()
-        return CognitoUserCredentials.load(Host, encryption_key=password)
+        return CognitoUserCredentials.load(Host, name=credentials_name, encryption_key=password)
 
     except (KeyError, ValueError):
         logger.error("incorrect password")
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.set:
-            credentials = CognitoUserCredentials.from_user()
+            credentials = CognitoUserCredentials.from_user(cmd.credentials_name)
 
             if not credentials.ok():
                 logger.error("the identity is not valid")
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         elif cmd.test:
             manager = CognitoLoginManager(requests)
 
-            credentials = load_credentials()
+            credentials = load_credentials(cmd.credentials_name)
 
             if credentials is None:
                 logger.error("no credentials are available")
@@ -115,7 +115,7 @@ if __name__ == '__main__':
             CognitoUserCredentials.delete(Host)
 
         else:
-            credentials = load_credentials()
+            credentials = load_credentials(cmd.credentials_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------

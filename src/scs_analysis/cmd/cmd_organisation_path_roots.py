@@ -16,10 +16,14 @@ class CmdOrganisationPathRoots(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F -l ORG_LABEL | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -l ORG_LABEL | "
                                                     "-C -l ORG_LABEL -r PATH_ROOT | "
                                                     "-D -l ORG_LABEL -r PATH_ROOT } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
@@ -77,6 +81,11 @@ class CmdOrganisationPathRoots(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def find(self):
         return self.__opts.find
 
@@ -118,7 +127,7 @@ class CmdOrganisationPathRoots(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisationPathRoots:{find:%s, create:%s, delete:%s, org_label:%s, path_root:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.find, self.__opts.create, self.__opts.delete, self.org_label, self.path_root,
-                self.indent, self.verbose)
+        return "CmdOrganisationPathRoots:{credentials_name:%s, find:%s, create:%s, delete:%s, " \
+               "org_label:%s, path_root:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.__opts.create, self.__opts.delete,
+                self.org_label, self.path_root, self.indent, self.verbose)

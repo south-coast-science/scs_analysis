@@ -11,10 +11,11 @@ DESCRIPTION
 The organisation_devices utility is used to
 
 SYNOPSIS
-organisation_devices.py  { -F { -l ORG_LABEL | -t DEVICE_TAG } | \
+organisation_devices.py [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } | \
 -C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION -d DEPLOYMENT_LABEL | \
 -E -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION | \
--D -t DEVICE_TAG } [-i INDENT] [-v]
+-D -t DEVICE_TAG } \
+[-i INDENT] [-v]
 
 EXAMPLES
 organisation_devices.py -F -l NARA
@@ -106,13 +107,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)
