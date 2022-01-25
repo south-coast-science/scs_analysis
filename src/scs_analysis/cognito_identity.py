@@ -112,7 +112,7 @@ if __name__ == '__main__':
         # resources...
 
         if not cmd.create:
-            finder = CognitoFinder(requests, authentication.id_token)
+            finder = CognitoFinder(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -120,16 +120,17 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.find_email is not None:
-                report = sorted(finder.find_by_email(cmd.find_email))
+                report = sorted(finder.find_by_email(authentication.id_token, cmd.find_email))
 
             elif cmd.find_confirmation is not None:
-                report = sorted(finder.find_by_status(CognitoUserIdentity.status(cmd.find_confirmation)))
+                report = sorted(finder.find_by_status(authentication.id_token,
+                                                      CognitoUserIdentity.status(cmd.find_confirmation)))
 
             elif cmd.find_status is not None:
-                report = sorted(finder.find_by_enabled(cmd.find_status))
+                report = sorted(finder.find_by_enabled(authentication.id_token, cmd.find_status))
 
             else:
-                report = sorted(finder.find_all())
+                report = sorted(finder.find_all(authentication.id_token))
 
         if cmd.create:
             # create...
@@ -156,11 +157,11 @@ if __name__ == '__main__':
             report = manager.create(identity)
 
         if cmd.retrieve:
-            report = finder.get_self()
+            report = finder.get_self(authentication.id_token)
 
         if cmd.update:
             # find...
-            identity = finder.get_self()
+            identity = finder.get_self(authentication.id_token)
 
             # update identity...
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)

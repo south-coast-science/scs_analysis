@@ -114,14 +114,14 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = CognitoFinder(requests, authentication.id_token)
+        finder = CognitoFinder(requests)
         manager = OrganisationManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # validate...
 
-        cognito = finder.find_by_email(cmd.email)
+        cognito = finder.get_by_email(authentication.id_token, cmd.email)
 
         if cognito is None:
             logger.error("no Cognito user found for email: '%s'." % cmd.email)
