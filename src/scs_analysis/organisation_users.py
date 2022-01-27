@@ -19,7 +19,7 @@ organisation_users.py  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | \
 [-i INDENT] [-v]
 
 EXAMPLES
-organisation_users.py -F -u NARA
+organisation_users.py -F -l NARA
 
 DOCUMENT EXAMPLE
 {"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
