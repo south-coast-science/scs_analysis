@@ -8,18 +8,18 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_identity utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
+The cognito_users utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
 of administrators and superusers) can only access their own identity.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_identity.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U | \
+cognito_users.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U | \
 -D EMAIL_ADDR } [-i INDENT] [-v]
 
 EXAMPLES
-./cognito_identity.py -R
+./cognito_users.py -R
 
 DOCUMENT EXAMPLE
 {"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
@@ -36,9 +36,10 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-pol
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_cognito_identity import CmdCognitoIdentity
+from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
-from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager
+from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager, \
+    CognitoDeleteManager
 
 from scs_core.aws.security.cognito_finder import CognitoFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -47,7 +48,7 @@ from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUs
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException, HTTPConflictException
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -69,13 +70,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdCognitoIdentity()
+        cmd = CmdCognitoUsers()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('cognito_identity', verbose=cmd.verbose)
+        Logging.config('cognito_users', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -117,8 +118,19 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.retrieve:
-            report = finder.get_self(authentication.id_token)
+        if cmd.find:
+            if cmd.find_email is not None:
+                report = sorted(finder.find_by_email(authentication.id_token, cmd.find_email))
+
+            elif cmd.find_confirmation is not None:
+                report = sorted(finder.find_by_status(authentication.id_token,
+                                                      CognitoUserIdentity.status(cmd.find_confirmation)))
+
+            elif cmd.find_status is not None:
+                report = sorted(finder.find_by_enabled(authentication.id_token, cmd.find_status))
+
+            else:
+                report = sorted(finder.find_all(authentication.id_token))
 
         if cmd.create:
             # create...
@@ -139,14 +151,13 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            report = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
+            identity = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
 
             manager = CognitoCreateManager(requests)
-            report = manager.create(report)
+            report = manager.create(identity)
 
-            # create credentials...
-            credentials = CognitoUserCredentials(cmd.credentials_name, report.email, report.password)
-            credentials.save(Host)
+        if cmd.retrieve:
+            report = finder.get_self(authentication.id_token)
 
         if cmd.update:
             # find...
@@ -170,14 +181,11 @@ if __name__ == '__main__':
 
             authentication = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUpdateManager(requests, authentication.id_token)
-            manager.update(report)
+            manager.update(identity)
 
-            # update credentials...
-            credentials.email = report.email
-            if password:
-                credentials.password = report.password
-
-            credentials.save(Host, encryption_key=credentials.password)
+        if cmd.delete:
+            manager = CognitoDeleteManager(requests, authentication.id_token)
+            manager.delete(cmd.delete_email)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -189,6 +197,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except HTTPConflictException as ex:
-        logger.error("the email address '%s' is already in use." % report.email)
+    except HTTPException as ex:
+        logger.error(ex.data)
         exit(1)

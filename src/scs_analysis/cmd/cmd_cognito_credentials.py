@@ -25,13 +25,13 @@ class CmdCognitoCredentials(object):
 
         # operations...
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
-                                 help="set the identity")
+                                 help="set the credentials")
 
         self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
-                                 help="test the identity")
+                                 help="test the credentials")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
-                                 help="delete the identity")
+                                 help="delete the credentials")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
