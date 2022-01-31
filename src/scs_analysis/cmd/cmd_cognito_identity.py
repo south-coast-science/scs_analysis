@@ -6,8 +6,6 @@ Created on 24 Nov 2021
 
 import optparse
 
-from scs_core.aws.security.cognito_user import CognitoUserIdentity
-
 
 # --------------------------------------------------------------------------------------------------------------------
 

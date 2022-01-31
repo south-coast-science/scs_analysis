@@ -104,11 +104,11 @@ if __name__ == '__main__':
                 logger.error("no credentials are available")
                 exit(1)
 
-            authentication = manager.login(credentials)
-            logger.info(authentication)
+            auth = manager.login(credentials)
+            logger.info(auth)
 
-            if authentication is None:
-                logger.error("invalid authentication")
+            if auth is None:
+                logger.error("invalid auth")
                 exit(1)
 
         elif cmd.delete:

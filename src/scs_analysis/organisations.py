@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    authentication = None
+    auth = None
     report = None
 
     try:
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         gatekeeper = CognitoLoginManager(requests)
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            authentication = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
         except HTTPException as ex:
             logger.error(ex.data)
@@ -121,15 +121,15 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_organisations(authentication.id_token)
+            report = manager.find_organisations(auth.id_token)
 
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner)
-            report = manager.insert_organisation(authentication.id_token, org)
+            report = manager.insert_organisation(auth.id_token, org)
 
         if cmd.update:
             # find...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.update)
+            org = manager.get_organisation_by_label(auth.id_token, cmd.update)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'." % cmd.update)
@@ -142,11 +142,11 @@ if __name__ == '__main__':
             owner = org.owner if cmd.owner is None else cmd.owner
 
             report = Organisation(org.org_id, label, long_name, url, owner)
-            manager.update_organisation(authentication.id_token, report)
+            manager.update_organisation(auth.id_token, report)
 
         if cmd.delete:
             # find...
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.delete)
+            org = manager.get_organisation_by_label(auth.id_token, cmd.delete)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'" % cmd.delete)
@@ -158,7 +158,7 @@ if __name__ == '__main__':
                 exit(0)
 
             # delete...
-            manager.delete_organisation(authentication.id_token, cmd.delete)
+            manager.delete_organisation(auth.id_token, cmd.delete)
 
 
     # ----------------------------------------------------------------------------------------------------------------

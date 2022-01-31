@@ -8,15 +8,13 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_identity utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
-of administrators and superusers) can only access their own identity.
+The cognito_identity utility is used to create, update and retrieve the AWS Cognito identity for the user.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_identity.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] | -C | -R | -U | \
--D EMAIL_ADDR } [-i INDENT] [-v]
+cognito_identity.py [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]
 
 EXAMPLES
 ./cognito_identity.py -R
@@ -61,7 +59,7 @@ if __name__ == '__main__':
     logger = None
     gatekeeper = None
     credentials = None
-    authentication = None
+    auth = None
     finder = None
     report = None
 
@@ -82,7 +80,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         if not cmd.create:
             gatekeeper = CognitoLoginManager(requests)
@@ -100,7 +98,7 @@ if __name__ == '__main__':
                 exit(1)
 
             try:
-                authentication = gatekeeper.login(credentials)
+                auth = gatekeeper.login(credentials)
 
             except HTTPException as ex:
                 logger.error(ex.data)
@@ -118,7 +116,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.retrieve:
-            report = finder.get_self(authentication.id_token)
+            report = finder.get_self(auth.id_token)
 
         if cmd.create:
             # create...
@@ -150,7 +148,7 @@ if __name__ == '__main__':
 
         if cmd.update:
             # find...
-            identity = finder.get_self(authentication.id_token)
+            identity = finder.get_self(auth.id_token)
 
             # update identity...
             given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
@@ -168,8 +166,8 @@ if __name__ == '__main__':
 
             report = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name, password)
 
-            authentication = gatekeeper.login(credentials)                          # renew credentials
-            manager = CognitoUpdateManager(requests, authentication.id_token)
+            auth = gatekeeper.login(credentials)                          # renew credentials
+            manager = CognitoUpdateManager(requests, auth.id_token)
             manager.update(report)
 
             # update credentials...

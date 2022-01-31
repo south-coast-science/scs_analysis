@@ -21,8 +21,13 @@ class CmdCognitoUsers(object):
         confirmations = ' | '.join(CognitoUserIdentity.status_codes())
 
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
-                                                    "{ -F [{ -e EMAIL_ADDR | -c CONFIRMATION | -s STATUS }] "
-                                                    "| -C | -R | -U | -D EMAIL_ADDR } [-i INDENT] [-v]",
+                                                    "{ -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | "
+                                                    "-s { 1 | 0 } } }] "
+                                                    "| -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR "
+                                                    "| -U EMAIL_ADDR [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL_ADDR] "
+                                                    "[-s { 1 | 0 }] "
+                                                    "| -D EMAIL_ADDR } "
+                                                    "[-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # identity...
@@ -36,23 +41,30 @@ class CmdCognitoUsers(object):
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create an identity")
 
-        self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
-                                 help="retrieve my identity")
+        self.__parser.add_option("--Update", "-U", type="string", action="store", dest="update", default=False,
+                                 help="update the identity")
 
-        self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
-                                 help="update my identity")
-
-        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
-                                 help="delete identity (superuser only)")
+        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete", default=False,
+                                 help="delete the identity (superuser only)")
 
         # filters...
-        self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
-                                 help="filter list by email address (partial match)")
+        self.__parser.add_option("--given-name", "-g", type="string", action="store", dest="given_name",
+                                 help="given name")
 
-        self.__parser.add_option("--confirmation", "-o", type="string", action="store", dest="confirmation",
+        self.__parser.add_option("--family-name", "-f", type="string", action="store", dest="family_name",
+                                 help="family name")
+
+        self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
+                                 help="email address")
+
+        self.__parser.add_option("--org-label", "-l", type="string", action="store", dest="org_label",
+                                 help="the organisation label")
+
+        self.__parser.add_option("--confirmation-status", "-o", type="string", action="store",
+                                 dest="confirmation_status",
                                  help="filter list by confirmation status { %s }" % confirmations)
 
-        self.__parser.add_option("--status", "-s", type="int", action="store", dest="status",
+        self.__parser.add_option("--enabled-status", "-s", type="int", action="store", dest="enabled",
                                  help="filter list by enabled status { 1 | 0 }")
 
         # output...
@@ -76,13 +88,10 @@ class CmdCognitoUsers(object):
         if self.create:
             count += 1
 
-        if self.retrieve:
+        if self.update is not None:
             count += 1
 
-        if self.update:
-            count += 1
-
-        if self.delete:
+        if self.delete is not None:
             count += 1
 
         if count != 1:
@@ -90,26 +99,27 @@ class CmdCognitoUsers(object):
 
         count = 0
 
-        if self.find_email is not None:
-            count += 1
+        if self.find:
+            if self.org_label is not None:
+                count += 1
 
-        if self.find_confirmation is not None:
-            count += 1
+            if self.email is not None:
+                count += 1
 
-        if self.find_status is not None:
-            count += 1
+            if self.confirmation_status is not None:
+                count += 1
 
-        if count > 1:
+            if self.enabled is not None:
+                count += 1
+
+            if count > 1:
+                return False
+
+        if self.confirmation_status is not None and self.confirmation_status not in CognitoUserIdentity.status_codes():
             return False
 
-        if self.find_confirmation is not None and self.find_confirmation not in CognitoUserIdentity.status_codes():
-            return False
-
-        if self.find_status is not None and self.find_status not in (0, 1):
+        if self.enabled is not None and self.enabled not in (0, 1):
             return None
-
-        if self.find_email is not None and not self.find:
-            return False
 
         return True
 
@@ -127,28 +137,8 @@ class CmdCognitoUsers(object):
 
 
     @property
-    def find_email(self):
-        return self.__opts.email
-
-
-    @property
-    def find_confirmation(self):
-        return self.__opts.confirmation
-
-
-    @property
-    def find_status(self):
-        return None if self.__opts.status is None else bool(self.__opts.status)
-
-
-    @property
     def create(self):
         return self.__opts.create
-
-
-    @property
-    def retrieve(self):
-        return self.__opts.retrieve
 
 
     @property
@@ -158,12 +148,37 @@ class CmdCognitoUsers(object):
 
     @property
     def delete(self):
-        return self.__opts.delete is not None
+        return self.__opts.delete
 
 
     @property
-    def delete_email(self):
-        return self.__opts.delete
+    def given_name(self):
+        return self.__opts.given_name
+
+
+    @property
+    def family_name(self):
+        return self.__opts.family_name
+
+
+    @property
+    def email(self):
+        return self.__opts.email
+
+
+    @property
+    def org_label(self):
+        return self.__opts.org_label
+
+
+    @property
+    def confirmation_status(self):
+        return self.__opts.confirmation_status
+
+
+    @property
+    def enabled(self):
+        return self.__opts.enabled
 
 
     @property
@@ -183,7 +198,9 @@ class CmdCognitoUsers(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoUsers:{credentials_name:%s, find:%s, find_email:%s, find_confirmation:%s, " \
-               "find_status:%s, retrieve:%s, create:%s, update:%s, delete:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.find, self.find_email, self.find_confirmation, self.__opts.status,
-                self.retrieve, self.create, self.update, self.__opts.delete, self.indent, self.verbose)
+        return "CmdCognitoUsers:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
+               "given_name:%s, family_name:%s, email:%s, org_label:%s, confirmation_status:%s, " \
+               "enabled:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.create, self.update, self.delete,
+                self.given_name, self.family_name, self.email, self.org_label, self.confirmation_status,
+                self.enabled, self.indent, self.verbose)

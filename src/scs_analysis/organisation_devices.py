@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    authentication = None
+    auth = None
     cognito = None
     org = None
     report = None
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         gatekeeper = CognitoLoginManager(requests)
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            authentication = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
         except HTTPException as ex:
             logger.error(ex.data)
@@ -136,7 +136,7 @@ if __name__ == '__main__':
         # validate...
 
         if cmd.org_label is not None:
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.org_label)
+            org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
@@ -148,9 +148,9 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.org_label is not None:
-                report = manager.find_devices_by_organisation(authentication.id_token, org.org_id)
+                report = manager.find_devices_by_organisation(auth.id_token, org.org_id)
             else:
-                report = manager.find_devices_by_tag(authentication.id_token, cmd.device_tag)
+                report = manager.find_devices_by_tag(auth.id_token, cmd.device_tag)
 
         if cmd.create:
             project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
@@ -162,14 +162,14 @@ if __name__ == '__main__':
             report = OrganisationDevice(cmd.device_tag, org.org_id, device_path, location_path, now, None,
                                         cmd.deployment_label)
 
-            manager.assert_device(authentication.id_token, report)
+            manager.assert_device(auth.id_token, report)
 
         if cmd.expire:
             project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
             device_path = project.device_path + '/'
             location_path = project.location_path + '/'
 
-            report = manager.get_device(authentication.id_token, cmd.device_tag, org.org_id,
+            report = manager.get_device(auth.id_token, cmd.device_tag, org.org_id,
                                         device_path, location_path)
 
             if report is None:
@@ -177,14 +177,14 @@ if __name__ == '__main__':
                 exit(1)
 
             report.end_datetime = LocalizedDatetime.now()
-            manager.assert_device(authentication.id_token, report)
+            manager.assert_device(auth.id_token, report)
 
         if cmd.delete:
             project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
             device_path = project.device_path + '/'
             location_path = project.location_path + '/'
 
-            manager.delete_device(authentication.id_token, cmd.device_tag, org.org_id, device_path, location_path)
+            manager.delete_device(auth.id_token, cmd.device_tag, org.org_id, device_path, location_path)
 
 
     # ----------------------------------------------------------------------------------------------------------------
