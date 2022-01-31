@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 """
-Created on 24 Nov 2021
+Created on 24 Jan 2022
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_users utility is used to create, update and retrieve AWS Cognito identities. Users (with the exception
-of administrators and superusers) can only access their own identity.
+The cognito_users utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
+by organisation administrators and superusers.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 excercised in order for the account to gain a CONFIRMED status.
