@@ -41,10 +41,10 @@ class CmdCognitoUsers(object):
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create an identity")
 
-        self.__parser.add_option("--Update", "-U", type="string", action="store", dest="update", default=False,
+        self.__parser.add_option("--Update", "-U", type="string", action="store", dest="update",
                                  help="update the identity")
 
-        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete", default=False,
+        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
                                  help="delete the identity (superuser only)")
 
         # filters...
