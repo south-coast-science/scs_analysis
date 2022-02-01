@@ -126,7 +126,7 @@ class CmdOrganisationUsers(object):
 
     @property
     def retrieve(self):
-        return self.__opts.create
+        return self.__opts.retrieve
 
 
     @property

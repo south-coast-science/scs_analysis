@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    authentication = None
+    auth = None
     cognito = None
     org = None
     report = None
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         gatekeeper = CognitoLoginManager(requests)
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            authentication = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
         except HTTPException as ex:
             logger.error(ex.data)
@@ -121,13 +121,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # validate...
 
-        cognito = finder.get_by_email(authentication.id_token, cmd.email)
+        cognito = finder.get_by_email(auth.id_token, cmd.email)
 
         if cognito is None:
             logger.error("no Cognito user found for email: '%s'." % cmd.email)
             exit(1)
 
-        opr = manager.get_opr_by_path_root(authentication.id_token, cmd.path_root)
+        opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
 
         if opr is None:
             logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
@@ -138,15 +138,15 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_oups(authentication.id_token, cognito.username, opr.opr_id)
+            report = manager.find_oups(auth.id_token, cognito.username, opr.opr_id)
 
         if cmd.create:
             report = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
-            manager.assert_oup(authentication.id_token, report)
+            manager.assert_oup(auth.id_token, report)
 
         if cmd.delete:
             oup = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
-            manager.delete_oup(authentication.id_token, oup)
+            manager.delete_oup(auth.id_token, oup)
 
 
     # ----------------------------------------------------------------------------------------------------------------

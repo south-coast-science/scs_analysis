@@ -19,7 +19,7 @@ organisation_users.py  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | \
 [-i INDENT] [-v]
 
 EXAMPLES
-organisation_users.py -F -u NARA
+organisation_users.py -F -l NARA
 
 DOCUMENT EXAMPLE
 {"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    authentication = None
+    auth = None
     cognito = None
     org = None
     report = None
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         gatekeeper = CognitoLoginManager(requests)
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            authentication = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
         except HTTPException as ex:
             logger.error(ex.data)
@@ -116,14 +116,14 @@ if __name__ == '__main__':
         # validate...
 
         if cmd.email:
-            cognito = finder.get_by_email(authentication.id_token, cmd.email)
+            cognito = finder.get_by_email(auth.id_token, cmd.email)
 
             if cognito is None:
                 logger.error("no Cognito user found for email: '%s'." % cmd.email)
                 exit(1)
 
         if cmd.org_label:
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.org_label)
+            org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
@@ -134,12 +134,12 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.email:
-                report = manager.find_users_by_username(authentication.id_token, cognito.username)
+                report = manager.find_users_by_username(auth.id_token, cognito.username)
             else:
-                report = manager.find_users_by_organisation(authentication.id_token, org.org_id)
+                report = manager.find_users_by_organisation(auth.id_token, org.org_id)
 
         if cmd.retrieve:
-            report = manager.get_user(authentication.id_token, cognito.username, org.org_id)
+            report = manager.get_user(auth.id_token, cognito.username, org.org_id)
 
         if cmd.create:
             is_org_admin = cmd.org_admin == 1
@@ -147,10 +147,10 @@ if __name__ == '__main__':
             is_suspended = False
 
             report = OrganisationUser(cognito.username, org.org_id, is_org_admin, is_device_admin, is_suspended)
-            manager.assert_user(authentication.id_token, report)
+            manager.assert_user(auth.id_token, report)
 
         if cmd.update:
-            user = manager.get_user(authentication.id_token, cognito.username, org.org_id)
+            user = manager.get_user(auth.id_token, cognito.username, org.org_id)
 
             if user is None:
                 logger.error("no organisation user found for email: '%s' and label '%s'." % (cmd.email, cmd.org_label))
@@ -161,10 +161,10 @@ if __name__ == '__main__':
             is_suspended = user.is_suspended if cmd.suspended is None else bool(cmd.suspended)
 
             report = OrganisationUser(cognito.username, org.org_id, is_org_admin, is_device_admin, is_suspended)
-            manager.assert_user(authentication.id_token, report)
+            manager.assert_user(auth.id_token, report)
 
         if cmd.delete:
-            manager.delete_user(authentication.id_token, cognito.username, org.org_id)
+            manager.delete_user(auth.id_token, cognito.username, org.org_id)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    authentication = None
+    auth = None
     org = None
     report = None
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # authentication...
+        # auth...
 
         gatekeeper = CognitoLoginManager(requests)
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
             exit(1)
 
         try:
-            authentication = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
         except HTTPException as ex:
             logger.error(ex.data)
@@ -114,7 +114,7 @@ if __name__ == '__main__':
         # validate...
 
         if cmd.org_label is not None:
-            org = manager.get_organisation_by_label(authentication.id_token, cmd.org_label)
+            org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
 
             if org is None:
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
@@ -125,21 +125,21 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_oprs_by_organisation(authentication.id_token, org.org_id)
+            report = manager.find_oprs_by_organisation(auth.id_token, org.org_id)
 
         if cmd.create:
             org = OrganisationPathRoot(0, org.org_id, cmd.path_root)
-            report = manager.insert_opr(authentication.id_token, org)
+            report = manager.insert_opr(auth.id_token, org)
 
         if cmd.delete:
-            opr = manager.get_opr_by_path_root(authentication.id_token, cmd.path_root)
+            opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
 
             if opr is None:
                 logger.error("no path root found for path: '%s'." % cmd.path_root)
                 exit(1)
 
             # delete...
-            manager.delete_opr(authentication.id_token, cmd.delete)
+            manager.delete_opr(auth.id_token, cmd.delete)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -23,6 +23,13 @@ the ',' character, and the output is terminated by a ']' character.
 Alternatively, if the node is an array or other iterable type, then it may be output as a sequence (a list of items
 separated by newline characters) according to the -s flag.
 
+The ordering of output nodes is as follows:
+* Exclude mode - by input nodes
+* Default mode - by nodes specified on the command line
+
+WARNING: node ordering is overridden by the internal node structure. Thus the specified ordering: a.b.c, x.b.c, a.b.d
+would be rendered as: a.b.c, a.b.d, x.b.c
+
 SYNOPSIS
 node.py [{ [-x] [-a] | -s }] [-f FILE] [-i INDENT] [-v] [SUB_PATH_1 .. SUB_PATH_N]
 
