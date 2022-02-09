@@ -1,5 +1,5 @@
 """
-Created on 24 Nov 2021
+Created on 18 Jan 2022
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,29 +9,38 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoIdentity(object):
+class CmdOrganisationPathRoots(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -l ORG_LABEL | "
+                                                    "-C -l ORG_LABEL -r PATH_ROOT | "
+                                                    "-D -l ORG_LABEL -r PATH_ROOT } "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
         # operations...
+        self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
+                                 help="find the path roots for the given organisation")
+
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create my identity")
+                                 help="create a path root for the given organisation and path")
 
-        self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
-                                 help="retrieve my identity")
+        self.__parser.add_option("--Delete", "-D", action="store", dest="delete", default=False,
+                                 help="delete the path root with the given organisation and path")
 
-        self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
-                                 help="update my identity")
+        # fields...
+        self.__parser.add_option("--org-label", "-l", type="string", action="store", dest="org_label",
+                                 help="the organisation label")
+
+        self.__parser.add_option("--path-root", "-r", type="string", action="store", dest="path_root",
+                                 help="the organisation path root")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -48,16 +57,22 @@ class CmdCognitoIdentity(object):
     def is_valid(self):
         count = 0
 
+        if self.find:
+            count += 1
+
         if self.create:
             count += 1
 
-        if self.retrieve:
-            count += 1
-
-        if self.update:
+        if self.delete:
             count += 1
 
         if count != 1:
+            return False
+
+        if self.org_label is None:
+            return False
+
+        if (self.create or self.delete) and self.path_root is None:
             return False
 
         return True
@@ -71,18 +86,28 @@ class CmdCognitoIdentity(object):
 
 
     @property
+    def find(self):
+        return self.__opts.find
+
+
+    @property
     def create(self):
         return self.__opts.create
 
 
     @property
-    def retrieve(self):
-        return self.__opts.retrieve
+    def delete(self):
+        return self.__opts.delete
 
 
     @property
-    def update(self):
-        return self.__opts.update
+    def org_label(self):
+        return self.__opts.org_label
+
+
+    @property
+    def path_root(self):
+        return self.__opts.path_root
 
 
     @property
@@ -102,5 +127,7 @@ class CmdCognitoIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoIdentity:{credentials_name:%s, retrieve:%s, create:%s, update:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.retrieve, self.create, self.update, self.indent, self.verbose)
+        return "CmdOrganisationPathRoots:{credentials_name:%s, find:%s, create:%s, delete:%s, " \
+               "org_label:%s, path_root:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.__opts.create, self.__opts.delete,
+                self.org_label, self.path_root, self.indent, self.verbose)
