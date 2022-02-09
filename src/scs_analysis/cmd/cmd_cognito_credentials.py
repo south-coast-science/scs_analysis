@@ -16,19 +16,24 @@ class CmdCognitoCredentials(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -t | -d }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [{ -s | -t | -d }] [-v]",
+                                              version="%prog 1.0")
 
-        # commands..
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
+
+        # operations...
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
-                                 help="set the identity")
+                                 help="set the credentials")
 
         self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
-                                 help="test the identity")
+                                 help="test the credentials")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
-                                 help="delete the identity")
+                                 help="delete the credentials")
 
-        # reporting flag..
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -58,6 +63,11 @@ class CmdCognitoCredentials(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def set(self):
         return self.__opts.set
 
@@ -84,5 +94,5 @@ class CmdCognitoCredentials(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoCredentials:{set:%s, test:%s, delete:%s, verbose:%s}" % \
-               (self.set, self.test, self.delete, self.verbose)
+        return "CmdCognitoCredentials:{credentials_name:%s, set:%s, test:%s, delete:%s, verbose:%s}" % \
+               (self.credentials_name, self.set, self.test, self.delete, self.verbose)
