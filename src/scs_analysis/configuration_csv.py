@@ -79,7 +79,7 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-COMMON_NODES = ['tag', 'rec.report', 'rec.update', 'ver']
+COMMON_NODES = ['tag', 'rec', 'rec.report', 'rec.update', 'ver']    # either rec or rec... depending on document type
 
 
 # --------------------------------------------------------------------------------------------------------------------
