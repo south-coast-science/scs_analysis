@@ -16,15 +16,15 @@ field is present but cannot be interpreted as a float, that document is ignored.
 
 The output is a single JSON document. Report fields are:
 
-* document count
-* minimum
-* mean
-* median
-* maximum
-* variance
-* first standard deviation
-* second standard deviation
-* third standard deviation
+* Document count
+* Minimum
+* Mean
+* Median
+* Maximum
+* Variance
+* First standard deviation
+* Second standard deviation
+* Third standard deviation
 
 A minimum of two input documents are required.
 
