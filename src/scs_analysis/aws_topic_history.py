@@ -12,6 +12,10 @@ The aws_topic_history utility is used to retrieve stored data from the South Coa
 retrieval system. Data can be retrieved by start or start + end localised datetimes, or by a days / hours / minutes
 timedelta back in time from now.
 
+Where start and end datetimes are used, messages are retrieved such that:
+
+start datetime <= message rec datetime < end datetime
+
 A latest mode returns the most recent document, or none if the topic has never received a publication. A --latest-at
 mode returns the most recent document, or none, prior to, or at the given datetime.
 

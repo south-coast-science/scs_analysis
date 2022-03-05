@@ -11,6 +11,10 @@ DESCRIPTION
 The histo_chart utility is used to create Matplotlib histogram charts and comma-separated value (CSV) histogram files.
 The utility analyses a given path to a leaf node of the input JSON data stream.
 
+For the domain MIN and MAX flag, a value is included if:
+
+MIN <= value < MAX
+
 An optional "batch" ("-b") flag can be set, causing the plotting only to take place when all data points have been
 received.
 
@@ -67,6 +71,10 @@ if __name__ == '__main__':
 
     Logging.config('histo_chart', verbose=cmd.verbose)
     logger = Logging.getLogger()
+
+    if cmd.bin_count < 1:
+        logger.error("bin count must be greater than 0.")
+        exit(2)
 
     logger.info(cmd)
 
