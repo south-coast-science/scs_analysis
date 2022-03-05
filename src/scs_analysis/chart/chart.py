@@ -60,7 +60,7 @@ class Chart(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def title(self, content):
-        return content if self.__title is None else ': '.join((self.__title, content))
+        return content if self.__title is None else ' '.join((self.__title, content))
 
 
     @property
