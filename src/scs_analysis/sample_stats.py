@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
         # validation...
         if len(values) < 2:
-            logger.error("at least two input documents are required.")
+            logger.error("at least two valid input documents are required.")
             exit(1)
 
         # stats...
@@ -117,9 +117,11 @@ if __name__ == '__main__':
         logger.info(stats)
 
         # output...
+        stats_dict = PathDict(stats.as_json())
         report = PathDict()
-        for key, value in stats.as_json().items():
-            report.append('.'.join((cmd.path, key)), value)
+
+        for stats_path in stats_dict.paths():
+            report.append('.'.join((cmd.path, stats_path)), stats_dict.node(stats_path))
 
         print(JSONify.dumps(report))
 
