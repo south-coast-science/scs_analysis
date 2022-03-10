@@ -19,7 +19,7 @@ change in the configuration for each device, save the history files in the named
 
 * --full-histories - download the history of all configuration changes for all devices.
 
-Nodes are:
+Nodes are any of:
 
 hostname, packs, afe-baseline, afe-id, aws-api-auth, aws-client-auth, aws-group-config, aws-project, csv-logger-conf,
 display-conf, gas-baseline, gas-model-conf, gps-conf, interface-conf, greengrass-identity, mpl115a2-calib, mqtt-conf,
@@ -38,10 +38,12 @@ For diff-histories and full-histories modes, a single rec value is included, equ
 Output CSV cell values are always wrapped in quotes ('"').
 
 SYNOPSIS
-configuration_csv.py { -n | -s | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } [-v] [NODE_1..NODE_N]
+configuration_csv.py { -n | -s | -l LATEST_CSV | { -d | -f } [-t DEVICE_TAG] [-o OUTPUT_CSV_DIR] } [-v] [NODE_1..NODE_N]
 
 EXAMPLES
-configuration_csv.py -vl configs.csv
+configuration_csv.py -vs configs.csv
+configuration_csv.py -vdo afe_ids afe-id
+configuration_csv.py -vft scs-bgx-431
 
 SEE ALSO
 scs_analysis/configuration_monitor
@@ -176,15 +178,22 @@ if __name__ == '__main__':
             logger.info(cmd.latest)
             generate_csv(configs, cmd.nodes, cmd.latest)
 
-        if cmd.histories:
-            Filesystem.mkdir(cmd.histories)
+        if cmd.diff_histories or cmd.full_histories:
+            if cmd.output_csv_dir is not None:
+                Filesystem.mkdir(cmd.output_csv_dir)
+
             tag_response = configuration_finder.find(None, False, ConfigurationRequest.MODE.TAGS_ONLY)
 
             for tag in sorted(tag_response.items):
+                if cmd.device_tag is not None and tag != cmd.device_tag:
+                    continue
+
                 response = configuration_finder.find(tag, True, cmd.request_mode())
                 configs = sorted(response.items)
 
-                path = os.path.join(cmd.histories, tag + '-configs.csv')
+                filename = tag + '-configs.csv'
+                path = filename if cmd.output_csv_dir is None else os.path.join(cmd.output_csv_dir, filename)
+
                 logger.info("-")
                 logger.info(path)
 
