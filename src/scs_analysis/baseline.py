@@ -318,7 +318,7 @@ if __name__ == '__main__':
                 no2_correction = conf_minimums['NO2'] - minimum.value
 
             try:
-                if minimum.update_already_done(device_conf, end):
+                if 'vCal' not in minimum.path and minimum.update_already_done(device_conf, end):
                     logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
                     continue
 
