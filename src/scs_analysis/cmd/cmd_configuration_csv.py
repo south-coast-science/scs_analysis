@@ -18,7 +18,8 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l LATEST_CSV | { -d | -f } HISTORIES_CSV_DIR } "
+        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l LATEST_CSV | "
+                                                    "{ -d | -f } [-t DEVICE_TAG] [-o OUTPUT_CSV_DIR] } "
                                                     "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
 
         # help...
@@ -32,13 +33,21 @@ class CmdConfigurationCSV(object):
         self.__parser.add_option("--latest", "-l", type="string", action="store", dest="latest",
                                  help="retrieve latest configurations to single CSV")
 
-        self.__parser.add_option("--diff-histories", "-d", type="string", action="store", dest="diff_histories",
+        self.__parser.add_option("--diff-histories", "-d", action="store_true", dest="diff_histories", default=False,
                                  help="retrieve configuration history differences")
 
-        self.__parser.add_option("--full-histories", "-f", type="string", action="store", dest="full_histories",
+        self.__parser.add_option("--full-histories", "-f", action="store_true", dest="full_histories", default=False,
                                  help="retrieve full configuration histories")
 
+        # filter...
+        self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
+                                 help="the device for the history report")
+
         # output...
+        self.__parser.add_option("--output-csv-dir", "-o", type="string", action="store", dest="output_csv_dir",
+                                 help="the directory in which to write histories")
+
+        # narrative...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -84,17 +93,6 @@ class CmdConfigurationCSV(object):
         return None
 
 
-    @property
-    def histories(self):
-        if self.diff_histories:
-            return self.diff_histories
-
-        if self.full_histories:
-            return self.full_histories
-
-        return None
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -123,6 +121,16 @@ class CmdConfigurationCSV(object):
 
 
     @property
+    def device_tag(self):
+        return self.__opts.device_tag
+
+
+    @property
+    def output_csv_dir(self):
+        return self.__opts.output_csv_dir
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -140,6 +148,6 @@ class CmdConfigurationCSV(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdConfigurationCSV:{node_names:%s, separate:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
-               "verbose:%s, nodes:%s}" %  \
+               "device_tag:%s, output_csv_dir:%s, verbose:%s, nodes:%s}" %  \
                (self.node_names, self.separate, self.latest, self.diff_histories, self.full_histories,
-                self.verbose, self.nodes)
+                self.device_tag, self.output_csv_dir, self.verbose, self.nodes)
