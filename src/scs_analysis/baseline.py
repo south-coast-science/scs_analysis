@@ -71,6 +71,7 @@ from scs_core.aws.manager.s3_manager import S3PersistenceManager
 from scs_core.control.control_handler import ControlHandler
 
 from scs_core.data.datetime import LocalizedDatetime
+# from scs_core.data.path_dict import PathDict
 
 from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
@@ -353,7 +354,8 @@ if __name__ == '__main__':
             elif minimum.index == len(data) - 1:
                 logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
 
-            # logger.error("acting on: %s" % minimum)
+            # logger.error("acting on path: %s" % minimum.path)
+            # logger.error("acting on data: %s" % PathDict(minimum.sample).node(minimum.path))
             # logger.error("...")
 
             cmd_tokens = minimum.cmd_tokens(conf_minimums)
