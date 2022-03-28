@@ -64,6 +64,7 @@ class CmdBaseline(object):
         self.__parser.add_option("--minimum", "-m", type="string", nargs=2, action="store", dest="minimum",
                                  help="override configuration's minimum for GAS")
 
+        # exclusions...
         self.__parser.add_option("--only-gas", "-o", type="string", nargs=1, action="store", dest="only_gas",
                                  help="baseline only GAS")
 

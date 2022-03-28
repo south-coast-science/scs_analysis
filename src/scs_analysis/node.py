@@ -179,5 +179,4 @@ if __name__ == '__main__':
             print(']')
             output_count = 1
 
-        if cmd.verbose:
-            logger.info("documents: %d output: %d" % (document_count, output_count))
+        logger.info("documents: %d output: %d" % (document_count, output_count))

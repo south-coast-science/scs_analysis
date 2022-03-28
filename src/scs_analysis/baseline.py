@@ -71,6 +71,7 @@ from scs_core.aws.manager.s3_manager import S3PersistenceManager
 from scs_core.control.control_handler import ControlHandler
 
 from scs_core.data.datetime import LocalizedDatetime
+from scs_core.data.json import JSONify
 
 from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
@@ -87,7 +88,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: optionally specify a closest datetime for low - in order to synchronise multiple devices
+# TODO: what happens if the device does not have the vcal_baseline.py -vm option (in Minimum)?
 # TODO: review Ox handling
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -273,7 +274,7 @@ if __name__ == '__main__':
         start = baseline_conf.start_datetime(now)
         end = baseline_conf.end_datetime(now)
 
-        logger.error("start: %s end: %s" % (start, end))
+        logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
 
         if start == end:
             logger.error("the start and end hours may not be the same.")
@@ -300,17 +301,20 @@ if __name__ == '__main__':
         no2_correction = None
 
         for minimum in Minimum.find_minimums(data, cmd.fields):
-            if cmd.excludes_gas(minimum.gas):
+            gas = minimum.gas
+
+            if cmd.excludes_gas(gas):       # not "only this gas"
                 continue
 
             logger.error("-")
+            logger.error("%s..." % minimum.path)
 
-            if minimum.gas == cmd.exclude_gas:
-                logger.error("%s is excluded - skipping" % minimum.gas)
+            if gas == cmd.exclude_gas:      # is excluded gas
+                logger.error("%s is excluded - skipping" % gas)
                 continue
 
-            if minimum.gas not in conf_minimums:
-                logger.error("%s has no specified minimum - skipping" % minimum.gas)
+            if gas not in conf_minimums:
+                logger.error("%s has no specified minimum - skipping" % gas)
                 continue
 
             # NO2...
@@ -318,7 +322,7 @@ if __name__ == '__main__':
                 no2_correction = conf_minimums['NO2'] - minimum.value
 
             try:
-                if minimum.update_already_done(device_conf, end):
+                if 'vCal' not in minimum.path and minimum.update_already_done(device_conf, end):
                     logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
                     continue
 
@@ -327,6 +331,7 @@ if __name__ == '__main__':
                 continue
 
             # Ox...
+            # TODO: correction needs to happen on the big data set - before minimums are found?
             if minimum.path == 'val.Ox.cnc':
                 if no2_correction is None:
                     logger.error('NO2 minimum required for Ox, but none available - skipping')
@@ -342,8 +347,11 @@ if __name__ == '__main__':
                 corrected = ox_sensor.datum(temp, ox_sample.we_v, ox_sample.ae_v, no2_cnc=no2_cnc)
                 minimum.value = corrected.cnc
 
+            # report...
+            logger.error(JSONify.dumps(minimum.summary(gas)))
+
             # minimums...
-            if minimum.value == conf_minimums[minimum.gas]:
+            if minimum.value == conf_minimums[gas]:
                 logger.error("%s matches the specified minimum - skipping" % minimum.path)
                 continue
 
@@ -353,9 +361,7 @@ if __name__ == '__main__':
             elif minimum.index == len(data) - 1:
                 logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
 
-            # logger.error("acting on: %s" % minimum)
-            # logger.error("...")
-
+            # command...
             cmd_tokens = minimum.cmd_tokens(conf_minimums)
             logger.error(' '.join([str(token) for token in cmd_tokens]))
 
