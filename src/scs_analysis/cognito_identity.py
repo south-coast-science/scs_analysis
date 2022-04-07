@@ -36,9 +36,9 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_identity import CmdCognitoIdentity
 
-from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
-from scs_core.aws.security.cognito_finder import CognitoFinder
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         # resources...
 
         if not cmd.create:
-            finder = CognitoFinder(requests)
+            finder = CognitoUserFinder(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
             report = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
 
-            manager = CognitoCreateManager(requests)
+            manager = CognitoUserCreator(requests)
             report = manager.create(report)
 
             # create credentials...
@@ -167,7 +167,7 @@ if __name__ == '__main__':
             report = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name, password)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
-            manager = CognitoUpdateManager(requests, auth.id_token)
+            manager = CognitoUserEditor(requests, auth.id_token)
             manager.update(report)
 
             # update credentials...

@@ -33,7 +33,7 @@ import sys
 
 from scs_analysis.cmd.cmd_organisation_users import CmdOrganisationUsers
 
-from scs_core.aws.security.cognito_finder import CognitoFinder
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = CognitoFinder(requests)
+        finder = CognitoUserFinder(requests)
         manager = OrganisationManager(requests)
 
 
