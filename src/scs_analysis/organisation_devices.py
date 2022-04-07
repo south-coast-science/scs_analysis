@@ -53,6 +53,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: organisation_devices: {'message': 'Missing Authentication Token'}
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

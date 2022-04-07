@@ -38,10 +38,9 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
-from scs_core.aws.security.cognito_account_manager import CognitoCreateManager, CognitoUpdateManager, \
-    CognitoDeleteManager
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
 
-from scs_core.aws.security.cognito_finder import CognitoFinder
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
@@ -115,7 +114,7 @@ if __name__ == '__main__':
         # resources...
 
         if not cmd.create:
-            finder = CognitoFinder(requests)
+            finder = CognitoUserFinder(requests)
 
         if cmd.org_label:
             manager = OrganisationManager(requests)
@@ -162,7 +161,7 @@ if __name__ == '__main__':
             identity = CognitoUserIdentity(None, None, None, None,
                                            cmd.email, cmd.given_name, cmd.family_name, None)
 
-            manager = CognitoCreateManager(requests)
+            manager = CognitoUserCreator(requests)
             report = manager.create(identity)
 
         if cmd.update:
@@ -191,12 +190,12 @@ if __name__ == '__main__':
                                          enabled, email, given_name, family_name, None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
-            manager = CognitoUpdateManager(requests, auth.id_token)
+            manager = CognitoUserEditor(requests, auth.id_token)
             manager.update(identity)
 
         if cmd.delete:
             # TODO: delete user from organisations
-            manager = CognitoDeleteManager(requests, auth.id_token)
+            manager = CognitoUserDeleter(requests, auth.id_token)
             manager.delete(cmd.delete)
 
 
