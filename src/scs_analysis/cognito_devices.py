@@ -61,8 +61,6 @@ if __name__ == '__main__':
     credentials = None
     auth = None
     finder = None
-    manager = None
-    org = None
     report = None
 
     try:
@@ -124,6 +122,10 @@ if __name__ == '__main__':
                 report = sorted(finder.find_all(auth.id_token))
 
         if cmd.create:
+            if not CognitoDeviceIdentity.is_valid_password(cmd.create[1]):
+                logger.error("password must be at least 16 characters.")
+                exit(2)
+
             # create...
             identity = CognitoDeviceIdentity(cmd.create[0], None, cmd.create[1])
 
@@ -131,6 +133,10 @@ if __name__ == '__main__':
             report = manager.create(identity)
 
         if cmd.update:
+            if not CognitoDeviceIdentity.is_valid_password(cmd.update[1]):
+                logger.error("password must be at least 16 characters.")
+                exit(2)
+
             # find...
             device = finder.find_by_tag(auth.id_token, cmd.update[0])
 
@@ -139,7 +145,6 @@ if __name__ == '__main__':
                 exit(1)
 
             # update...
-
             report = CognitoDeviceIdentity(cmd.update[0], device.creation_date, cmd.update[1])
 
             auth = gatekeeper.login(credentials)                          # renew credentials
@@ -147,7 +152,7 @@ if __name__ == '__main__':
             manager.update(report)
 
         if cmd.delete:
-            # TODO: delete user from organisations
+            # TODO: delete device from organisations
             manager = CognitoDeviceDeleter(requests, auth.id_token)
             manager.delete(cmd.delete)
 
@@ -162,5 +167,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPConflictException as ex:
-        logger.error("the email address '%s' is already in use." % report.email)
+        logger.error("the tag '%s' is already in use." % report.tag)
         exit(1)
