@@ -127,7 +127,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
-            identity = CognitoDeviceIdentity(cmd.create[0], None, cmd.create[1])
+            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None)
 
             manager = CognitoDeviceCreator(requests, auth.id_token)
             report = manager.create(identity)
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], device.creation_date, cmd.update[1])
+            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], device.creation_date)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoDeviceEditor(requests, auth.id_token)

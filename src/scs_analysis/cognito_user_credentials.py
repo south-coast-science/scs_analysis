@@ -8,16 +8,16 @@ Created on 22 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_credentials utility is used to manage the AWS Cognito credentials for the user. The credentials are
+The cognito_user_credentials utility is used to manage the AWS Cognito credentials for the user. The credentials are
 composed of an email address and a password. The JSON identity document managed by this utility is encrypted.
 
 The password must be specified when the credentials are created and is required when the credentials are accessed.
 
 SYNOPSIS
-cognito_credentials.py [-c CREDENTIALS] [{ -s | -t | -d }] [-v]
+cognito_user_credentials.py [-c CREDENTIALS] [{ -s | -t | -d }] [-v]
 
 EXAMPLES
-./cognito_credentials.py -s
+./cognito_user_credentials.py -s
 
 FILES
 ~/SCS/aws/cognito_user_credentials.json
@@ -35,7 +35,7 @@ https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_cognito_credentials import CmdCognitoCredentials
+from scs_analysis.cmd.cmd_cognito_user_credentials import CmdCognitoUserCredentials
 
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
@@ -71,13 +71,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdCognitoCredentials()
+        cmd = CmdCognitoUserCredentials()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('cognito_credentials', verbose=cmd.verbose)
+        Logging.config('cognito_user_credentials', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
