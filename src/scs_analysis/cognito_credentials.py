@@ -37,7 +37,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_credentials import CmdCognitoCredentials
 
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.data.json import JSONify
@@ -96,13 +96,15 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.password)
 
         elif cmd.test:
-            manager = CognitoLoginManager(requests)
+            manager = CognitoUserLoginManager(requests)
 
             credentials = load_credentials(cmd.credentials_name)
 
             if credentials is None:
                 logger.error("no credentials are available")
                 exit(1)
+
+            logger.info(credentials)
 
             auth = manager.login(credentials)
             logger.info(auth)

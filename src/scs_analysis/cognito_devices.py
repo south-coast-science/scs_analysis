@@ -42,7 +42,7 @@ from scs_core.aws.security.cognito_device_manager import CognitoDeviceCreator, C
 
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.data.json import JSONify
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoUserLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
