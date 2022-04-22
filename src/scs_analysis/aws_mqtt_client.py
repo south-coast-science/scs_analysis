@@ -96,7 +96,7 @@ if __name__ == '__main__':
         # resources...
 
         # MQTTConf
-        conf = MQTTConf.load(Host)
+        conf = MQTTConf.load(Host, skeleton=True)
 
         if cmd.verbose:
             print("aws_mqtt_client: %s" % conf, file=sys.stderr)

@@ -15,10 +15,10 @@ data set. This is useful when reference data is labelled for the beginning of th
 The path to the ISO 8601 recording datetime may be given, otherwise it defaults to 'rec'.
 
 SYNOPSIS
-sample_time_shift.py -t [[DD-]HH:]MM[:SS] [-v] [PATH]
+sample_time_shift.py -t { + | - } [[DD-]HH:]MM[:SS] [-v] [PATH]
 
 EXAMPLES
-csv_reader.py -v mfidikwe.csv | sample_time_shift.py -v -t 00:01:00 | csv_writer.py -v mfidikwe_shifted.csv
+csv_reader.py -v mfidikwe.csv | sample_time_shift.py -v -t + 00:01:00 | csv_writer.py -v mfidikwe_shifted.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"rec": "2021-10-31T22:00:00Z", "meteo": {"T": 15.2, "rH": 62}, "gas": {"SO2": 11}}
@@ -78,7 +78,7 @@ if __name__ == '__main__':
             document_count += 1
 
             rec = LocalizedDatetime.construct_from_iso8601(datum.node(cmd.path))
-            shifted = rec + cmd.timedelta
+            shifted = rec + cmd.timedelta if cmd.positive else rec - cmd.timedelta
 
             datum.append(cmd.path, shifted.as_iso8601())
 
