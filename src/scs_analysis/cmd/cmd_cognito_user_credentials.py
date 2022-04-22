@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoCredentials(object):
+class CmdCognitoUserCredentials(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -94,5 +94,5 @@ class CmdCognitoCredentials(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoCredentials:{credentials_name:%s, set:%s, test:%s, delete:%s, verbose:%s}" % \
+        return "CmdCognitoUserCredentials:{credentials_name:%s, set:%s, test:%s, delete:%s, verbose:%s}" % \
                (self.credentials_name, self.set, self.test, self.delete, self.verbose)

@@ -1,5 +1,5 @@
 """
-Created on 24 Nov 2021
+Created on 24 Jan 2022
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,14 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoIdentity(object):
+class CmdCognitoDevices(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
+                                                    "{ -F [-t TAG] "
+                                                    "| -C TAG SHARED_SECRET "
+                                                    "| -U TAG SHARED_SECRET "
+                                                    "| -D TAG } "
+                                                    "[-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # identity...
@@ -24,14 +29,21 @@ class CmdCognitoIdentity(object):
                                  help="the stored credentials to be presented")
 
         # operations...
-        self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create my identity")
+        self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
+                                 help="list the devices visible to me")
 
-        self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
-                                 help="retrieve my identity")
+        self.__parser.add_option("--Create", "-C", type="string", action="store", nargs=2, dest="create",
+                                 help="create a device")
 
-        self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
-                                 help="update my identity")
+        self.__parser.add_option("--Update", "-U", type="string", action="store", nargs=2, dest="update",
+                                 help="update the device")
+
+        self.__parser.add_option("--Delete", "-D", type="string", action="store", nargs=1, dest="delete",
+                                 help="delete the device (superuser only)")
+
+        # filters...
+        self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
+                                 help="filter by device tag")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -48,13 +60,16 @@ class CmdCognitoIdentity(object):
     def is_valid(self):
         count = 0
 
-        if self.create:
+        if self.find:
             count += 1
 
-        if self.retrieve:
+        if self.create is not None:
             count += 1
 
-        if self.update:
+        if self.update is not None:
+            count += 1
+
+        if self.delete is not None:
             count += 1
 
         if count != 1:
@@ -71,18 +86,28 @@ class CmdCognitoIdentity(object):
 
 
     @property
+    def find(self):
+        return self.__opts.find
+
+
+    @property
     def create(self):
         return self.__opts.create
 
 
     @property
-    def retrieve(self):
-        return self.__opts.retrieve
+    def update(self):
+        return self.__opts.update
 
 
     @property
-    def update(self):
-        return self.__opts.update
+    def delete(self):
+        return self.__opts.delete
+
+
+    @property
+    def tag(self):
+        return self.__opts.tag
 
 
     @property
@@ -102,5 +127,7 @@ class CmdCognitoIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoIdentity:{credentials_name:%s, retrieve:%s, create:%s, update:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.retrieve, self.create, self.update, self.indent, self.verbose)
+        return "CmdCognitoDevices:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
+               "tag:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.create, self.update, self.delete,
+                self.tag, self.indent, self.verbose)

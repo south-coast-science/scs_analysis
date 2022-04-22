@@ -22,12 +22,12 @@ class CmdSampleTimeShift(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -t [[DD-]HH:]MM[:SS] [-v] [PATH]",
+        self.__parser = optparse.OptionParser(usage="%prog -t { + | - } [[DD-]HH:]MM[:SS] [-v] [PATH]",
                                               version="%prog 1.0")
 
         # functions...
-        self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
-                                 help="offset in days / hours / minutes / seconds")
+        self.__parser.add_option("--timedelta", "-t", type="string", nargs=2, action="store", dest="timedelta",
+                                 help="sign and offset in days / hours / minutes / seconds")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -40,6 +40,9 @@ class CmdSampleTimeShift(object):
 
     def is_valid(self):
         if self.__opts.timedelta is None:
+            return False
+
+        if self.__opts.timedelta[0] != '+' and self.__opts.timedelta[0] != '-':
             return False
 
         if self.timedelta is None:
@@ -58,8 +61,13 @@ class CmdSampleTimeShift(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def positive(self):
+        return None if self.__opts.timedelta is None else self.__opts.timedelta[0] == '+'
+
+
+    @property
     def timedelta(self):
-        return Timedelta.construct_from_flag(self.__opts.timedelta)
+        return Timedelta.construct_from_flag(self.__opts.timedelta[1])
 
 
     @property
