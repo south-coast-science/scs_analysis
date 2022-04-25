@@ -34,6 +34,9 @@ class CmdMultiChart(object):
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
 
+        self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
+                                 help="ignore rows with missing path values")
+
         self.__parser.add_option("--title", "-t", type="string", nargs=1, action="store", dest="title",
                                  help="chart title")
 
@@ -75,6 +78,11 @@ class CmdMultiChart(object):
 
 
     @property
+    def skip_malformed(self):
+        return self.__opts.skip_malformed
+
+
+    @property
     def title(self):
         return self.__opts.title
 
@@ -96,5 +104,7 @@ class CmdMultiChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, title:%s, verbose:%s, paths:%s}" % \
-                    (self.batch_mode, self.x, self.y, self.echo, self.title, self.verbose, self.paths)
+        return "CmdMultiChart:{batch_mode:%s, x:%d, y:%s, echo:%s, skip_malformed:%s, title:%s, " \
+               "verbose:%s, paths:%s}" % \
+                    (self.batch_mode, self.x, self.y, self.echo, self.skip_malformed, self.title,
+                     self.verbose, self.paths)

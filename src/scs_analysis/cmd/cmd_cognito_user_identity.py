@@ -9,7 +9,7 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoIdentity(object):
+class CmdCognitoUserIdentity(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -102,5 +102,7 @@ class CmdCognitoIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoIdentity:{credentials_name:%s, retrieve:%s, create:%s, update:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.retrieve, self.create, self.update, self.indent, self.verbose)
+        return "CmdCognitoUserIdentity:{credentials_name:%s, retrieve:%s, create:%s, update:%s, indent:%s, " \
+               "verbose:%s}" % \
+               (self.credentials_name, self.retrieve, self.create, self.update, self.indent,
+                self.verbose)

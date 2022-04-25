@@ -8,16 +8,16 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_identity utility is used to create, update and retrieve the AWS Cognito identity for the user.
+The cognito_user_identity utility is used to create, update and retrieve the AWS Cognito identity for the user.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_identity.py [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]
+cognito_user_identity.py [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]
 
 EXAMPLES
-./cognito_identity.py -R
+./cognito_user_identity.py -R
 
 DOCUMENT EXAMPLE
 {"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
@@ -34,12 +34,12 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-pol
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_cognito_identity import CmdCognitoIdentity
+from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
 
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
 from scs_core.data.datum import Datum
@@ -67,13 +67,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdCognitoIdentity()
+        cmd = CmdCognitoUserIdentity()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('cognito_identity', verbose=cmd.verbose)
+        Logging.config('cognito_user_identity', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoUserLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):

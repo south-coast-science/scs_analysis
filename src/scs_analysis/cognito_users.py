@@ -41,7 +41,7 @@ from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
 
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
 from scs_core.aws.security.organisation_manager import OrganisationManager
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoUserLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):

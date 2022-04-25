@@ -30,7 +30,7 @@ import sys
 
 from scs_analysis.cmd.cmd_organisations import CmdOrganisations
 
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import Organisation
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoUserLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host):
