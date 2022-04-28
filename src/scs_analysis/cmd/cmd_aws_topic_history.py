@@ -8,7 +8,6 @@ source repo: scs_analysis
 
 import logging
 import optparse
-import sys
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.timedelta import Timedelta
@@ -149,8 +148,6 @@ class CmdAWSTopicHistory(object):
 
 
     def is_valid_end(self):
-        print("self.__opts.end: %s" % self.__opts.end, file=sys.stderr)
-        print("self.end: %s" % self.end, file=sys.stderr)
         if self.__opts.end is None:
             return True
 
