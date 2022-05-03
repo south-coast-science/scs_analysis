@@ -36,6 +36,9 @@ class CmdHistoChart(object):
         self.__parser.add_option("--precision", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
                                  help="precision of reported deltas (default 3)")
 
+        self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
+                                 help="ignore rows with missing path values")
+
         self.__parser.add_option("--output", "-o", type="string", nargs=1, action="store", dest="outfile",
                                  help="output histogram to CSV file")
 
@@ -93,6 +96,11 @@ class CmdHistoChart(object):
 
 
     @property
+    def skip_malformed(self):
+        return self.__opts.skip_malformed
+
+
+    @property
     def title(self):
         return self.__opts.title
 
@@ -114,7 +122,7 @@ class CmdHistoChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, precision:%d, outfile:%s, echo:%s, title:%s, " \
-               "verbose:%s, path:%s}" % \
-                    (self.batch_mode, self.x, self.bin_count, self.precision, self.outfile, self.echo, self.title,
-                     self.verbose, self.path)
+        return "CmdHistoChart:{batch_mode:%s, x:%s, bin_count:%d, precision:%d, outfile:%s, echo:%s, " \
+               "skip_malformed:%s, title:%s, verbose:%s, path:%s}" % \
+                    (self.batch_mode, self.x, self.bin_count, self.precision, self.outfile, self.echo,
+                     self.skip_malformed, self.title, self.verbose, self.path)

@@ -68,6 +68,10 @@ if __name__ == '__main__':
 
     cmd = CmdSingleChart()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     Logging.config('single_chart', verbose=cmd.verbose)
     logger = Logging.getLogger()
 
@@ -106,6 +110,19 @@ if __name__ == '__main__':
 
             if datum is None:
                 break
+
+            if cmd.path not in datum.paths():
+                if not cmd.skip_malformed:
+                    logger.error("path: %s not in %s" % (cmd.path, line.strip()))
+                    exit(1)
+
+                continue
+
+            try:
+                float(datum.node(cmd.path))
+            except ValueError:
+                logger.error("invalid value for path: %s: %s" % (cmd.path, line.strip()))
+                exit(1)
 
             if cmd.echo:
                 print(JSONify.dumps(datum))
