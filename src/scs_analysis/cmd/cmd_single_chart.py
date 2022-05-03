@@ -37,6 +37,9 @@ class CmdSingleChart(object):
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
 
+        self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
+                                 help="ignore rows with missing path values")
+
         self.__parser.add_option("--title", "-t", type="string", nargs=1, action="store", dest="title",
                                  help="chart title")
 
@@ -44,6 +47,15 @@ class CmdSingleChart(object):
                                  help="report narrative to stderr")
 
         self.__opts, self.__args = self.__parser.parse_args()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_valid(self):
+        if self.path is None:
+            return False
+
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -74,6 +86,11 @@ class CmdSingleChart(object):
 
 
     @property
+    def skip_malformed(self):
+        return self.__opts.skip_malformed
+
+
+    @property
     def title(self):
         return self.__opts.title
 
@@ -95,5 +112,7 @@ class CmdSingleChart(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, title:%s, verbose:%s, path:%s}" % \
-                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.title, self.verbose, self.path)
+        return "CmdSingleChart:{batch_mode:%s, relative:%s, x:%d, y:%s, echo:%s, skip_malformed:%s, title:%s, " \
+               "verbose:%s, path:%s}" % \
+                    (self.batch_mode, self.relative, self.x, self.y, self.echo, self.skip_malformed, self.title,
+                     self.verbose, self.path)

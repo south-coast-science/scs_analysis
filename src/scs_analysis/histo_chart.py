@@ -113,6 +113,19 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
+            if cmd.path not in datum.paths():
+                if not cmd.skip_malformed:
+                    logger.error("path: %s not in %s" % (cmd.path, line.strip()))
+                    exit(1)
+
+                continue
+
+            try:
+                float(datum.node(cmd.path))
+            except ValueError:
+                logger.error("invalid value for path: %s: %s" % (cmd.path, line.strip()))
+                exit(1)
+
             if cmd.echo:
                 print(JSONify.dumps(datum))
                 sys.stdout.flush()

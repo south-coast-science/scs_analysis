@@ -238,7 +238,7 @@ if __name__ == '__main__':
 
         ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
 
-        # AFECAlib...
+        # AFECalib...
         if ox_index is None:
             ox_sensor = None
 
