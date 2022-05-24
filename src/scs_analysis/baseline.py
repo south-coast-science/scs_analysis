@@ -89,7 +89,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: what happens if the device does not have the vcal_baseline.py -vm option (in Minimum)?
 # TODO: review Ox handling
 # --------------------------------------------------------------------------------------------------------------------
 
