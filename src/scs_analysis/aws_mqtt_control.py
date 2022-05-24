@@ -68,6 +68,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: test "configuration" command when using mobile network - remove omd field from communications?
 # TODO: when in non-interactive mode, exit return code should be the same as the command
 # --------------------------------------------------------------------------------------------------------------------
 

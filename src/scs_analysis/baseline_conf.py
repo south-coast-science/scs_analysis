@@ -61,110 +61,117 @@ if __name__ == '__main__':
     conf = None
     key = None
 
-    # ----------------------------------------------------------------------------------------------------------------
-    # cmd...
+    try:
+        # ------------------------------------------------------------------------------------------------------------
+        # cmd...
 
-    cmd = CmdBaselineConf()
+        cmd = CmdBaselineConf()
 
-    if not cmd.is_valid():
-        cmd.print_help(sys.stderr)
-        exit(2)
-
-    Logging.config('baseline_conf', verbose=cmd.verbose)
-    logger = Logging.getLogger()
-
-    logger.info(cmd)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # resources...
-
-    # PersistenceManager...
-    if cmd.aws:
-        if not AccessKey.exists(Host):
-            logger.error('AccessKey not available.')
-            exit(1)
-
-        try:
-            key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
-        except (KeyError, ValueError):
-            logger.error('incorrect password.')
-            exit(1)
-
-        client = Client.construct('s3', key)
-        resource_client = Client.resource('s3', key)
-
-        persistence_manager = S3PersistenceManager(client, resource_client)
-
-    else:
-        persistence_manager = Host
-
-    # GasModelConf...
-    if not cmd.duplicate():
-        conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # run...
-
-    if cmd.zones:
-        for zone in Timezone.zones():
-            print(zone, file=sys.stderr)
-        exit(0)
-
-    if cmd.list:
-        for conf_name in BaselineConf.list(persistence_manager):
-            print(conf_name, file=sys.stderr)
-        exit(0)
-
-    if cmd.duplicate():
-        source = BaselineConf.load(persistence_manager, name=cmd.duplicate_from)
-
-        if source is None:
-            logger.error("no configuration found for '%s'" % cmd.duplicate_from)
+        if not cmd.is_valid():
+            cmd.print_help(sys.stderr)
             exit(2)
 
-        conf = source.duplicate(cmd.duplicate_to)
-        conf.save(persistence_manager)
+        Logging.config('baseline_conf', verbose=cmd.verbose)
+        logger = Logging.getLogger()
 
-    if cmd.set():
-        if conf is None and not cmd.is_complete():
-            logger.error("no configuration is stored - you must therefore set all fields.")
-            exit(2)
+        logger.info(cmd)
 
-        if cmd.timezone and not Timezone.is_valid(cmd.timezone):
-            logger.error("unrecognised timezone name: %s." % cmd.timezone)
-            exit(2)
 
-        if cmd.aggregation_period and cmd.aggregation_period not in RecurringMinutes.valid_intervals():
-            logger.error("aggregation period must be one of: %s." % str(RecurringMinutes.valid_intervals()))
-            exit(2)
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
 
-        timezone = conf.timezone if cmd.timezone is None else cmd.timezone
-        start_hour = conf.start_hour if cmd.start_hour is None else cmd.start_hour
-        end_hour = conf.end_hour if cmd.end_hour is None else cmd.end_hour
-        aggregation_period = conf.aggregation_period if cmd.aggregation_period is None else \
-            RecurringMinutes(cmd.aggregation_period)
+        # PersistenceManager...
+        if cmd.aws:
+            if not AccessKey.exists(Host):
+                logger.error('AccessKey not available.')
+                exit(1)
 
-        if start_hour == end_hour:
-            logger.error("the start and end hours may not be the same.")
-            exit(2)
+            try:
+                key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
+            except (KeyError, ValueError):
+                logger.error('incorrect password.')
+                exit(1)
 
-        minimums = {} if conf is None else conf.minimums
+            client = Client.construct('s3', key)
+            resource_client = Client.resource('s3', key)
 
-        conf = BaselineConf(cmd.conf_name, timezone, start_hour, end_hour, aggregation_period, minimums)
+            persistence_manager = S3PersistenceManager(client, resource_client)
 
-        if cmd.set_gas_name:
-            if cmd.set_gas_name not in BaselineConf.supported_gases():
-                logger.error("the gas '%s' is not supported." % cmd.set_gas_name)
+        else:
+            persistence_manager = Host
+
+        # GasModelConf...
+        if not cmd.duplicate():
+            conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # run...
+
+        if cmd.zones:
+            for zone in Timezone.zones():
+                print(zone, file=sys.stderr)
+            exit(0)
+
+        if cmd.list:
+            for conf_name in BaselineConf.list(persistence_manager):
+                print(conf_name, file=sys.stderr)
+            exit(0)
+
+        if cmd.duplicate():
+            source = BaselineConf.load(persistence_manager, name=cmd.duplicate_from)
+
+            if source is None:
+                logger.error("no configuration found for '%s'" % cmd.duplicate_from)
                 exit(2)
 
-            conf.set_minimum(cmd.set_gas_name, cmd.set_gas_minimum)
+            conf = source.duplicate(cmd.duplicate_to)
+            conf.save(persistence_manager)
 
-        if cmd.remove_gas:
-            conf.remove_minimum(cmd.remove_gas)
+        if cmd.set():
+            if conf is None and not cmd.is_complete():
+                logger.error("no configuration is stored - you must therefore set all fields.")
+                exit(2)
 
-        conf.save(persistence_manager)
+            if cmd.timezone and not Timezone.is_valid(cmd.timezone):
+                logger.error("unrecognised timezone name: %s." % cmd.timezone)
+                exit(2)
 
-    if conf:
-        print(JSONify.dumps(conf, indent=cmd.indent))
+            if cmd.aggregation_period and cmd.aggregation_period not in RecurringMinutes.valid_intervals():
+                logger.error("aggregation period must be one of: %s." % str(RecurringMinutes.valid_intervals()))
+                exit(2)
+
+            timezone = conf.timezone if cmd.timezone is None else cmd.timezone
+            start_hour = conf.start_hour if cmd.start_hour is None else cmd.start_hour
+            end_hour = conf.end_hour if cmd.end_hour is None else cmd.end_hour
+            aggregation_period = conf.aggregation_period if cmd.aggregation_period is None else \
+                RecurringMinutes(cmd.aggregation_period)
+
+            if start_hour == end_hour:
+                logger.error("the start and end hours may not be the same.")
+                exit(2)
+
+            minimums = {} if conf is None else conf.minimums
+
+            conf = BaselineConf(cmd.conf_name, timezone, start_hour, end_hour, aggregation_period, minimums)
+
+            if cmd.set_gas_name:
+                if cmd.set_gas_name not in BaselineConf.supported_gases():
+                    logger.error("the gas '%s' is not supported." % cmd.set_gas_name)
+                    exit(2)
+
+                conf.set_minimum(cmd.set_gas_name, cmd.set_gas_minimum)
+
+            if cmd.remove_gas:
+                conf.remove_minimum(cmd.remove_gas)
+
+            conf.save(persistence_manager)
+
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
+
+        if conf:
+            print(JSONify.dumps(conf, indent=cmd.indent))
+
+    except KeyboardInterrupt:
+        print(file=sys.stderr)
