@@ -18,7 +18,8 @@ class CmdSampleStats(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t] [-p PRECISION] [-a] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t] [-p PRECISION] [-a] [-v] PATH1 [PATH2 .. PATHN]",
+                                              version="%prog 1.0")
 
         # output...
         self.__parser.add_option("--include-tag", "-t", action="store_true", dest="include_tag", default=False,
@@ -39,7 +40,7 @@ class CmdSampleStats(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.path is None:
+        if not self.paths:
             return False
 
         return True
@@ -68,8 +69,8 @@ class CmdSampleStats(object):
 
 
     @property
-    def path(self):
-        return self.__args[0] if len(self.__args) > 0 else None
+    def paths(self):
+        return self.__args
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -79,5 +80,5 @@ class CmdSampleStats(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleStats:{include_tag:%s, precision:%s, analytic:%s, verbose:%s, path:%s}" % \
-               (self.include_tag, self.precision, self.analytic, self.verbose, self.path)
+        return "CmdSampleStats:{include_tag:%s, precision:%s, analytic:%s, verbose:%s, paths:%s}" % \
+               (self.include_tag, self.precision, self.analytic, self.verbose, self.paths)

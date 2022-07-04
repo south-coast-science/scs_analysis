@@ -9,10 +9,10 @@ source repo: scs_analysis
 
 DESCRIPTION
 The sample_regression utility provides a statical report on a single specified field for documents provided in the
-input data stream. The specified field normally represents an error or difference betwen two sources.
+input data stream. The specified field(s) normally represent an error or difference between two sources.
 
-If the specified field is not present in any of the input documents, the sample_regression utility terminates. If the
-field is present but cannot be interpreted as a float, that document is ignored.
+If the specified field(s) are not present in any of the input documents, the sample_regression utility terminates.
+If a field is present but cannot be interpreted as a float, that document is ignored.
 
 The output is a single JSON document. In standard mode, report fields are:
 
@@ -44,12 +44,12 @@ In analytic mode, report fields are:
 A minimum of two input documents are required.
 
 SYNOPSIS
-sample_stats.py [-t] [-p PRECISION] [-a] [-v] PATH
+sample_stats.py [-t] [-p PRECISION] [-a] [-v] PATH1 [PATH2 .. PATHN]
 
 EXAMPLES
-csv_reader.py -v Mfi_so2_vE_22Q1_results_err.csv | \
-sample_stats.py -v -p 3 err.SO2.vE.Urban.22Q1 | \
-csv_writer.py -v Mfi_so2_vE_22Q1_results_err_stats.csv
+csv_reader.py -v scs-bgx-621-gases-2022-07-04-1min.csv | \
+sample_stats.py -t -p1 -a val.VOC.cnc val.CO2.cnc exg.val.NO2.cnc | \
+csv_writer.py -e scs-bgx-621-gases-2022-07-04-1min-stats.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"ref": {"gas": {"SO2": 4.1}}, "SO2": {"vE": {"Urban": {"22Q1": 1.9}}},
@@ -107,7 +107,7 @@ if __name__ == '__main__':
         # run...
 
         # data...
-        values = []
+        values = {path: [] for path in cmd.paths}
 
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
@@ -120,39 +120,43 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            if not datum.has_path(cmd.path):
-                logger.error("path '%s' not in datum: %s" % (cmd.path, line.strip()))
-                exit(1)
+            for path in cmd.paths:
+                if not datum.has_path(path):
+                    logger.error("path '%s' not in datum: %s" % (path, line.strip()))
+                    exit(1)
 
-            try:
-                values.append(float(datum.node(cmd.path)))
-            except ValueError:
-                continue
+                try:
+                    values[path].append(float(datum.node(path)))
+                except ValueError:
+                    continue
 
             processed_count += 1
 
         # validation...
-        if len(values) < 2:
-            logger.error("at least two valid input documents are required.")
-            exit(1)
+        for path in cmd.paths:
+            if len(values[path]) < 2:
+                logger.error("at least two valid input documents are required for '%s'." % path)
+                exit(1)
 
         # stats...
-        stats = Stats.construct(values, prec=cmd.precision)
-
-        if cmd.analytic:
-            stats = StatsAnalysis.construct_from_stats(stats, prec=cmd.precision)
-
-        logger.info(stats)
-
-        # output...
-        stats_dict = PathDict(stats.as_json())
         report = PathDict()
 
-        if cmd.include_tag:
-            report.append('tag', tag)
+        for path in cmd.paths:
+            stats = Stats.construct(values[path], prec=cmd.precision)
 
-        for stats_path in stats_dict.paths():
-            report.append('.'.join((cmd.path, stats_path)), stats_dict.node(stats_path))
+            if cmd.analytic:
+                stats = StatsAnalysis.construct_from_stats(stats, prec=cmd.precision)
+
+            logger.info(stats)
+
+            # output...
+            stats_dict = PathDict(stats.as_json())
+
+            if cmd.include_tag:
+                report.append('tag', tag)
+
+            for stats_path in stats_dict.paths():
+                report.append('.'.join((path, stats_path)), stats_dict.node(stats_path))
 
         print(JSONify.dumps(report))
 
