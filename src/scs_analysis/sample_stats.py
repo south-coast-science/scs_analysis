@@ -9,12 +9,12 @@ source repo: scs_analysis
 
 DESCRIPTION
 The sample_regression utility provides a statical report on a single specified field for documents provided in the
-input data stream. The specified field normally represents an error or difference betwen two sources.
+input data stream. The specified field(s) normally represent an error or difference between two sources.
 
-If the specified field is not present in any of the input documents, the sample_regression utility terminates. If the
-field is present but cannot be interpreted as a float, that document is ignored.
+If the specified field(s) are not present in any of the input documents, the sample_regression utility terminates.
+If a field is present but cannot be interpreted as a float, that document is ignored.
 
-The output is a single JSON document. Report fields are:
+The output is a single JSON document. In standard mode, report fields are:
 
 * Document count
 * Minimum
@@ -26,15 +26,31 @@ The output is a single JSON document. Report fields are:
 * Second standard deviation
 * Third standard deviation
 
+In analytic mode, report fields are:
+
+* Minimum
+* Mean
+* Median
+* Maximum
+* Lower boundary of 1st standard deviation
+* Lower boundary of 2nd standard deviation
+* Lower boundary of 3rd standard deviation
+* Upper boundary of 1st standard deviation
+* Upper boundary of 2nd standard deviation
+* Upper boundary of 3rd standard deviation
+* Amplitude by 1st standard deviation
+* Amplitude by 2nd standard deviation
+* Amplitude by 3rd standard deviation
+
 A minimum of two input documents are required.
 
 SYNOPSIS
-sample_stats.py [-p PRECISION] [-v] PATH
+sample_stats.py [-t] [-p PRECISION] [-a] [-v] PATH1 [PATH2 .. PATHN]
 
 EXAMPLES
-csv_reader.py -v Mfi_so2_vE_22Q1_results_err.csv | \
-sample_stats.py -v -p 3 err.SO2.vE.Urban.22Q1 | \
-csv_writer.py -v Mfi_so2_vE_22Q1_results_err_stats.csv
+csv_reader.py -v scs-bgx-621-gases-2022-07-04-1min.csv | \
+sample_stats.py -t -p1 -a val.VOC.cnc val.CO2.cnc exg.val.NO2.cnc | \
+csv_writer.py -e scs-bgx-621-gases-2022-07-04-1min-stats.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"ref": {"gas": {"SO2": 4.1}}, "SO2": {"vE": {"Urban": {"22Q1": 1.9}}},
@@ -42,8 +58,13 @@ DOCUMENT EXAMPLE - INPUT
 ...
 
 DOCUMENT EXAMPLE - OUTPUT
-{"err": {"SO2": {"vE": {"Urban": {"22Q1": {"count": 14167, "min": -239.8, "mean": 0.1, "median": 0.1, "max": 145.0,
-"var": 19.5, "stdev": 4.4, "stdev2": 8.8, "stdev3": 13.2}}}}}}
+standard mode:
+{"tag": "scs-bgx-619", "val": {"VOC": {"cnc": {"count": 4320, "min": 397.7, "mean": 448.2, "median": 446.1,
+"max": 498.9, "var": 375.6, "stdev": 19.4, "stdev2": 38.8, "stdev3": 58.2}}}}
+
+analytic mode:
+{"tag": "scs-bgx-570", "val": {"SO2": {"cnc": {"min": -3.6, "mean": 1.7, "median": 1.4, "max": 9.3,
+"l3": -5.8, "l2": -3.4, "l1": -1.0, "u1": 3.8, "u2": 6.2, "u3": 8.6, "a1": 4.8, "a2": 9.6, "a3": 14.4}
 
 RESOURCES
 https://en.wikipedia.org/wiki/Standard_deviation
@@ -55,7 +76,7 @@ from scs_analysis.cmd.cmd_sample_stats import CmdSampleStats
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
-from scs_core.data.stats import Stats
+from scs_core.data.stats import Stats, StatsAnalysis
 
 from scs_core.sys.logging import Logging
 
@@ -64,6 +85,7 @@ from scs_core.sys.logging import Logging
 
 if __name__ == '__main__':
 
+    tag = None
     document_count = 0
     processed_count = 0
 
@@ -86,7 +108,7 @@ if __name__ == '__main__':
         # run...
 
         # data...
-        values = []
+        values = {path: [] for path in cmd.paths}
 
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line)
@@ -94,34 +116,48 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
+            if tag is None:
+                tag = datum.node('tag')
+
             document_count += 1
 
-            if not datum.has_path(cmd.path):
-                logger.error("path '%s' not in datum: %s" % (cmd.path, line.strip()))
-                exit(1)
+            for path in cmd.paths:
+                if not datum.has_path(path):
+                    logger.error("path '%s' not in datum: %s" % (path, line.strip()))
+                    exit(1)
 
-            try:
-                values.append(float(datum.node(cmd.path)))
-            except ValueError:
-                continue
+                try:
+                    values[path].append(float(datum.node(path)))
+                except ValueError:
+                    continue
 
             processed_count += 1
 
         # validation...
-        if len(values) < 2:
-            logger.error("at least two valid input documents are required.")
-            exit(1)
+        for path in cmd.paths:
+            if len(values[path]) < 2:
+                logger.error("at least two valid input documents are required for '%s'." % path)
+                exit(1)
 
         # stats...
-        stats = Stats.construct(values, prec=cmd.precision)
-        logger.info(stats)
-
-        # output...
-        stats_dict = PathDict(stats.as_json())
         report = PathDict()
 
-        for stats_path in stats_dict.paths():
-            report.append('.'.join((cmd.path, stats_path)), stats_dict.node(stats_path))
+        for path in cmd.paths:
+            stats = Stats.construct(values[path], prec=cmd.precision)
+
+            if cmd.analytic:
+                stats = StatsAnalysis.construct_from_stats(stats, prec=cmd.precision)
+
+            logger.info(stats)
+
+            # output...
+            stats_dict = PathDict(stats.as_json())
+
+            if cmd.include_tag:
+                report.append('tag', tag)
+
+            for stats_path in stats_dict.paths():
+                report.append('.'.join((path, stats_path)), stats_dict.node(stats_path))
 
         print(JSONify.dumps(report))
 
