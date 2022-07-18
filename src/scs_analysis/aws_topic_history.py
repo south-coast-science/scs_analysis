@@ -75,7 +75,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: test --latest-at
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -108,7 +107,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.checkpoint is not None and cmd.checkpoint != 'auto' and not CheckpointGenerator.is_valid(cmd.checkpoint):
-        logger.error("invalid format for end datetime.")
+        logger.error("invalid format for checkpoint.")
         exit(2)
 
     if not cmd.is_valid():

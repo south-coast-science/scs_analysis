@@ -72,6 +72,7 @@ from scs_core.control.control_handler import ControlHandler
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
+from scs_core.data.timedelta import Timedelta
 
 from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
@@ -88,7 +89,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: what happens if the device does not have the vcal_baseline.py -vm option (in Minimum)?
 # TODO: review Ox handling
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -238,7 +238,7 @@ if __name__ == '__main__':
 
         ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
 
-        # AFECAlib...
+        # AFECalib...
         if ox_index is None:
             ox_sensor = None
 
@@ -274,15 +274,16 @@ if __name__ == '__main__':
         start = baseline_conf.start_datetime(now)
         end = baseline_conf.end_datetime(now)
 
-        logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
-
         if start == end:
             logger.error("the start and end hours may not be the same.")
             exit(1)
 
         if end > now:
-            logger.error("baselining cannot take place during the test period.")
-            exit(1)
+            start -= Timedelta(days=1)
+            end -= Timedelta(days=1)
+            logger.error("WARNING: testing previous day...")
+
+        logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
 
         data = list(message_manager.find_for_topic(gases_topic, start, end, None, False, baseline_conf.checkpoint(),
                                                    False, False, False, False, False, None))

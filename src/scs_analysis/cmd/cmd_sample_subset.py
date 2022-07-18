@@ -21,10 +21,10 @@ class CmdSampleSubset(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -i | -n  | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
-                                                    "[-s] [-x] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -i | -n | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
+                                                    "[-t] [-x] [-v] PATH", version="%prog 1.0")
 
-        # interpretation...
+        # casting...
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,
                                  help="interpret the value as an ISO 8601 datetime")
 
@@ -37,7 +37,7 @@ class CmdSampleSubset(object):
         self.__parser.add_option("--strict", "-t", action="store_true", dest="strict", default=False,
                                  help="halt on type errors")
 
-        # optional...
+        # function...
         self.__parser.add_option("--equal", "-e", type="string", nargs=1, action="store", dest="equal",
                                  help="equal to")
 
@@ -47,6 +47,7 @@ class CmdSampleSubset(object):
         self.__parser.add_option("--upper", "-u", type="string", nargs=1, action="store", dest="upper",
                                  help="upper bound")
 
+        # output...
         self.__parser.add_option("--exclusions", "-x", action="store_true", dest="exclusions", default=False,
                                  help="output exclusions instead of inclusions")
 
