@@ -17,6 +17,7 @@ class CmdBaseline(object):
     """unix command line handler"""
 
     __UPTAKE_CMDS = ('restart', 'reboot', 'shutdown')
+    __DEFAULT_UPTAKE_CMD = 'shutdown'
 
     # --------------------------------------------------------------------------------------------------------------------
 
@@ -49,7 +50,8 @@ class CmdBaseline(object):
                                  help="show what actions should be performed")
 
         self.__parser.add_option("--uptake", "-u", type="string", nargs=1, action="store", dest="uptake",
-                                 default="reboot", help="{ %s }, default 'reboot'" % cmds)
+                                 default=self.__DEFAULT_UPTAKE_CMD,
+                                 help="{ %s }, default '%s'" % (cmds, self.__DEFAULT_UPTAKE_CMD))
 
         # fields...
         self.__parser.add_option("--start-hour", "-s", type="int", nargs=1, action="store", dest="start_hour",
