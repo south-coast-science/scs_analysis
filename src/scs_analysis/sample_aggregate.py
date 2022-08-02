@@ -46,11 +46,15 @@ input samples. The interval may be found using the aws_topic_history utility.
 If the --exclude-remainder flag is used, then all of the input documents after the last complete checkpoint period
 are ignored.
 
+WARNING: The The sample_aggregate utility uses the first input document to determine the data type for the regressions.
+If csv_reader is being used to supply data, then the csv_reader's --nullify flag should be used - this will prevent
+numeric fields being incorrectly identified as strings.
+
 SYNOPSIS
 sample_aggregate.py -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] [-x] [-v] [PATH_1 .. PATH_N]
 
 EXAMPLES
-csv_reader.py gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
+csv_reader.py -n gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
 """
 
 import sys
