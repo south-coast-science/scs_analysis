@@ -45,7 +45,7 @@ In analytic mode, report fields are:
 A minimum of two input documents are required.
 
 SYNOPSIS
-sample_stats.py [-t] [-p PRECISION] [-a] [-v] PATH1 [PATH2 .. PATHN]
+sample_stats.py [-t] [-p PRECISION] [-a] [-r] [-v] PATH1 [PATH2 .. PATHN]
 
 EXAMPLES
 csv_reader.py -v scs-bgx-621-gases-2022-07-04-1min.csv | \
@@ -65,6 +65,14 @@ standard mode:
 analytic mode:
 {"tag": "scs-bgx-570", "val": {"SO2": {"cnc": {"min": -3.6, "mean": 1.7, "median": 1.4, "max": 9.3,
 "l3": -5.8, "l2": -3.4, "l1": -1.0, "u1": 3.8, "u2": 6.2, "u3": 8.6, "a1": 4.8, "a2": 9.6, "a3": 14.4}
+
+rows mode:
+{"path": "val.NO2.cnc", "count": 60, "min": 13.1, "mean": 21.0, "median": 20.3, "max": 35.4, "var": 16.3,
+"stdev": 4.0, "stdev2": 8.0, "stdev3": 12.0}
+{"path": "val.Ox.cnc", "count": 60, "min": 98.9, "mean": 110.6, "median": 111.2, "max": 117.5, "var": 17.5,
+"stdev": 4.2, "stdev2": 8.4, "stdev3": 12.6}
+{"path": "val.NO.cnc", "count": 60, "min": 18.1, "mean": 28.1, "median": 25.4, "max": 69.7, "var": 92.0,
+"stdev": 9.6, "stdev2": 19.2, "stdev3": 28.8}
 
 RESOURCES
 https://en.wikipedia.org/wiki/Standard_deviation
@@ -148,7 +156,7 @@ if __name__ == '__main__':
             if cmd.analytic:
                 stats = StatsAnalysis.construct_from_stats(stats, prec=cmd.precision)
 
-            logger.info(stats)
+            logger.info("%s: %s" % (path, stats))
 
             # output...
             stats_dict = PathDict(stats.as_json())
@@ -156,13 +164,22 @@ if __name__ == '__main__':
             if cmd.include_tag:
                 report.append('tag', tag)
 
-            for stats_path in stats_dict.paths():
-                report.append('.'.join((path, stats_path)), stats_dict.node(stats_path))
+            if cmd.rows:
+                report.append('path', path)
+                for stats_path in stats_dict.paths():
+                    report.append(stats_path, stats_dict.node(stats_path))
 
-        print(JSONify.dumps(report))
+                print(JSONify.dumps(report))
+
+            else:
+                for stats_path in stats_dict.paths():
+                    report.append('.'.join((path, stats_path)), stats_dict.node(stats_path))
+
+        if not cmd.rows:
+            print(JSONify.dumps(report))
 
 
-    # ----------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------
     # end...
 
     except KeyboardInterrupt:
