@@ -18,7 +18,7 @@ class CmdSampleStats(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t] [-p PRECISION] [-a] [-v] PATH1 [PATH2 .. PATHN]",
+        self.__parser = optparse.OptionParser(usage="%prog [-t] [-p PRECISION] [-a] [-r] [-v] PATH1 [PATH2 .. PATHN]",
                                               version="%prog 1.0")
 
         # output...
@@ -30,6 +30,9 @@ class CmdSampleStats(object):
 
         self.__parser.add_option("--analytic", "-a", action="store_true", dest="analytic", default=False,
                                  help="analytic output")
+
+        self.__parser.add_option("--rows", "-r", action="store_true", dest="rows", default=False,
+                                 help="output results for each path on a separate row")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -64,6 +67,11 @@ class CmdSampleStats(object):
 
 
     @property
+    def rows(self):
+        return self.__opts.rows
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -80,5 +88,5 @@ class CmdSampleStats(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleStats:{include_tag:%s, precision:%s, analytic:%s, verbose:%s, paths:%s}" % \
-               (self.include_tag, self.precision, self.analytic, self.verbose, self.paths)
+        return "CmdSampleStats:{include_tag:%s, precision:%s, analytic:%s, rows:%s, verbose:%s, paths:%s}" % \
+               (self.include_tag, self.precision, self.analytic, self.rows, self.verbose, self.paths)
