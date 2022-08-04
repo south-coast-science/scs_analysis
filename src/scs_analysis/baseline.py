@@ -226,12 +226,12 @@ if __name__ == '__main__':
         mqtt_client.connect(client_auth, False)
 
         # Configuration...
-        stdout, stderr = handler.publish(mqtt_client, control_topic, ['configuration'], MQTT_TIMEOUT,
-                                         peer.shared_secret)
+        stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['configuration'], MQTT_TIMEOUT,
+                                                      peer.shared_secret)
 
-        if stderr:
+        if return_code != 0:
             logger.error("Configuration cannot be retrieved: %s" % stderr[0])
-            exit(1)
+            exit(return_code)
 
         jdict = json.loads(stdout[0])
         device_conf = Configuration.construct_from_jdict(jdict.get('val'))
@@ -243,11 +243,11 @@ if __name__ == '__main__':
             ox_sensor = None
 
         else:
-            stdout, stderr = handler.publish(mqtt_client, control_topic, ['afe_calib'], MQTT_TIMEOUT,
-                                             peer.shared_secret)
-            if stderr:
+            stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['afe_calib'], MQTT_TIMEOUT,
+                                                          peer.shared_secret)
+            if return_code != 0:
                 logger.error("AFECAlib cannot be retrieved: %s" % stderr[0])
-                exit(1)
+                exit(return_code)
 
             jdict = json.loads(stdout[0])
             afe_calib = AFECalib.construct_from_jdict(jdict)
@@ -369,15 +369,14 @@ if __name__ == '__main__':
             if cmd.rehearse:
                 continue
 
-            stdout, stderr = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT, peer.shared_secret)
-            correction_applied = True
-
+            stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT,
+                                                          peer.shared_secret)
             if stderr:
                 print(*stderr, sep='\n', file=sys.stderr)
             if stdout:
                 print(*stdout, sep='\n', file=sys.stdout)
 
-        if not correction_applied:
+        if return_code != 0:
             exit(0)
 
         logger.error("-")
