@@ -377,7 +377,7 @@ if __name__ == '__main__':
                 print(*stdout, sep='\n', file=sys.stdout)
 
         if return_code != 0:
-            exit(0)
+            exit(return_code)
 
         logger.error("-")
 
