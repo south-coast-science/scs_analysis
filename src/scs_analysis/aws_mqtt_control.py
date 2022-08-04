@@ -69,7 +69,6 @@ from scs_host.sys.host import Host
 
 
 # TODO: test "configuration" command when using mobile network - remove omd field from communications?
-# TODO: when in non-interactive mode, exit return code should be the same as the command
 # --------------------------------------------------------------------------------------------------------------------
 
 EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
@@ -85,6 +84,7 @@ if __name__ == '__main__':
 
     stdout = None
     stderr = None
+    return_code = 0
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
         if cmd.interactive:
             try:
-                stdout, stderr = handler.publish(mqtt_client, topic, ['?'], cmd.DEFAULT_TIMEOUT, key)
+                stdout, stderr, _ = handler.publish(mqtt_client, topic, ['?'], cmd.DEFAULT_TIMEOUT, key)
             except TimeoutError:
                 logger.error("%s is not available." % device_tag)
                 exit(1)
@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
             # publish...
             try:
-                stdout, stderr = handler.publish(mqtt_client, topic, cmd_tokens, cmd.timeout, key)
+                stdout, stderr, return_code = handler.publish(mqtt_client, topic, cmd_tokens, cmd.timeout, key)
             except TimeoutError:
                 logger.error("%s is not available." % device_tag)
                 exit(1)
@@ -238,3 +238,6 @@ if __name__ == '__main__':
 
         if mqtt_client:
             mqtt_client.disconnect()
+
+        if not cmd.interactive:
+            exit(return_code)
