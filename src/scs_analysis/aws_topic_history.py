@@ -81,6 +81,7 @@ if __name__ == '__main__':
 
     agent = None
     reporter = None
+    start_time = None
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -151,6 +152,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        start_time = LocalizedDatetime.now()
+
         if cmd.latest_at:
             message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, None, cmd.include_wrapper,
                                                             cmd.rec_only, None)
@@ -204,3 +207,7 @@ if __name__ == '__main__':
     finally:
         if reporter:
             logger.info("blocks: %s" % reporter.block_count)
+
+        if start_time:
+            elapsed_time = LocalizedDatetime.now() - start_time
+            logger.info("elapsed time: %s" % elapsed_time.as_json())
