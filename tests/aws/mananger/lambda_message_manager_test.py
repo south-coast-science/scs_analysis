@@ -6,13 +6,15 @@ Created on 23 May 2020
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
+
+from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
 
@@ -28,7 +30,8 @@ api_auth = APIAuth.load(Host)
 print(api_auth)
 
 # reporter...
-reporter = AWSTopicHistoryReporter(False)
+Logging.config('lambda_message_manager_test')
+reporter = BatchDownloadReporter()
 
 # message manager...
 message_manager = MessageManager(api_auth, reporter=reporter)
