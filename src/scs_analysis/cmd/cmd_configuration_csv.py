@@ -18,13 +18,13 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l LATEST_CSV | "
-                                                    "{ -d | -f } [-t DEVICE_TAG] [-o OUTPUT_CSV_DIR] } "
+        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l OUTPUT_CSV | "
+                                                    "{ -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-e]] "
                                                     "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
 
         # help...
         self.__parser.add_option("--node-names", "-n", action="store_true", dest="node_names", default=False,
-                                 help="list available nodes")
+                                 help="list the available nodes")
 
         # mode...
         self.__parser.add_option("--separate", "-s", action="store_true", dest="separate", default=False,
@@ -42,6 +42,9 @@ class CmdConfigurationCSV(object):
         # filter...
         self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
                                  help="the device for the history report")
+
+        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+                                 help="exact match for tag")
 
         # output...
         self.__parser.add_option("--output-csv-dir", "-o", type="string", action="store", dest="output_csv_dir",
@@ -75,6 +78,9 @@ class CmdConfigurationCSV(object):
             count += 1
 
         if count != 1:
+            return False
+
+        if self.device_tag is None and self.exact_match:
             return False
 
         return True
@@ -126,6 +132,11 @@ class CmdConfigurationCSV(object):
 
 
     @property
+    def exact_match(self):
+        return self.__opts.exact_match
+
+
+    @property
     def output_csv_dir(self):
         return self.__opts.output_csv_dir
 
@@ -148,6 +159,6 @@ class CmdConfigurationCSV(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdConfigurationCSV:{node_names:%s, separate:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
-               "device_tag:%s, output_csv_dir:%s, verbose:%s, nodes:%s}" %  \
+               "device_tag:%s, exact_match:%s, output_csv_dir:%s, verbose:%s, nodes:%s}" %  \
                (self.node_names, self.separate, self.latest, self.diff_histories, self.full_histories,
-                self.device_tag, self.output_csv_dir, self.verbose, self.nodes)
+                self.device_tag, self.exact_match, self.output_csv_dir, self.verbose, self.nodes)
