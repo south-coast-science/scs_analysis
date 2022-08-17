@@ -38,7 +38,8 @@ For diff-histories and full-histories modes, a single rec value is included, equ
 Output CSV cell values are always wrapped in quotes ('"').
 
 SYNOPSIS
-configuration_csv.py { -n | -s | -l LATEST_CSV | { -d | -f } [-t DEVICE_TAG] [-o OUTPUT_CSV_DIR] } [-v] [NODE_1..NODE_N]
+configuration_csv.py { -n | -s | -l OUTPUT_CSV | { -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-e]] [-v]
+[NODE_1..NODE_N]
 
 EXAMPLES
 configuration_csv.py -vs configs.csv
@@ -57,16 +58,15 @@ import os
 import requests
 import sys
 
-from subprocess import Popen, PIPE
-
 from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
+from scs_analysis.handler.configuration_csv_generator import ConfigurationCSVGenerator
 
 from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder, ConfigurationCheckRequest
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 
 from scs_core.data.datetime import LocalizedDatetime
-from scs_core.data.json import JSONify
 
 from scs_core.estate.configuration import Configuration
 
@@ -77,27 +77,6 @@ from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-COMMON_NODES = ['tag', 'rec', 'rec.report', 'rec.update', 'ver']    # either rec or rec... depending on document type
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-def generate_csv(selected_configs, selected_nodes, file_path):
-    jstr = '\n'.join([JSONify.dumps(config) for config in selected_configs])
-    node_args = COMMON_NODES + ['val.' + selected_node for selected_node in selected_nodes]
-
-    if selected_nodes:
-        p = Popen(['node.py', node_opts] + node_args, stdin=PIPE, stdout=PIPE)
-        csv_data, _ = p.communicate(input=jstr.encode())
-    else:
-        csv_data = jstr.encode()
-
-    p = Popen(['csv_writer.py', csv_opts, file_path], stdin=PIPE)
-    p.communicate(input=csv_data)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -121,7 +100,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('configuration_csv', verbose=cmd.verbose)
+        Logging.config('configuration_csv', verbose=cmd.verbose)     # verbose=cmd.verbose | level=logging.DEBUG
         logger = Logging.getLogger()
 
         for node in cmd.nodes:
@@ -135,10 +114,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
+        # nodes...
         if cmd.node_names:
             print(node_names, file=sys.stderr)
             exit(0)
 
+        # MonitorAuth...
         if not MonitorAuth.exists(Host):
             logger.error('MonitorAuth not available.')
             exit(1)
@@ -149,22 +130,28 @@ if __name__ == '__main__':
             logger.error('incorrect password.')
             exit(1)
 
-        configuration_finder = ConfigurationFinder(requests, auth)
+        # reporter...
+        reporter = BatchDownloadReporter()
+
+        # ConfigurationFinder...
+        configuration_finder = ConfigurationFinder(requests, auth, reporter=reporter)
         check_finder = ConfigurationCheckFinder(requests, auth)
 
-        csv_opts = '-vsq' if cmd.verbose else '-sq'
-        node_opts = '-v' if cmd.verbose else ''
+        # ConfigurationCSVGenerator...
+        csv_generator = ConfigurationCSVGenerator(cmd.verbose)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        logger.info("retrieving check reports...")
         checks = check_finder.find(None, None, None, ConfigurationCheckRequest.MODE.FULL)
         check_reports = {check.tag: check.rec for check in checks.items}
 
         if cmd.separate or cmd.latest:
-            response = configuration_finder.find(None, False, cmd.request_mode())
-            configs = [ConfigurationReport.construct(item, check_reports[item.tag]) for item in sorted(response.items)]
+            logger.info("retrieving configurations...")
+            response = configuration_finder.find(cmd.device_tag, cmd.exact_match, cmd.request_mode())
+            configs = [ConfigurationReport.construct(item, check_reports[item.tag]) for item in sorted(response)]
 
         if cmd.separate:
             for node in node_names:
@@ -172,32 +159,31 @@ if __name__ == '__main__':
                 logger.info("-")
                 logger.info(path)
 
-                generate_csv(configs, [node], path)
+                csv_generator.generate(configs, [node], path)
 
         if cmd.latest:
             logger.info(cmd.latest)
-            generate_csv(configs, cmd.nodes, cmd.latest)
+            csv_generator.generate(configs, cmd.nodes, cmd.latest)
 
         if cmd.diff_histories or cmd.full_histories:
             if cmd.output_csv_dir is not None:
                 Filesystem.mkdir(cmd.output_csv_dir)
 
-            tag_response = configuration_finder.find(None, False, ConfigurationRequest.MODE.TAGS_ONLY)
+            logger.info("retrieving device tags...")
+            tag_response = configuration_finder.find(cmd.device_tag, cmd.exact_match,
+                                                     ConfigurationRequest.MODE.TAGS_ONLY)
 
-            for tag in sorted(tag_response.items):
-                if cmd.device_tag is not None and tag != cmd.device_tag:
-                    continue
-
-                response = configuration_finder.find(tag, True, cmd.request_mode())
-                configs = sorted(response.items)
-
+            for tag in sorted(tag_response):
                 filename = tag + '-configs.csv'
                 path = filename if cmd.output_csv_dir is None else os.path.join(cmd.output_csv_dir, filename)
 
                 logger.info("-")
                 logger.info(path)
 
-                generate_csv(configs, cmd.nodes, path)
+                response = configuration_finder.find(tag, True, cmd.request_mode())
+                configs = sorted(response)
+
+                csv_generator.generate(configs, cmd.nodes, path)
 
 
     # ----------------------------------------------------------------------------------------------------------------

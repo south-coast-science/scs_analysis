@@ -56,7 +56,7 @@ import sys
 
 from scs_analysis.cmd.cmd_baseline import CmdBaseline
 
-from scs_analysis.handler.aws_topic_history_reporter import AWSTopicHistoryReporter
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.api_auth import APIAuth
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         byline_manager = BylineManager(api_auth)
 
         # reporter...
-        reporter = AWSTopicHistoryReporter(cmd.verbose)
+        reporter = BatchDownloadReporter()
 
         # message manager...
         message_manager = MessageManager(api_auth, reporter=reporter)

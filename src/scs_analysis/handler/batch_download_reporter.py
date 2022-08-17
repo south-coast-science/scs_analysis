@@ -6,47 +6,55 @@ Created on 17 Jan 2018
 source repo: scs_analysis
 """
 
-import sys
+import logging
 import time
 
 from scs_core.data.timedelta import Timedelta
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class AWSTopicHistoryReporter(object):
+class BatchDownloadReporter(object):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, verbose):
+    def __init__(self):
         """
         Constructor
         """
-        self.__verbose = verbose
+        self.__block_count = 0
+        self.__document_count = 0
+        self.__start_time = time.time()
 
+        self.__logger = Logging.getLogger()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def reset(self):
         self.__block_count = 0
         self.__document_count = 0
         self.__start_time = time.time()
 
 
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def print(self, block_start, block_length):
-        if not self.__verbose:
+    def print(self, block_length, block_start=None):
+        if Logging.level() > logging.INFO:
             return
 
         self.__block_count += 1
         self.__document_count += block_length
         elapsed_time = int(round(time.time() - self.__start_time))
         elapsed_delta = Timedelta(seconds=elapsed_time)
+        elapsed = elapsed_delta.as_json()
 
-        print("aws_topic_history: block start:%s docs:%d elapsed:%s" %
-              (block_start, self.__document_count, elapsed_delta.as_json()), file=sys.stderr)
-
-        sys.stderr.flush()
+        if block_start is None:
+            self.__logger.info("docs:%d elapsed:%s" % (self.__document_count, elapsed))
+        else:
+            self.__logger.info("block start:%s docs:%d elapsed:%s" % (block_start, self.__document_count, elapsed))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -59,5 +67,5 @@ class AWSTopicHistoryReporter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "AWSTopicHistoryReporter:{verbose:%s, block_count:%d, document_count:%d, start_time:%d}" % \
-               (self.__verbose, self.block_count, self.__document_count, self.__start_time)
+        return "BatchDownloadReporter:{block_count:%d, document_count:%d, start_time:%d}" % \
+               (self.block_count, self.__document_count, self.__start_time)
