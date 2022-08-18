@@ -145,7 +145,7 @@ if __name__ == '__main__':
         # run...
 
         logger.info("retrieving check reports...")
-        checks = check_finder.find(None, None, None, ConfigurationCheckRequest.MODE.FULL)
+        checks = check_finder.find(None, None, None, ConfigurationCheckRequest.Mode.FULL)
         check_reports = {check.tag: check.rec for check in checks.items}
 
         if cmd.separate or cmd.latest:
@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
             logger.info("retrieving device tags...")
             tag_response = configuration_finder.find(cmd.device_tag, cmd.exact_match,
-                                                     ConfigurationRequest.MODE.TAGS_ONLY)
+                                                     ConfigurationRequest.Mode.TAGS_ONLY)
 
             for tag in sorted(tag_response):
                 filename = tag + '-configs.csv'

@@ -79,16 +79,16 @@ class CmdConfigurationMonitor(object):
 
     def response_mode(self):
         if self.latest:
-            return ConfigurationRequest.MODE.LATEST
+            return ConfigurationRequest.Mode.LATEST
 
         if self.history:
-            return ConfigurationRequest.MODE.HISTORY
+            return ConfigurationRequest.Mode.HISTORY
 
         if self.diff:
-            return ConfigurationRequest.MODE.DIFF
+            return ConfigurationRequest.Mode.DIFF
 
         if self.tags_only:
-            return ConfigurationRequest.MODE.TAGS_ONLY
+            return ConfigurationRequest.Mode.TAGS_ONLY
 
         return None
 
