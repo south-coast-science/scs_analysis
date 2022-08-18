@@ -65,7 +65,7 @@ class CmdAlertStatus(object):
 
 
     def response_mode(self):
-        return AlertStatusFinderRequest.MODE.LATEST if self.latest else AlertStatusFinderRequest.MODE.HISTORY
+        return AlertStatusFinderRequest.Mode.LATEST if self.latest else AlertStatusFinderRequest.Mode.HISTORY
 
 
     # ----------------------------------------------------------------------------------------------------------------
