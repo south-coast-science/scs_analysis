@@ -72,7 +72,7 @@ class CmdConfigurationMonitorCheck(object):
 
 
     def response_mode(self):
-        return ConfigurationCheckRequest.MODE.TAGS_ONLY if self.tags_only else ConfigurationCheckRequest.MODE.FULL
+        return ConfigurationCheckRequest.Mode.TAGS_ONLY if self.tags_only else ConfigurationCheckRequest.Mode.FULL
 
 
     # ----------------------------------------------------------------------------------------------------------------
