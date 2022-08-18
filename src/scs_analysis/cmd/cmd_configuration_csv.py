@@ -88,13 +88,13 @@ class CmdConfigurationCSV(object):
 
     def request_mode(self):
         if self.separate or self.latest:
-            return ConfigurationRequest.MODE.LATEST
+            return ConfigurationRequest.Mode.LATEST
 
         if self.diff_histories:
-            return ConfigurationRequest.MODE.DIFF
+            return ConfigurationRequest.Mode.DIFF
 
         if self.full_histories:
-            return ConfigurationRequest.MODE.HISTORY
+            return ConfigurationRequest.Mode.HISTORY
 
         return None
 
