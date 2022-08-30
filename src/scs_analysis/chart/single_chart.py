@@ -19,7 +19,6 @@ from scs_analysis.chart.chart import Chart
 
 
 # TODO: move the Y baseline up if zero is not needed
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class SingleChart(Chart):
