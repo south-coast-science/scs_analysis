@@ -18,8 +18,12 @@ class CmdSampleSlope(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-i ISO] [-t TALLY] [-p PRECISION] [-v] PATH",
+        self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-x] [-p PRECISION] [-v] PATH",
                                               version="%prog 1.0")
+
+        # compulsory...
+        self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",
+                                 help="slope field name (i.e. '1min')")
 
         # optional...
         self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
@@ -27,6 +31,9 @@ class CmdSampleSlope(object):
 
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", default=2, dest="tally",
                                  help="compute for rolling TALLY number of data points (default 2)")
+
+        self.__parser.add_option("--exclude-incomplete", "-x", action="store_true", dest="exclude_incomplete",
+                                 default=False, help="exclude incomplete tallies")
 
         self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=6, dest="precision",
                                  help="precision (default 6 decimal places)")
@@ -40,6 +47,9 @@ class CmdSampleSlope(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if self.name is None:
+            return False
+
         if self.tally < 1:
             return False
 
@@ -52,6 +62,11 @@ class CmdSampleSlope(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def name(self):
+        return self.__opts.name
+
+
+    @property
     def iso(self):
         return self.__opts.iso
 
@@ -59,6 +74,11 @@ class CmdSampleSlope(object):
     @property
     def tally(self):
         return self.__opts.tally
+
+
+    @property
+    def exclude_incomplete(self):
+        return self.__opts.exclude_incomplete
 
 
     @property
@@ -83,5 +103,7 @@ class CmdSampleSlope(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleSlope:{iso:%s, tally:%s, precision:%s, verbose:%s, path:%s}" % \
-               (self.iso, self.tally, self.precision, self.verbose, self.path)
+        return "CmdSampleSlope:{name:%s, iso:%s, tally:%s, exclude_incomplete:%s, precision:%s, verbose:%s, " \
+               "path:%s}" % \
+               (self.name, self.iso, self.tally, self.exclude_incomplete, self.precision, self.verbose,
+                self.path)
