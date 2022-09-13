@@ -13,7 +13,7 @@ have contiguous datetime values.
 
 Contiguity is defined by the --max-interval flag. If the time interval between a document and the previous document is
 greater than this interval, then the current CSV file is closed, and a new file is opened. File names (and
-sub-directories) as specified by the --file-prefix flag. The datetime of the first row of CSV file is appended to the
+subdirectories) as specified by the --file-prefix flag. The datetime of the first row of CSV file is appended to the
 prefix.
 
 The input documents must contain a field carrying an ISO 8601 datetime. If the field in a given document is empty or

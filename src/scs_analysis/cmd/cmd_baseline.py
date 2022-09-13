@@ -27,9 +27,10 @@ class CmdBaseline(object):
         """
         cmds = ' | '.join(self.__UPTAKE_CMDS)
 
-        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -t DEVICE_TAG -f { V | E } "
-                                                    "[{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] "
-                                                    "[-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -f { V | E } [{ -r | -u COMMAND }] "
+                                                    "[-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM] "
+                                                    "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N",
+                                              version="%prog 1.0")
 
         # source...
         self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
@@ -38,9 +39,6 @@ class CmdBaseline(object):
         # identity...
         self.__parser.add_option("--conf-name", "-c", type="string", nargs=1, action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
-
-        self.__parser.add_option("--device-tag", "-t", type="string", nargs=1, action="store", dest="device_tag",
-                                 help="the device to be baselined")
 
         # function...
         self.__parser.add_option("--fields", "-f", type="string", nargs=1, action="store", dest="fields",
@@ -83,7 +81,7 @@ class CmdBaseline(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.conf_name is None or self.device_tag is None:
+        if self.conf_name is None or len(self.device_tags) < 1:
             return False
 
         if self.fields not in Minimum.FIELD_SELECTIONS:
@@ -136,11 +134,6 @@ class CmdBaseline(object):
     @property
     def conf_name(self):
         return self.__opts.conf_name
-
-
-    @property
-    def device_tag(self):
-        return self.__opts.device_tag
 
 
     @property
@@ -198,6 +191,11 @@ class CmdBaseline(object):
         return self.__opts.verbose
 
 
+    @property
+    def device_tags(self):
+        return self.__args
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -205,9 +203,9 @@ class CmdBaseline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaseline:{aws:%s, conf_name:%s, device_tag:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
+        return "CmdBaseline:{aws:%s, conf_name:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
                "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, " \
-               "verbose:%s}" % \
-               (self.aws, self.conf_name, self.device_tag, self.fields, self.rehearse, self.uptake, self.start_hour,
+               "verbose:%s, device_tags:%s}" % \
+               (self.aws, self.conf_name, self.fields, self.rehearse, self.uptake, self.start_hour,
                 self.end_hour, self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas,
-                self.verbose)
+                self.verbose, self.device_tags)

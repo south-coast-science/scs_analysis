@@ -28,8 +28,8 @@ Any number of named baseline_conf files may be stored.
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py [-a] -c NAME -t DEVICE_TAG -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION]
-[-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v]
+baseline.py [-a] -c NAME -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM]
+[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N
 
 EXAMPLES
 baseline.py -ac freshfield -t scs-be2-3 -f E -r
@@ -101,20 +101,21 @@ if __name__ == '__main__':
     monitor_auth = None
     mqtt_client = None
 
+    processed_count = 0
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdBaseline()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
+    Logging.config('baseline', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # cmd...
-
-        cmd = CmdBaseline()
-
-        if not cmd.is_valid():
-            cmd.print_help(sys.stderr)
-            exit(2)
-
-        Logging.config('baseline', verbose=cmd.verbose)
-        logger = Logging.getLogger()
-
-
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
@@ -166,225 +167,236 @@ if __name__ == '__main__':
         persistence_manager = s3_manager if cmd.aws else Host
 
 
-        # ------------------------------------------------------------------------------------------------------------
-        # configuration...
-
-        logger.error("configuration...")
-
-        # BaselineConf...
-        baseline_conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
-
-        if baseline_conf is None:
-            logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
-            exit(1)
-
-        try:
-            baseline_conf = cmd.override(baseline_conf)
-        except KeyError as ex:
-            logger.error("the gas %s is not in the baseline configuration." % ex)
-            exit(2)
-
-        # host name...
-        host_tag = Host.name()
-
-        # topics...
-        group = byline_manager.find_bylines_for_device(cmd.device_tag)
-
-        if group is None:
-            logger.error("no bylines found for %s." % cmd.device_tag)
-            exit(1)
-
-        gases_topic = group.latest_topic('/gases')
-        control_topic = group.latest_topic('/control')
-
-        if gases_topic is None:
-            logger.error("no gases topic found for %s." % cmd.device_tag)
-            exit(1)
-
-        if control_topic is None:
-            logger.error("no control topic found for %s." % cmd.device_tag)
-            exit(1)
-
-        logger.error("gases_topic: %s" % gases_topic)
-        logger.error("control_topic: %s" % control_topic)
-
-        # MQTT peer...
-        peer_group = MQTTPeerSet.load(s3_manager)
-        peer = peer_group.peer_by_tag(cmd.device_tag)
-
-        if peer is None:
-            logger.error("no MQTT peer found for tag '%s'." % cmd.device_tag)
-            exit(1)
-
-        logger.error("hostname: %s" % peer.hostname)
-
-        # MQTTClient...
-        handler = ControlHandler(host_tag, cmd.device_tag)
-        subscriber = MQTTSubscriber(control_topic, handler.handle)
-
-        mqtt_client = MQTTClient(subscriber)
-        mqtt_client.connect(client_auth, False)
-
-        # Configuration...
-        stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['configuration'], MQTT_TIMEOUT,
-                                                      peer.shared_secret)
-
-        if return_code != 0:
-            logger.error("Configuration cannot be retrieved: %s" % stderr[0])
-            exit(return_code)
-
-        jdict = json.loads(stdout[0])
-        device_conf = Configuration.construct_from_jdict(jdict.get('val'))
-
-        ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
-
-        # AFECalib...
-        if ox_index is None:
-            ox_sensor = None
-
-        else:
-            stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['afe_calib'], MQTT_TIMEOUT,
-                                                          peer.shared_secret)
-            if return_code != 0:
-                logger.error("AFECAlib cannot be retrieved: %s" % stderr[0])
-                exit(return_code)
-
-            jdict = json.loads(stdout[0])
-            afe_calib = AFECalib.construct_from_jdict(jdict)
-
-            afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else device_conf.afe_baseline
-
-            ox_baseline = afe_baseline.sensor_baseline(ox_index)
-            ox_calib = afe_calib.sensor_calib(ox_index)
-
-            ox_sensor = ox_calib.sensor(ox_baseline)
-            # logger.error(ox_sensor)
-
-        logger.error("-")
-
-
-        # ------------------------------------------------------------------------------------------------------------
-        # run...
-
-        # data...
-        logger.error("data...")
-
-        now = LocalizedDatetime.now()
-
-        start = baseline_conf.start_datetime(now)
-        end = baseline_conf.end_datetime(now)
-
-        if start == end:
-            logger.error("the start and end hours may not be the same.")
-            exit(1)
-
-        if end > now:
-            start -= Timedelta(days=1)
-            end -= Timedelta(days=1)
-            logger.error("WARNING: testing previous day...")
-
-        logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
-
-        data = list(message_manager.find_for_topic(gases_topic, start, end, None, False, baseline_conf.checkpoint(),
-                                                   False, False, False, False, False, None))
-        if not data:
-            logger.error("no data found for %s." % gases_topic)
-            exit(1)
-
-        logger.error("expected: %s retrieved: %s" % (baseline_conf.expected_data_points(start, end), len(data)))
-        logger.error("-")
-
-        # corrections...
-        logger.error("correction...")
-
-        conf_minimums = baseline_conf.minimums
-        correction_applied = False
-        no2_correction = None
-
-        for minimum in Minimum.find_minimums(data, cmd.fields):
-            gas = minimum.gas
-
-            if cmd.excludes_gas(gas):       # not "only this gas"
-                continue
-
-            logger.error("-")
-            logger.error("%s..." % minimum.path)
-
-            if gas == cmd.exclude_gas:      # is excluded gas
-                logger.error("%s is excluded - skipping" % gas)
-                continue
-
-            if gas not in conf_minimums:
-                logger.error("%s has no specified minimum - skipping" % gas)
-                continue
-
-            # NO2...
-            if minimum.path == 'val.NO2.cnc':
-                no2_correction = conf_minimums['NO2'] - minimum.value
-
+        for device_tag in cmd.device_tags:
             try:
-                if 'vCal' not in minimum.path and minimum.update_already_done(device_conf, end):
-                    logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
+                # ----------------------------------------------------------------------------------------------------
+                # configuration...
+
+                logger.error("configuration...")
+
+                # BaselineConf...
+                baseline_conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
+
+                if baseline_conf is None:
+                    logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
                     continue
 
-            except ValueError as ex:
-                logger.error("sensor with serial number %s is not supported - skipping" % ex)
-                continue
-
-            # Ox...
-            # TODO: correction needs to happen on the big data set - before minimums are found?
-            if minimum.path == 'val.Ox.cnc':
-                if no2_correction is None:
-                    logger.error('NO2 minimum required for Ox, but none available - skipping')
+                try:
+                    baseline_conf = cmd.override(baseline_conf)
+                except KeyError as ex:
+                    logger.error("the gas %s is not in the baseline configuration." % ex)
                     continue
 
-                sample = GasesSample.construct_from_jdict(minimum.sample)
+                # host name...
+                host_tag = Host.name()
 
-                temp = sample.sht_datum.temp
-                no2_sample = sample.electrochem_datum.sns['NO2']
-                ox_sample = sample.electrochem_datum.sns['Ox']
+                # topics...
+                group = byline_manager.find_bylines_for_device(device_tag)
 
-                no2_cnc = no2_sample.cnc + no2_correction
-                corrected = ox_sensor.datum(temp, ox_sample.we_v, ox_sample.ae_v, no2_cnc=no2_cnc)
-                minimum.value = corrected.cnc
+                if group is None:
+                    logger.error("no bylines found for %s." % device_tag)
+                    continue
 
-            # report...
-            logger.error(JSONify.dumps(minimum.summary(gas)))
+                gases_topic = group.latest_topic('/gases')
+                control_topic = group.latest_topic('/control')
 
-            # minimums...
-            if minimum.value == conf_minimums[gas]:
-                logger.error("%s matches the specified minimum - skipping" % minimum.path)
+                if gases_topic is None:
+                    logger.error("no gases topic found for %s." % device_tag)
+                    continue
+
+                if control_topic is None:
+                    logger.error("no control topic found for %s." % device_tag)
+                    continue
+
+                logger.error("gases_topic: %s" % gases_topic)
+                logger.error("control_topic: %s" % control_topic)
+
+                # MQTT peer...
+                peer_group = MQTTPeerSet.load(s3_manager)
+                peer = peer_group.peer_by_tag(device_tag)
+
+                if peer is None:
+                    logger.error("no MQTT peer found for tag '%s'." % device_tag)
+                    continue
+
+                logger.error("hostname: %s" % peer.hostname)
+
+                # MQTTClient...
+                handler = ControlHandler(host_tag, device_tag)
+                subscriber = MQTTSubscriber(control_topic, handler.handle)
+
+                mqtt_client = MQTTClient(subscriber)
+                mqtt_client.connect(client_auth, False)
+
+                # Configuration...
+                stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['configuration'],
+                                                              MQTT_TIMEOUT, peer.shared_secret)
+
+                if return_code != 0:
+                    logger.error("Configuration cannot be retrieved: %s" % stderr[0])
+                    continue
+
+                jdict = json.loads(stdout[0])
+                device_conf = Configuration.construct_from_jdict(jdict.get('val'))
+
+                # noinspection PyUnresolvedReferences
+                ox_index = None if device_conf.afe_id is None else device_conf.afe_id.sensor_index('Ox')
+
+                # AFECalib...
+                if ox_index is None:
+                    ox_sensor = None
+
+                else:
+                    stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['afe_calib'],
+                                                                  MQTT_TIMEOUT, peer.shared_secret)
+                    if return_code != 0:
+                        logger.error("AFECAlib cannot be retrieved: %s" % stderr[0])
+                        continue
+
+                    jdict = json.loads(stdout[0])
+                    afe_calib = AFECalib.construct_from_jdict(jdict)
+
+                    afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else \
+                        device_conf.afe_baseline
+
+                    ox_baseline = afe_baseline.sensor_baseline(ox_index)
+                    ox_calib = afe_calib.sensor_calib(ox_index)
+
+                    ox_sensor = ox_calib.sensor(ox_baseline)
+                    # logger.error(ox_sensor)
+
+                logger.error("-")
+
+
+                # ----------------------------------------------------------------------------------------------------
+                # run...
+
+                # data...
+                logger.error("data...")
+
+                now = LocalizedDatetime.now()
+
+                start = baseline_conf.start_datetime(now)
+                end = baseline_conf.end_datetime(now)
+
+                if start == end:
+                    logger.error("the start and end hours may not be the same.")
+                    exit(1)
+
+                if end > now:
+                    start -= Timedelta(days=1)
+                    end -= Timedelta(days=1)
+                    logger.error("WARNING: testing previous day...")
+
+                logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
+
+                data = list(message_manager.find_for_topic(gases_topic, start, end, None, False,
+                                                           baseline_conf.checkpoint(),
+                                                           False, False, False, False, False, None))
+                if not data:
+                    logger.error("no data found for %s." % gases_topic)
+                    continue
+
+                logger.error("expected: %s retrieved: %s" % (baseline_conf.expected_data_points(start, end), len(data)))
+                logger.error("-")
+
+                # corrections...
+                logger.error("correction...")
+
+                conf_minimums = baseline_conf.minimums
+                correction_applied = False
+                no2_correction = None
+
+                for minimum in Minimum.find_minimums(data, cmd.fields):
+                    gas = minimum.gas
+
+                    if cmd.excludes_gas(gas):       # not "only this gas"
+                        continue
+
+                    logger.error("-")
+                    logger.error("%s..." % minimum.path)
+
+                    if gas == cmd.exclude_gas:      # is excluded gas
+                        logger.error("%s is excluded - skipping" % gas)
+                        continue
+
+                    if gas not in conf_minimums:
+                        logger.error("%s has no specified minimum - skipping" % gas)
+                        continue
+
+                    # NO2...
+                    if minimum.path == 'val.NO2.cnc':
+                        no2_correction = conf_minimums['NO2'] - minimum.value
+
+                    try:
+                        if 'vCal' not in minimum.path and minimum.update_already_done(device_conf, end):
+                            logger.error("%s has been updated since the latest test period - skipping" % minimum.path)
+                            continue
+
+                    except ValueError as ex:
+                        logger.error("sensor with serial number %s is not supported - skipping" % ex)
+                        continue
+
+                    # Ox...
+                    # TODO: correction needs to happen on the big data set - before minimums are found?
+                    if minimum.path == 'val.Ox.cnc':
+                        if no2_correction is None:
+                            logger.error('NO2 minimum required for Ox, but none available - skipping')
+                            continue
+
+                        sample = GasesSample.construct_from_jdict(minimum.sample)
+
+                        temp = sample.sht_datum.temp
+                        no2_sample = sample.electrochem_datum.sns['NO2']
+                        ox_sample = sample.electrochem_datum.sns['Ox']
+
+                        no2_cnc = no2_sample.cnc + no2_correction
+                        corrected = ox_sensor.datum(temp, ox_sample.we_v, ox_sample.ae_v, no2_cnc=no2_cnc)
+                        minimum.value = corrected.cnc
+
+                    # report...
+                    logger.error(JSONify.dumps(minimum.summary(gas)))
+
+                    # minimums...
+                    if minimum.value == conf_minimums[gas]:
+                        logger.error("%s matches the specified minimum - skipping" % minimum.path)
+                        continue
+
+                    if minimum.index == 0:
+                        logger.error("WARNING: the first datum for %s is the minimum value" % minimum.path)
+
+                    elif minimum.index == len(data) - 1:
+                        logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
+
+                    # command...
+                    cmd_tokens = minimum.cmd_tokens(conf_minimums)
+                    logger.error(' '.join([str(token) for token in cmd_tokens]))
+
+                    if cmd.rehearse:
+                        continue
+
+                    stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT,
+                                                                  peer.shared_secret)
+                    if stderr:
+                        print(*stderr, sep='\n', file=sys.stderr)
+                    if stdout:
+                        print(*stdout, sep='\n', file=sys.stdout)
+
+                if return_code != 0:
+                    continue
+
+                logger.error("-")
+
+                # reboot...
+                logger.error(cmd.uptake)
+
+                handler.publish(mqtt_client, control_topic, [cmd.uptake], MQTT_TIMEOUT, peer.shared_secret)
+
+            except TimeoutError:
+                logger.error("device is not available.")
                 continue
 
-            if minimum.index == 0:
-                logger.error("WARNING: the first datum for %s is the minimum value" % minimum.path)
-
-            elif minimum.index == len(data) - 1:
-                logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
-
-            # command...
-            cmd_tokens = minimum.cmd_tokens(conf_minimums)
-            logger.error(' '.join([str(token) for token in cmd_tokens]))
-
-            if cmd.rehearse:
-                continue
-
-            stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT,
-                                                          peer.shared_secret)
-            if stderr:
-                print(*stderr, sep='\n', file=sys.stderr)
-            if stdout:
-                print(*stdout, sep='\n', file=sys.stdout)
-
-        if return_code != 0:
-            exit(return_code)
-
-        logger.error("-")
-
-        # reboot...
-        logger.error(cmd.uptake)
-
-        handler.publish(mqtt_client, control_topic, [cmd.uptake], MQTT_TIMEOUT, peer.shared_secret)
+            processed_count += 1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -393,10 +405,8 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except TimeoutError:
-        logger.error("device is not available.")
-        exit(1)
-
     finally:
         if mqtt_client:
             mqtt_client.disconnect()
+
+        logger.info("devices: %d processed: %d" % (len(cmd.device_tags), processed_count))

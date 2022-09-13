@@ -18,11 +18,15 @@ class CmdSampleStats(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t] [-p PRECISION] [-a] [-r] [-v] PATH1 [PATH2 .. PATHN]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-i] [-p PRECISION] [-a] [-r] [-v] "
+                                                    "PATH1 [PATH2 .. PATHN]", version="%prog 1.0")
+
+        # input...
+        self.__parser.add_option("--tag", "-t", type="string", nargs=1, action="store", default='tag', dest="tag",
+                                 help="name of the tag field (default 'tag')")
 
         # output...
-        self.__parser.add_option("--include-tag", "-t", action="store_true", dest="include_tag", default=False,
+        self.__parser.add_option("--include-tag", "-i", action="store_true", dest="include_tag", default=False,
                                  help="include the device tag")
 
         self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=6, dest="precision",
@@ -50,6 +54,11 @@ class CmdSampleStats(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def tag(self):
+        return self.__opts.tag
+
 
     @property
     def include_tag(self):
@@ -88,5 +97,5 @@ class CmdSampleStats(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleStats:{include_tag:%s, precision:%s, analytic:%s, rows:%s, verbose:%s, paths:%s}" % \
-               (self.include_tag, self.precision, self.analytic, self.rows, self.verbose, self.paths)
+        return "CmdSampleStats:{tag:%s, include_tag:%s, precision:%s, analytic:%s, rows:%s, verbose:%s, paths:%s}" % \
+               (self.tag, self.include_tag, self.precision, self.analytic, self.rows, self.verbose, self.paths)
