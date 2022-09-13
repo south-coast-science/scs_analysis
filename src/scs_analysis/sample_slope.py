@@ -9,24 +9,31 @@ source repo: scs_analysis
 
 DESCRIPTION
 The sample_slope utility it used to find the slope for a given field in a sequence of JSON documents. Slope is
-defined as change in value / change in time (in seconds).
+defined as delta value / delta time (in seconds).
 
 The output document replaced the input field with field.cur (the current value) and field.slope. For the initial
 input document, the corresponding output document's field.slope value is null. A --tally flag specifies the number
 of rolling samples in the regression.
 
+If the --exclude-incomplete flag is set, then any data proir to the required number of tallies is not output. Where
+a chain of slope analyses are being performed, the flag should only be used on the last (highest tally) pass.
+
 SYNOPSIS
-sample_slope.py [-i ISO] [-t TALLY] [-p PRECISION] [-v] PATH
+sample_slope.py -n NAME [-i ISO] [-t TALLY] [-x] [-p PRECISION] [-v] PATH
 
 EXAMPLES
-csv_reader.py -v ~/climate.csv | sample_slope.py -v val.tmp
+csv_reader.py -v climate-15min.csv | \
+sample_slope.py -v -n 15min -t2 val.hmd | \
+sample_slope.py -v -n 30min -t3 -x val.hmd | \
+csv_writer.py -v climate-15min-slp15-slp30.csv
 
 DOCUMENT EXAMPLE - INPUT
-{"val": {"hmd": 67.6, "tmp": 20.5, "bar": ""}, "rec": "2020-10-23T12:19:20Z", "tag": "scs-bgx-401"}
+{"rec": "2022-09-13T13:30:00Z", "val": {"hmd": 72.5, "tmp": 22.2,
+"bar": {"pA": 100.964}}, "ver": 1.0, "tag": "scs-opc-125"}
 
 DOCUMENT EXAMPLE - OUTPUT
-{"val": {"hmd": 67.6, "tmp": {"cur": 20.5, "slope": -0.001667}, "bar": ""}, "rec": "2020-10-23T12:19:20Z",
-"tag": "scs-bgx-401"}
+{"rec": "2022-09-13T13:30:00Z", "val": {"hmd": {"cur": 72.5, "slp15min": -0.000111, "slp30min": 0.0005},
+"tmp": 22.2, "bar": {"pA": 100.964}}, "ver": 1.0, "tag": "scs-opc-125"}
 """
 
 import sys
@@ -38,6 +45,8 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.linear_regression import LinearRegression
 from scs_core.data.path_dict import PathDict
+
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -56,8 +65,10 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("sample_slope: %s" % cmd, file=sys.stderr)
+    Logging.config('sample_slope', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -65,6 +76,7 @@ if __name__ == '__main__':
 
         regression = LinearRegression(tally=cmd.tally)
 
+        source_path = cmd.path
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -85,26 +97,29 @@ if __name__ == '__main__':
 
             # rec...
             if cmd.iso not in paths:
-                print("sample_slope: field %s not present." % cmd.iso, file=sys.stderr)
+                logger.error("field %s not present." % cmd.iso)
                 exit(1)
 
             rec_node = datum.node(cmd.iso)
             rec = LocalizedDatetime.construct_from_iso8601(rec_node)
 
             if rec is None:
-                print("sample_slope: invalid ISO 8601 value '%s' in %s." % (rec_node, jstr), file=sys.stderr)
+                logger.error("invalid ISO 8601 value '%s' in %s." % (rec_node, jstr))
                 exit(1)
 
             # value...
-            if cmd.path not in paths:
-                print("sample_slope: field %s not present in %s." % (cmd.path, jstr), file=sys.stderr)
-                exit(1)
+            if source_path not in paths:
+                if source_path + '.cur' in paths:
+                    source_path += '.cur'               # we are extending an existing slope analysis
+                else:
+                    logger.error("field %s not present in %s." % (cmd.path, jstr))
+                    exit(1)
 
-            value_node = datum.node(cmd.path)
+            value_node = datum.node(source_path)
             value = Datum.float(value_node)
 
             if value is None:
-                print("sample_slope: invalid numeric value '%s' in %s." % (value_node, jstr), file=sys.stderr)
+                logger.error("invalid numeric value '%s' in %s." % (value_node, jstr))
                 exit(1)
 
             # slope...
@@ -121,12 +136,15 @@ if __name__ == '__main__':
             target = PathDict()
 
             for path in datum.paths():
-                if path == cmd.path:
+                if path == source_path:
                     target.append('.'.join((cmd.path, 'cur')), value)
-                    target.append('.'.join((cmd.path, 'slope')), slope)
+                    target.append('.'.join((cmd.path, 'slp' + cmd.name)), slope)
                     continue
 
                 target.copy(datum, path)
+
+            if cmd.exclude_incomplete and document_count < cmd.tally:
+                continue
 
             print(JSONify.dumps(target))
             sys.stdout.flush()
@@ -143,5 +161,4 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     finally:
-        if cmd.verbose:
-            print("sample_slope: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+        logger.info("documents: %d processed: %d" % (document_count, processed_count))

@@ -124,8 +124,11 @@ if __name__ == '__main__':
             if datum is None:
                 continue
 
-            if tag is None:
-                tag = datum.node('tag')
+            if cmd.include_tag and tag is None:
+                try:
+                    tag = datum.node(cmd.tag)
+                except KeyError:
+                    tag = None
 
             document_count += 1
 
