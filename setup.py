@@ -43,7 +43,7 @@ setuptools.setup(
     version=get_version("src/scs_analysis/__init__.py"),
     author="South Coast Science",
     author_email="contact@southcoastscience.com",
-    description="Information management and analysis utilities for South Coast Science data consumers.",
+    description="Information management and analysis utilities for South Coast Science data consumers",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/south-coast-science/scs_analysis",
