@@ -198,6 +198,7 @@ if __name__ == '__main__':
 
     except KeyError as ex:
         print("csv_join: KeyError: %s" % ex, file=sys.stderr)
+        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
