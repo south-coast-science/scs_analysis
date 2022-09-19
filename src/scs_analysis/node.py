@@ -170,6 +170,7 @@ if __name__ == '__main__':
 
     except KeyError as ex:
         logger.error("KeyError: %s" % ex)
+        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

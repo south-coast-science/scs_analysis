@@ -132,9 +132,11 @@ if __name__ == '__main__':
 
     except (ConnectionError, HTTPException) as ex:
         print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
+        exit(1)
 
     except ResourceUnavailableException as ex:
         print("aws_byline: %s" % repr(ex), file=sys.stderr)
+        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

@@ -229,6 +229,7 @@ if __name__ == '__main__':
 
     except (OSError, TimeoutError):
         logger.error("device is not available.")
+        exit(1)
 
     except (EOFError, KeyboardInterrupt):
         print(file=sys.stderr)

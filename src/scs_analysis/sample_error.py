@@ -124,6 +124,7 @@ if __name__ == '__main__':
 
     except KeyError as ex:
         print("sample_error: KeyError: %s" % ex, file=sys.stderr)
+        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
