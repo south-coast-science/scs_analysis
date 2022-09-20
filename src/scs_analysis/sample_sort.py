@@ -8,9 +8,9 @@ Created on 19 Sep 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_sort utility is used to sort the JSON documents provided on stdin, according to one or more fields
-indicated by paths. It is up to the user to ensure that each document contains a leaf node for each path, and that
-the type of each node is compatible (i.e. all values for a given path are numeric or are strings).
+The sample_sort utility is used to sort the JSON documents provided on stdin, according to one or more fields indicated
+by the given paths. It is up to the user to ensure that each document contains a leaf node for each path, and that the
+type of each node is compatible (i.e. all values for a given path are numeric or are strings).
 
 WARNING: no support is given for localised datetimes. Therefore, for example, 2022-09-16T09:00:00Z is considered
 not equal to 2022-09-16T10:00:00+01:00.
@@ -60,6 +60,7 @@ if __name__ == '__main__':
 
         data = []
 
+        # ingest...
         for line in sys.stdin:
             datum = PathDict.construct_from_jstr(line, sort_paths=cmd.sort_paths)
 
