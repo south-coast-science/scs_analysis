@@ -111,6 +111,7 @@ setuptools.setup(
         'src/scs_analysis/sample_paths.py',
         'src/scs_analysis/sample_regression.py',
         'src/scs_analysis/sample_slope.py',
+        'src/scs_analysis/sample_sort.py',
         'src/scs_analysis/sample_stats.py',
         'src/scs_analysis/sample_subset.py',
         'src/scs_analysis/sample_time_shift.py',
