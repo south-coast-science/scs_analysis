@@ -50,11 +50,11 @@ for device in group.devices:
 print("=")
 
 # DeviceBylineGroup...
-group = manager.find_bylines_for_device('scs-bgx-431')
+group = manager.find_bylines_for_device('scs-opc-198')
 print(group)
 print("-")
 
-group = manager.find_bylines_for_device('scs-bgx-431', excluded='/control')
+group = manager.find_bylines_for_device('scs-opc-198', excluded='/control')
 print(group)
 print("-")
 
