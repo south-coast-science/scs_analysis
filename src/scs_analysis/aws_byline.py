@@ -31,11 +31,12 @@ SEE ALSO
 scs_analysis/aws_topic_history
 """
 
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.client.network import Network
@@ -44,8 +45,7 @@ from scs_core.client.resource_unavailable_exception import ResourceUnavailableEx
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
-
-from scs_host.sys.host import Host
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -63,36 +63,28 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("aws_byline: %s" % cmd, file=sys.stderr)
+    Logging.config('aws_byline', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # APIAuth...
-        api_auth = APIAuth.load(Host)
-
-        if api_auth is None:
-            print("aws_byline: APIAuth not available.", file=sys.stderr)
-            exit(1)
+        # reporter...
+        reporter = BatchDownloadReporter()
 
         # BylineManager...
-        manager = BylineManager(api_auth)
-
-        if cmd.verbose:
-            print("aws_byline: %s" % manager, file=sys.stderr)
-            sys.stderr.flush()
+        manager = BylineManager(requests, reporter=reporter)
+        logger.info(manager)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # check...
 
         if not Network.is_available():
-            if cmd.verbose:
-                print("aws_byline: waiting for network.", file=sys.stderr)
-                sys.stderr.flush()
-
+            logger.info("waiting for network")
             Network.wait()
 
 
@@ -109,7 +101,7 @@ if __name__ == '__main__':
             group = manager.find_bylines_for_device(cmd.device, excluded=cmd.excluded)
 
         else:
-            group = manager.find_bylines(excluded=cmd.excluded)     # all
+            group = manager.find_bylines(excluded=cmd.excluded)         # all
 
         # report...
         for byline in group.bylines:
@@ -131,11 +123,11 @@ if __name__ == '__main__':
     # end...
 
     except (ConnectionError, HTTPException) as ex:
-        print("aws_byline: %s: %s" % (ex.__class__.__name__, ex), file=sys.stderr)
+        logger.error("%s: %s" % (ex.__class__.__name__, ex))
         exit(1)
 
     except ResourceUnavailableException as ex:
-        print("aws_byline: %s" % repr(ex), file=sys.stderr)
+        logger.error(repr(ex))
         exit(1)
 
     except KeyboardInterrupt:
@@ -146,4 +138,4 @@ if __name__ == '__main__':
             latest_pub = group.latest_pub()
             latest_iso = None if latest_pub is None else latest_pub.as_iso8601()
 
-            print("aws_byline: latest_pub: %s" % latest_iso, file=sys.stderr)
+            logger.info("latest_pub: %s" % latest_iso)
