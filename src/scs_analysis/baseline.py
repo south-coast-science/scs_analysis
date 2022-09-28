@@ -51,7 +51,7 @@ scs_mfr/scd30_baseline
 """
 
 import json
-
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_baseline import CmdBaseline
@@ -130,7 +130,7 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        # APIAuth (for BylineManager)...
+        # APIAuth (for MessageManager)...
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
@@ -154,13 +154,13 @@ if __name__ == '__main__':
 
         s3_manager = S3PersistenceManager(s3_client, s3_resource_client)
 
-        # BylineManager...
-        byline_manager = BylineManager(api_auth)
-
         # reporter...
         reporter = BatchDownloadReporter()
 
-        # message manager...
+        # BylineManager...
+        byline_manager = BylineManager(requests, reporter=reporter)
+
+        # MessageManager...
         message_manager = MessageManager(api_auth, reporter=reporter)
 
         # PersistenceManager...

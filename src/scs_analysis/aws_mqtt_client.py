@@ -214,6 +214,7 @@ if __name__ == '__main__':
 
     except ConnectionError as ex:
         print("aws_mqtt_client: %s" % ex, file=sys.stderr)
+        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
