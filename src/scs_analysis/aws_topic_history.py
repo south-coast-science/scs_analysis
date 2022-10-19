@@ -53,6 +53,7 @@ RESOURCES
 https://github.com/curl/curl
 """
 
+import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
@@ -134,7 +135,7 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # BylineManager...
-        byline_manager = BylineManager(api_auth)
+        byline_manager = BylineManager(requests)
 
         # MessageManager...
         message_manager = MessageManager(api_auth, reporter=reporter)
