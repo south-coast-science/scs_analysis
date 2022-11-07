@@ -1,6 +1,7 @@
 AWSIoTPythonSDK~=1.4.9
 matplotlib~=3.3
 paho-mqtt~=1.5.0
+pycryptodome~=3.15.0
 pycurl~=7.43.0.6
 pypandoc~=1.5
 pysftp~=0.2.9
@@ -9,5 +10,5 @@ scipy~=1.5
 setuptools~=50.3.0
 tzlocal~=2.1
 
-scs-core~=1.4.11
+scs-core~=1.4.14
 scs-host-posix~=1.0.11
