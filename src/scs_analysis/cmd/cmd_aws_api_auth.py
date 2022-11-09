@@ -24,7 +24,7 @@ class CmdAWSAPIAuth(object):
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]",
                                               version="%prog 1.0")
 
-        # optional...
+        # set...
         self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
                                  help="set API endpoint")
 
@@ -34,6 +34,7 @@ class CmdAWSAPIAuth(object):
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the API configuration")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -73,13 +74,13 @@ class CmdAWSAPIAuth(object):
 
 
     @property
-    def verbose(self):
-        return self.__opts.verbose
+    def delete(self):
+        return self.__opts.delete
 
 
     @property
-    def delete(self):
-        return self.__opts.delete
+    def verbose(self):
+        return self.__opts.verbose
 
 
     # ----------------------------------------------------------------------------------------------------------------

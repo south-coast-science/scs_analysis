@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
             # reported...
             if cmd.reported_path not in datum.paths():
-                print("sample_error: reported path '%s' not present" % cmd.reference_path, file=sys.stderr)
+                print("sample_error: reported path '%s' not present" % cmd.reported_path, file=sys.stderr)
                 exit(1)
 
             try:
