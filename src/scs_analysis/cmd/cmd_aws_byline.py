@@ -18,8 +18,8 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-m] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-m] "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
 
         # search types...
         self.__parser.add_option("--device", "-d", type="string", nargs=1, action="store", dest="device",
@@ -40,6 +40,9 @@ class CmdAWSByline(object):
 
         self.__parser.add_option("--include-messages", "-m", action="store_true", dest="include_messages",
                                  default=False, help="report the message with each byline")
+
+        self.__parser.add_option("--indent", "-i", action="store", dest="indent", type=int,
+                                 help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -103,6 +106,11 @@ class CmdAWSByline(object):
 
 
     @property
+    def indent(self):
+        return self.__opts.indent
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -114,5 +122,7 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, include_messages:%s, verbose:%s}" % \
-               (self.device, self.topic, self.latest, self.all, self.excluded, self.include_messages, self.verbose)
+        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, include_messages:%s, " \
+               "indent:%s, verbose:%s}" % \
+               (self.device, self.topic, self.latest, self.all, self.excluded, self.include_messages,
+                self.indent, self.verbose)
