@@ -190,7 +190,7 @@ if __name__ == '__main__':
                 jdict = json.loads(message)
 
             except (TypeError, ValueError) as ex:
-                reporter.print("%s: %s" % (ex, message))
+                reporter.print(repr(ex))
                 continue
 
             if cmd.echo:
