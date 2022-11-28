@@ -67,7 +67,7 @@ if __name__ == '__main__':
                 interval = UploadInterval.construct_from_jstr(jstr)
 
             except (KeyError, ValueError) as ex:
-                print("aws_upload_interval: %s for: %s on: %s" % (ex.__class__.__name__, ex, jstr), file=sys.stderr)
+                print("aws_upload_interval: %s on: %s" % (repr(ex), jstr), file=sys.stderr)
                 exit(1)
 
             if interval is None:

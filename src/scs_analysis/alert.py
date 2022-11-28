@@ -10,7 +10,7 @@ The alert utility is used to create, update, delete and find alert specification
 
 Alerts take the form of emails, sent when a parameter falls below or above specified bounds, or when the value is null
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
-the aggregartion period (usually in minutes). The minimum period is one minute.
+the aggregation period (usually in minutes). The minimum period is one minute.
 
 In --find mode, results can be filtered by topic, field or creator email address.
 
