@@ -124,17 +124,21 @@ if __name__ == '__main__':
             family_name = StdIO.prompt("Enter family name: ")
             email = StdIO.prompt("Enter email address: ")
             password = StdIO.prompt("Enter password: ")
+            retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same): ", default=None)
+
+            if not retrieval_password:
+                retrieval_password = password
 
             if not given_name or not given_name:
                 logger.error("Given name and family name are required.")
                 exit(1)
 
             if not Datum.is_email_address(email):
-                logger.error("The email address '%s' is not valid." % email)
+                logger.error("The email address is not valid.")
                 exit(1)
 
             if not CognitoUserIdentity.is_valid_password(password):
-                logger.error("The password '%s' is not valid." % password)
+                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
             report = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
@@ -143,7 +147,7 @@ if __name__ == '__main__':
             report = manager.create(report)
 
             # create credentials...
-            credentials = CognitoUserCredentials(cmd.credentials_name, report.email, report.password)
+            credentials = CognitoUserCredentials(cmd.credentials_name, email, password, retrieval_password)
             credentials.save(Host)
 
         if cmd.update:
@@ -156,6 +160,21 @@ if __name__ == '__main__':
             email = StdIO.prompt("Enter email (%s): ", default=identity.email)
             password = StdIO.prompt("Enter password (RETURN to keep existing): ", default=None)
 
+            if not password:
+                password = credentials.password
+
+            if credentials.retrieval_password == credentials.password:
+                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same): ", default=None)
+
+                if not retrieval_password:
+                    retrieval_password = password
+
+            else:
+                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN to keep existing): ", default=None)
+
+                if not retrieval_password:
+                    retrieval_password = credentials.retrieval_password
+
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
@@ -164,18 +183,19 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name, password)
+            identity = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name,
+                                           password)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
-            manager.update(report)
+            manager.update(identity)
 
             # update credentials...
-            credentials.email = report.email
-            if password:
-                credentials.password = report.password
+            credentials = CognitoUserCredentials(credentials.name, email, password, retrieval_password)
+            credentials.save(Host, encryption_key=retrieval_password)
 
-            credentials.save(Host, encryption_key=credentials.password)
+            # report...
+            report = finder.get_self(auth.id_token)
 
 
     # ----------------------------------------------------------------------------------------------------------------
