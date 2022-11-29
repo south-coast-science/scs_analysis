@@ -38,8 +38,9 @@ import sys
 from scs_analysis.cmd.cmd_cognito_user_credentials import CmdCognitoUserCredentials
 
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
+from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
+from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
@@ -89,11 +90,15 @@ if __name__ == '__main__':
         if cmd.set:
             credentials = CognitoUserCredentials.from_user(cmd.credentials_name)
 
-            if not credentials.ok():
-                logger.error("the identity is not valid")
+            if not Datum.is_email_address(credentials.email):
+                logger.error("The email address is not valid.")
                 exit(1)
 
-            credentials.save(Host, encryption_key=credentials.password)
+            if not CognitoUserIdentity.is_valid_password(credentials.password):
+                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
+                exit(1)
+
+            credentials.save(Host, encryption_key=credentials.retrieval_password)
 
         elif cmd.test:
             manager = CognitoUserLoginManager(requests)
