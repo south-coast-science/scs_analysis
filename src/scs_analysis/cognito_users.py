@@ -55,6 +55,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: report total found when in verbose find mode
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -154,10 +155,6 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % cmd.email)
                 exit(1)
 
-            # if not CognitoUserIdentity.is_valid_password(password):
-            #     logger.error("The password '%s' is not valid." % password)
-            #     exit(1)
-
             identity = CognitoUserIdentity(None, None, None, None,
                                            cmd.email, cmd.given_name, cmd.family_name, None)
 
@@ -182,10 +179,6 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            # if password and not CognitoUserIdentity.is_valid_password(password):
-            #     logger.error("The password '%s' is not valid." % password)
-            #     exit(1)
-
             report = CognitoUserIdentity(identity.username, None, None,
                                          enabled, email, given_name, family_name, None)
 
@@ -194,7 +187,6 @@ if __name__ == '__main__':
             manager.update(identity)
 
         if cmd.delete:
-            # TODO: delete user from organisations
             manager = CognitoUserDeleter(requests, auth.id_token)
             manager.delete(cmd.delete)
 
