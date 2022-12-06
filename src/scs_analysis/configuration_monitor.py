@@ -29,6 +29,7 @@ import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder
@@ -78,16 +79,21 @@ if __name__ == '__main__':
             logger.error('incorrect password.')
             exit(1)
 
-        finder = ConfigurationFinder(requests, auth)
+        # reporter...
+        reporter = BatchDownloadReporter()
+
+        # ConfigurationFinder...
+        finder = ConfigurationFinder(requests, auth, reporter=reporter)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         response = finder.find(cmd.tag_filter, cmd.exact_match, cmd.response_mode())
+        items = list(response)
 
-        print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
-        logger.info('retrieved: %s' % len(response.items))
+        print(JSONify.dumps(sorted(items), indent=cmd.indent))
+        logger.info('retrieved: %s' % len(items))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
