@@ -7,36 +7,31 @@ Created on 7 Oct 2020
 """
 
 import json
+import requests
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.data.byline import DeviceBylineGroup
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.data.json import JSONify
 
-from scs_host.sys.host import Host
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
-api_auth = APIAuth.load(Host)
-print(api_auth)
-
-manager = BylineManager(api_auth)
+manager = BylineManager(requests)
 print(manager)
-print("-")
+print("1-")
 
 # TopicBylineGroup...
-group = manager.find_bylines_for_topic('', excluded='/control')
+group = manager.find_bylines_for_topic('acsoft/holding-pool/device/praxis-000752/status', excluded='/control')
 print(group)
-print("-")
+print("2-")
 
 print("latest pub: %s" % group.latest_pub())
 print("latest rec: %s" % group.latest_rec())
-print("-")
+print("3-")
 
 print(group.devices)
-print("-")
+print("4-")
 
 for device in group.devices:
     print(device)
@@ -52,26 +47,34 @@ print("=")
 # DeviceBylineGroup...
 group = manager.find_bylines_for_device('scs-opc-198')
 print(group)
-print("-")
+print("5-")
 
 group = manager.find_bylines_for_device('scs-opc-198', excluded='/control')
 print(group)
-print("-")
+print("6-")
 
 print("latest pub: %s" % group.latest_pub())
 print("latest rec: %s" % group.latest_rec())
-print("-")
+print("7-")
 
 print(group.device)
 print("=")
 
 jstr = JSONify.dumps(group.as_json())
 print(jstr)
-print("-")
+print("8-")
 
 group = DeviceBylineGroup.construct_from_jdict(json.loads(jstr))
 print(group)
-print("-")
+print("9-")
 
 print("latest pub: %s" % group.latest_pub())
 print("latest rec: %s" % group.latest_rec())
+print("X-")
+
+
+group = manager.find_bylines()
+print(group)
+jstr = JSONify.dumps(group.as_json(), indent=4)
+print(jstr)
+
