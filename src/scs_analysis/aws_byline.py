@@ -126,11 +126,9 @@ if __name__ == '__main__':
 
     except (ConnectionError, HTTPException) as ex:
         logger.error(repr(ex))
-        exit(1)
 
     except ResourceUnavailableException as ex:
         logger.error(repr(ex))
-        exit(1)
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
