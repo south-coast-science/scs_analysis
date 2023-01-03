@@ -68,7 +68,6 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
-# TODO: test "configuration" command when using mobile network - remove omd field from communications?
 # --------------------------------------------------------------------------------------------------------------------
 
 EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
@@ -126,6 +125,7 @@ if __name__ == '__main__':
         else:
             manager = Host
 
+        # peer...
         if cmd.is_stored_peer():
             peer_group = MQTTPeerSet.load(manager)
             peer = peer_group.peer(cmd.peer_hostname)
@@ -144,6 +144,9 @@ if __name__ == '__main__':
             device_tag = cmd.device_tag
             key = cmd.device_shared_secret
             topic = cmd.device_topic
+
+        if cmd.interactive or cmd.verbose:
+            logger.error("control_topic: %s" % topic)
 
         # ClientAuth...
         auth = ClientAuth.load(Host)
