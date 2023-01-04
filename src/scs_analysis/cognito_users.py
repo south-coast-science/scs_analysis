@@ -55,7 +55,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: report total found when in verbose find mode
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -191,11 +190,16 @@ if __name__ == '__main__':
             manager.delete(cmd.delete)
 
 
-    # ----------------------------------------------------------------------------------------------------------------
-    # end...
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
 
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        try:
+            logger.info("found: %s" % len(report))
+        except TypeError:
+            pass
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
