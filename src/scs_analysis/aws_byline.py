@@ -120,6 +120,11 @@ if __name__ == '__main__':
         else:
             print(JSONify.dumps(report, indent=cmd.indent))
 
+            try:
+                logger.info("found: %s" % len(report))
+            except TypeError:
+                pass
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
