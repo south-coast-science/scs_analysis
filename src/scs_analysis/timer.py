@@ -21,10 +21,11 @@ https://stackoverflow.com/questions/26692284/how-to-prevent-brokenpipeerror-when
 """
 
 import sys
-import time
 
 from scs_core.data.json import JSONify
 from scs_core.data.timedelta import Timedelta
+
+from scs_core.sys.timer import Timer
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     print("timer: starting", file=sys.stderr)
     sys.stderr.flush()
 
-    start_time = time.time()
+    timer = Timer()
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -60,9 +61,7 @@ if __name__ == '__main__':
     # close...
 
     finally:
-        elapsed_time = time.time() - start_time
-        delta = Timedelta(seconds=elapsed_time)
-
+        delta = Timedelta(seconds=int(round(timer.elapsed())))
         print("timer: %s" % JSONify.dumps(delta.as_json()).strip('"'), file=sys.stderr)
 
         sys.stderr.close()
