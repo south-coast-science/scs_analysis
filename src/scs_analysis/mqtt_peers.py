@@ -200,6 +200,9 @@ if __name__ == '__main__':
             print(JSONify.dumps(report, indent=cmd.indent))
             logger.info('missing: %d' % len(report))
 
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
 

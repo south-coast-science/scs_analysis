@@ -105,6 +105,9 @@ if __name__ == '__main__':
             response = finder.find(cmd.id, cmd.cause, cmd.response_mode())
             report = sorted(response.alert_statuses)
 
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
+
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
