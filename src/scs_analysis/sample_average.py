@@ -145,12 +145,12 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-    except KeyError as ex:
-        print("sample_average: KeyError: %s" % ex, file=sys.stderr)
-        exit(1)
-
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except KeyError as ex:
+        print("sample_average: %s" % repr(ex), file=sys.stderr)
+        exit(1)
 
     finally:
         if cmd.verbose:
