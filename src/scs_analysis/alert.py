@@ -212,12 +212,18 @@ if __name__ == '__main__':
 
             alert_manager.delete(cmd.delete_id)
 
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
+
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
             logger.info('retrieved: %s' % len(response.alerts))
+
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

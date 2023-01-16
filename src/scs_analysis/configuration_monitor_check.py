@@ -108,6 +108,10 @@ if __name__ == '__main__':
         print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
+
+        # ------------------------------------------------------------------------------------------------------------
+        # end...
+
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
