@@ -25,6 +25,7 @@ SEE ALSO
 scs_analysis/cognito_credentials
 """
 
+import logging
 import requests
 import sys
 
@@ -64,7 +65,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('organisations', verbose=cmd.verbose)
+        Logging.config('organisations', level=logging.DEBUG)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -92,13 +93,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoUserLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)
