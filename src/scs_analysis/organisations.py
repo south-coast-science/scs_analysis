@@ -25,7 +25,6 @@ SEE ALSO
 scs_analysis/cognito_credentials
 """
 
-import logging
 import requests
 import sys
 
@@ -65,7 +64,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('organisations', level=logging.DEBUG)
+        Logging.config('organisations', verbose=cmd.verbose)       # level=logging.DEBUG
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -122,7 +121,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_organisations(auth.id_token)
+            report = sorted(manager.find_organisations(auth.id_token))
 
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner)
@@ -154,7 +153,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # check...
-            response = StdIO.prompt('Are you sure (Y/n)?')
+            response = StdIO.prompt('Are you sure (Y/n)? ')
             if response != 'Y':
                 exit(0)
 
@@ -167,6 +166,9 @@ if __name__ == '__main__':
 
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        if cmd.find:
+            logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

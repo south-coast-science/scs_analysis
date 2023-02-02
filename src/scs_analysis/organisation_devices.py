@@ -64,7 +64,7 @@ if __name__ == '__main__':
     auth = None
     cognito = None
     org = None
-    report = None
+    report = []
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -194,6 +194,9 @@ if __name__ == '__main__':
 
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        if cmd.find:
+            logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
