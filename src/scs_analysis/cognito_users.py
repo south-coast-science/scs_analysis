@@ -186,6 +186,7 @@ if __name__ == '__main__':
             manager.update(identity)
 
         if cmd.delete:
+            # TODO: delete user from organisations?
             manager = CognitoUserDeleter(requests, auth.id_token)
             manager.delete(cmd.delete)
 
@@ -196,10 +197,8 @@ if __name__ == '__main__':
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
 
-        try:
+        if cmd.find:
             logger.info("found: %s" % len(report))
-        except TypeError:
-            pass
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
