@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # close...
 
     finally:
-        delta = Timedelta(seconds=int(round(timer.elapsed())))
-        print("timer: %s" % JSONify.dumps(delta.as_json()).strip('"'), file=sys.stderr)
+        delta = Timedelta(seconds=int(round(timer.total())))
+        print("timer: %s" % JSONify.dumps(delta).strip('"'), file=sys.stderr)
 
         sys.stderr.close()
