@@ -64,7 +64,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('organisations', verbose=cmd.verbose)
+        Logging.config('organisations', verbose=cmd.verbose)       # level=logging.DEBUG
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -92,13 +92,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoUserLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host):
+        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
             password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, encryption_key=password)
+            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)
@@ -121,7 +121,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_organisations(auth.id_token)
+            report = sorted(manager.find_organisations(auth.id_token))
 
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner)
@@ -153,7 +153,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # check...
-            response = StdIO.prompt('Are you sure (Y/n)?')
+            response = StdIO.prompt('Are you sure (Y/n)? ')
             if response != 'Y':
                 exit(0)
 
@@ -166,6 +166,9 @@ if __name__ == '__main__':
 
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+
+        if cmd.find:
+            logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
