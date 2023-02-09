@@ -16,12 +16,15 @@ class CmdCognitoPassword(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -c EMAIL | -r EMAIL | -p EMAIL } [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL } [-v]",
                                               version="%prog 1.0")
 
         # operations...
         self.__parser.add_option("--resend-confirmation", "-c", type="string", action="store",
-                                 dest="resend_confirmation", help="resend confirmation email")
+                                 dest="resend_confirmation", help="resend account confirmation email")
+
+        self.__parser.add_option("--resend-temporary", "-t", type="string", action="store",
+                                 dest="resend_temporary", help="resend temporary password email")
 
         self.__parser.add_option("--request-reset", "-r", type="string", action="store",
                                  dest="request_reset", help="request password reset code")
@@ -44,6 +47,9 @@ class CmdCognitoPassword(object):
         if self.resend_confirmation:
             count += 1
 
+        if self.resend_temporary:
+            count += 1
+
         if self.request_reset:
             count += 1
 
@@ -63,6 +69,9 @@ class CmdCognitoPassword(object):
         if self.resend_confirmation:
             return self.__opts.resend_confirmation
 
+        if self.resend_temporary:
+            return self.__opts.resend_temporary
+
         if self.request_reset:
             return self.__opts.request_reset
 
@@ -75,6 +84,11 @@ class CmdCognitoPassword(object):
     @property
     def resend_confirmation(self):
         return self.__opts.resend_confirmation is not None
+
+
+    @property
+    def resend_temporary(self):
+        return self.__opts.resend_temporary is not None
 
 
     @property
@@ -99,5 +113,7 @@ class CmdCognitoPassword(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoPassword:{resend_confirmation:%s, request_reset:%s, reset_password:%s, verbose:%s}" % \
-               (self.__opts.resend_confirmation, self.__opts.request_reset, self.__opts.reset_password, self.verbose)
+        return "CmdCognitoPassword:{resend_confirmation:%s, resend_temporary:%s, request_reset:%s, " \
+               "reset_password:%s, verbose:%s}" % \
+               (self.__opts.resend_confirmation, self.__opts.resend_temporary, self.__opts.request_reset,
+                self.__opts.reset_password, self.verbose)

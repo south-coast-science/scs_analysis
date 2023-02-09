@@ -27,7 +27,7 @@ import sys
 from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
 
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
-from scs_core.aws.security.cognito_user_manager import CognitoPasswordManager
+from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -80,6 +80,9 @@ if __name__ == '__main__':
 
         if cmd.resend_confirmation:
             manager.resend_confirmation(cmd.email)
+
+        if cmd.resend_temporary:
+            manager.resend_temporary_password(cmd.email)
 
         if cmd.request_reset:
             manager.request_reset_password(cmd.email)
