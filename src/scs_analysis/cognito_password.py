@@ -30,7 +30,6 @@ from scs_core.aws.security.cognito_user import CognitoUserIdentity
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 
 from scs_core.data.datum import Datum
-from scs_core.data.json import JSONify
 
 from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
