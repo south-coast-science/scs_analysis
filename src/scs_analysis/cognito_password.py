@@ -11,7 +11,7 @@ DESCRIPTION
 The cognito_password utility is used to
 
 SYNOPSIS
-cognito_password.py { -c EMAIL | -r EMAIL | -p EMAIL } [-v]
+cognito_password.py { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL } [-v]
 
 EXAMPLES
 ./cognito_password.py -r someone@me.com
@@ -61,17 +61,17 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
-
-        manager = CognitoPasswordManager(requests)
-
-
-        # ------------------------------------------------------------------------------------------------------------
         # validation...
 
         if not Datum.is_email_address(cmd.email):
             logger.error("The email address is not valid.")
             exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        manager = CognitoPasswordManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
