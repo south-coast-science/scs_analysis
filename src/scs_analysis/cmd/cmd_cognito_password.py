@@ -16,8 +16,8 @@ class CmdCognitoPassword(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL } [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL | -s EMAIL } "
+                                                    "[-v]", version="%prog 1.0")
 
         # operations...
         self.__parser.add_option("--resend-confirmation", "-c", type="string", action="store",
@@ -31,6 +31,9 @@ class CmdCognitoPassword(object):
 
         self.__parser.add_option("--reset-password", "-p", type="string", action="store",
                                  dest="reset_password", help="perform password reset")
+
+        self.__parser.add_option("--set-password", "-s", type="string", action="store",
+                                 dest="set_password", help="perform password set")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -56,6 +59,9 @@ class CmdCognitoPassword(object):
         if self.reset_password:
             count += 1
 
+        if self.set_password:
+            count += 1
+
         if count != 1:
             return False
 
@@ -77,6 +83,9 @@ class CmdCognitoPassword(object):
 
         if self.reset_password:
             return self.__opts.reset_password
+
+        if self.set_password:
+            return self.__opts.set_password
 
         return None
 
@@ -102,6 +111,11 @@ class CmdCognitoPassword(object):
 
 
     @property
+    def set_password(self):
+        return self.__opts.set_password is not None
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -114,6 +128,6 @@ class CmdCognitoPassword(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdCognitoPassword:{resend_confirmation:%s, resend_temporary:%s, request_reset:%s, " \
-               "reset_password:%s, verbose:%s}" % \
+               "reset_password:%s, set_password:%s, verbose:%s}" % \
                (self.__opts.resend_confirmation, self.__opts.resend_temporary, self.__opts.request_reset,
-                self.__opts.reset_password, self.verbose)
+                self.__opts.reset_password, self.__opts.set_password, self.verbose)

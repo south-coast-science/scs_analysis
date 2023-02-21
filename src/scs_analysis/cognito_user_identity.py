@@ -45,7 +45,7 @@ from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUs
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException, HTTPConflictException
+from scs_core.sys.http_exception import HTTPConflictException
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -97,13 +97,11 @@ if __name__ == '__main__':
                 logger.error("incorrect password")
                 exit(1)
 
-            try:
-                auth = gatekeeper.login(credentials)
+            auth = gatekeeper.login(credentials)
 
-            except HTTPException as ex:
-                logger.error(ex.data)
+            if not auth.is_ok():
+                logger.error("login: %s" % auth.authentication_status.description)
                 exit(1)
-
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
