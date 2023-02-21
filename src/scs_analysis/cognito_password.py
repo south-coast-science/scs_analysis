@@ -10,6 +10,13 @@ source repo: scs_analysis
 DESCRIPTION
 The cognito_password utility is used to
 
+* resend_confirmation - re-send confirmation email when account is created using the API
+* resend_temporary_password - re-send temporary password that was created by the security_import system
+* request_reset_password - re-send a code needed to do a password reset
+* do_reset_password - perform a password reset using the code
+* do_set_password - change password when in force reset mode created by security_import system
+
+
 SYNOPSIS
 cognito_password.py { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL } [-v]
 
@@ -26,7 +33,8 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
 
-from scs_core.aws.security.cognito_user import CognitoUserIdentity
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 
 from scs_core.data.datum import Datum
@@ -72,7 +80,7 @@ if __name__ == '__main__':
         # resources...
 
         manager = CognitoPasswordManager(requests)
-
+        gatekeeper = CognitoUserLoginManager(requests)
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -88,13 +96,40 @@ if __name__ == '__main__':
 
         if cmd.reset_password:
             code = StdIO.prompt("Enter confirmation code: ")
-            password = StdIO.prompt("Enter new password: ")
+            new_password = StdIO.prompt("Enter new password: ")
 
-            if not CognitoUserIdentity.is_valid_password(password):
+            if not CognitoUserIdentity.is_valid_password(new_password):
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            manager.do_reset_password(cmd.email, code, password)
+            manager.do_reset_password(cmd.email, code, new_password)
+
+
+        if cmd.set_password:
+            temporary_password = StdIO.prompt("Enter temporary password: ")
+
+            # login
+            credentials = CognitoUserCredentials(None, cmd.email, temporary_password, None)
+            print("credentials: %s" % credentials)
+
+            try:
+                auth = gatekeeper.login(credentials)
+                print("auth: %s" % auth)
+            except HTTPException as ex:
+                logger.error(repr(ex))
+                exit(1)
+
+            exit(0)
+
+            new_password = StdIO.prompt("Enter new password: ")
+
+            if not CognitoUserIdentity.is_valid_password(new_password):
+                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
+                exit(1)
+
+            manager.do_set_password(cmd.email, new_password, session)
+
+
 
 
     # ----------------------------------------------------------------------------------------------------------------
