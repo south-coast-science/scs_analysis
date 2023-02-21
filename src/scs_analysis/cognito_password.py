@@ -116,7 +116,7 @@ if __name__ == '__main__':
                 auth = gatekeeper.login(credentials)
                 print("auth: %s" % auth)
             except HTTPException as ex:
-                logger.error(repr(ex))
+                logger.error('exception')
                 exit(1)
 
             exit(0)
