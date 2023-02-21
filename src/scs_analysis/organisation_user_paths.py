@@ -103,11 +103,10 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        try:
-            auth = gatekeeper.login(credentials)
+        auth = gatekeeper.login(credentials)
 
-        except HTTPException as ex:
-            logger.error(ex.data)
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
 

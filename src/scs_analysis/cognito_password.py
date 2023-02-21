@@ -33,7 +33,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
 
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager, AuthenticationStatus
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 
@@ -104,22 +104,16 @@ if __name__ == '__main__':
 
             manager.do_reset_password(cmd.email, code, new_password)
 
-
         if cmd.set_password:
             temporary_password = StdIO.prompt("Enter temporary password: ")
 
             # login
             credentials = CognitoUserCredentials(None, cmd.email, temporary_password, None)
-            print("credentials: %s" % credentials)
+            auth = gatekeeper.login(credentials)
 
-            try:
-                auth = gatekeeper.login(credentials)
-                print("auth: %s" % auth)
-            except HTTPException as ex:
-                logger.error('exception')
+            if auth.authentication_status != AuthenticationStatus.Challenge:
+                logger.error('user not in challenge mode.')
                 exit(1)
-
-            exit(0)
 
             new_password = StdIO.prompt("Enter new password: ")
 
@@ -127,9 +121,7 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            manager.do_set_password(cmd.email, new_password, session)
-
-
+            manager.do_set_password(cmd.email, new_password, auth.content.session)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -139,5 +131,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPException as ex:
-        logger.error(ex.data)
+        logger.error("HTTPException: %s" % ex.data)
         exit(1)
