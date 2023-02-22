@@ -137,14 +137,14 @@ if __name__ == '__main__':
                 exit(2)
 
             # find...
-            device = finder.find_by_tag(auth.id_token, cmd.update[0])
+            device = finder.get_by_tag(auth.id_token, cmd.update[0])
 
             if device is None:
                 logger.error("no device found for tag: '%s'." % cmd.update)
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], device.creation_date)
+            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoDeviceEditor(requests, auth.id_token)
