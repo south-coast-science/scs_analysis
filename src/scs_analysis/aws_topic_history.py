@@ -146,7 +146,7 @@ if __name__ == '__main__':
         # check...
 
         if not Network.is_available():
-            logger.info("waiting for network.")
+            logger.info("waiting for network")
             Network.wait()
 
 
