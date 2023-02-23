@@ -47,7 +47,7 @@ from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException, HTTPConflictException
+from scs_core.sys.http_exception import HTTPConflictException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -96,11 +96,10 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        try:
-            auth = gatekeeper.login(credentials)
+        auth = gatekeeper.login(credentials)
 
-        except HTTPException as ex:
-            logger.error(ex.data)
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
 
@@ -138,14 +137,14 @@ if __name__ == '__main__':
                 exit(2)
 
             # find...
-            device = finder.find_by_tag(auth.id_token, cmd.update[0])
+            device = finder.get_by_tag(auth.id_token, cmd.update[0])
 
             if device is None:
                 logger.error("no device found for tag: '%s'." % cmd.update)
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], device.creation_date)
+            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoDeviceEditor(requests, auth.id_token)
