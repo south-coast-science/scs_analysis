@@ -19,7 +19,6 @@ class CmdOrganisationDevices(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } | "
                                                     "-C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION"
                                                     " -d DEPLOYMENT_LABEL | "
-                                                    "-E -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION | "
                                                     "-D -t DEVICE_TAG } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
@@ -33,9 +32,6 @@ class CmdOrganisationDevices(object):
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create a device")
-
-        self.__parser.add_option("--Expire", "-E", action="store_true", dest="expire", default=False,
-                                 help="set device's end datetime to the current time")
 
         self.__parser.add_option("--Delete", "-D", action="store_true", dest="delete", default=False,
                                  help="delete the device")
@@ -74,9 +70,6 @@ class CmdOrganisationDevices(object):
         if self.create:
             count += 1
 
-        if self.expire:
-            count += 1
-
         if self.delete:
             count += 1
 
@@ -86,10 +79,10 @@ class CmdOrganisationDevices(object):
         if self.find and self.org_label is None and self.device_tag is None:
             return False
 
-        if (self.create or self.expire or self.delete) and (self.org_label is None or self.device_tag is None):
+        if (self.create or self.delete) and (self.org_label is None or self.device_tag is None):
             return False
 
-        if (self.expire or self.delete) and (self.__opts.project is None):
+        if self.delete and (self.__opts.project is None):
             return False
 
         if self.create and (self.__opts.project is None or self.deployment_label is None):
@@ -113,11 +106,6 @@ class CmdOrganisationDevices(object):
     @property
     def create(self):
         return self.__opts.create
-
-
-    @property
-    def expire(self):
-        return self.__opts.expire
 
 
     @property
@@ -172,7 +160,7 @@ class CmdOrganisationDevices(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdOrganisationDevices:{credentials_name:%s, find:%s, create:%s, expire:%s, delete:%s, " \
+        return "CmdOrganisationDevices:{credentials_name:%s, find:%s, create:%s, delete:%s, " \
                "org_label:%s, device_tag:%s, project:%s, deployment_label:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.find, self.create, self.expire, self.delete,
+               (self.credentials_name, self.find, self.create, self.delete,
                 self.org_label, self.device_tag, self.__opts.project, self.deployment_label, self.indent, self.verbose)
