@@ -38,10 +38,9 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 
-from scs_core.aws.security.cognito_device_manager import CognitoDeviceCreator, CognitoDeviceEditor, CognitoDeviceDeleter
-
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
+from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
@@ -106,8 +105,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if not cmd.create:
-            finder = CognitoDeviceFinder(requests)
+        manager = CognitoDeviceManager(requests, auth.id_token)
+        finder = CognitoDeviceFinder(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -128,7 +127,6 @@ if __name__ == '__main__':
             # create...
             identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None)
 
-            manager = CognitoDeviceCreator(requests, auth.id_token)
             report = manager.create(identity)
 
         if cmd.update:
@@ -147,12 +145,9 @@ if __name__ == '__main__':
             report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
-            manager = CognitoDeviceEditor(requests, auth.id_token)
             manager.update(report)
 
         if cmd.delete:
-            # TODO: delete device from organisations
-            manager = CognitoDeviceDeleter(requests, auth.id_token)
             manager.delete(cmd.delete)
 
 

@@ -165,27 +165,8 @@ if __name__ == '__main__':
 
             manager.assert_device(auth.id_token, report)
 
-        if cmd.expire:
-            project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
-            device_path = project.device_path + '/'
-            location_path = project.location_path + '/'
-
-            report = manager.get_device(auth.id_token, cmd.device_tag, org.org_id,
-                                        device_path, location_path)
-
-            if report is None:
-                logger.error("no device found.")
-                exit(1)
-
-            report.end_datetime = LocalizedDatetime.now()
-            manager.assert_device(auth.id_token, report)
-
         if cmd.delete:
-            project = Project.construct(cmd.project_organisation, cmd.project_group, cmd.project_location)
-            device_path = project.device_path + '/'
-            location_path = project.location_path + '/'
-
-            manager.delete_device(auth.id_token, cmd.device_tag, org.org_id, device_path, location_path)
+            manager.delete_device(auth.id_token, cmd.device_tag)
 
 
     # ----------------------------------------------------------------------------------------------------------------
