@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            report = CognitoUserIdentity(None, None, None, None, email, given_name, family_name, password)
+            report = CognitoUserIdentity(None, None, None, None, False, email, given_name, family_name, password)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(report)
@@ -181,8 +181,8 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(identity.username, None, None, None, email, given_name, family_name,
-                                           password)
+            identity = CognitoUserIdentity(identity.username, None, None, identity.email_confirmed, None,
+                                           email, given_name, family_name, password)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
