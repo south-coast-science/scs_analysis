@@ -181,7 +181,7 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(identity.username, None, None, identity.email_confirmed, None,
+            identity = CognitoUserIdentity(identity.username, None, None, identity.email_verified, True,
                                            email, given_name, family_name, password)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
