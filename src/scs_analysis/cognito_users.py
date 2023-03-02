@@ -152,8 +152,9 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % cmd.email)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, None, None, None, False,
-                                           cmd.email, cmd.given_name, cmd.family_name, None)
+            identity = CognitoUserIdentity(None, None, None, True,
+                                           False, cmd.email, cmd.given_name, cmd.family_name, None,
+                                           False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(identity)
@@ -176,8 +177,9 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, None, None, False,
-                                         enabled, email, given_name, family_name, None)
+            report = CognitoUserIdentity(identity.username, None, None, enabled,
+                                         identity.email_verified, email, given_name, family_name, None,
+                                         identity.is_super, identity.is_tester, None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
