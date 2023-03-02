@@ -139,10 +139,8 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            #     def __init__(self, username, created, confirmation_status, enabled, email_verified,
-            #     email, given_name, family_name, password, is_super=False, is_tester=False):
-
-            report = CognitoUserIdentity(None, None, None, True, False, email, given_name, family_name, password)
+            report = CognitoUserIdentity(None, None, None, True, False, email, given_name, family_name, password,
+                                         False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(report)
@@ -185,7 +183,8 @@ if __name__ == '__main__':
                 exit(1)
 
             identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified,
-                                           email, given_name, family_name, password)
+                                           email, given_name, family_name, password,
+                                           identity.is_super, identity.is_tester, None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
