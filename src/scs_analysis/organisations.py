@@ -157,7 +157,7 @@ if __name__ == '__main__':
                 exit(0)
 
             # delete...
-            manager.delete_organisation(auth.id_token, cmd.delete)
+            manager.delete_organisation(auth.id_token, org.org_id)
 
 
     # ----------------------------------------------------------------------------------------------------------------
