@@ -39,7 +39,7 @@ from scs_core.aws.security.cognito_password_manager import CognitoPasswordManage
 
 from scs_core.data.datum import Datum
 
-from scs_core.sys.http_exception import HTTPException, HTTPUnauthorizedException, HTTPNotFoundException
+from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -69,13 +69,6 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
-
-        manager = CognitoPasswordManager(requests)
-        gatekeeper = CognitoUserLoginManager(requests)
-
-
-        # ------------------------------------------------------------------------------------------------------------
         # validation...
 
         if not Datum.is_email_address(cmd.email):
@@ -84,20 +77,23 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        manager = CognitoPasswordManager(requests)
+        gatekeeper = CognitoUserLoginManager(requests)
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.send_email:
-            try:
-                manager.send_email(cmd.email)
-                logger.error("an email has been sent to '%s'." % cmd.email)
+        if cmd.resend_confirmation:
+            manager.resend_confirmation(cmd.email)
 
-            except HTTPUnauthorizedException:
-                logger.error("the user '%s' is disabled." % cmd.email)
-                exit(1)
+        if cmd.resend_temporary:
+            manager.resend_temporary_password(cmd.email)
 
-            except HTTPNotFoundException:
-                logger.error("no user could be found for email '%s'." % cmd.email)
-                exit(1)
+        if cmd.request_reset:
+            manager.request_reset_password(cmd.email)
 
         if cmd.reset_password:
             code = StdIO.prompt("Enter confirmation code: ")
