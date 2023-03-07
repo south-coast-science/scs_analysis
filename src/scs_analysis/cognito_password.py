@@ -8,17 +8,18 @@ Created on 9 Feb 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_password utility is used to
+The cognito_password utility is used to set or reset the user's password, or to request an email to permit
+password operations. Which email message is sent depends on the state of the state of the user's account:
 
-* resend_confirmation - re-send confirmation email when account is created using the API
-* resend_temporary_password - re-send temporary password that was created by the security_import system
-* request_reset_password - re-send a code needed to do a password reset
-* do_reset_password - perform a password reset using the code
-* do_set_password - change password when in force reset mode created by security_import system
+* UNCONFIRMED - the account creation email is re-sent
+* CONFIRMED - a password reset code is sent and the user account enters the PASSWORD_RESET_REQUIRED state
+* PASSWORD_RESET_REQUIRED - a password reset code is re-sent
+* FORCE_CHANGE_PASSWORD - the temporary password is re-sent
 
+Emails cannot be sent to users in the DISABLED state.
 
 SYNOPSIS
-cognito_password.py { -c EMAIL | -t EMAIL | -r EMAIL | -p EMAIL } [-v]
+cognito_password.py { -e | -s | -r } EMAIL [-v]
 
 EXAMPLES
 ./cognito_password.py -r someone@me.com
@@ -26,6 +27,7 @@ EXAMPLES
 SEE ALSO
 scs_analysis/cognito_user_credentials
 scs_analysis/cognito_user_identity
+scs_analysis/cognito_users
 """
 
 import requests
