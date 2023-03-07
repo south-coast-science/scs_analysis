@@ -16,7 +16,7 @@ class CmdCognitoPassword(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -e EMAIL | -s EMAIL | -r EMAIL} [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -e | -s | -r } EMAIL [-v]",
                                               version="%prog 1.0")
 
         # functions...
