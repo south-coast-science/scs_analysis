@@ -59,6 +59,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    cmd = None
     logger = None
     gatekeeper = None
     credentials = None
@@ -204,5 +205,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPConflictException as ex:
-        logger.error("the email address '%s' is already in use." % report.email)
+        logger.error("the email address '%s' is already in use." % cmd.email)
         exit(1)
