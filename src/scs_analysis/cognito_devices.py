@@ -126,10 +126,6 @@ if __name__ == '__main__':
 
             if cmd.memberships:
                 org_devices = org_manager.find_devices(auth.id_token)
-
-                for org_device in org_devices:
-                    print(org_device)
-
                 report = CognitoMemberships.merge(report, org_devices)
 
         if cmd.create:
