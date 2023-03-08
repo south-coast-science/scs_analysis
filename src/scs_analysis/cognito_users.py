@@ -39,12 +39,11 @@ import sys
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
-
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
-
 from scs_core.aws.security.organisation_manager import OrganisationManager
+from scs_core.aws.security.user_memberships import UserMemberships
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -115,8 +114,9 @@ if __name__ == '__main__':
         if not cmd.create:
             finder = CognitoUserFinder(requests)
 
+        manager = OrganisationManager(requests)
+
         if cmd.org_label:
-            manager = OrganisationManager(requests)
             org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
 
             if org is None:
@@ -146,6 +146,10 @@ if __name__ == '__main__':
 
             else:
                 report = sorted(finder.find_all(auth.id_token))
+
+            if cmd.memberships:
+                org_users = manager.find_users(auth.id_token)
+                report = UserMemberships.merge(report, org_users)
 
         if cmd.create:
             # create...
@@ -184,7 +188,7 @@ if __name__ == '__main__':
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
-            manager.update(identity)
+            report = manager.update(identity)
 
         if cmd.delete:
             # TODO: delete user from organisations?
