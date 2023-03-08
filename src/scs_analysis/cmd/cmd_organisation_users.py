@@ -16,7 +16,7 @@ class CmdOrganisationUsers(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [{ -e EMAIL | -l ORG_LABEL }] | "
                                                     "-R -e EMAIL -l ORG_LABEL | "
                                                     "-C -e EMAIL -l ORG_LABEL -o { 1 | 0 } -d { 1 | 0 } | "
                                                     "-U -e EMAIL -l ORG_LABEL [-o { 1 | 0 }] [-d { 1 | 0 }] "
@@ -102,7 +102,7 @@ class CmdOrganisationUsers(object):
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
-        if self.find and bool(self.email) == bool(self.org_label):
+        if self.find and bool(self.email) and bool(self.org_label):
             return False
 
         if (self.retrieve or self.create or self.update or self.delete) and \

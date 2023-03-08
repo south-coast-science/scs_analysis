@@ -134,8 +134,12 @@ if __name__ == '__main__':
         if cmd.find:
             if cmd.email:
                 report = manager.find_users_by_username(auth.id_token, cognito.username)
-            else:
+
+            elif cmd.org_label:
                 report = manager.find_users_by_organisation(auth.id_token, org.org_id)
+
+            else:
+                report = manager.find_users(auth.id_token)
 
         if cmd.retrieve:
             report = manager.get_user(auth.id_token, cognito.username, org.org_id)
