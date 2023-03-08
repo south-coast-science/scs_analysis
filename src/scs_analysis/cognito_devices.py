@@ -42,6 +42,9 @@ from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_memberships import CognitoMemberships
+from scs_core.aws.security.organisation_manager import OrganisationManager
+
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.data.json import JSONify
@@ -105,7 +108,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = CognitoDeviceManager(requests, auth.id_token)
+        device_manager = CognitoDeviceManager(requests, auth.id_token)
+        org_manager = OrganisationManager(requests)
+
         finder = CognitoDeviceFinder(requests)
 
 
@@ -119,6 +124,14 @@ if __name__ == '__main__':
             else:
                 report = sorted(finder.find_all(auth.id_token))
 
+            if cmd.memberships:
+                org_devices = org_manager.find_devices(auth.id_token)
+
+                for org_device in org_devices:
+                    print(org_device)
+
+                report = CognitoMemberships.merge(report, org_devices)
+
         if cmd.create:
             if not CognitoDeviceIdentity.is_valid_password(cmd.create[1]):
                 logger.error("password must be at least 16 characters.")
@@ -127,7 +140,7 @@ if __name__ == '__main__':
             # create...
             identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None)
 
-            report = manager.create(identity)
+            report = device_manager.create(identity)
 
         if cmd.update:
             if not CognitoDeviceIdentity.is_valid_password(cmd.update[1]):
@@ -145,10 +158,10 @@ if __name__ == '__main__':
             report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
-            manager.update(report)
+            device_manager.update(report)
 
         if cmd.delete:
-            manager.delete(cmd.delete)
+            device_manager.delete(cmd.delete)
 
 
     # ----------------------------------------------------------------------------------------------------------------
