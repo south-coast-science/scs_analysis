@@ -22,7 +22,7 @@ class CmdCognitoUsers(object):
 
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | "
-                                                    "-s { 1 | 0 } } }] "
+                                                    "-s { 1 | 0 } } }] [-m] "
                                                     "| -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR "
                                                     "| -U EMAIL_ADDR [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL_ADDR] "
                                                     "[-s { 1 | 0 }] "
@@ -36,16 +36,16 @@ class CmdCognitoUsers(object):
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="list the identities visible to me")
+                                 help="list the users visible to me")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create an identity")
+                                 help="create a user")
 
         self.__parser.add_option("--Update", "-U", type="string", action="store", dest="update",
-                                 help="update the identity")
+                                 help="update the user")
 
         self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
-                                 help="delete the identity (superuser only)")
+                                 help="delete the user (superuser only)")
 
         # filters...
         self.__parser.add_option("--given-name", "-g", type="string", action="store", dest="given_name",
@@ -68,6 +68,9 @@ class CmdCognitoUsers(object):
                                  help="filter list by enabled status { 1 | 0 }")
 
         # output...
+        self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
+                                 help="show user's organisation memberships")
+
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -114,6 +117,9 @@ class CmdCognitoUsers(object):
 
             if count > 1:
                 return False
+
+        if self.memberships and not self.find:
+            return False
 
         if self.confirmation_status is not None and self.confirmation_status not in CognitoUserIdentity.status_codes():
             return False
@@ -182,6 +188,11 @@ class CmdCognitoUsers(object):
 
 
     @property
+    def memberships(self):
+        return self.__opts.memberships
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -200,7 +211,7 @@ class CmdCognitoUsers(object):
     def __str__(self, *args, **kwargs):
         return "CmdCognitoUsers:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
                "given_name:%s, family_name:%s, email:%s, org_label:%s, confirmation_status:%s, " \
-               "enabled:%s, indent:%s, verbose:%s}" % \
+               "enabled:%s, memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.create, self.update, self.delete,
                 self.given_name, self.family_name, self.email, self.org_label, self.confirmation_status,
-                self.enabled, self.indent, self.verbose)
+                self.enabled, self.memberships, self.indent, self.verbose)
