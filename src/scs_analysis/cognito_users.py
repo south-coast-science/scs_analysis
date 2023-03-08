@@ -43,7 +43,7 @@ from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.organisation_manager import OrganisationManager
-from scs_core.aws.security.user_memberships import UserMemberships
+from scs_core.aws.security.cognito_memberships import CognitoMemberships
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
             if cmd.memberships:
                 org_users = manager.find_users(auth.id_token)
-                report = UserMemberships.merge(report, org_users)
+                report = CognitoMemberships.merge(report, org_users)
 
         if cmd.create:
             # create...
@@ -182,13 +182,13 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, None, None, enabled,
-                                         identity.email_verified, email, given_name, family_name, None,
-                                         identity.is_super, identity.is_tester, None)
+            new_identity = CognitoUserIdentity(identity.username, None, None, enabled,
+                                               identity.email_verified, email, given_name, family_name, None,
+                                               identity.is_super, identity.is_tester, None)
 
             auth = gatekeeper.login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
-            report = manager.update(identity)
+            report = manager.update(new_identity)
 
         if cmd.delete:
             # TODO: delete user from organisations?
