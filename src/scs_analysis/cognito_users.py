@@ -38,12 +38,12 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
-from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
-from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
-from scs_core.aws.security.organisation_manager import OrganisationManager
 from scs_core.aws.security.cognito_memberships import CognitoMemberships
+from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
+from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
