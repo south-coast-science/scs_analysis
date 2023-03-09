@@ -102,8 +102,8 @@ if __name__ == '__main__':
                 exit(1)
 
         if cmd.reset_password:
-            code = StdIO.prompt("Enter confirmation code: ")
-            new_password = StdIO.prompt("Enter new password: ")
+            code = StdIO.prompt("Enter confirmation code")
+            new_password = StdIO.prompt("Enter new password")
 
             if not CognitoUserIdentity.is_valid_password(new_password):
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
@@ -112,7 +112,7 @@ if __name__ == '__main__':
             manager.do_reset_password(cmd.email, code, new_password)
 
         if cmd.set_password:
-            temporary_password = StdIO.prompt("Enter temporary password: ")
+            temporary_password = StdIO.prompt("Enter temporary password")
 
             # login
             credentials = CognitoUserCredentials(None, cmd.email, temporary_password, None)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
                 logger.error('user not in challenge mode.')
                 exit(1)
 
-            new_password = StdIO.prompt("Enter new password: ")
+            new_password = StdIO.prompt("Enter new password")
 
             if not CognitoUserIdentity.is_valid_password(new_password):
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")

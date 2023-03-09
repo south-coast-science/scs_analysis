@@ -26,7 +26,7 @@ def main():
         # plt.show()                    # this plots correctly, but blocks execution.
         plt.show(block=False)           # this creates an empty frozen window.
 
-        StdIO.prompt("Press [enter] to continue.")
+        StdIO.prompt("Press [RETURN] to continue")
 
 
 if __name__ == '__main__':
