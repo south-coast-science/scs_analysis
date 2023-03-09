@@ -42,7 +42,7 @@ from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
-from scs_core.aws.security.cognito_memberships import CognitoMemberships
+from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
             if cmd.memberships:
                 org_devices = org_manager.find_devices(auth.id_token)
-                report = CognitoMemberships.merge(report, org_devices)
+                report = CognitoMembership.merge(report, org_devices)
 
         if cmd.create:
             if not CognitoDeviceIdentity.is_valid_password(cmd.create[1]):

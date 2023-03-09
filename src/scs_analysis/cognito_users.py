@@ -39,7 +39,7 @@ import sys
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
 from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
-from scs_core.aws.security.cognito_memberships import CognitoMemberships
+from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
             if cmd.memberships:
                 org_users = manager.find_users(auth.id_token)
-                report = CognitoMemberships.merge(report, org_users)
+                report = CognitoMembership.merge(report, org_users)
 
         if cmd.create:
             # create...
