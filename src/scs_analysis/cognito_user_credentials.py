@@ -9,7 +9,12 @@ source repo: scs_analysis
 
 DESCRIPTION
 The cognito_user_credentials utility is used to manage the AWS Cognito credentials for the user. The credentials are
-composed of an email address and a password. The JSON identity document managed by this utility is encrypted.
+composed of an email address and a password.
+
+The JSON identity document managed by this utility is encrypted, and a password must be used to retrieve the document.
+By default, the retrieval password is the same as the Cognito credentials password. However, a separate retrieval
+password can be specified (in order, for example, to standardise the retrieval password across multiple Cognito
+credentials.
 
 The password must be specified when the credentials are created and is required when the credentials are accessed.
 
