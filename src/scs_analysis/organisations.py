@@ -152,7 +152,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # check...
-            response = StdIO.prompt('Are you sure (Y/n)? ')
+            response = StdIO.prompt('Are you sure? (Y/n)')
             if response != 'Y':
                 exit(0)
 

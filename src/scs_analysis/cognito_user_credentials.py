@@ -14,7 +14,7 @@ composed of an email address and a password. The JSON identity document managed 
 The password must be specified when the credentials are created and is required when the credentials are accessed.
 
 SYNOPSIS
-cognito_user_credentials.py [-c CREDENTIALS] [{ -s | -t | -d }] [-v]
+cognito_user_credentials.py [{ -l | [-c CREDENTIALS] [{ -s | -t | -d }] }] [-v]
 
 EXAMPLES
 ./cognito_user_credentials.py -s
@@ -23,7 +23,7 @@ FILES
 ~/SCS/aws/cognito_user_credentials.json
 
 DOCUMENT EXAMPLE
-{"email": "bruno.beloff@southcoastscience.com", "password": "hello"}
+{"email": "production@southcoastscience.com", "password": "scs_admin_Password_123!", "retrieval-password": "beloff"}
 
 SEE ALSO
 scs_analysis/cognito_identity
@@ -86,6 +86,11 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        if cmd.list:
+            for conf_name in CognitoUserCredentials.list(Host):
+                print(conf_name, file=sys.stderr)
+            exit(0)
 
         if cmd.set:
             credentials = CognitoUserCredentials.from_user(cmd.credentials_name)
