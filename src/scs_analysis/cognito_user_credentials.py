@@ -28,7 +28,7 @@ FILES
 ~/SCS/aws/cognito_user_credentials.json
 
 DOCUMENT EXAMPLE
-{"email": "production@southcoastscience.com", "password": "scs_admin_Password", "retrieval-password": "beloff"}
+{"email": "production@southcoastscience.com", "password": "###", "retrieval-password": "###"}
 
 SEE ALSO
 scs_analysis/cognito_identity
