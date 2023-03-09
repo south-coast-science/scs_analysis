@@ -39,7 +39,7 @@ from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
 from scs_core.data.datum import Datum
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoUserLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                 logger.error("incorrect password")
                 exit(1)
 
-            auth = gatekeeper.login(credentials)
+            auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
                 logger.error("login: %s" % auth.authentication_status.description)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
             family_name = StdIO.prompt("Enter family name")
             email = StdIO.prompt("Enter email address")
             password = StdIO.prompt("Enter password")
-            retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same)", default=None)
+            retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same)")
 
             if not retrieval_password:
                 retrieval_password = password
@@ -186,7 +186,7 @@ if __name__ == '__main__':
                                            email, given_name, family_name, password,
                                            identity.is_super, identity.is_tester, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
             report = manager.update(identity)
 
