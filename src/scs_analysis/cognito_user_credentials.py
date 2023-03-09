@@ -42,7 +42,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_user_credentials import CmdCognitoUserCredentials
 
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
 from scs_core.data.datum import Datum
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
         elif cmd.test:
-            manager = CognitoUserLoginManager(requests)
+            manager = CognitoLoginManager(requests)
 
             credentials = load_credentials(cmd.credentials_name)
 
@@ -121,8 +121,8 @@ if __name__ == '__main__':
 
             logger.info(credentials)
 
-            auth = manager.login(credentials)
-            logger.info(auth)
+            auth = manager.user_login(credentials)
+            logger.info("auth: %s" % auth)
 
             if auth is None:
                 logger.error("invalid auth")

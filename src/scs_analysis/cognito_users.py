@@ -38,7 +38,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoUserLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 logger.error("incorrect password")
                 exit(1)
 
-            auth = gatekeeper.login(credentials)
+            auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
                 logger.error("login: %s" % auth.authentication_status.description)
@@ -186,7 +186,7 @@ if __name__ == '__main__':
                                                identity.email_verified, email, given_name, family_name, None,
                                                identity.is_super, identity.is_tester, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
             report = manager.update(new_identity)
 

@@ -41,7 +41,7 @@ from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoUserLoginManager(requests)
+        gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -98,7 +98,7 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        auth = gatekeeper.login(credentials)
+        auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
             logger.error("login: %s" % auth.authentication_status.description)
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             # update...
             report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
             device_manager.update(report)
 
         if cmd.delete:

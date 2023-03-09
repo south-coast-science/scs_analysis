@@ -35,7 +35,7 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
 
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager, AuthenticationStatus
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager, AuthenticationStatus
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         # resources...
 
         manager = CognitoPasswordManager(requests)
-        gatekeeper = CognitoUserLoginManager(requests)
+        gatekeeper = CognitoLoginManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
             # login
             credentials = CognitoUserCredentials(None, cmd.email, temporary_password, None)
-            auth = gatekeeper.login(credentials)
+            auth = gatekeeper.user_login(credentials)
 
             if auth.authentication_status != AuthenticationStatus.Challenge:
                 logger.error('user not in challenge mode.')
