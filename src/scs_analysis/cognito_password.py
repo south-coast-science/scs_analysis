@@ -41,10 +41,52 @@ from scs_core.aws.security.cognito_password_manager import CognitoPasswordManage
 
 from scs_core.data.datum import Datum
 
-from scs_core.sys.http_exception import HTTPException, HTTPUnauthorizedException, HTTPNotFoundException
+from scs_core.sys.http_exception import HTTPException, HTTPBadRequestException, HTTPUnauthorizedException, \
+    HTTPNotFoundException, HTTPNotAllowedException
+
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+def do_password(do_set):
+    new_password = StdIO.prompt("Enter new password")
+
+    if not CognitoUserIdentity.is_valid_password(new_password):
+        logger.error("The password must include lower and upper case, numeric and punctuation characters.")
+        exit(1)
+
+    try:
+        if do_set:
+            manager.do_set_password(cmd.email, new_password, auth.content.session)
+        else:
+            manager.do_reset_password(cmd.email, code, new_password)
+
+    except HTTPNotFoundException:
+        logger.error("no user could be found for email '%s'." % cmd.email)
+        exit(1)
+
+    except HTTPUnauthorizedException:
+        logger.error("the user '%s' is disabled." % cmd.email)
+        exit(1)
+
+    except HTTPNotAllowedException:
+        alternative = '--reset-password' if do_set else '--set-password'
+        logger.error("the operation is not permitted in the current user state. Try %s?" % alternative)
+        exit(1)
+
+    except HTTPBadRequestException as error:
+        if error.data == "Mismatch":
+            logger.error("the code '%s' is not valid." % code)
+            exit(1)
+
+        if error.data == "Expired":
+            logger.error("the code has expired.")
+            exit(1)
+
+        logger.error(repr(ex))
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -91,7 +133,8 @@ if __name__ == '__main__':
         if cmd.send_email:
             try:
                 manager.send_email(cmd.email)
-                logger.error("an email has been sent to '%s'." % cmd.email)
+                logger.error("an email has been sent.")
+                exit(0)
 
             except HTTPUnauthorizedException:
                 logger.error("the user '%s' is disabled." % cmd.email)
@@ -101,16 +144,6 @@ if __name__ == '__main__':
                 logger.error("no user could be found for email '%s'." % cmd.email)
                 exit(1)
 
-        if cmd.reset_password:
-            code = StdIO.prompt("Enter confirmation code")
-            new_password = StdIO.prompt("Enter new password")
-
-            if not CognitoUserIdentity.is_valid_password(new_password):
-                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
-                exit(1)
-
-            manager.do_reset_password(cmd.email, code, new_password)
-
         if cmd.set_password:
             temporary_password = StdIO.prompt("Enter temporary password")
 
@@ -119,16 +152,19 @@ if __name__ == '__main__':
             auth = gatekeeper.user_login(credentials)
 
             if auth.authentication_status != AuthenticationStatus.Challenge:
-                logger.error('user not in challenge mode.')
+                logger.error(auth.authentication_status.description)
                 exit(1)
 
-            new_password = StdIO.prompt("Enter new password")
+            do_password(True)
+            logger.error("the password has been set.")
+            exit(0)
 
-            if not CognitoUserIdentity.is_valid_password(new_password):
-                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
-                exit(1)
+        if cmd.reset_password:
+            code = StdIO.prompt("Enter verification code")
 
-            manager.do_set_password(cmd.email, new_password, auth.content.session)
+            do_password(False)
+            logger.error("the password has been reset.")
+            exit(0)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -138,5 +174,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPException as ex:
-        logger.error("HTTPException: %s" % ex.data)
+        logger.error(repr(ex))
         exit(1)
