@@ -28,7 +28,7 @@ FILES
 ~/SCS/aws/cognito_user_credentials.json
 
 DOCUMENT EXAMPLE
-{"email": "production@southcoastscience.com", "password": "scs_admin_Password_123!", "retrieval-password": "beloff"}
+{"email": "production@southcoastscience.com", "password": "###", "retrieval-password": "###"}
 
 SEE ALSO
 scs_analysis/cognito_identity
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
         elif cmd.test:
-            manager = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             credentials = load_credentials(cmd.credentials_name)
 
@@ -121,12 +121,10 @@ if __name__ == '__main__':
 
             logger.info(credentials)
 
-            auth = manager.user_login(credentials)
-            logger.info("auth: %s" % auth)
+            result = gatekeeper.user_login(credentials)
+            logger.error(result.authentication_status.description)
 
-            if auth is None:
-                logger.error("invalid auth")
-                exit(1)
+            exit(0 if result.is_ok() else 1)
 
         elif cmd.delete:
             CognitoUserCredentials.delete(Host)
