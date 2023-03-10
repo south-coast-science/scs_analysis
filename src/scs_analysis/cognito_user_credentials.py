@@ -110,6 +110,25 @@ if __name__ == '__main__':
 
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
+        if cmd.update_password:
+            credentials = load_credentials(cmd.credentials_name)
+
+            if credentials is None:
+                logger.error("credentials not found.")
+                exit(1)
+
+            credentials = CognitoUserCredentials.from_user(cmd.credentials_name, existing_email=credentials.email)
+
+            if not Datum.is_email_address(credentials.email):
+                logger.error("The email address is not valid.")
+                exit(1)
+
+            if not CognitoUserIdentity.is_valid_password(credentials.password):
+                logger.error("The password must include lower and upper case, numeric and punctuation characters.")
+                exit(1)
+
+            credentials.save(Host, encryption_key=credentials.retrieval_password)
+
         elif cmd.test:
             gatekeeper = CognitoLoginManager(requests)
 
