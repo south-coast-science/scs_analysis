@@ -41,7 +41,10 @@ from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_membership import CognitoMembership
+from scs_core.aws.security.organisation_manager import OrganisationManager
+
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.data.json import JSONify
@@ -81,7 +84,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoUserLoginManager(requests)
+        gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -95,7 +98,7 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        auth = gatekeeper.login(credentials)
+        auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
             logger.error("login: %s" % auth.authentication_status.description)
@@ -105,7 +108,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = CognitoDeviceManager(requests, auth.id_token)
+        device_manager = CognitoDeviceManager(requests, auth.id_token)
+        org_manager = OrganisationManager(requests)
+
         finder = CognitoDeviceFinder(requests)
 
 
@@ -119,15 +124,19 @@ if __name__ == '__main__':
             else:
                 report = sorted(finder.find_all(auth.id_token))
 
+            if cmd.memberships:
+                org_devices = org_manager.find_devices(auth.id_token)
+                report = CognitoMembership.merge(report, org_devices)
+
         if cmd.create:
             if not CognitoDeviceIdentity.is_valid_password(cmd.create[1]):
                 logger.error("password must be at least 16 characters.")
                 exit(2)
 
             # create...
-            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None)
+            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None)
 
-            report = manager.create(identity)
+            report = device_manager.create(identity)
 
         if cmd.update:
             if not CognitoDeviceIdentity.is_valid_password(cmd.update[1]):
@@ -142,13 +151,13 @@ if __name__ == '__main__':
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None)
+            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
-            manager.update(report)
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
+            device_manager.update(report)
 
         if cmd.delete:
-            manager.delete(cmd.delete)
+            device_manager.delete(cmd.delete)
 
 
     # ----------------------------------------------------------------------------------------------------------------

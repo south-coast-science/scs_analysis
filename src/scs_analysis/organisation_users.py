@@ -34,7 +34,7 @@ import sys
 from scs_analysis.cmd.cmd_organisation_users import CmdOrganisationUsers
 
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import OrganisationUser
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoUserLoginManager(requests)
+        gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        auth = gatekeeper.login(credentials)
+        auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
             logger.error("login: %s" % auth.authentication_status.description)
@@ -134,8 +134,12 @@ if __name__ == '__main__':
         if cmd.find:
             if cmd.email:
                 report = manager.find_users_by_username(auth.id_token, cognito.username)
-            else:
+
+            elif cmd.org_label:
                 report = manager.find_users_by_organisation(auth.id_token, org.org_id)
+
+            else:
+                report = manager.find_users(auth.id_token)
 
         if cmd.retrieve:
             report = manager.get_user(auth.id_token, cognito.username, org.org_id)

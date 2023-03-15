@@ -17,7 +17,7 @@ class CmdCognitoDevices(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
-                                                    "{ -F [-t TAG] "
+                                                    "{ -F [-t TAG] [-m] "
                                                     "| -C TAG SHARED_SECRET "
                                                     "| -U TAG SHARED_SECRET "
                                                     "| -D TAG } "
@@ -46,6 +46,9 @@ class CmdCognitoDevices(object):
                                  help="filter by device tag")
 
         # output...
+        self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
+                                 help="show device's organisation memberships")
+
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -73,6 +76,9 @@ class CmdCognitoDevices(object):
             count += 1
 
         if count != 1:
+            return False
+
+        if self.memberships and not self.find:
             return False
 
         return True
@@ -111,6 +117,11 @@ class CmdCognitoDevices(object):
 
 
     @property
+    def memberships(self):
+        return self.__opts.memberships
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -128,6 +139,6 @@ class CmdCognitoDevices(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdCognitoDevices:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
-               "tag:%s, indent:%s, verbose:%s}" % \
+               "tag:%s, memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.create, self.update, self.delete,
-                self.tag, self.indent, self.verbose)
+                self.tag, self.memberships, self.indent, self.verbose)

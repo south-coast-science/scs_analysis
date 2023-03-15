@@ -38,12 +38,11 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
-from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
-
-from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
-
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.datum import Datum
@@ -59,6 +58,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    cmd = None
     logger = None
     gatekeeper = None
     credentials = None
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoUserLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 logger.error("incorrect password")
                 exit(1)
 
-            auth = gatekeeper.login(credentials)
+            auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
                 logger.error("login: %s" % auth.authentication_status.description)
@@ -114,8 +114,9 @@ if __name__ == '__main__':
         if not cmd.create:
             finder = CognitoUserFinder(requests)
 
+        manager = OrganisationManager(requests)
+
         if cmd.org_label:
-            manager = OrganisationManager(requests)
             org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
 
             if org is None:
@@ -146,14 +147,19 @@ if __name__ == '__main__':
             else:
                 report = sorted(finder.find_all(auth.id_token))
 
+            if cmd.memberships:
+                org_users = manager.find_users(auth.id_token)
+                report = CognitoMembership.merge(report, org_users)
+
         if cmd.create:
             # create...
             if not Datum.is_email_address(cmd.email):
                 logger.error("The email address '%s' is not valid." % cmd.email)
                 exit(1)
 
-            identity = CognitoUserIdentity(None, None, None, None, False,
-                                           cmd.email, cmd.given_name, cmd.family_name, None)
+            identity = CognitoUserIdentity(None, None, None, True,
+                                           False, cmd.email, cmd.given_name, cmd.family_name, None,
+                                           False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(identity)
@@ -176,12 +182,13 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
 
-            report = CognitoUserIdentity(identity.username, None, None, False,
-                                         enabled, email, given_name, family_name, None)
+            new_identity = CognitoUserIdentity(identity.username, None, None, enabled,
+                                               identity.email_verified, email, given_name, family_name, None,
+                                               identity.is_super, identity.is_tester, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
-            manager.update(identity)
+            report = manager.update(new_identity)
 
         if cmd.delete:
             # TODO: delete user from organisations?
@@ -202,5 +209,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPConflictException as ex:
-        logger.error("the email address '%s' is already in use." % report.email)
+        logger.error("the email address '%s' is already in use." % cmd.email)
         exit(1)

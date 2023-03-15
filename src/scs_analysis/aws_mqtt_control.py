@@ -170,7 +170,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # StdIO settings...
 
-        mqtt_client.connect(auth, False)
+        mqtt_client.connect(auth)
 
         if cmd.interactive:
             try:
@@ -195,7 +195,7 @@ if __name__ == '__main__':
         while True:
             # cmd...
             if cmd.interactive:
-                line = StdIO.prompt(device_tag + ' > ')
+                line = StdIO.prompt(device_tag)
 
                 if not line:
                     continue

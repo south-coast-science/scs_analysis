@@ -20,8 +20,8 @@ EXAMPLES
 ./cognito_user_identity.py -R
 
 DOCUMENT EXAMPLE
-{"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
-"email": "bruno.beloff@southcoastscience.com", "given-name": "Bruno", "family-name": "Beloff", "is-super": true}
+{"username""8", "creation-date""2021-11-24T12:51:12Z", "confirmation-status""CONFIRMED", "enabled": true,
+"email""bruno.beloff@southcoastscience.com", "given-name""Bruno", "family-name""Beloff", "is-super": true}
 
 SEE ALSO
 scs_analysis/cognito_credentials
@@ -39,7 +39,7 @@ from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 
 from scs_core.data.datum import Datum
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            gatekeeper = CognitoUserLoginManager(requests)
+            gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
             if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                 logger.error("incorrect password")
                 exit(1)
 
-            auth = gatekeeper.login(credentials)
+            auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
                 logger.error("login: %s" % auth.authentication_status.description)
@@ -118,11 +118,11 @@ if __name__ == '__main__':
 
         if cmd.create:
             # create...
-            given_name = StdIO.prompt("Enter given name: ")
-            family_name = StdIO.prompt("Enter family name: ")
-            email = StdIO.prompt("Enter email address: ")
-            password = StdIO.prompt("Enter password: ")
-            retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same): ", default=None)
+            given_name = StdIO.prompt("Enter given name")
+            family_name = StdIO.prompt("Enter family name")
+            email = StdIO.prompt("Enter email address")
+            password = StdIO.prompt("Enter password")
+            retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same)")
 
             if not retrieval_password:
                 retrieval_password = password
@@ -139,7 +139,8 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            report = CognitoUserIdentity(None, None, None, None, False, email, given_name, family_name, password)
+            report = CognitoUserIdentity(None, None, None, True, False, email, given_name, family_name, password,
+                                         False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(report)
@@ -153,22 +154,22 @@ if __name__ == '__main__':
             identity = finder.get_self(auth.id_token)
 
             # update identity...
-            given_name = StdIO.prompt("Enter given name (%s): ", default=identity.given_name)
-            family_name = StdIO.prompt("Enter family name (%s): ", default=identity.family_name)
-            email = StdIO.prompt("Enter email (%s): ", default=identity.email)
-            password = StdIO.prompt("Enter password (RETURN to keep existing): ", default=None)
+            given_name = StdIO.prompt("Enter given name", default=identity.given_name)
+            family_name = StdIO.prompt("Enter family name", default=identity.family_name)
+            email = StdIO.prompt("Enter email", default=identity.email)
+            password = StdIO.prompt("Enter password (RETURN to keep existing)")
 
             if not password:
                 password = credentials.password
 
             if credentials.retrieval_password == credentials.password:
-                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same): ", default=None)
+                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN for same)")
 
                 if not retrieval_password:
                     retrieval_password = password
 
             else:
-                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN to keep existing): ", default=None)
+                retrieval_password = StdIO.prompt("Enter retrieval password (RETURN to keep existing)")
 
                 if not retrieval_password:
                     retrieval_password = credentials.retrieval_password
@@ -181,19 +182,20 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
-            identity = CognitoUserIdentity(identity.username, None, None, identity.email_confirmed, None,
-                                           email, given_name, family_name, password)
+            identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified,
+                                           email, given_name, family_name, password,
+                                           identity.is_super, identity.is_tester, None)
 
-            auth = gatekeeper.login(credentials)                          # renew credentials
+            auth = gatekeeper.user_login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
-            manager.update(identity)
+            report = manager.update(identity)
 
             # update credentials...
             credentials = CognitoUserCredentials(credentials.name, email, password, retrieval_password)
             credentials.save(Host, encryption_key=retrieval_password)
 
             # report...
-            report = finder.get_self(auth.id_token)
+            # report = finder.get_self(auth.id_token)
 
 
     # ----------------------------------------------------------------------------------------------------------------
