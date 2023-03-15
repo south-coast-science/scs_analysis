@@ -72,6 +72,7 @@ setuptools.setup(
         'src/scs_analysis/baseline.py',
         'src/scs_analysis/baseline_conf.py',
         'src/scs_analysis/cognito_devices.py',
+        'src/scs_analysis/cognito_password.py',
         'src/scs_analysis/cognito_user_credentials.py',
         'src/scs_analysis/cognito_user_identity.py',
         'src/scs_analysis/cognito_users.py',
