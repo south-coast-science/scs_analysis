@@ -30,7 +30,7 @@ import sys
 
 from scs_analysis.cmd.cmd_organisations import CmdOrganisations
 
-from scs_core.aws.security.cognito_login_manager import CognitoUserLoginManager
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import Organisation
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
-        gatekeeper = CognitoUserLoginManager(requests)
+        gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
         if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
@@ -103,7 +103,7 @@ if __name__ == '__main__':
             logger.error("incorrect password")
             exit(1)
 
-        auth = gatekeeper.login(credentials)
+        auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
             logger.error("login: %s" % auth.authentication_status.description)
@@ -152,12 +152,12 @@ if __name__ == '__main__':
                 exit(1)
 
             # check...
-            response = StdIO.prompt('Are you sure (Y/n)? ')
+            response = StdIO.prompt('Are you sure? (Y/n)')
             if response != 'Y':
                 exit(0)
 
             # delete...
-            manager.delete_organisation(auth.id_token, cmd.delete)
+            manager.delete_organisation(auth.id_token, org.org_id)
 
 
     # ----------------------------------------------------------------------------------------------------------------

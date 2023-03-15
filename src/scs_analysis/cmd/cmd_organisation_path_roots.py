@@ -32,7 +32,7 @@ class CmdOrganisationPathRoots(object):
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create a path root for the given organisation and path")
 
-        self.__parser.add_option("--Delete", "-D", action="store", dest="delete", default=False,
+        self.__parser.add_option("--Delete", "-D", action="store_true", dest="delete", default=False,
                                  help="delete the path root with the given organisation and path")
 
         # fields...

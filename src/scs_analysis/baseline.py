@@ -226,7 +226,7 @@ if __name__ == '__main__':
                 subscriber = MQTTSubscriber(control_topic, handler.handle)
 
                 mqtt_client = MQTTClient(subscriber)
-                mqtt_client.connect(client_auth, False)
+                mqtt_client.connect(client_auth)
 
                 # Configuration...
                 stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['configuration'],
