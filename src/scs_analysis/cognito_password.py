@@ -35,9 +35,10 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager, AuthenticationStatus
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
 
 from scs_core.data.datum import Datum
 
@@ -148,7 +149,7 @@ if __name__ == '__main__':
             temporary_password = StdIO.prompt("Enter temporary password")
 
             # login
-            credentials = CognitoUserCredentials(None, cmd.email, temporary_password, None)
+            credentials = CognitoClientCredentials(None, cmd.email, temporary_password, None)
             auth = gatekeeper.user_login(credentials)
 
             if auth.authentication_status != AuthenticationStatus.Challenge:

@@ -42,8 +42,9 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_user_credentials import CmdCognitoUserCredentials
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -58,8 +59,8 @@ from scs_host.sys.host import Host
 
 def load_credentials(credentials_name):
     try:
-        password = CognitoUserCredentials.password_from_user()
-        return CognitoUserCredentials.load(Host, name=credentials_name, encryption_key=password)
+        password = CognitoClientCredentials.password_from_user()
+        return CognitoClientCredentials.load(Host, name=credentials_name, encryption_key=password)
 
     except (KeyError, ValueError):
         logger.error("incorrect password")
@@ -93,12 +94,12 @@ if __name__ == '__main__':
         # run...
 
         if cmd.list:
-            for conf_name in CognitoUserCredentials.list(Host):
+            for conf_name in CognitoClientCredentials.list(Host):
                 print(conf_name, file=sys.stderr)
             exit(0)
 
         if cmd.set:
-            credentials = CognitoUserCredentials.from_user(cmd.credentials_name)
+            credentials = CognitoClientCredentials.from_user(cmd.credentials_name)
 
             if not Datum.is_email_address(credentials.email):
                 logger.error("The email address is not valid.")
@@ -117,7 +118,7 @@ if __name__ == '__main__':
                 logger.error("credentials not found.")
                 exit(1)
 
-            credentials = CognitoUserCredentials.from_user(cmd.credentials_name, existing_email=credentials.email)
+            credentials = CognitoClientCredentials.from_user(cmd.credentials_name, existing_email=credentials.email)
 
             if not Datum.is_email_address(credentials.email):
                 logger.error("The email address is not valid.")
@@ -146,7 +147,7 @@ if __name__ == '__main__':
             exit(0 if result.is_ok() else 1)
 
         elif cmd.delete:
-            CognitoUserCredentials.delete(Host)
+            CognitoClientCredentials.delete(Host)
 
         else:
             credentials = load_credentials(cmd.credentials_name)

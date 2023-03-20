@@ -38,14 +38,14 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
-from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
+from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.json import JSONify
 
@@ -87,13 +87,13 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
             logger.error("incorrect password")
             exit(1)

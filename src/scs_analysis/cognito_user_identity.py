@@ -36,11 +36,11 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
 
-from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
-
-from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -86,13 +86,13 @@ if __name__ == '__main__':
             gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
-            if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+            if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
                 logger.error("Cognito credentials not available.")
                 exit(1)
 
             try:
-                password = CognitoUserCredentials.password_from_user()
-                credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+                password = CognitoClientCredentials.password_from_user()
+                credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
             except (KeyError, ValueError):
                 logger.error("incorrect password")
                 exit(1)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
             report = manager.create(report)
 
             # create credentials...
-            credentials = CognitoUserCredentials(cmd.credentials_name, email, password, retrieval_password)
+            credentials = CognitoClientCredentials(cmd.credentials_name, email, password, retrieval_password)
             credentials.save(Host)
 
         if cmd.update:
@@ -191,7 +191,7 @@ if __name__ == '__main__':
             report = manager.update(identity)
 
             # update credentials...
-            credentials = CognitoUserCredentials(credentials.name, email, password, retrieval_password)
+            credentials = CognitoClientCredentials(credentials.name, email, password, retrieval_password)
             credentials.save(Host, encryption_key=retrieval_password)
 
             # report...
