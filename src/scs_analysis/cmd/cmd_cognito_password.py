@@ -23,10 +23,10 @@ class CmdCognitoPassword(object):
         self.__parser.add_option("--send-email", "-e", type="string", action="store", dest="send_email",
                                  help="send password email")
 
-        self.__parser.add_option("--set", "-s", type="string", action="store", dest="set_password",
+        self.__parser.add_option("--set-password", "-s", type="string", action="store", dest="set_password",
                                  help="set password (using temporary password)")
 
-        self.__parser.add_option("--reset", "-r", type="string", action="store", dest="reset_password",
+        self.__parser.add_option("--reset-password", "-r", type="string", action="store", dest="reset_password",
                                  help="reset password (using code)")
 
         # output...

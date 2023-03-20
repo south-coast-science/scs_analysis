@@ -170,7 +170,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # StdIO settings...
 
-        mqtt_client.connect(auth, False)
+        mqtt_client.connect(auth)
 
         if cmd.interactive:
             try:

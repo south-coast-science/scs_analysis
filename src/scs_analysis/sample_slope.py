@@ -15,17 +15,18 @@ The output document replaced the input field with field.cur (the current value) 
 input document, the corresponding output document's field.slope value is null. A --tally flag specifies the number
 of rolling samples in the regression.
 
+The --max-interval flag is intended to prevent slope analyses covering long periods such as device downtime.
+
 If the --exclude-incomplete flag is set, then any data proir to the required number of tallies is not output. Where
 a chain of slope analyses are being performed, the flag should only be used on the last (highest tally) pass.
 
 SYNOPSIS
-sample_slope.py -n NAME [-i ISO] [-t TALLY] [-x] [-p PRECISION] [-v] PATH
+sample_slope.py -n NAME [-i ISO] [-t TALLY] [-m [DD-]HH:MM[:SS]] [-x] [-p PRECISION] [-v] PATH
 
 EXAMPLES
-csv_reader.py -v climate-15min.csv | \
-sample_slope.py -v -n 15min -t2 val.hmd | \
-sample_slope.py -v -n 30min -t3 -x val.hmd | \
-csv_writer.py -v climate-15min-slp15-slp30.csv
+bruno:scs-opc-164 bruno$ csv_reader.py -v scs-opc-164-meteo-pmx-2022-15min.csv | \
+sample_slope.py -v -n 15min -t2 -m 00:15:00 -x meteo.val.hmd | \
+csv_writer.py -v scs-opc-164-meteo-pmx-2022-15min-slope.csv
 
 DOCUMENT EXAMPLE - INPUT
 {"rec": "2022-09-13T13:30:00Z", "val": {"hmd": 72.5, "tmp": 22.2,
@@ -68,6 +69,10 @@ if __name__ == '__main__':
     Logging.config('sample_slope', verbose=cmd.verbose)
     logger = Logging.getLogger()
 
+    if not cmd.is_valid_interval():
+        logger.error("invalid format for max interval.")
+        exit(2)
+
     logger.info(cmd)
 
     try:
@@ -107,6 +112,11 @@ if __name__ == '__main__':
                 logger.error("invalid ISO 8601 value '%s' in %s." % (rec_node, jstr))
                 exit(1)
 
+            # exclude long intervals...
+            if cmd.max_interval and prev_rec is not None and rec - prev_rec > cmd.max_interval:
+                logger.info("resetting regression on %s" % jstr)
+                regression.reset()
+
             # value...
             if source_path not in paths:
                 if source_path + '.cur' in paths:
@@ -143,14 +153,15 @@ if __name__ == '__main__':
 
                 target.copy(datum, path)
 
-            if cmd.exclude_incomplete and document_count < cmd.tally:
+            prev_rec = rec
+            prev_value = value
+
+            if cmd.exclude_incomplete and (slope is None or document_count < cmd.tally):
                 continue
 
             print(JSONify.dumps(target))
             sys.stdout.flush()
 
-            prev_rec = rec
-            prev_value = value
             processed_count += 1
 
 

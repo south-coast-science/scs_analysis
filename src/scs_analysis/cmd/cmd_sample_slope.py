@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_core.data.timedelta import Timedelta
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,8 +20,8 @@ class CmdSampleSlope(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-x] [-p PRECISION] [-v] PATH",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-m [DD-]HH:MM[:SS]] [-x] "
+                                                    "[-p PRECISION] [-v] PATH", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",
@@ -31,6 +33,9 @@ class CmdSampleSlope(object):
 
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", default=2, dest="tally",
                                  help="compute for rolling TALLY number of data points (default 2)")
+
+        self.__parser.add_option("--max-interval", "-m", type="string", nargs=1, action="store", dest="max_interval",
+                                 help="restart regresson on long intervals")
 
         self.__parser.add_option("--exclude-incomplete", "-x", action="store_true", dest="exclude_incomplete",
                                  default=False, help="exclude incomplete tallies")
@@ -59,6 +64,13 @@ class CmdSampleSlope(object):
         return True
 
 
+    def is_valid_interval(self):
+        if self.__opts.max_interval is None:
+            return True
+
+        return self.max_interval is not None
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -74,6 +86,11 @@ class CmdSampleSlope(object):
     @property
     def tally(self):
         return self.__opts.tally
+
+
+    @property
+    def max_interval(self):
+        return Timedelta.construct_from_flag(self.__opts.max_interval)
 
 
     @property

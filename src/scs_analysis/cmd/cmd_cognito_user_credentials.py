@@ -16,7 +16,7 @@ class CmdCognitoUserCredentials(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -l | [-c CREDENTIALS] [{ -s | -t | -d }] }] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] [-v]",
                                               version="%prog 1.0")
 
         # helpers...
@@ -30,6 +30,9 @@ class CmdCognitoUserCredentials(object):
         # operations...
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
                                  help="set the credentials")
+
+        self.__parser.add_option("--update-password", "-p", action="store_true", dest="update_password", default=False,
+                                 help="update the password")
 
         self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
                                  help="test the credentials")
@@ -53,6 +56,9 @@ class CmdCognitoUserCredentials(object):
             count += 1
 
         if self.set:
+            count += 1
+
+        if self.update_password:
             count += 1
 
         if self.test:
@@ -85,6 +91,11 @@ class CmdCognitoUserCredentials(object):
 
 
     @property
+    def update_password(self):
+        return self.__opts.update_password
+
+
+    @property
     def test(self):
         return self.__opts.test
 
@@ -106,5 +117,7 @@ class CmdCognitoUserCredentials(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoUserCredentials:{list:%s, credentials_name:%s, set:%s, test:%s, delete:%s, verbose:%s}" % \
-               (self.list, self.credentials_name, self.set, self.test, self.delete, self.verbose)
+        return "CmdCognitoUserCredentials:{list:%s, credentials_name:%s, set:%s, update_password:%s, test:%s, " \
+               "delete:%s, verbose:%s}" % \
+               (self.list, self.credentials_name, self.set, self.update_password, self.test,
+                self.delete, self.verbose)
