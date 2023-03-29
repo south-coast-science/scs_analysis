@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
             # exclude long intervals...
             if cmd.max_interval and prev_rec is not None and rec - prev_rec > cmd.max_interval:
-                logger.info("resetting regression on %s" % jstr)
+                logger.info("regression reset on %s" % jstr)
                 regression.reset()
 
             # value...

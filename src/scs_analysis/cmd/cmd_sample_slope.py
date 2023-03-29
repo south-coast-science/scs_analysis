@@ -35,7 +35,7 @@ class CmdSampleSlope(object):
                                  help="compute for rolling TALLY number of data points (default 2)")
 
         self.__parser.add_option("--max-interval", "-m", type="string", nargs=1, action="store", dest="max_interval",
-                                 help="restart regresson on long intervals")
+                                 help="restart regression on long intervals")
 
         self.__parser.add_option("--exclude-incomplete", "-x", action="store_true", dest="exclude_incomplete",
                                  default=False, help="exclude incomplete tallies")

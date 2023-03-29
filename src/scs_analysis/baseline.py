@@ -96,7 +96,6 @@ if __name__ == '__main__':
 
     MQTT_TIMEOUT = 60           # seconds
 
-    logger = None
     key = None
     monitor_auth = None
     mqtt_client = None
