@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            report = CognitoUserIdentity(None, None, None, True, False, email, given_name, family_name, password,
+            report = CognitoUserIdentity(email, None, None, True, False, email, given_name, family_name, password,
                                          False, False, None)
 
             manager = CognitoUserCreator(requests)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
             # create credentials...
             credentials = CognitoClientCredentials(cmd.credentials_name, email, password, retrieval_password)
-            credentials.save(Host)
+            credentials.save(Host, encryption_key=retrieval_password)
 
         if cmd.update:
             # find...
@@ -193,9 +193,6 @@ if __name__ == '__main__':
             # update credentials...
             credentials = CognitoClientCredentials(credentials.name, email, password, retrieval_password)
             credentials.save(Host, encryption_key=retrieval_password)
-
-            # report...
-            # report = finder.get_self(auth.id_token)
 
 
     # ----------------------------------------------------------------------------------------------------------------
