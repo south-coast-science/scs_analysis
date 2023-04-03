@@ -16,7 +16,7 @@ class CmdOrganisationUserPaths(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -e EMAIL -r PATH_ROOT | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F { -e EMAIL | -r PATH_ROOT } | "
                                                     "-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | "
                                                     "-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
@@ -72,8 +72,12 @@ class CmdOrganisationUserPaths(object):
         if count != 1:
             return False
 
-        if self.email is None or self.path_root is None:
-            return False
+        if self.find:
+            if self.email is None and self.path_root is None:
+                return False
+        else:
+            if self.email is None or self.path_root is None:
+                return False
 
         if (self.create or self.delete) and self.path_extension is None:
             return False

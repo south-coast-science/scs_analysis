@@ -78,7 +78,7 @@ if __name__ == '__main__':
             logger.error("email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+        if cmd.path_root and not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
             logger.error("path root '%s' is not valid." % cmd.path_root)
             exit(2)
 
