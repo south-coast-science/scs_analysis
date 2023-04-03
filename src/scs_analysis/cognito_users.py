@@ -27,6 +27,8 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_devices
+scs_analysis/organisation_users
 
 RESOURCES
 https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html

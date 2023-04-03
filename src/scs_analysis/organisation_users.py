@@ -26,6 +26,7 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_users
 """
 
 import requests

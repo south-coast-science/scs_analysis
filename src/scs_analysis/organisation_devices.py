@@ -28,6 +28,7 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_devices
 """
 
 import requests
