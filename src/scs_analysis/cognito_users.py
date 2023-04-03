@@ -50,7 +50,7 @@ from scs_core.aws.security.organisation_manager import OrganisationManager
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPConflictException
+from scs_core.sys.http_exception import HTTPException, HTTPConflictException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -212,4 +212,8 @@ if __name__ == '__main__':
 
     except HTTPConflictException as ex:
         logger.error("the email address '%s' is already in use." % cmd.email)
+        exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.data)
         exit(1)

@@ -127,6 +127,7 @@ if __name__ == '__main__':
             if not retrieval_password:
                 retrieval_password = password
 
+            # validate...
             if not given_name or not given_name:
                 logger.error("Given name and family name are required.")
                 exit(1)
@@ -139,6 +140,7 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
+            # save identity...
             report = CognitoUserIdentity(email, None, None, True, False, email, given_name, family_name, password,
                                          False, False, None)
 
@@ -174,6 +176,11 @@ if __name__ == '__main__':
                 if not retrieval_password:
                     retrieval_password = credentials.retrieval_password
 
+            # validate...
+            if not given_name or not given_name:
+                logger.error("Given name and family name are required.")
+                exit(1)
+
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
@@ -182,6 +189,7 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
+            # save identity...
             identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified,
                                            email, given_name, family_name, password,
                                            identity.is_super, identity.is_tester, None)
