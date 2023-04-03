@@ -127,25 +127,31 @@ if __name__ == '__main__':
             logger.error("no Cognito user found for email: '%s'." % cmd.email)
             exit(1)
 
-        opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
+        if cmd.path_root:
+            opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
 
-        if opr is None:
-            logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
-            exit(1)
+            if opr is None:
+                logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
+                exit(1)
+
+            opr_id = opr.opr_id
+
+        else:
+            opr_id = None
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = manager.find_oups(auth.id_token, cognito.username, opr.opr_id)
+            report = manager.find_oups(auth.id_token, cognito.username, opr_id)
 
         if cmd.create:
-            report = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            report = OrganisationUserPath(cognito.username, opr_id, cmd.path_extension)
             manager.assert_oup(auth.id_token, report)
 
         if cmd.delete:
-            oup = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            oup = OrganisationUserPath(cognito.username, opr_id, cmd.path_extension)
             manager.delete_oup(auth.id_token, oup)
 
 
