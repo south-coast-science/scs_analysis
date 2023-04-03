@@ -11,10 +11,8 @@ DESCRIPTION
 The organisation_path_roots utility is used to
 
 SYNOPSIS
-organisation_path_roots.py  [-c CREDENTIALS] { -F -l ORG_LABEL | \
--C -l ORG_LABEL -r PATH_ROOT | \
--D -l ORG_LABEL -r PATH_ROOT } \
-[-i INDENT] [-v]
+Usage: organisation_path_roots.py  [-c CREDENTIALS] \
+{ -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } [-m] [-i INDENT] [-v]
 
 EXAMPLES
 organisation_path_roots.py -F -l NARA
@@ -36,6 +34,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.aws.security.organisation import Organisation, OrganisationPathRoot
 from scs_core.aws.security.organisation_manager import OrganisationManager
+from scs_core.aws.security.opr_membership import OPRMembership
 
 from scs_core.data.json import JSONify
 
@@ -50,8 +49,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
     org = None
     report = None
 
@@ -70,7 +67,7 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
-        if not Organisation.is_valid_label(cmd.org_label):
+        if cmd.org_label is not None and not Organisation.is_valid_label(cmd.org_label):
             logger.error("the organisation label '%s' is not valid." % cmd.org_label)
             exit(2)
 
@@ -93,7 +90,7 @@ if __name__ == '__main__':
             password = CognitoClientCredentials.password_from_user()
             credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)
@@ -119,12 +116,21 @@ if __name__ == '__main__':
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
                 exit(1)
 
+            org_id = org.org_id
+
+        else:
+            org_id = None
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = manager.find_oprs_by_organisation(auth.id_token, org.org_id)
+            report = manager.find_oprs(auth.id_token, org_id=org_id)
+
+            if cmd.memberships:
+                oups = manager.find_oups(auth.id_token)
+                report = OPRMembership.merge(report, oups)
 
         if cmd.create:
             org = OrganisationPathRoot(0, org.org_id, cmd.path_root)

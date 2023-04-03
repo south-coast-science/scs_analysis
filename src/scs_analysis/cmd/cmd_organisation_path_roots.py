@@ -16,10 +16,10 @@ class CmdOrganisationPathRoots(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -l ORG_LABEL | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l ORG_LABEL] | "
                                                     "-C -l ORG_LABEL -r PATH_ROOT | "
                                                     "-D -l ORG_LABEL -r PATH_ROOT } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-m] [-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -43,6 +43,9 @@ class CmdOrganisationPathRoots(object):
                                  help="the organisation path root")
 
         # output...
+        self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
+                                 help="show path root's user path memberships")
+
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -69,7 +72,7 @@ class CmdOrganisationPathRoots(object):
         if count != 1:
             return False
 
-        if self.org_label is None:
+        if not self.find and self.org_label is None:
             return False
 
         if (self.create or self.delete) and self.path_root is None:
@@ -111,6 +114,11 @@ class CmdOrganisationPathRoots(object):
 
 
     @property
+    def memberships(self):
+        return self.__opts.memberships
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -128,6 +136,6 @@ class CmdOrganisationPathRoots(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdOrganisationPathRoots:{credentials_name:%s, find:%s, create:%s, delete:%s, " \
-               "org_label:%s, path_root:%s, indent:%s, verbose:%s}" % \
+               "org_label:%s, path_root:%s, memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.__opts.create, self.__opts.delete,
-                self.org_label, self.path_root, self.indent, self.verbose)
+                self.org_label, self.path_root, self.memberships, self.indent, self.verbose)

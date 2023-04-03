@@ -53,10 +53,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
-    cognito = None
-    org = None
     report = []
 
     try:
@@ -101,7 +97,7 @@ if __name__ == '__main__':
             password = CognitoClientCredentials.password_from_user()
             credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)
@@ -144,7 +140,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find_oups(auth.id_token, cognito.username, opr_id)
+            report = manager.find_oups(auth.id_token, username=cognito.username, opr_id=opr_id)
 
         if cmd.create:
             report = OrganisationUserPath(cognito.username, opr_id, cmd.path_extension)
@@ -158,7 +154,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-        if report is not None:
+        if not cmd.delete:
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:

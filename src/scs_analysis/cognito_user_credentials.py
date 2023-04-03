@@ -63,7 +63,7 @@ def load_credentials(credentials_name):
         return CognitoClientCredentials.load(Host, name=credentials_name, encryption_key=password)
 
     except (KeyError, ValueError):
-        logger.error("incorrect password")
+        logger.error("incorrect password.")
         exit(1)
 
 
