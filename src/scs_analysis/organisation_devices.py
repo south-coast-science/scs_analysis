@@ -58,9 +58,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
-    cognito = None
     org = None
     report = []
 
@@ -115,7 +112,7 @@ if __name__ == '__main__':
             password = CognitoClientCredentials.password_from_user()
             credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
 

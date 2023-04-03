@@ -95,7 +95,7 @@ if __name__ == '__main__':
             password = CognitoClientCredentials.password_from_user()
             credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)
