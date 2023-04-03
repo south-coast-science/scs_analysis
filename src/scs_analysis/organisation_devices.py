@@ -30,7 +30,6 @@ SEE ALSO
 scs_analysis/cognito_credentials
 """
 
-import logging
 import requests
 import sys
 
@@ -75,7 +74,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('organisation_devices', level=logging.DEBUG)
+        Logging.config('organisation_devices', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
