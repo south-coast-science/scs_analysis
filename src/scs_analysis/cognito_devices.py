@@ -15,15 +15,14 @@ If the --Create function is used, an email is sent to the new user. The verifica
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_devices.py  [-c CREDENTIALS] { -F [-t TAG] | -C TAG SHARED_SECRET | -U TAG SHARED_SECRET | -D TAG }
+cognito_devices.py  [-c CREDENTIALS] { -F [-t TAG] [-m] | -C TAG SHARED_SECRET | -U TAG SHARED_SECRET | -D TAG } \
 [-i INDENT] [-v]
 
 EXAMPLES
-cognito_users.py -Fe bruno.beloff@southcoastscience.com
+cognito_devices.py -vi4 -c super -F -m
 
 DOCUMENT EXAMPLE
-{"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
-"email": "bruno.beloff@southcoastscience.com", "given-name": "Bruno", "family-name": "Beloff", "is-super": true}
+{"username": "scs-ph1-28", "created": "2023-04-04T09:08:55Z", "last-updated": "2023-04-04T09:08:56Z"}
 
 SEE ALSO
 scs_analysis/cognito_credentials
