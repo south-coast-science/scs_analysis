@@ -27,6 +27,8 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_devices
+scs_analysis/organisation_users
 
 RESOURCES
 https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html
@@ -38,17 +40,19 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor, CognitoUserDeleter
+
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPConflictException
+from scs_core.sys.http_exception import HTTPException, HTTPConflictException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -91,15 +95,15 @@ if __name__ == '__main__':
             gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
-            if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+            if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
                 logger.error("Cognito credentials not available.")
                 exit(1)
 
             try:
-                password = CognitoUserCredentials.password_from_user()
-                credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+                password = CognitoClientCredentials.password_from_user()
+                credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
             except (KeyError, ValueError):
-                logger.error("incorrect password")
+                logger.error("incorrect password.")
                 exit(1)
 
             auth = gatekeeper.user_login(credentials)
@@ -210,4 +214,8 @@ if __name__ == '__main__':
 
     except HTTPConflictException as ex:
         logger.error("the email address '%s' is already in use." % cmd.email)
+        exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.data)
         exit(1)

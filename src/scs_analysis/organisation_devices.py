@@ -28,9 +28,9 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_devices
 """
 
-import logging
 import requests
 import sys
 
@@ -38,8 +38,8 @@ from scs_analysis.cmd.cmd_organisation_devices import CmdOrganisationDevices
 
 from scs_core.aws.config.project import Project
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import Organisation, OrganisationPathRoot, OrganisationDevice
 from scs_core.aws.security.organisation_manager import OrganisationManager
@@ -59,9 +59,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
-    cognito = None
     org = None
     report = []
 
@@ -75,7 +72,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('organisation_devices', level=logging.DEBUG)
+        Logging.config('organisation_devices', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -108,15 +105,15 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
 

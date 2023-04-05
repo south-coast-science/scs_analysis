@@ -11,13 +11,11 @@ DESCRIPTION
 The organisation_path_roots utility is used to
 
 SYNOPSIS
-organisation_path_roots.py  [-c CREDENTIALS] { -F -l ORG_LABEL | \
--C -l ORG_LABEL -r PATH_ROOT | \
--D -l ORG_LABEL -r PATH_ROOT } \
-[-i INDENT] [-v]
+organisation_path_roots.py  [-c CREDENTIALS] \
+{ -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } [-m] [-i INDENT] [-v]
 
 EXAMPLES
-organisation_path_roots.py -F -l NARA
+organisation_path_roots.py -vi4 -c super -Fl 4sfera -m
 
 DOCUMENT EXAMPLE
 {"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
@@ -31,11 +29,12 @@ import sys
 
 from scs_analysis.cmd.cmd_organisation_path_roots import CmdOrganisationPathRoots
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import Organisation, OrganisationPathRoot
 from scs_core.aws.security.organisation_manager import OrganisationManager
+from scs_core.aws.security.opr_membership import OPRMembership
 
 from scs_core.data.json import JSONify
 
@@ -50,8 +49,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
     org = None
     report = None
 
@@ -70,7 +67,7 @@ if __name__ == '__main__':
 
         logger.info(cmd)
 
-        if not Organisation.is_valid_label(cmd.org_label):
+        if cmd.org_label is not None and not Organisation.is_valid_label(cmd.org_label):
             logger.error("the organisation label '%s' is not valid." % cmd.org_label)
             exit(2)
 
@@ -85,15 +82,15 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)
@@ -119,12 +116,21 @@ if __name__ == '__main__':
                 logger.error("no organisation found for label: '%s'." % cmd.org_label)
                 exit(1)
 
+            org_id = org.org_id
+
+        else:
+            org_id = None
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = manager.find_oprs_by_organisation(auth.id_token, org.org_id)
+            report = manager.find_oprs(auth.id_token, org_id=org_id)
+
+            if cmd.memberships:
+                oups = manager.find_oups(auth.id_token)
+                report = OPRMembership.merge(report, oups)
 
         if cmd.create:
             org = OrganisationPathRoot(0, org.org_id, cmd.path_root)
