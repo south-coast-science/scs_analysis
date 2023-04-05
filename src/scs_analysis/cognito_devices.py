@@ -15,18 +15,19 @@ If the --Create function is used, an email is sent to the new user. The verifica
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_devices.py  [-c CREDENTIALS] { -F [-t TAG] | -C TAG SHARED_SECRET | -U TAG SHARED_SECRET | -D TAG }
+cognito_devices.py  [-c CREDENTIALS] { -F [-t TAG] [-m] | -C TAG SHARED_SECRET | -U TAG SHARED_SECRET | -D TAG } \
 [-i INDENT] [-v]
 
 EXAMPLES
-cognito_users.py -Fe bruno.beloff@southcoastscience.com
+cognito_devices.py -vi4 -c super -F -m
 
 DOCUMENT EXAMPLE
-{"username": "8", "creation-date": "2021-11-24T12:51:12Z", "confirmation-status": "CONFIRMED", "enabled": true,
-"email": "bruno.beloff@southcoastscience.com", "given-name": "Bruno", "family-name": "Beloff", "is-super": true}
+{"username": "scs-ph1-28", "created": "2023-04-04T09:08:55Z", "last-updated": "2023-04-04T09:08:56Z"}
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_users
+scs_analysis/organisation_devices
 
 RESOURCES
 https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html
@@ -38,14 +39,14 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
-from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
+from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.data.json import JSONify
 
@@ -87,15 +88,15 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)

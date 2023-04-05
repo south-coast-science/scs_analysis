@@ -31,12 +31,13 @@ import sys
 
 from scs_analysis.cmd.cmd_organisation_user_paths import CmdOrganisationUserPaths
 
-from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials
 
 from scs_core.aws.security.organisation import OrganisationPathRoot, OrganisationUserPath
 from scs_core.aws.security.organisation_manager import OrganisationManager
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -52,10 +53,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    auth = None
-    cognito = None
-    org = None
     report = []
 
     try:
@@ -77,7 +74,7 @@ if __name__ == '__main__':
             logger.error("email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
+        if cmd.path_root and not OrganisationPathRoot.is_valid_path_root(cmd.path_root):
             logger.error("path root '%s' is not valid." % cmd.path_root)
             exit(2)
 
@@ -92,15 +89,15 @@ if __name__ == '__main__':
         gatekeeper = CognitoLoginManager(requests)
 
         # CognitoUserCredentials...
-        if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
             logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            password = CognitoUserCredentials.password_from_user()
-            credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error("incorrect password")
+            logger.error("incorrect password.")
             exit(1)
 
         auth = gatekeeper.user_login(credentials)
@@ -126,32 +123,38 @@ if __name__ == '__main__':
             logger.error("no Cognito user found for email: '%s'." % cmd.email)
             exit(1)
 
-        opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
+        if cmd.path_root:
+            opr = manager.get_opr_by_path_root(auth.id_token, cmd.path_root)
 
-        if opr is None:
-            logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
-            exit(1)
+            if opr is None:
+                logger.error("no organisation path root found for path: '%s'." % cmd.path_root)
+                exit(1)
+
+            opr_id = opr.opr_id
+
+        else:
+            opr_id = None
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = manager.find_oups(auth.id_token, cognito.username, opr.opr_id)
+            report = manager.find_oups(auth.id_token, username=cognito.username, opr_id=opr_id)
 
         if cmd.create:
-            report = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            report = OrganisationUserPath(cognito.username, opr_id, cmd.path_extension)
             manager.assert_oup(auth.id_token, report)
 
         if cmd.delete:
-            oup = OrganisationUserPath(cognito.username, opr.opr_id, cmd.path_extension)
+            oup = OrganisationUserPath(cognito.username, opr_id, cmd.path_extension)
             manager.delete_oup(auth.id_token, oup)
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
-        if report is not None:
+        if not cmd.delete:
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:

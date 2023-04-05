@@ -36,11 +36,11 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
 
-from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
-
-from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-from scs_core.aws.security.cognito_user import CognitoUserCredentials, CognitoUserIdentity
+from scs_core.aws.security.cognito_user import CognitoUserIdentity
+from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -86,15 +86,15 @@ if __name__ == '__main__':
             gatekeeper = CognitoLoginManager(requests)
 
             # CognitoUserCredentials...
-            if not CognitoUserCredentials.exists(Host, name=cmd.credentials_name):
+            if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
                 logger.error("Cognito credentials not available.")
                 exit(1)
 
             try:
-                password = CognitoUserCredentials.password_from_user()
-                credentials = CognitoUserCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
+                password = CognitoClientCredentials.password_from_user()
+                credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
             except (KeyError, ValueError):
-                logger.error("incorrect password")
+                logger.error("incorrect password.")
                 exit(1)
 
             auth = gatekeeper.user_login(credentials)
@@ -127,6 +127,7 @@ if __name__ == '__main__':
             if not retrieval_password:
                 retrieval_password = password
 
+            # validate...
             if not given_name or not given_name:
                 logger.error("Given name and family name are required.")
                 exit(1)
@@ -139,15 +140,16 @@ if __name__ == '__main__':
                 logger.error("The password must include lower and upper case, numeric and punctuation characters.")
                 exit(1)
 
-            report = CognitoUserIdentity(None, None, None, True, False, email, given_name, family_name, password,
+            # save identity...
+            report = CognitoUserIdentity(email, None, None, True, False, email, given_name, family_name, password,
                                          False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(report)
 
             # create credentials...
-            credentials = CognitoUserCredentials(cmd.credentials_name, email, password, retrieval_password)
-            credentials.save(Host)
+            credentials = CognitoClientCredentials(cmd.credentials_name, email, password, retrieval_password)
+            credentials.save(Host, encryption_key=retrieval_password)
 
         if cmd.update:
             # find...
@@ -174,6 +176,11 @@ if __name__ == '__main__':
                 if not retrieval_password:
                     retrieval_password = credentials.retrieval_password
 
+            # validate...
+            if not given_name or not given_name:
+                logger.error("Given name and family name are required.")
+                exit(1)
+
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
                 exit(1)
@@ -182,6 +189,7 @@ if __name__ == '__main__':
                 logger.error("The password '%s' is not valid." % password)
                 exit(1)
 
+            # save identity...
             identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified,
                                            email, given_name, family_name, password,
                                            identity.is_super, identity.is_tester, None)
@@ -191,11 +199,8 @@ if __name__ == '__main__':
             report = manager.update(identity)
 
             # update credentials...
-            credentials = CognitoUserCredentials(credentials.name, email, password, retrieval_password)
+            credentials = CognitoClientCredentials(credentials.name, email, password, retrieval_password)
             credentials.save(Host, encryption_key=retrieval_password)
-
-            # report...
-            # report = finder.get_self(auth.id_token)
 
 
     # ----------------------------------------------------------------------------------------------------------------
