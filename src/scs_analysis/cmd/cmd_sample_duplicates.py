@@ -18,9 +18,12 @@ class CmdSampleDuplicates(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c] [-v] PATH", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -x | -c }] [-v] [PATH]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
+                                 help="output non-duplicate documents only")
+
         self.__parser.add_option("--counts", "-c", action="store_true", dest="counts", default=False,
                                  help="only list the count of matching documents")
 
@@ -33,13 +36,18 @@ class CmdSampleDuplicates(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 1:
+        if self.exclude and self.counts:
             return False
 
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def exclude(self):
+        return self.__opts.exclude
+
 
     @property
     def counts(self):
@@ -63,4 +71,5 @@ class CmdSampleDuplicates(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleDuplicates:{counts:%s, verbose:%s, path:%s}" % (self.counts, self.verbose, self.path)
+        return "CmdSampleDuplicates:{exclude:%s, counts:%s, verbose:%s, path:%s}" % \
+            (self.exclude, self.counts, self.verbose, self.path)
