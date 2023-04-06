@@ -8,28 +8,27 @@ Created on 3 Mar 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_duplicates utility is used to find duplicate values in a sequence of input JSON documents, for a specified
-leaf node path. It is particularly useful in searching for duplicate recording datetimes.
+The sample_duplicates utility is used to find duplicate values in a sequence of input JSON documents, optionally
+for a specified node path. It is particularly useful in searching for duplicate recording datetimes.
 
 If an input document does not contain the specified path, then it is ignored.
 
-The default output report is sequence of JSON dictionaries with a field for each value where duplicates were found.
-The value for this field is itself a dictionary, with a field for the index of each input document, and value being
-the input document itself.
+In the default mode, the utility outputs the rows that were duplicates (or contained duplicate field values). If the
+--exclude flag is set, then sample_duplicates generates a version of the input data that contains no duplicates.
 
 In the --counts mode, the output report is sequence of JSON dictionaries with a field for each value where duplicates
 were found, whose value is the number of matching documents.
 
 SYNOPSIS
-sample_duplicates.py [-c] [-v] PATH
+sample_duplicates.py [{ -x | -c }] [-v] [PATH]
 
 EXAMPLES
 csv_reader.py climate.csv | sample_duplicates.py -v val.hmd
 
 DOCUMENT EXAMPLE - OUTPUT
 default mode:
-{"17.5": {"278728": {"val": {"hmd": 17.5, "tmp": 25.7}, "rec": "2019-02-25T15:28:18Z", "tag": "scs-bgx-303"},
-"278731": {"val": {"hmd": 17.5, "tmp": 25.7}, "rec": "2019-02-25T15:31:18Z", "tag": "scs-bgx-303"}}}
+{"val": {"hmd": 17.5, "tmp": 25.7}, "rec": "2019-02-25T15:28:18Z", "tag": "scs-bgx-303"}
+{"val": {"hmd": 17.5, "tmp": 25.7}, "rec": "2019-02-25T15:31:18Z", "tag": "scs-bgx-303"}
 
 counts mode:
 {"17.5": 2}
@@ -42,6 +41,8 @@ from scs_analysis.cmd.cmd_sample_duplicates import CmdSampleDuplicates
 from scs_core.data.duplicates import Duplicates
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
+
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -62,15 +63,17 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("sample_duplicates: %s" % cmd, file=sys.stderr)
+    Logging.config('sample_duplicates', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
         dupes = Duplicates()
-
+        non_dupes = []
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -84,10 +87,18 @@ if __name__ == '__main__':
 
             document_count += 1
 
-            if not datum.has_path(cmd.path):
+            if not datum.has_sub_path(cmd.path):
                 continue
 
-            dupes.test(document_count, datum.node(cmd.path), datum)
+            is_duplicate = dupes.test(document_count, datum.node(cmd.path), datum)
+
+            if not cmd.counts:
+                if cmd.exclude:
+                    if not is_duplicate:
+                        non_dupes.append(jstr)
+                else:
+                    if is_duplicate:
+                        print(jstr)
 
             processed_count += 1
 
@@ -95,13 +106,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # report...
 
+        if cmd.exclude:
+            for datum in non_dupes:
+                print(datum)
+
         if cmd.counts:
             for count in dupes.match_counts():
                 print(JSONify.dumps(count))
-
-        else:
-            for match in dupes.matches():
-                print(JSONify.dumps(match))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -111,8 +122,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     finally:
-        if cmd.verbose:
-            print("sample_duplicates: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
-
-            if dupes is not None:
-                print("sample_duplicates: values with duplicates: %d" % dupes.matched_key_count, file=sys.stderr)
+        logger.info("documents: %d processed: %d" % (document_count, processed_count))
+        logger.info("values with duplicates: %d total duplicates: %d" % (dupes.matched_key_count, dupes.total_matches))
