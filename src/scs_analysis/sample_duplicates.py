@@ -39,7 +39,6 @@ import sys
 from scs_analysis.cmd.cmd_sample_duplicates import CmdSampleDuplicates
 
 from scs_core.data.duplicates import Duplicates
-from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 from scs_core.sys.logging import Logging
@@ -112,7 +111,7 @@ if __name__ == '__main__':
 
         if cmd.counts:
             for count in dupes.match_counts():
-                print(JSONify.dumps(count))
+                print(count)
 
 
     # ----------------------------------------------------------------------------------------------------------------
