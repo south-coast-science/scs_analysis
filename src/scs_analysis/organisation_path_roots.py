@@ -11,11 +11,11 @@ DESCRIPTION
 The organisation_path_roots utility is used to
 
 SYNOPSIS
-Usage: organisation_path_roots.py  [-c CREDENTIALS] \
+organisation_path_roots.py  [-c CREDENTIALS] \
 { -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } [-m] [-i INDENT] [-v]
 
 EXAMPLES
-organisation_path_roots.py -F -l NARA
+organisation_path_roots.py -vi4 -c super -Fl 4sfera -m
 
 DOCUMENT EXAMPLE
 {"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
