@@ -10,6 +10,9 @@ uses matplotlibrc configuration file
 https://matplotlib.org/faq/usage_faq.html
 https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
 http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
+
+Deprecation warnings with Matplotlib 3.4 #383
+https://github.com/raysect/source/issues/383
 """
 
 from matplotlib import pyplot as plt
@@ -49,7 +52,8 @@ class HistoChart(Chart):
 
         # plotter...
         self.__fig, self.__ax = plt.subplots()
-        self.__fig.canvas.set_window_title(self.title(path))
+        # self.__fig.canvas.set_window_title(self.title(path))                  # deprecated
+        self.__fig.canvas.manager.set_window_title(self.title(path))
         self.__fig.tight_layout()
 
         self.__fig.canvas.mpl_connect('close_event', self.close)
