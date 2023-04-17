@@ -9,6 +9,9 @@ uses matplotlibrc configuration file
 
 https://matplotlib.org/faq/usage_faq.html
 https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
+
+Deprecation warnings with Matplotlib 3.4 #383
+https://github.com/raysect/source/issues/383
 """
 
 from matplotlib import pyplot as plt
@@ -42,7 +45,7 @@ class MultiChart(Chart):
 
         # plotter...
         fig = plt.figure()
-        fig.canvas.set_window_title(self.title(', '.join(self.__paths)))
+        fig.canvas.manager.set_window_title(self.title(', '.join(self.__paths)))
         fig.tight_layout()
 
         fig.canvas.mpl_connect('close_event', self.close)
