@@ -45,7 +45,6 @@ class MultiChart(Chart):
 
         # plotter...
         fig = plt.figure()
-        # fig.canvas.set_window_title(self.title(', '.join(self.__paths)))              # deprecated
         fig.canvas.manager.set_window_title(self.title(', '.join(self.__paths)))
         fig.tight_layout()
 
