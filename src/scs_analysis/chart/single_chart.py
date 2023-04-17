@@ -11,6 +11,9 @@ https://matplotlib.org/faq/usage_faq.html
 https://matplotlib.org/stable/users/interactive_guide.html
 https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib?noredirect=1&lq=1
 http://physicalmodelingwithpython.blogspot.com/2015/07/raising-figure-window-to-foreground.html
+
+Deprecation warnings with Matplotlib 3.4 #383
+https://github.com/raysect/source/issues/383
 """
 
 from matplotlib import pyplot as plt
@@ -47,7 +50,8 @@ class SingleChart(Chart):
 
         # plotter...
         fig = plt.figure()
-        fig.canvas.set_window_title(self.title(path))
+        # fig.canvas.set_window_title(self.title(path))                     # deprecated
+        fig.canvas.manager.set_window_title(self.title(path))
         fig.tight_layout()
 
         fig.canvas.mpl_connect('close_event', self.close)
