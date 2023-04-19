@@ -35,7 +35,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
 
-from scs_core.sys.http_exception import HTTPNotFoundException
+from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         # StdIO settings...
 
         if not cmd.message:
-            response = client.interrogate(auth.id_token, cmd.device_tag, ['?'])
+            response = client.interact(auth.id_token, cmd.device_tag, ['?'])
 
             if response.command.stderr:
                 logger.error("%s device problem: %s." % (cmd.device_tag, response.command.stderr[0]))
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.message:
-            response = client.interrogate(auth.id_token, cmd.device_tag, cmd.message.split())
+            response = client.interact(auth.id_token, cmd.device_tag, cmd.message.split())
 
             if cmd.std:
                 print_output(response.command)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
                 auth = gatekeeper.user_login(credentials)
 
-                response = client.interrogate(auth.id_token, cmd.device_tag, line.split())
+                response = client.interact(auth.id_token, cmd.device_tag, line.split())
                 print_output(response.command)
 
 
@@ -158,4 +158,8 @@ if __name__ == '__main__':
 
     except HTTPNotFoundException:
         logger.error("device '%s' not found." % cmd.device_tag)
+        exit(1)
+
+    except HTTPGatewayTimeoutException:
+        logger.error("device '%s' is not available." % cmd.device_tag)
         exit(1)
