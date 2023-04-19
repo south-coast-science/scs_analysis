@@ -8,18 +8,29 @@ Created on 17 Apr 2023
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_users utility is used to
+The device_controller utility is used to interact with a remote host, using the device's control topic.
+A command / receipt message regime provides an interactive system over the messaging infrastructure.
+
+An appropriate email address and password must have been stored using the cognito_credentials utility.
+
+In the interactive mode, the aws_mqtt_control command-line interpreter supports history [UP] and [DOWN] keys.
+The mode supports command completion with the [TAB] key and command listing with [TAB][TAB]. Exit from the interactive
+mode with [CTRL-D].
+
+A maximum of 30 seconds is available for the device to respond to the published message. After this time, the
+device_controller utility will terminate.
 
 SYNOPSIS
-Usage: device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS] [-i INDENT] [-v]
+device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS [{ [-w] [-i INDENT] | -s }]] [-v]
 
 EXAMPLES
-device_controller.py -vi4 -c super -F -m
+device_controller.py -c super -t scs-be2-3 -m "vcal_baseline -i4" -s
 
 SEE ALSO
 scs_analysis/cognito_credentials
-scs_analysis/cognito_users
-scs_analysis/organisation_devices
+
+BUGS
+Interactive history features may be unavailable in macOS.
 """
 
 import json
@@ -35,7 +46,9 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
 
-from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException
+from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
+    HTTPServiceUnavailableException
+
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -162,4 +175,8 @@ if __name__ == '__main__':
 
     except HTTPGatewayTimeoutException:
         logger.error("device '%s' is not available." % cmd.device_tag)
+        exit(1)
+
+    except HTTPServiceUnavailableException:
+        logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
