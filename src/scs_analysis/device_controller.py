@@ -35,7 +35,9 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
 
-from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException
+from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
+    HTTPServiceUnavailableException
+
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
@@ -162,4 +164,8 @@ if __name__ == '__main__':
 
     except HTTPGatewayTimeoutException:
         logger.error("device '%s' is not available." % cmd.device_tag)
+        exit(1)
+
+    except HTTPServiceUnavailableException:
+        logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
