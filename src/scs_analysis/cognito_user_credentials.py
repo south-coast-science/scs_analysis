@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 print(conf_name, file=sys.stderr)
             exit(0)
 
-        if cmd.set:
+        elif cmd.set:
             credentials = CognitoClientCredentials.from_user(cmd.credentials_name)
 
             if not Datum.is_email_address(credentials.email):
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
-        if cmd.update_password:
+        elif cmd.update_password:
             credentials = load_credentials(cmd.credentials_name)
 
             if credentials is None:
