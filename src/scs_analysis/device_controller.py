@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 
 """
-Created on 24 Jan 2022
+Created on 17 Apr 2023
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_users utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
-by organisation administrators and superusers.
-
-If the --Create function is used, an email is sent to the new user. The verification link in the email must be
-excercised in order for the account to gain a CONFIRMED status.
+The cognito_users utility is used to
 
 SYNOPSIS
 Usage: device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS] [-i INDENT] [-v]
@@ -20,19 +16,14 @@ Usage: device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS] [-i I
 EXAMPLES
 device_controller.py -vi4 -c super -F -m
 
-DOCUMENT EXAMPLE
-{"username": "scs-ph1-28", "created": "2023-04-04T09:08:55Z", "last-updated": "2023-04-04T09:08:56Z"}
-
 SEE ALSO
 scs_analysis/cognito_credentials
 scs_analysis/cognito_users
 scs_analysis/organisation_devices
-
-RESOURCES
-https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html
-https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
+import json
+import os
 import requests
 import sys
 
@@ -42,20 +33,33 @@ from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.data.json import JSONify
+from scs_core.data.json import AbstractPersistentJSONable, JSONify
 
 from scs_core.sys.http_exception import HTTPNotFoundException
 from scs_core.sys.logging import Logging
 
+from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+def print_output(command):
+    if command.stderr:
+        print(*command.stderr, sep='\n', file=sys.stderr)
+        sys.stderr.flush()
+
+    if command.stdout:
+        print(*command.stdout, sep='\n')
+        sys.stdout.flush()
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    credentials = None
-    auth = None
+    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller')
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
@@ -101,14 +105,49 @@ if __name__ == '__main__':
 
         client = DeviceControlClient(requests)
 
+
+        # ------------------------------------------------------------------------------------------------------------
+        # StdIO settings...
+
+        if not cmd.message:
+            response = client.interrogate(auth.id_token, cmd.device_tag, ['?'])
+
+            if response.command.stderr:
+                logger.error("%s device problem: %s." % (cmd.device_tag, response.command.stderr[0]))
+                exit(1)
+
+            commands = json.loads(response.command.stdout[0])
+            vocabulary = [command + ' ' for command in commands]
+
+            StdIO.set(vocabulary=vocabulary, history_filename=history_filename)
+
+
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.message:
-            recipt = client.interrogate(auth.id_token, cmd.device_tag, cmd.message)
-            report = recipt if cmd.wrapper else recipt.command
+            response = client.interrogate(auth.id_token, cmd.device_tag, cmd.message.split())
 
-            print(JSONify.dumps(report, indent=cmd.indent))
+            if cmd.std:
+                print_output(response.command)
+
+            else:
+                report = response if cmd.wrapper else response.command
+                print(JSONify.dumps(report, indent=cmd.indent))
+
+            exit(response.command.return_code)
+
+        else:
+            while True:
+                line = StdIO.prompt(cmd.device_tag)
+
+                if not line:
+                    continue
+
+                auth = gatekeeper.user_login(credentials)
+
+                response = client.interrogate(auth.id_token, cmd.device_tag, line.split())
+                print_output(response.command)
 
 
     # ----------------------------------------------------------------------------------------------------------------

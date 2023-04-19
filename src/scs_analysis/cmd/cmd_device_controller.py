@@ -18,8 +18,9 @@ class CmdDeviceController(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS [-w]] "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -t DEVICE_TAG "
+                                                    "[-m CMD_TOKENS [{ [-w] [-i INDENT] | -s }]] [-v]",
+                                              version="%prog 1.0")
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -37,6 +38,9 @@ class CmdDeviceController(object):
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="wrapper", default=False,
                                  help="report message wrapper")
 
+        self.__parser.add_option("--std", "-s", action="store_true", dest="std", default=False,
+                                 help="write to stderr and stdout")
+
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -52,7 +56,10 @@ class CmdDeviceController(object):
         if self.message is not None and len(self.message) < 1:
             return False
 
-        if self.wrapper and not self.message:
+        if self.std and (self.indent is not None or self.wrapper):
+            return False
+
+        if (self.wrapper or self.indent or self.std) and not self.message:
             return False
 
         return True
@@ -81,6 +88,11 @@ class CmdDeviceController(object):
 
 
     @property
+    def std(self):
+        return self.__opts.std
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -97,7 +109,7 @@ class CmdDeviceController(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdDeviceController:{credentials_name:%s, device_tag:%s, message:%s, wrapper:%s, " \
+        return "CmdDeviceController:{credentials_name:%s, device_tag:%s, message:%s, wrapper:%s, std:%s, " \
                "indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.device_tag, self.message, self.wrapper,
+               (self.credentials_name, self.device_tag, self.message, self.wrapper, self.std,
                 self.indent, self.verbose)
