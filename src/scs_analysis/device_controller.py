@@ -57,6 +57,10 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
+EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
+
+# --------------------------------------------------------------------------------------------------------------------
+
 def print_output(command):
     if command.stderr:
         print(*command.stderr, sep='\n', file=sys.stderr)
@@ -157,10 +161,14 @@ if __name__ == '__main__':
                 if not line:
                     continue
 
-                auth = gatekeeper.user_login(credentials)
+                cmd_tokens = line.split()
 
-                response = client.interact(auth.id_token, cmd.device_tag, line.split())
+                auth = gatekeeper.user_login(credentials)
+                response = client.interact(auth.id_token, cmd.device_tag, cmd_tokens)
                 print_output(response.command)
+
+                if cmd_tokens and cmd_tokens[0] in EXIT_COMMANDS:
+                    exit(0)
 
 
     # ----------------------------------------------------------------------------------------------------------------
