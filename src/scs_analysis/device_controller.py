@@ -35,22 +35,18 @@ Interactive history features may be unavailable in macOS.
 
 import json
 import os
-import requests
 import sys
 
-from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
+import requests
 
+from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
 from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
-
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
-
 from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
     HTTPServiceUnavailableException
-
 from scs_core.sys.logging import Logging
-
 from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
@@ -189,3 +185,6 @@ if __name__ == '__main__':
     except HTTPServiceUnavailableException:
         logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
+
+    finally:
+        StdIO.save_history(history_filename)
