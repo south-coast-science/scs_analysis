@@ -59,6 +59,7 @@ from scs_host.sys.host import Host
 
 EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
 
+
 # --------------------------------------------------------------------------------------------------------------------
 
 def print_output(command):
