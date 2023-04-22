@@ -35,8 +35,9 @@ Interactive history features may be unavailable in macOS.
 
 import json
 import os
-import requests
 import sys
+
+import requests
 
 from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
 
@@ -76,7 +77,7 @@ def print_output(command):
 
 if __name__ == '__main__':
 
-    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller')
+    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller.history')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -189,3 +190,6 @@ if __name__ == '__main__':
     except HTTPServiceUnavailableException:
         logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
+
+    finally:
+        StdIO.save_history(history_filename)

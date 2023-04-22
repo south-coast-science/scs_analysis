@@ -7,7 +7,7 @@ Created on 9 Mar 2019
 
 DESCRIPTION
 The mqtt_peers utility is used to maintain a database of MQTT peers for use with the
-scs_analysis/aws_mqtt_control and scs_analysis/osio_mqtt_control utilities.
+scs_analysis/aws_mqtt_control utility.
 
 Options exist to find subsets of authentication documents according to hostname or control topic. Lists of
 documents can be exported to or imported from CSV files, enabling the sharing of groups of documents between
