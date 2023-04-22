@@ -40,13 +40,18 @@ import sys
 import requests
 
 from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
+
 from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
+
 from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
     HTTPServiceUnavailableException
+
 from scs_core.sys.logging import Logging
+
 from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
@@ -72,7 +77,7 @@ def print_output(command):
 
 if __name__ == '__main__':
 
-    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller')
+    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller.history')
 
 
     # ----------------------------------------------------------------------------------------------------------------
