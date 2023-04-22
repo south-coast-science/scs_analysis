@@ -19,7 +19,7 @@ SYNOPSIS
 sample_interval.py [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_interval.py -p3 rec
+aws_topic_history.py -m1 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_interval.py -p3 rec
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {

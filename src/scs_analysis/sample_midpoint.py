@@ -19,7 +19,7 @@ SYNOPSIS
 sample_midpoint.py [-t TALLY] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
+aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 sample_midpoint.py -t360 -p1 val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT

@@ -18,7 +18,7 @@ SYNOPSIS
 sample_regression.py [-t TALLY] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
+aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 sample_regression.py -t360 -p3 val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT
