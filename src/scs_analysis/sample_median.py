@@ -20,7 +20,7 @@ SYNOPSIS
 sample_median.py [-w SIZE] [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
+aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 sample_median.py -w 3 -p 1 val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT
