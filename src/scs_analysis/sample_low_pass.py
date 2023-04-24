@@ -19,7 +19,7 @@ SYNOPSIS
 sample_low_pass.py -d DELTA_T -c CUT_OFF [-p PRECISION] [-v] [PATH]
 
 EXAMPLES
-osio_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
+aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | \
 sample_low_pass.py -d 10.0 -c 0.02 -p 1 val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT

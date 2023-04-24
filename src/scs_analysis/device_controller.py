@@ -35,8 +35,9 @@ Interactive history features may be unavailable in macOS.
 
 import json
 import os
-import requests
 import sys
+
+import requests
 
 from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
 
@@ -57,6 +58,11 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
+EXIT_COMMANDS = ['reboot', 'restart', 'shutdown']
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
 def print_output(command):
     if command.stderr:
         print(*command.stderr, sep='\n', file=sys.stderr)
@@ -71,7 +77,7 @@ def print_output(command):
 
 if __name__ == '__main__':
 
-    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller')
+    history_filename = os.path.join(Host.scs_path(), AbstractPersistentJSONable.aws_dir(), 'device_controller.history')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -157,10 +163,14 @@ if __name__ == '__main__':
                 if not line:
                     continue
 
-                auth = gatekeeper.user_login(credentials)
+                cmd_tokens = line.split()
 
-                response = client.interact(auth.id_token, cmd.device_tag, line.split())
+                auth = gatekeeper.user_login(credentials)
+                response = client.interact(auth.id_token, cmd.device_tag, cmd_tokens)
                 print_output(response.command)
+
+                if cmd_tokens and cmd_tokens[0] in EXIT_COMMANDS:
+                    exit(0)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -180,3 +190,6 @@ if __name__ == '__main__':
     except HTTPServiceUnavailableException:
         logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
+
+    finally:
+        StdIO.save_history(history_filename)
