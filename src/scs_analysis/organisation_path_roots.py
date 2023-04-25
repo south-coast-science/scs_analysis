@@ -36,9 +36,10 @@ from scs_core.aws.security.organisation import Organisation, OrganisationPathRoo
 from scs_core.aws.security.organisation_manager import OrganisationManager
 from scs_core.aws.security.opr_membership import OPRMembership
 
+from scs_core.client.http_exception import HTTPException
+
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host

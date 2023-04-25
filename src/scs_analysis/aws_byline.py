@@ -39,12 +39,12 @@ from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.manager.byline_manager import BylineManager
 
+from scs_core.client.http_exception import HTTPException
 from scs_core.client.network import Network
 from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 
