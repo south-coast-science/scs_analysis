@@ -45,10 +45,10 @@ from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.data.json import AbstractPersistentJSONable, JSONify
-
-from scs_core.sys.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
+from scs_core.client.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
     HTTPServiceUnavailableException
+
+from scs_core.data.json import AbstractPersistentJSONable, JSONify
 
 from scs_core.sys.logging import Logging
 
