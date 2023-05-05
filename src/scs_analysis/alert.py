@@ -52,12 +52,13 @@ from scs_core.aws.data.alert import AlertSpecification
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
 from scs_core.aws.manager.byline_manager import BylineManager
 
+from scs_core.client.http_exception import HTTPException
+
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
 
-from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
