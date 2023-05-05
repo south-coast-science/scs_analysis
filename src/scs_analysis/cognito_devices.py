@@ -45,12 +45,12 @@ from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
-
 from scs_core.aws.security.organisation_manager import OrganisationManager
+
+from scs_core.client.http_exception import HTTPConflictException
 
 from scs_core.data.json import JSONify
 
-from scs_core.sys.http_exception import HTTPConflictException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        device_manager = CognitoDeviceManager(requests, auth.id_token)
+        device_manager = CognitoDeviceManager(requests)
         org_manager = OrganisationManager(requests)
 
         finder = CognitoDeviceFinder(requests)
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             # create...
             identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None)
 
-            report = device_manager.create(identity)
+            report = device_manager.create(identity, auth.id_token)
 
         if cmd.update:
             if not CognitoDeviceIdentity.is_valid_password(cmd.update[1]):
@@ -155,10 +155,10 @@ if __name__ == '__main__':
             report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
 
             auth = gatekeeper.user_login(credentials)                          # renew credentials
-            device_manager.update(report)
+            device_manager.update(report, auth.id_token)
 
         if cmd.delete:
-            device_manager.delete(cmd.delete)
+            device_manager.delete(cmd.delete, auth.id_token)
 
 
     # ----------------------------------------------------------------------------------------------------------------

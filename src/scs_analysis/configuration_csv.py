@@ -66,6 +66,8 @@ from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder, ConfigurationCheckRequest
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 
+from scs_core.client.http_exception import HTTPException
+
 from scs_core.data.datetime import LocalizedDatetime
 
 from scs_core.estate.configuration import Configuration
@@ -73,7 +75,6 @@ from scs_core.estate.configuration import Configuration
 from scs_core.sample.configuration_sample import ConfigurationReport
 
 from scs_core.sys.filesystem import Filesystem
-from scs_core.sys.http_exception import HTTPException
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
