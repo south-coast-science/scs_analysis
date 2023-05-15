@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # auth...
 
         if not cmd.create:
-            credentials = CognitoClientCredentials.load_for_user(Host, cmd.credentials_name)
+            credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
             if not credentials:
                 exit(1)
