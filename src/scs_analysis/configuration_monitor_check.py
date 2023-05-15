@@ -36,6 +36,9 @@ scs_analysis/configuration_monitor
 scs_analysis/monitor_auth
 
 scs_mfr/configuration
+
+BUGS
+Result code not currently in use.
 """
 
 import requests
@@ -43,9 +46,11 @@ import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMonitorCheck
 
-from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder
 from scs_core.aws.manager.configuration_check_requester import ConfigurationCheckRequester
+
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
@@ -62,7 +67,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    auth = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -83,14 +87,24 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth not available.')
+        gatekeeper = CognitoLoginManager(requests)
+
+        # CognitoUserCredentials...
+        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
+            logger.error("Cognito credentials not available.")
             exit(1)
 
         try:
-            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
+            password = CognitoClientCredentials.password_from_user()
+            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
         except (KeyError, ValueError):
-            logger.error('incorrect password.')
+            logger.error("incorrect password.")
+            exit(1)
+
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
         finder = ConfigurationCheckFinder(requests, auth)
@@ -100,12 +114,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.check_tag:
-            response = requester.request(cmd.check_tag)
+        if cmd.force:
+            response = requester.request(cmd.force)
             print(response.result, file=sys.stderr)
             exit(0 if response.result == 'OK' else 1)
 
-        response = finder.find(cmd.tag_filter, cmd.exact_match, cmd.result_code, cmd.response_mode())
+        response = finder.find(auth.id_token, cmd.tag_filter, cmd.exact_match, cmd.response_mode())
         print(JSONify.dumps(sorted(response.items), indent=cmd.indent))
         logger.info('retrieved: %s' % len(response.items))
 
