@@ -88,7 +88,6 @@ if __name__ == '__main__':
     node_names = sorted(list(configuration.as_json().keys()))
 
     logger = None
-    auth = None
     configs = []
 
     try:
@@ -119,6 +118,8 @@ if __name__ == '__main__':
         if cmd.node_names:
             print(node_names, file=sys.stderr)
             exit(0)
+
+        # TODO: new-world security
 
         # MonitorAuth...
         if not MonitorAuth.exists(Host):

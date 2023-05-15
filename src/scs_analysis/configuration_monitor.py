@@ -49,7 +49,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    auth = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -69,6 +68,8 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        # TODO: new-world security
 
         if not MonitorAuth.exists(Host):
             logger.error('MonitorAuth not available.')

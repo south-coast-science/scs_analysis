@@ -95,7 +95,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.list:
-            for conf_name in CognitoClientCredentials.list(Host):
+            for conf_name in sorted(CognitoClientCredentials.list(Host)):
                 print(conf_name, file=sys.stderr)
             exit(0)
 
