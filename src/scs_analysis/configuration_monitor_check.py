@@ -103,7 +103,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = ConfigurationCheckFinder(requests, auth)
+        finder = ConfigurationCheckFinder(requests)
         requester = ConfigurationCheckRequester(requests, auth)
 
 

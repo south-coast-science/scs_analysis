@@ -62,7 +62,6 @@ from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 from scs_analysis.handler.configuration_csv_generator import ConfigurationCSVGenerator
 
-from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder, ConfigurationCheckRequest
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -136,25 +135,12 @@ if __name__ == '__main__':
             print(node_names, file=sys.stderr)
             exit(0)
 
-        # TODO: new-world security
-
-        # MonitorAuth...
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth not available.')
-            exit(1)
-
-        try:
-            monitor_auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
-        except (KeyError, ValueError):
-            logger.error('incorrect password.')
-            exit(1)
-
         # reporter...
         reporter = BatchDownloadReporter()
 
         # ConfigurationFinder...
         configuration_finder = ConfigurationFinder(requests, reporter=reporter)
-        check_finder = ConfigurationCheckFinder(requests, monitor_auth)
+        check_finder = ConfigurationCheckFinder(requests)
 
         # ConfigurationCSVGenerator...
         csv_generator = ConfigurationCSVGenerator(cmd.verbose)

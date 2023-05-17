@@ -18,8 +18,12 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TAG [-e]] { -l | -f | -d | -o } [-i INDENT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-e]] { -l | -f | -d | -o } "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # filters...
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
@@ -96,6 +100,10 @@ class CmdConfigurationMonitor(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+    @property
     def tag_filter(self):
         return self.__opts.tag_filter
 
@@ -142,7 +150,7 @@ class CmdConfigurationMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitor:{tag_filter:%s, exact_match:%s, latest:%s, history:%s, diff:%s, " \
-               "tags_only:%s, indent:%s, verbose:%s}" % \
-               (self.tag_filter, self.exact_match, self.latest, self.history, self.diff,
-                self.tags_only, self.indent, self.verbose)
+        return "CmdConfigurationMonitor:{credentials_name:%s, tag_filter:%s, exact_match:%s, latest:%s, history:%s, " \
+               "diff:%s, tags_only:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.tag_filter, self.exact_match, self.latest, self.history,
+                self.diff, self.tags_only, self.indent, self.verbose)
