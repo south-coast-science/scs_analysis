@@ -103,21 +103,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # auth...
 
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
+            exit(1)
+
         gatekeeper = CognitoLoginManager(requests)
-
-        # CognitoUserCredentials...
-        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
-            logger.error("Cognito credentials not available.")
-            exit(1)
-
-        try:
-            password = CognitoClientCredentials.password_from_user()
-            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
-        except (KeyError, ValueError):
-            logger.error("incorrect password.")
-            exit(1)
-
-
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
