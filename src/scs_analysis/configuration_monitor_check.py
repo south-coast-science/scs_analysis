@@ -89,6 +89,8 @@ if __name__ == '__main__':
 
         credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
+        logger.info(credentials)
+
         if not credentials:
             exit(1)
 
@@ -104,14 +106,14 @@ if __name__ == '__main__':
         # resources...
 
         finder = ConfigurationCheckFinder(requests)
-        requester = ConfigurationCheckRequester(requests, auth)
+        requester = ConfigurationCheckRequester(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.force:
-            response = requester.request(cmd.force)
+            response = requester.request(auth.id_token, cmd.force)
             print(response.result, file=sys.stderr)
             exit(0 if response.result == 'OK' else 1)
 
