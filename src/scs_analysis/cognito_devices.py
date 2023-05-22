@@ -8,7 +8,7 @@ Created on 24 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_users utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
+The cognito_devices utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
 by organisation administrators and superusers.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
