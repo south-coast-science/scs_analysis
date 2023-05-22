@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # auth...
+        # authentication...
 
         credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
