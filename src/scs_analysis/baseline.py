@@ -354,12 +354,14 @@ if __name__ == '__main__':
                     response = client.interact(auth.id_token, device_tag, cmd_tokens)
                     command = response.command
 
+                    if command.stderr:
+                        print(*command.stderr, sep='\n', file=sys.stderr)
+                    if command.stdout:
+                        print(*command.stdout, sep='\n', file=sys.stdout)
+
                     if command.return_code != 0:
                         logger.error("update could not be performed: %s" % command.stderr[0])
                         continue
-
-                    if command.stdout:
-                        print(*command.stdout, sep='\n', file=sys.stdout)
 
                     device_updates += 1
 
