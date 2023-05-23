@@ -49,7 +49,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    auth = None
     response = None
     report = None
 

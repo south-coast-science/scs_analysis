@@ -31,8 +31,9 @@ import sys
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
@@ -49,7 +50,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    auth = None
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -68,29 +68,35 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # authentication...
+
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
+            exit(1)
+
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
+            exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # resources...
-
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth not available.')
-            exit(1)
-
-        try:
-            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
-        except (KeyError, ValueError):
-            logger.error('incorrect password.')
-            exit(1)
 
         # reporter...
         reporter = BatchDownloadReporter()
 
         # ConfigurationFinder...
-        finder = ConfigurationFinder(requests, auth, reporter=reporter)
+        finder = ConfigurationFinder(requests, reporter=reporter)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        response = finder.find(cmd.tag_filter, cmd.exact_match, cmd.response_mode())
+        response = finder.find(auth.id_token, cmd.tag_filter, cmd.exact_match, cmd.response_mode())
         items = list(response)
 
         print(JSONify.dumps(sorted(items), indent=cmd.indent))

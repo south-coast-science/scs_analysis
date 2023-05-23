@@ -62,9 +62,10 @@ from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 from scs_analysis.handler.configuration_csv_generator import ConfigurationCSVGenerator
 
-from scs_core.aws.client.monitor_auth import MonitorAuth
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder, ConfigurationCheckRequest
 from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
@@ -88,7 +89,6 @@ if __name__ == '__main__':
     node_names = sorted(list(configuration.as_json().keys()))
 
     logger = None
-    auth = None
     configs = []
 
     try:
@@ -113,6 +113,21 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # authentication...
+
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
+            exit(1)
+
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
+            exit(1)
+
+        # ------------------------------------------------------------------------------------------------------------
         # resources...
 
         # nodes...
@@ -120,23 +135,12 @@ if __name__ == '__main__':
             print(node_names, file=sys.stderr)
             exit(0)
 
-        # MonitorAuth...
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth not available.')
-            exit(1)
-
-        try:
-            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
-        except (KeyError, ValueError):
-            logger.error('incorrect password.')
-            exit(1)
-
         # reporter...
         reporter = BatchDownloadReporter()
 
         # ConfigurationFinder...
-        configuration_finder = ConfigurationFinder(requests, auth, reporter=reporter)
-        check_finder = ConfigurationCheckFinder(requests, auth)
+        configuration_finder = ConfigurationFinder(requests, reporter=reporter)
+        check_finder = ConfigurationCheckFinder(requests)
 
         # ConfigurationCSVGenerator...
         csv_generator = ConfigurationCSVGenerator(cmd.verbose)
@@ -146,12 +150,12 @@ if __name__ == '__main__':
         # run...
 
         logger.info("retrieving check reports...")
-        checks = check_finder.find(None, None, None, ConfigurationCheckRequest.Mode.FULL)
+        checks = check_finder.find(auth.id_token, None, None, ConfigurationCheckRequest.Mode.FULL)
         check_reports = {check.tag: check.rec for check in checks.items}
 
         if cmd.separate or cmd.latest:
             logger.info("retrieving configurations...")
-            response = configuration_finder.find(cmd.device_tag, cmd.exact_match, cmd.request_mode())
+            response = configuration_finder.find(auth.id_token, cmd.device_tag, cmd.exact_match, cmd.request_mode())
             configs = [ConfigurationReport.construct(item, check_reports[item.tag]) for item in sorted(response)]
 
         if cmd.separate:
@@ -171,7 +175,7 @@ if __name__ == '__main__':
                 Filesystem.mkdir(cmd.output_csv_dir)
 
             logger.info("retrieving device tags...")
-            tag_response = configuration_finder.find(cmd.device_tag, cmd.exact_match,
+            tag_response = configuration_finder.find(auth.id_token, cmd.device_tag, cmd.exact_match,
                                                      ConfigurationRequest.Mode.TAGS_ONLY)
 
             for tag in sorted(tag_response):
@@ -181,7 +185,7 @@ if __name__ == '__main__':
                 logger.info("-")
                 logger.info(path)
 
-                response = configuration_finder.find(tag, True, cmd.request_mode())
+                response = configuration_finder.find(auth.id_token, tag, True, cmd.request_mode())
                 configs = sorted(response)
 
                 csv_generator.generate(configs, cmd.nodes, path)

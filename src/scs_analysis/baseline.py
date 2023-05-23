@@ -58,17 +58,15 @@ from scs_analysis.cmd.cmd_baseline import CmdBaseline
 
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.api_auth import APIAuth
-from scs_core.aws.client.client import Client
-from scs_core.aws.client.client_auth import ClientAuth
-from scs_core.aws.client.mqtt_client import MQTTClient, MQTTSubscriber
-
+from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
-from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
-from scs_core.control.control_handler import ControlHandler
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+
+from scs_core.client.http_exception import HTTPGatewayTimeoutException
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
@@ -76,7 +74,6 @@ from scs_core.data.timedelta import Timedelta
 
 from scs_core.estate.baseline_conf import BaselineConf
 from scs_core.estate.configuration import Configuration
-from scs_core.estate.mqtt_peer import MQTTPeerSet
 
 from scs_core.gas.afe_baseline import AFEBaseline
 from scs_core.gas.afe_calib import AFECalib
@@ -118,15 +115,16 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
-        # AccessKey (for S3PersistenceManager)...
-        if not AccessKey.exists(Host):
-            logger.error("AccessKey not available.")
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
             exit(1)
 
-        try:
-            key = AccessKey.load(Host, encryption_key=AccessKey.password_from_user())
-        except (KeyError, ValueError):
-            logger.error("incorrect password.")
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
         # APIAuth (for MessageManager)...
@@ -136,22 +134,9 @@ if __name__ == '__main__':
             logger.error("APIAuth is not available")
             exit(1)
 
-        # ClientAuth (for MQTTClient)...
-        client_auth = ClientAuth.load(Host)
-
-        if client_auth is None:
-            logger.error("ClientAuth not available.")
-            exit(1)
-
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
-
-        # S3PersistenceManager...
-        s3_client = Client.construct('s3', key)
-        s3_resource_client = Client.resource('s3', key)
-
-        s3_manager = S3PersistenceManager(s3_client, s3_resource_client)
 
         # reporter...
         reporter = BatchDownloadReporter()
@@ -162,19 +147,24 @@ if __name__ == '__main__':
         # MessageManager...
         message_manager = MessageManager(api_auth, reporter=reporter)
 
-        # PersistenceManager...
-        persistence_manager = s3_manager if cmd.aws else Host
+        # DeviceControlClient...
+        client = DeviceControlClient(requests)
 
+
+        # ------------------------------------------------------------------------------------------------------------
+        # run...
 
         for device_tag in cmd.device_tags:
             try:
+                device_updates = 0
+
                 # ----------------------------------------------------------------------------------------------------
                 # configuration...
 
                 logger.error("configuration...")
 
                 # BaselineConf...
-                baseline_conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
+                baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
 
                 if baseline_conf is None:
                     logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
@@ -210,32 +200,15 @@ if __name__ == '__main__':
                 logger.error("gases_topic: %s" % gases_topic)
                 logger.error("control_topic: %s" % control_topic)
 
-                # MQTT peer...
-                peer_group = MQTTPeerSet.load(s3_manager)
-                peer = peer_group.peer_by_tag(device_tag)
+                # configuration...
+                response = client.interact(auth.id_token, device_tag, ['configuration'])
+                command = response.command
 
-                if peer is None:
-                    logger.error("no MQTT peer found for tag '%s'." % device_tag)
+                if command.return_code != 0:
+                    logger.error("configuration cannot be retrieved: %s" % command.stderr[0])
                     continue
 
-                logger.error("hostname: %s" % peer.hostname)
-
-                # MQTTClient...
-                handler = ControlHandler(host_tag, device_tag)
-                subscriber = MQTTSubscriber(control_topic, handler.handle)
-
-                mqtt_client = MQTTClient(subscriber)
-                mqtt_client.connect(client_auth)
-
-                # Configuration...
-                stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['configuration'],
-                                                              MQTT_TIMEOUT, peer.shared_secret)
-
-                if return_code != 0:
-                    logger.error("Configuration cannot be retrieved: %s" % stderr[0])
-                    continue
-
-                jdict = json.loads(stdout[0])
+                jdict = json.loads(command.stdout[0])
                 device_conf = Configuration.construct_from_jdict(jdict.get('val'))
 
                 # noinspection PyUnresolvedReferences
@@ -246,13 +219,14 @@ if __name__ == '__main__':
                     ox_sensor = None
 
                 else:
-                    stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, ['afe_calib'],
-                                                                  MQTT_TIMEOUT, peer.shared_secret)
-                    if return_code != 0:
-                        logger.error("AFECAlib cannot be retrieved: %s" % stderr[0])
+                    response = client.interact(auth.id_token, device_tag, ['afe_calib'])
+                    command = response.command
+
+                    if command.return_code != 0:
+                        logger.error("AFECAlib cannot be retrieved: %s" % command.stderr[0])
                         continue
 
-                    jdict = json.loads(stdout[0])
+                    jdict = json.loads(command.stdout[0])
                     afe_calib = AFECalib.construct_from_jdict(jdict)
 
                     afe_baseline = AFEBaseline.null_datum() if device_conf.afe_baseline is None else \
@@ -268,7 +242,7 @@ if __name__ == '__main__':
 
 
                 # ----------------------------------------------------------------------------------------------------
-                # run...
+                # analysis...
 
                 # data...
                 logger.error("data...")
@@ -367,32 +341,42 @@ if __name__ == '__main__':
                     elif minimum.index == len(data) - 1:
                         logger.error("WARNING: the last datum for %s is the minimum value" % minimum.path)
 
-                    # command...
+
+                    # ------------------------------------------------------------------------------------------------
+                    # update...
+
                     cmd_tokens = minimum.cmd_tokens(conf_minimums)
                     logger.error(' '.join([str(token) for token in cmd_tokens]))
 
                     if cmd.rehearse:
                         continue
 
-                    stdout, stderr, return_code = handler.publish(mqtt_client, control_topic, cmd_tokens, MQTT_TIMEOUT,
-                                                                  peer.shared_secret)
-                    if stderr:
-                        print(*stderr, sep='\n', file=sys.stderr)
-                    if stdout:
-                        print(*stdout, sep='\n', file=sys.stdout)
+                    response = client.interact(auth.id_token, device_tag, cmd_tokens)
+                    command = response.command
 
-                if return_code != 0:
+                    if command.stderr:
+                        print(*command.stderr, sep='\n', file=sys.stderr)
+                    if command.stdout:
+                        print(*command.stdout, sep='\n', file=sys.stdout)
+
+                    if command.return_code != 0:
+                        logger.error("update could not be performed: %s" % command.stderr[0])
+                        continue
+
+                    device_updates += 1
+
+                if not device_updates:
                     continue
 
+                # reboot...
                 logger.error("-")
 
-                # reboot...
                 logger.error(cmd.uptake)
 
-                handler.publish(mqtt_client, control_topic, [cmd.uptake], MQTT_TIMEOUT, peer.shared_secret)
+                client.interact(auth.id_token, device_tag, [cmd.uptake])
 
-            except TimeoutError:
-                logger.error("device is not available.")
+            except HTTPGatewayTimeoutException:
+                logger.error("device '%s' is not available." % device_tag)
                 continue
 
             processed_count += 1
@@ -405,7 +389,4 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     finally:
-        if mqtt_client:
-            mqtt_client.disconnect()
-
         logger.info("devices: %d processed: %d" % (len(cmd.device_tags), processed_count))

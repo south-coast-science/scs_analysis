@@ -22,12 +22,16 @@ class CmdConfigurationMonitorCheck(object):
         """
         codes = ' | '.join(ConfigurationCheck.result_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog { -c TAG | [-t TAG [-e]] [-r RESULT] [-o] } [-i INDENT] "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -f TAG | [-t TAG [-e]] [-o] } "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
-        self.__parser.add_option("--check", "-c", type="string", action="store", dest="check",
-                                 help="check the device with TAG now")
+        self.__parser.add_option("--force", "-f", type="string", action="store", dest="force",
+                                 help="force check the device with TAG now")
 
         # filters...
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
@@ -55,7 +59,7 @@ class CmdConfigurationMonitorCheck(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.check_tag and (self.tag_filter or self.result_code or self.tags_only):
+        if self.force and (self.tag_filter or self.result_code or self.tags_only):
             return False
 
         if self.exact_match and self.tag_filter is None:
@@ -78,8 +82,13 @@ class CmdConfigurationMonitorCheck(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def check_tag(self):
-        return self.__opts.check
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
+    def force(self):
+        return self.__opts.force
 
 
     @property
@@ -119,7 +128,7 @@ class CmdConfigurationMonitorCheck(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationMonitorCheck:{check:%s, tag_filter:%s, exact_match:%s, result_code:%s, tags_only:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.check_tag, self.tag_filter, self.exact_match, self.result_code, self.tags_only,
-                self.indent, self.verbose)
+        return "CmdConfigurationMonitorCheck:{credentials_name:%s, force:%s, tag_filter:%s, exact_match:%s, " \
+               "result_code:%s, tags_only:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.force, self.tag_filter, self.exact_match,
+                self.result_code, self.tags_only, self.indent, self.verbose)
