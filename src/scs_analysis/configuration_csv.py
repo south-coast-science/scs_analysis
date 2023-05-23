@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # run... token, tag_filter, exact_match, response_mode
+        # run...
 
         logger.info("retrieving check reports...")
         checks = check_finder.find(auth.id_token, None, None, ConfigurationCheckRequest.Mode.FULL)
