@@ -8,7 +8,7 @@ Created on 24 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_users utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
+The cognito_devices utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
 by organisation administrators and superusers.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
@@ -62,7 +62,6 @@ if __name__ == '__main__':
 
     logger = None
     credentials = None
-    auth = None
     finder = None
     report = None
 
@@ -83,22 +82,14 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # auth...
+        # authentication...
+
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
+            exit(1)
 
         gatekeeper = CognitoLoginManager(requests)
-
-        # CognitoUserCredentials...
-        if not CognitoClientCredentials.exists(Host, name=cmd.credentials_name):
-            logger.error("Cognito credentials not available.")
-            exit(1)
-
-        try:
-            password = CognitoClientCredentials.password_from_user()
-            credentials = CognitoClientCredentials.load(Host, name=cmd.credentials_name, encryption_key=password)
-        except (KeyError, ValueError):
-            logger.error("incorrect password.")
-            exit(1)
-
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():

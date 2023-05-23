@@ -18,9 +18,13 @@ class CmdConfigurationCSV(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -n | -s | -l OUTPUT_CSV | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -n | -s | -l OUTPUT_CSV | "
                                                     "{ -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-e]] "
                                                     "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # help...
         self.__parser.add_option("--node-names", "-n", action="store_true", dest="node_names", default=False,
@@ -102,6 +106,11 @@ class CmdConfigurationCSV(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
     def node_names(self):
         return self.__opts.node_names
 
@@ -158,7 +167,7 @@ class CmdConfigurationCSV(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdConfigurationCSV:{node_names:%s, separate:%s, latest:%s, diff_histories:%s, full_histories:%s, " \
-               "device_tag:%s, exact_match:%s, output_csv_dir:%s, verbose:%s, nodes:%s}" %  \
-               (self.node_names, self.separate, self.latest, self.diff_histories, self.full_histories,
-                self.device_tag, self.exact_match, self.output_csv_dir, self.verbose, self.nodes)
+        return "CmdConfigurationCSV:{credentials_name:%s, node_names:%s, separate:%s, latest:%s, diff_histories:%s, " \
+               "full_histories:%s, device_tag:%s, exact_match:%s, output_csv_dir:%s, verbose:%s, nodes:%s}" %  \
+               (self.credentials_name, self.node_names, self.separate, self.latest, self.diff_histories,
+                self.full_histories, self.device_tag, self.exact_match, self.output_csv_dir, self.verbose, self.nodes)

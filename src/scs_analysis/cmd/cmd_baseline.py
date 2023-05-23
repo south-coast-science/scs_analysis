@@ -27,17 +27,18 @@ class CmdBaseline(object):
         """
         cmds = ' | '.join(self.__UPTAKE_CMDS)
 
-        self.__parser = optparse.OptionParser(usage="%prog [-a] -c NAME -f { V | E } [{ -r | -u COMMAND }] "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -n CONF_NAME -f { V | E } "
+                                                    "[{ -r | -u COMMAND }] "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM] "
                                                     "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N",
                                               version="%prog 1.0")
 
-        # source...
-        self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,
-                                 help="Use AWS S3 instead of local storage for configuration")
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # identity...
-        self.__parser.add_option("--conf-name", "-c", type="string", nargs=1, action="store", dest="conf_name",
+        self.__parser.add_option("--conf-name", "-n", type="string", nargs=1, action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
 
         # function...
@@ -127,8 +128,8 @@ class CmdBaseline(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def aws(self):
-        return self.__opts.aws
+    def credentials_name(self):
+        return self.__opts.credentials_name
 
 
     @property
@@ -203,9 +204,9 @@ class CmdBaseline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaseline:{aws:%s, conf_name:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
+        return "CmdBaseline:{credentials_name:%s, conf_name:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
                "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, " \
                "verbose:%s, device_tags:%s}" % \
-               (self.aws, self.conf_name, self.fields, self.rehearse, self.uptake, self.start_hour,
+               (self.credentials_name, self.conf_name, self.fields, self.rehearse, self.uptake, self.start_hour,
                 self.end_hour, self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas,
                 self.verbose, self.device_tags)

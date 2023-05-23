@@ -69,7 +69,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    auth = None
     response = None
     report = None
 
@@ -91,6 +90,8 @@ if __name__ == '__main__':
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
+
+        # TODO: new-world security
 
         # MonitorAuth...
         if not MonitorAuth.exists(Host):
@@ -122,7 +123,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            creator_filter = auth.email_address if cmd.creator is None else cmd.creator
+            creator_filter = auth.email_address if cmd.creator is None else cmd.creator     # TODO: remove
             response = alert_manager.find(cmd.topic, cmd.field, creator_filter)
             report = sorted(response.alerts)
 
@@ -152,7 +153,7 @@ if __name__ == '__main__':
             to = auth.email_address if cmd.to is None else cmd.to
 
             alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
-                                       cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, auth.email_address,
+                                       cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, None,
                                        to, [], cmd.suspended)
 
             if not alert.has_valid_thresholds():
