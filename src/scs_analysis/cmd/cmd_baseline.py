@@ -27,7 +27,7 @@ class CmdBaseline(object):
         """
         cmds = ' | '.join(self.__UPTAKE_CMDS)
 
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -n NAME -f { V | E } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -n CONF_NAME -f { V | E } "
                                                     "[{ -r | -u COMMAND }] "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM] "
                                                     "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N",
