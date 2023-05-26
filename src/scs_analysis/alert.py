@@ -122,8 +122,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            # creator_filter = auth.email_address if cmd.creator is None else cmd.creator     # TODO: remove
-            response = alert_manager.find(auth.id_token, cmd.topic, cmd.field, None)
+            response = alert_manager.find(auth.id_token, cmd.topic, cmd.field, cmd.creator)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
@@ -163,10 +162,6 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            if not alert.is_valid():
-                logger.error("the alert is invalid.")
-                exit(2)
-
             report = alert_manager.create(auth.id_token, alert)
 
         if cmd.update:
@@ -179,10 +174,6 @@ if __name__ == '__main__':
 
             if alert is None:
                 logger.error("no alert found with ID %s." % cmd.update_id)
-                exit(2)
-
-            if auth.email_address != alert.creator_email_address:
-                logger.error("you do not have permission to update this alert.")
                 exit(2)
 
             # update...
@@ -229,13 +220,10 @@ if __name__ == '__main__':
             logger.info('retrieved: %s' % len(response.alerts))
 
 
-        # ------------------------------------------------------------------------------------------------------------
-        # end...
-
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    # except HTTPException as ex:
-    #     now = LocalizedDatetime.now().utc().as_iso8601()
-    #     logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
-    #     exit(1)
+    except HTTPException as ex:
+        now = LocalizedDatetime.now().utc().as_iso8601()
+        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        exit(1)
