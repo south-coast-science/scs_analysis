@@ -22,7 +22,7 @@ class CmdAlert(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-e EMAIL_ADDR] [-i INDENT] [-v]",
+                                                    "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # identity...
@@ -73,6 +73,9 @@ class CmdAlert(object):
         # email...
         self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
                                  help="email To address")
+
+        self.__parser.add_option("--creator-email", "-r", type="string", action="store", dest="creator",
+                                 help="creator email address (search only)")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -229,6 +232,11 @@ class CmdAlert(object):
 
 
     @property
+    def creator(self):
+        return self.__opts.creator
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -247,7 +255,9 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
                "topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, " \
-               "aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, indent:%s, verbose:%s}" % \
+               "aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, creator:%s, " \
+               "indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.retrieve_id, self.create, self.update_id, self.delete_id,
                 self.topic, self.field, self.lower_threshold, self.upper_threshold, self.alert_on_none,
-                self.aggregation_period, self.test_interval, self.suspended, self.to, self.indent, self.verbose)
+                self.aggregation_period, self.test_interval, self.suspended, self.to, self.creator,
+                self.indent, self.verbose)
