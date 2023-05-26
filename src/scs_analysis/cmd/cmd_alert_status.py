@@ -22,8 +22,12 @@ class CmdAlertStatus(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -d [-c CAUSE] } [-i INDENT] [-v] ID",
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -l | -d [-a CAUSE] } [-i INDENT] [-v] ID",
                                               version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -33,7 +37,7 @@ class CmdAlertStatus(object):
                                  help="return history of status reports")
 
         # filters...
-        self.__parser.add_option("--cause", "-c", type="string", action="store", dest="cause",
+        self.__parser.add_option("--cause", "-a", type="string", action="store", dest="cause",
                                  help="filter by cause { L | U | N }")
 
         # output...
@@ -69,6 +73,11 @@ class CmdAlertStatus(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
 
     @property
     def id(self):
@@ -107,5 +116,7 @@ class CmdAlertStatus(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlertStatus:{id:%s, latest:%s, history:%s, cause:%s, indent:%s, verbose:%s}" % \
-               (self.id, self.latest, self.history, self.__opts.cause, self.indent, self.verbose)
+        return "CmdAlertStatus:{credentials_name:%s, id:%s, latest:%s, history:%s, cause:%s, " \
+               "indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.id, self.latest, self.history, self.__opts.cause,
+                self.indent, self.verbose)
