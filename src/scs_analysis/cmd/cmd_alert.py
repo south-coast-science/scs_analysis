@@ -9,6 +9,7 @@ import optparse
 from scs_core.data.recurring_period import RecurringPeriod
 
 
+# TODO: put creator back
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdAlert(object):
@@ -18,11 +19,15 @@ class CmdAlert(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F | -R ID | -C | -U ID | -D ID } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]",
+                                                    "[-e EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
@@ -60,15 +65,12 @@ class CmdAlert(object):
                                  dest="aggregation_period", help="aggregation interval and units { D | H | M }")
 
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",
-                                 help="test interval")
+                                 help="test interval (NOT IN USE)")
 
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
                                  default=False, help="suspended (default false)")
 
         # email...
-        self.__parser.add_option("--creator", "-c", type="string", action="store", dest="creator",
-                                 help="email address of alert creator (admin use only)")
-
         self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
                                  help="email To address")
 
@@ -134,6 +136,11 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
 
     @property
     def find(self):
@@ -217,11 +224,6 @@ class CmdAlert(object):
 
 
     @property
-    def creator(self):
-        return self.__opts.creator
-
-
-    @property
     def to(self):
         return self.__opts.to
 
@@ -243,9 +245,9 @@ class CmdAlert(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlert:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, topic:%s, field:%s, " \
-               "lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, aggregation_period:%s, " \
-               "test_interval:%s, suspended:%s, creator:%s, to:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.retrieve_id, self.create, self.update_id, self.delete_id, self.topic, self.field,
-                self.lower_threshold, self.upper_threshold, self.alert_on_none, self.aggregation_period,
-                self.test_interval, self.suspended, self.creator, self.to, self.indent, self.verbose)
+        return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
+               "topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, " \
+               "aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.retrieve_id, self.create, self.update_id, self.delete_id,
+                self.topic, self.field, self.lower_threshold, self.upper_threshold, self.alert_on_none,
+                self.aggregation_period, self.test_interval, self.suspended, self.to, self.indent, self.verbose)

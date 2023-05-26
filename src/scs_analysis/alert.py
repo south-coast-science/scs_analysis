@@ -15,12 +15,11 @@ the aggregation period (usually in minutes). The minimum period is one minute.
 In --find mode, results can be filtered by topic, field or creator email address.
 
 SYNOPSIS
-alert.py  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] [-n { 1 | 0 }]
-[-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]
+alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER]
+[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-i INDENT] [-v]
 
 EXAMPLES
-alert.py -v -C -p south-coast-science-dev/development/loc/1/gases -f val.NO2.cnc -u 1000.0 -a 1 M \
--e someone@me.com -i4
+
 
 DOCUMENT EXAMPLE
 {"id": 77, "topic": "south-coast-science-dev/development/loc/1/gases", "field": "val.CO.cnc", "lower-threshold": null,
@@ -38,19 +37,20 @@ BUGS
 """
 
 import json
-
 import requests
 import sys
 
 from scs_analysis.cmd.cmd_alert import CmdAlert
 
 from scs_core.aws.client.api_auth import APIAuth
-from scs_core.aws.client.monitor_auth import MonitorAuth
 
 from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
 from scs_core.aws.manager.byline_manager import BylineManager
+
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
@@ -82,53 +82,52 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('alert', verbose=cmd.verbose)
+        Logging.config('alert', verbose=cmd.verbose)        # level=logging.DEBUG
         logger = Logging.getLogger()
 
         logger.info(cmd)
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
+        # authentication...
 
-        # TODO: new-world security
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
-        # MonitorAuth...
-        if not MonitorAuth.exists(Host):
-            logger.error('MonitorAuth not available.')
+        if not credentials:
             exit(1)
 
-        try:
-            auth = MonitorAuth.load(Host, encryption_key=MonitorAuth.password_from_user())
-        except (KeyError, ValueError):
-            logger.error('incorrect password.')
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
-        alert_manager = AlertSpecificationManager(requests, auth)
-        logger.info(alert_manager)
-
-        # APIAuth...
+        # APIAuth (for BylineManager)...
         api_auth = APIAuth.load(Host)
 
         if api_auth is None:
-            logger.error("APIAuth not available.")
+            logger.error("APIAuth is not available")
             exit(1)
 
-        # byline manager...
-        byline_manager = BylineManager(api_auth)
-        logger.info(byline_manager)
+
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
+
+        alert_manager = AlertSpecificationManager(requests)
+        byline_manager = BylineManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            creator_filter = auth.email_address if cmd.creator is None else cmd.creator     # TODO: remove
-            response = alert_manager.find(cmd.topic, cmd.field, creator_filter)
+            # creator_filter = auth.email_address if cmd.creator is None else cmd.creator     # TODO: remove
+            response = alert_manager.find(auth.id_token, cmd.topic, cmd.field, None)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            report = alert_manager.retrieve(cmd.retrieve_id)
+            report = alert_manager.retrieve(auth.id_token, cmd.retrieve_id)
 
         if cmd.create:
             # validate...
@@ -164,7 +163,11 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            report = alert_manager.create(alert)
+            if not alert.is_valid():
+                logger.error("the alert is invalid.")
+                exit(2)
+
+            report = alert_manager.create(auth.id_token, alert)
 
         if cmd.update:
             # validate...
@@ -172,7 +175,7 @@ if __name__ == '__main__':
                 logger.error("topic and field may not be changed.")
                 exit(2)
 
-            alert = alert_manager.retrieve(cmd.update_id)
+            alert = alert_manager.retrieve(auth.id_token, cmd.update_id)
 
             if alert is None:
                 logger.error("no alert found with ID %s." % cmd.update_id)
@@ -203,16 +206,17 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            report = alert_manager.update(updated)
+            report = alert_manager.update(auth.id_token, updated)
 
         if cmd.delete:
-            alert = alert_manager.retrieve(cmd.delete_id)
+            alert = alert_manager.retrieve(auth.id_token, cmd.delete_id)
 
             if alert is None:
                 logger.error("no alert found with ID %s." % cmd.delete_id)
                 exit(2)
 
-            alert_manager.delete(cmd.delete_id)
+            alert_manager.delete(auth.id_token, cmd.delete_id)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # end...
@@ -224,13 +228,14 @@ if __name__ == '__main__':
         if cmd.find:
             logger.info('retrieved: %s' % len(response.alerts))
 
+
         # ------------------------------------------------------------------------------------------------------------
         # end...
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except HTTPException as ex:
-        now = LocalizedDatetime.now().utc().as_iso8601()
-        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
-        exit(1)
+    # except HTTPException as ex:
+    #     now = LocalizedDatetime.now().utc().as_iso8601()
+    #     logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+    #     exit(1)

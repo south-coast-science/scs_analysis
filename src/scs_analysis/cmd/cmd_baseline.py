@@ -37,7 +37,7 @@ class CmdBaseline(object):
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
-        # identity...
+        # target...
         self.__parser.add_option("--conf-name", "-n", type="string", nargs=1, action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
 
