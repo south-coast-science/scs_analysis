@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
-            to = auth.email_address if cmd.to is None else cmd.to
+            to = credentials.email if cmd.to is None else cmd.to
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
