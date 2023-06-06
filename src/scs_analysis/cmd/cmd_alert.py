@@ -9,7 +9,6 @@ import optparse
 from scs_core.data.recurring_period import RecurringPeriod
 
 
-# TODO: put creator back
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdAlert(object):
@@ -20,7 +19,7 @@ class CmdAlert(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
-                                                    "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
+                                                    "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
                                                     "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
                                               version="%prog 1.0")
@@ -46,6 +45,9 @@ class CmdAlert(object):
                                  help="delete alert with given ID")
 
         # fields...
+        self.__parser.add_option("--description", "-d", type="string", action="store", dest="description",
+                                 default="", help="description")
+
         self.__parser.add_option("--topic-path", "-p", type="string", action="store", dest="topic",
                                  help="topic path")
 
@@ -139,11 +141,15 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # fields: identity...
 
     @property
     def credentials_name(self):
         return self.__opts.credentials_name
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # fields: operations...
 
     @property
     def find(self):
@@ -183,6 +189,14 @@ class CmdAlert(object):
     @property
     def delete(self):
         return self.__opts.delete_id is not None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # fields: alert fields...
+
+    @property
+    def description(self):
+        return self.__opts.description
 
 
     @property
@@ -226,6 +240,9 @@ class CmdAlert(object):
         return self.__opts.suspended
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+    # fields: email...
+
     @property
     def to(self):
         return self.__opts.to
@@ -235,6 +252,9 @@ class CmdAlert(object):
     def creator(self):
         return self.__opts.creator
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # fields: output...
 
     @property
     def indent(self):
