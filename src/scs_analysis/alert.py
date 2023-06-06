@@ -12,7 +12,12 @@ Alerts take the form of emails, sent when a parameter falls below or above speci
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
 the aggregation period (usually in minutes). The minimum period is one minute.
 
+WARNING: when an alert is triggered, only one email is sent to each of the specified recipients. No further email
+is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds.
+
 In --find mode, results can be filtered by description, topic, field or creator email address.
+
+A history of out-of-bounds events for each alert specification can be found using the alert_status utility.
 
 SYNOPSIS
 alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER]
@@ -44,7 +49,7 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/alert_status
-scs_analysis/monitor_auth
+scs_analysis/cognito_user_credentials
 
 BUGS
 * The --test-interval flag is not currently in use, and is ignored.
@@ -70,6 +75,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.client.http_exception import HTTPException
 
 from scs_core.data.datetime import LocalizedDatetime
+from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
@@ -141,7 +147,15 @@ if __name__ == '__main__':
                 int(cmd.id)
         except (TypeError, ValueError):
             logger.error('the ID must be an integer.')
-            exit(1)
+            exit(2)
+
+        if cmd.to is not None and not Datum.is_email_address(cmd.to):
+            logger.error("the To email address '%s' is not valid." % cmd.to)
+            exit(2)
+
+        if cmd.cc_email is not None and not Datum.is_email_address(cmd.cc_email):
+            logger.error("the CC email address '%s' is not valid." % cmd.to)
+            exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -175,10 +189,11 @@ if __name__ == '__main__':
 
             # create...
             to = credentials.email if cmd.to is None else cmd.to
+            cc = {cmd.cc_email} if cmd.cc_function == 'A' else {}
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       cmd.test_interval, None, to, [], cmd.suspended)
+                                       cmd.test_interval, None, to, cc, cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -211,6 +226,12 @@ if __name__ == '__main__':
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.to is None else cmd.to
+
+            if cmd.cc_function == 'A':
+                alert.add_cc(cmd.cc_email)
+
+            elif cmd.cc_function == 'R':
+                alert.remove_cc(cmd.cc_email)
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, test_interval,
@@ -245,7 +266,6 @@ if __name__ == '__main__':
 
         if cmd.find:
             logger.info('retrieved: %s' % len(response.alerts))
-
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
