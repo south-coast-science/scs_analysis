@@ -15,8 +15,9 @@ the aggregation period (usually in minutes). The minimum period is one minute.
 In --find mode, results can be filtered by topic, field or creator email address.
 
 SYNOPSIS
-alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER]
-[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-i INDENT] [-v]
+alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER]
+[-u UPPER] [-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-r EMAIL_ADDR]
+[-i INDENT] [-v]
 
 EXAMPLES
 
@@ -52,9 +53,9 @@ from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPException
+# from scs_core.client.http_exception import HTTPException
 
-from scs_core.data.datetime import LocalizedDatetime
+# from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
@@ -150,9 +151,9 @@ if __name__ == '__main__':
             # create...
             to = auth.email_address if cmd.to is None else cmd.to
 
-            alert = AlertSpecification(None, cmd.topic, cmd.field, cmd.lower_threshold, cmd.upper_threshold,
-                                       cmd.alert_on_none, cmd.aggregation_period, cmd.test_interval, None,
-                                       to, [], cmd.suspended)
+            alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
+                                       cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
+                                       cmd.test_interval, None, to, [], cmd.suspended)
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -177,6 +178,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # update...
+            description = alert.description if not cmd.description else cmd.description
             lower_threshold = alert.lower_threshold if cmd.lower_threshold is None else cmd.lower_threshold
             upper_threshold = alert.upper_threshold if cmd.upper_threshold is None else cmd.upper_threshold
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
@@ -185,9 +187,9 @@ if __name__ == '__main__':
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.to is None else cmd.to
 
-            updated = AlertSpecification(alert.id, alert.topic, alert.field, lower_threshold, upper_threshold,
-                                         alert_on_none, aggregation_period, test_interval, alert.creator_email_address,
-                                         to, alert.cc_list, suspended)
+            updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
+                                         upper_threshold, alert_on_none, aggregation_period, test_interval,
+                                         alert.creator_email_address, to, alert.cc_list, suspended)
 
             if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -223,7 +225,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except HTTPException as ex:
-        now = LocalizedDatetime.now().utc().as_iso8601()
-        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
-        exit(1)
+    # except HTTPException as ex:
+    #     now = LocalizedDatetime.now().utc().as_iso8601()
+    #     logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+    #     exit(1)
