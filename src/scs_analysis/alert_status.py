@@ -16,7 +16,7 @@ SYNOPSIS
 alert_status.py [-c CREDENTIALS] { -l | -d [-a CAUSE] } [-i INDENT] [-v] ID
 
 EXAMPLES
-
+alert_status.py -vi4 -c bruno -l 87
 
 DOCUMENT EXAMPLE
 {"id": 77, "rec": "2021-09-07T11:40:00Z", "cause": null, "val": 589.6}
@@ -32,14 +32,13 @@ import sys
 from scs_analysis.cmd.cmd_alert_status import CmdAlertStatus
 
 from scs_core.aws.manager.alert_status_finder import AlertStatusFinder
-
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
-from scs_core.data.json import JSONify
 from scs_core.data.datetime import LocalizedDatetime
+from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
 

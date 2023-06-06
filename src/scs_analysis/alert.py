@@ -20,13 +20,27 @@ alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] 
 [-i INDENT] [-v]
 
 EXAMPLES
-
+alert.py -vi4 -c bruno -C -d "null climate" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -n 1 -a 1 M
 
 DOCUMENT EXAMPLE
-{"id": 77, "topic": "south-coast-science-dev/development/loc/1/gases", "field": "val.CO.cnc", "lower-threshold": null,
-"upper-threshold": 1000.0, "alert-on-none": true, "aggregation-period": {"interval": 1, "units": "M"},
-"test-interval": null, "creator-email-address": "authorization@southcoastscience.com",
-"to": "someone@me.com", "cc-list": [], "suspended": false}
+{
+    "id": 87,
+    "description": "null climate",
+    "topic": "south-coast-science-dev/development/loc/1/climate",
+    "field": "val.tmp",
+    "lower-threshold": null,
+    "upper-threshold": null,
+    "alert-on-none": true,
+    "aggregation-period": {
+        "interval": 1,
+        "units": "M"
+    },
+    "test-interval": null,
+    "creator-email-address": "bruno.beloff@southcoastscience.com",
+    "to": "bruno.beloff@southcoastscience.com",
+    "cc-list": [],
+    "suspended": false
+}
 
 SEE ALSO
 scs_analysis/alert_status
@@ -123,7 +137,7 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            response = alert_manager.find(auth.id_token, cmd.topic, cmd.field, cmd.creator)
+            response = alert_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.creator)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
