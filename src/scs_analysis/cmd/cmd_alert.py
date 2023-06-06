@@ -21,7 +21,8 @@ class CmdAlert(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-i INDENT] [-v]",
+                                                    "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-m { A | R } EMAIL_ADDR]"
+                                                    "[-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # identity...
@@ -76,8 +77,11 @@ class CmdAlert(object):
         self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
                                  help="email To address")
 
-        self.__parser.add_option("--creator-email", "-r", type="string", action="store", dest="creator",
+        self.__parser.add_option("--email-creator", "-r", type="string", action="store", dest="creator",
                                  help="creator email address (search only)")
+
+        self.__parser.add_option("--email-cc", "-m", type="string", nargs=2, action="store", dest="cc",
+                                 help="CC email function { Add | Remove } and address")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -122,6 +126,9 @@ class CmdAlert(object):
             return False
 
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
+            return False
+
+        if self.cc_function not in (None, 'A', 'R'):
             return False
 
         return True
@@ -252,6 +259,21 @@ class CmdAlert(object):
         return self.__opts.creator
 
 
+    @property
+    def cc(self):
+        return bool(self.__opts.cc)
+
+
+    @property
+    def cc_function(self):
+        return self.__opts.cc[0] if self.__opts.cc else None
+
+
+    @property
+    def cc_email(self):
+        return self.__opts.cc[1] if self.__opts.cc else None
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # fields: output...
 
@@ -275,8 +297,8 @@ class CmdAlert(object):
         return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, " \
                "delete:%s, topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, " \
                "alert_on_none:%s, aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, creator:%s, " \
-               "indent:%s, verbose:%s}" % \
+               "cc:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
                 self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
                 self.alert_on_none, self.aggregation_period, self.test_interval, self.suspended, self.to, self.creator,
-                self.indent, self.verbose)
+                self.__opts.cc, self.indent, self.verbose)
