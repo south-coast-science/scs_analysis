@@ -148,17 +148,26 @@ class CmdAlert(object):
         return self.__opts.credentials_name
 
 
+    @property
+    def id(self):
+        if self.__opts.retrieve_id is not None:
+            return self.__opts.retrieve_id
+
+        if self.__opts.update_id is not None:
+            return self.__opts.update_id
+
+        if self.__opts.delete_id is not None:
+            return self.__opts.delete_id
+
+        return None
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # fields: operations...
 
     @property
     def find(self):
         return self.__opts.find
-
-
-    @property
-    def retrieve_id(self):
-        return self.__opts.retrieve_id
 
 
     @property
@@ -172,18 +181,8 @@ class CmdAlert(object):
 
 
     @property
-    def update_id(self):
-        return self.__opts.update_id
-
-
-    @property
     def update(self):
         return self.__opts.update_id is not None
-
-
-    @property
-    def delete_id(self):
-        return self.__opts.delete_id
 
 
     @property
@@ -273,11 +272,11 @@ class CmdAlert(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, delete:%s, " \
-               "topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, " \
-               "aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, creator:%s, " \
+        return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, " \
+               "delete:%s, topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, " \
+               "alert_on_none:%s, aggregation_period:%s, test_interval:%s, suspended:%s, to:%s, creator:%s, " \
                "indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.find, self.retrieve_id, self.create, self.update_id, self.delete_id,
-                self.topic, self.field, self.lower_threshold, self.upper_threshold, self.alert_on_none,
-                self.aggregation_period, self.test_interval, self.suspended, self.to, self.creator,
+               (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
+                self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
+                self.alert_on_none, self.aggregation_period, self.test_interval, self.suspended, self.to, self.creator,
                 self.indent, self.verbose)

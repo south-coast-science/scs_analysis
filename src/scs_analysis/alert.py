@@ -6,13 +6,13 @@ Created on 29 Jun 2021
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The alert utility is used to create, update, delete and find alert specifications.
+The alert utility is used to create, update, delete or find alert specifications.
 
 Alerts take the form of emails, sent when a parameter falls below or above specified bounds, or when the value is null
 (a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
 the aggregation period (usually in minutes). The minimum period is one minute.
 
-In --find mode, results can be filtered by topic, field or creator email address.
+In --find mode, results can be filtered by description, topic, field or creator email address.
 
 SYNOPSIS
 alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER]
@@ -134,6 +134,17 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
+        # validation...
+
+        try:
+            if cmd.id is not None:
+                int(cmd.id)
+        except (TypeError, ValueError):
+            logger.error('the ID must be an integer.')
+            exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
@@ -141,7 +152,7 @@ if __name__ == '__main__':
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            report = alert_manager.retrieve(auth.id_token, cmd.retrieve_id)
+            report = alert_manager.retrieve(auth.id_token, cmd.id)
 
         if cmd.create:
             # validate...
@@ -185,10 +196,10 @@ if __name__ == '__main__':
                 logger.error("topic and field may not be changed.")
                 exit(2)
 
-            alert = alert_manager.retrieve(auth.id_token, cmd.update_id)
+            alert = alert_manager.retrieve(auth.id_token, cmd.id)
 
             if alert is None:
-                logger.error("no alert found with ID %s." % cmd.update_id)
+                logger.error("no alert found with ID %s." % cmd.id)
                 exit(2)
 
             # update...
@@ -216,13 +227,13 @@ if __name__ == '__main__':
             report = alert_manager.update(auth.id_token, updated)
 
         if cmd.delete:
-            alert = alert_manager.retrieve(auth.id_token, cmd.delete_id)
+            alert = alert_manager.retrieve(auth.id_token, cmd.id)
 
             if alert is None:
-                logger.error("no alert found with ID %s." % cmd.delete_id)
+                logger.error("no alert found with ID %s." % cmd.id)
                 exit(2)
 
-            alert_manager.delete(auth.id_token, cmd.delete_id)
+            alert_manager.delete(auth.id_token, cmd.id)
 
 
         # ------------------------------------------------------------------------------------------------------------

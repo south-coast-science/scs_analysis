@@ -70,16 +70,6 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # validation...
-
-        try:
-            int(cmd.id)
-        except (TypeError, ValueError):
-            logger.error('the ID must be an integer.')
-            exit(1)
-
-
-        # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
         credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
@@ -100,6 +90,17 @@ if __name__ == '__main__':
 
         finder = AlertStatusFinder(requests)
 
+
+        # ------------------------------------------------------------------------------------------------------------
+        # validation...
+
+        try:
+            int(cmd.id)
+        except (TypeError, ValueError):
+            logger.error('the ID must be an integer.')
+            exit(1)
+
+        # TODO: check for alert
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
