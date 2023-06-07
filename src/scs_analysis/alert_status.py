@@ -33,7 +33,7 @@ import sys
 from scs_analysis.cmd.cmd_alert_status import CmdAlertStatus
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
-from scs_core.aws.manager.alert_status_finder import AlertStatusFinder
+from scs_core.aws.manager.alert_status_manager import AlertStatusManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -91,8 +91,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        alert_manager = AlertSpecificationManager(requests)
-        alert_finder = AlertStatusFinder(requests)
+        specification_manager = AlertSpecificationManager(requests)
+        status_manager = AlertStatusManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ if __name__ == '__main__':
             logger.error('the ID must be an integer.')
             exit(2)
 
-        alert = alert_manager.retrieve(auth.id_token, cmd.id)
+        specification = specification_manager.retrieve(auth.id_token, cmd.id)
 
-        if alert is None:
+        if specification is None:
             logger.error("no alert found with ID %s." % cmd.id)
             exit(2)
 
@@ -115,11 +115,11 @@ if __name__ == '__main__':
         # run...
 
         if cmd.latest:
-            response = alert_finder.find(auth.id_token, cmd.id, None, cmd.response_mode())
+            response = status_manager.find(auth.id_token, cmd.id, None, cmd.response_mode())
             report = response.alert_statuses[0] if response.alert_statuses else None
 
         if cmd.history:
-            response = alert_finder.find(auth.id_token, cmd.id, cmd.cause, cmd.response_mode())
+            response = status_manager.find(auth.id_token, cmd.id, cmd.cause, cmd.response_mode())
             report = sorted(response.alert_statuses)
 
 

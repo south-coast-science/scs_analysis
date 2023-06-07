@@ -69,6 +69,7 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
+from scs_core.aws.manager.alert_status_manager import AlertStatusManager
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -137,8 +138,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        alert_manager = AlertSpecificationManager(requests)
         byline_manager = BylineManager(requests)
+        specification_manager = AlertSpecificationManager(requests)
+        status_manager = AlertStatusManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -164,11 +166,11 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            response = alert_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.creator)
+            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.creator)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
-            report = alert_manager.retrieve(auth.id_token, cmd.id)
+            report = specification_manager.retrieve(auth.id_token, cmd.id)
 
         if cmd.create:
             # validate...
@@ -205,7 +207,7 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            report = alert_manager.create(auth.id_token, alert)
+            report = specification_manager.create(auth.id_token, alert)
 
         if cmd.update:
             # validate...
@@ -213,7 +215,7 @@ if __name__ == '__main__':
                 logger.error("topic and field may not be changed.")
                 exit(2)
 
-            alert = alert_manager.retrieve(auth.id_token, cmd.id)
+            alert = specification_manager.retrieve(auth.id_token, cmd.id)
 
             if alert is None:
                 logger.error("no alert found with ID %s." % cmd.id)
@@ -247,16 +249,17 @@ if __name__ == '__main__':
                 logger.error("the aggregation period is invalid.")
                 exit(2)
 
-            report = alert_manager.update(auth.id_token, updated)
+            report = specification_manager.update(auth.id_token, updated)
 
         if cmd.delete:
-            alert = alert_manager.retrieve(auth.id_token, cmd.id)
+            alert = specification_manager.retrieve(auth.id_token, cmd.id)
 
-            if alert is None:
-                logger.error("no alert found with ID %s." % cmd.id)
-                exit(2)
+            # if alert is None:
+            #     logger.error("no alert found with ID %s." % cmd.id)
+            #     exit(2)
 
-            alert_manager.delete(auth.id_token, cmd.id)
+            specification_manager.delete(auth.id_token, cmd.id)
+            # status_manager.delete(auth.id_token, cmd.id)
 
 
         # ------------------------------------------------------------------------------------------------------------
