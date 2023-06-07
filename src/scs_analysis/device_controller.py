@@ -45,7 +45,7 @@ from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPNotFoundException, HTTPGatewayTimeoutException, \
+from scs_core.client.http_exception import HTTPException, HTTPNotFoundException, HTTPGatewayTimeoutException, \
     HTTPServiceUnavailableException
 
 from scs_core.data.json import AbstractPersistentJSONable, JSONify
@@ -182,6 +182,11 @@ if __name__ == '__main__':
     except HTTPServiceUnavailableException:
         logger.error("device '%s' is interacting with another controller." % cmd.device_tag)
         exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.error_report)
+        exit(1)
+
 
     finally:
         StdIO.save_history(history_filename)

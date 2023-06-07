@@ -42,7 +42,7 @@ from scs_core.aws.security.cognito_user import CognitoUserIdentity
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator, CognitoUserEditor
 
-from scs_core.client.http_exception import HTTPConflictException
+from scs_core.client.http_exception import HTTPException, HTTPConflictException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -208,4 +208,8 @@ if __name__ == '__main__':
 
     except HTTPConflictException as ex:
         logger.error("the email address '%s' is already in use." % report.email)
+        exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.error_report)
         exit(1)

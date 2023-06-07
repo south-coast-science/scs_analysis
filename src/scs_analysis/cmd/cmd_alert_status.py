@@ -6,7 +6,7 @@ Created on 29 Jun 2021
 
 import optparse
 
-from scs_core.aws.manager.alert_status_finder import AlertStatusFinderRequest
+from scs_core.aws.manager.alert_status_manager import AlertStatusFindRequest
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -22,6 +22,8 @@ class CmdAlertStatus(object):
         """
         Constructor
         """
+        causes = ' | '.join(self.__CAUSES)
+
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -l | -d [-a CAUSE] } [-i INDENT] [-v] ID",
                                               version="%prog 1.0")
 
@@ -38,7 +40,7 @@ class CmdAlertStatus(object):
 
         # filters...
         self.__parser.add_option("--cause", "-a", type="string", action="store", dest="cause",
-                                 help="filter by cause { L | U | N | OK }")
+                                 help="filter by cause { %s }" % causes)
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -69,7 +71,7 @@ class CmdAlertStatus(object):
 
 
     def response_mode(self):
-        return AlertStatusFinderRequest.Mode.LATEST if self.latest else AlertStatusFinderRequest.Mode.HISTORY
+        return AlertStatusFindRequest.Mode.LATEST if self.latest else AlertStatusFindRequest.Mode.HISTORY
 
 
     # ----------------------------------------------------------------------------------------------------------------
