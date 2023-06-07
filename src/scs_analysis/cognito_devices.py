@@ -47,7 +47,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.client.http_exception import HTTPConflictException
+from scs_core.client.http_exception import HTTPException, HTTPConflictException
 
 from scs_core.data.json import JSONify
 
@@ -166,4 +166,8 @@ if __name__ == '__main__':
 
     except HTTPConflictException as ex:
         logger.error("the tag '%s' is already in use." % report.tag)
+        exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.error_report)
         exit(1)

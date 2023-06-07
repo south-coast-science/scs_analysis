@@ -199,7 +199,11 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except (HTTPException, ResourceUnavailableException) as ex:
+    except HTTPException as ex:
+        logger.error(ex.error_report)
+        exit(1)
+
+    except ResourceUnavailableException as ex:
         logger.error(repr(ex))
         exit(1)
 

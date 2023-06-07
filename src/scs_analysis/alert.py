@@ -77,7 +77,6 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
-from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -276,6 +275,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPException as ex:
-        now = LocalizedDatetime.now().utc().as_iso8601()
-        logger.error("%s: HTTP response: %s (%s) %s" % (now, ex.status, ex.reason, ex.data))
+        logger.error(ex.error_report)
         exit(1)
