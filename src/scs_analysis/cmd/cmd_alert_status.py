@@ -14,7 +14,7 @@ from scs_core.aws.manager.alert_status_finder import AlertStatusFinderRequest
 class CmdAlertStatus(object):
     """unix command line handler"""
 
-    __CAUSES = {'L': '<L', 'U': '>U', 'N': 'NV'}
+    __CAUSES = {'L': '<L', 'U': '>U', 'N': 'NV', 'OK': 'OK'}
 
     # --------------------------------------------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ class CmdAlertStatus(object):
 
         # filters...
         self.__parser.add_option("--cause", "-a", type="string", action="store", dest="cause",
-                                 help="filter by cause { L | U | N }")
+                                 help="filter by cause { L | U | N | OK }")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
