@@ -21,7 +21,7 @@ class CmdAlert(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-m { A | R } EMAIL_ADDR]"
+                                                    "[-e EMAIL_ADDR] [-r EMAIL_ADDR] [-m { A | R } EMAIL_ADDR] "
                                                     "[-i INDENT] [-v]",
                                               version="%prog 1.0")
 
@@ -71,7 +71,7 @@ class CmdAlert(object):
                                  help="test interval (NOT IN USE)")
 
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
-                                 default=False, help="suspended (default false)")
+                                 default=None, help="suspended (default false)")
 
         # email...
         self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
@@ -81,7 +81,7 @@ class CmdAlert(object):
                                  help="creator email address (search only)")
 
         self.__parser.add_option("--email-cc", "-m", type="string", nargs=2, action="store", dest="cc",
-                                 help="CC email function { Add | Remove } and address")
+                                 help="CC email operation { Add | Remove } and address")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -148,7 +148,7 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # fields: identity...
+    # properties: identity...
 
     @property
     def credentials_name(self):
@@ -170,7 +170,7 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # fields: operations...
+    # properties: operations...
 
     @property
     def find(self):
@@ -198,7 +198,7 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # fields: alert fields...
+    # properties: fields...
 
     @property
     def description(self):
@@ -247,7 +247,7 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # fields: email...
+    # properties: email...
 
     @property
     def to(self):
@@ -257,11 +257,6 @@ class CmdAlert(object):
     @property
     def creator(self):
         return self.__opts.creator
-
-
-    @property
-    def cc(self):
-        return bool(self.__opts.cc)
 
 
     @property

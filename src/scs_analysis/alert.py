@@ -25,25 +25,28 @@ alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] 
 [-i INDENT] [-v]
 
 EXAMPLES
-alert.py -vi4 -c bruno -C -d "null climate" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -n 1 -a 1 M
+alert.py -vi4 -c bruno -C -d "warm" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -u 30 -n 1 -a 1 M
 
 DOCUMENT EXAMPLE
 {
-    "id": 87,
-    "description": "null climate",
+    "id": 88,
+    "description": "warm",
     "topic": "south-coast-science-dev/development/loc/1/climate",
     "field": "val.tmp",
     "lower-threshold": null,
-    "upper-threshold": null,
+    "upper-threshold": 30.0,
     "alert-on-none": true,
     "aggregation-period": {
         "interval": 1,
         "units": "M"
     },
     "test-interval": null,
-    "creator-email-address": "bruno.beloff@southcoastscience.com",
-    "to": "bruno.beloff@southcoastscience.com",
-    "cc-list": [],
+    "creator-email-address": "someone@southcoastscience.com",
+    "to": "someone@southcoastscience.com",
+    "cc-list": [
+        "someone@me.com",
+        "someone@outlook.com"
+    ],
     "suspended": false
 }
 
@@ -52,8 +55,7 @@ scs_analysis/alert_status
 scs_analysis/cognito_user_credentials
 
 BUGS
-* The --test-interval flag is not currently in use, and is ignored.
-* Email CC addresses cannot be added or removed.
+The --test-interval flag is not currently in use, and is ignored.
 """
 
 import json
@@ -193,7 +195,7 @@ if __name__ == '__main__':
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       cmd.test_interval, None, to, cc, cmd.suspended)
+                                       cmd.test_interval, None, to, cc, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
