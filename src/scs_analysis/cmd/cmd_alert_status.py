@@ -24,7 +24,8 @@ class CmdAlertStatus(object):
         """
         causes = ' | '.join(self.__CAUSES)
 
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -l | -d [-a CAUSE] } [-i INDENT] [-v] ID",
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -l | -d [-a CAUSE] } | -D } "
+                                                    "[-i INDENT] [-v] ID",
                                               version="%prog 1.0")
 
         # identity...
@@ -32,15 +33,21 @@ class CmdAlertStatus(object):
                                  help="the stored credentials to be presented")
 
         # operations...
-        self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
-                                 help="return latest status report only")
+        self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
+                                 help="find alert status reports")
 
-        self.__parser.add_option("--history", "-d", action="store_true", dest="history", default=False,
-                                 help="return history of status reports")
+        self.__parser.add_option("--delete", "-D", action="store_true", dest="delete", default=False,
+                                 help="delete the alert status history")
 
         # filters...
+        self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
+                                 help="find latest status report only")
+
+        self.__parser.add_option("--history", "-d", action="store_true", dest="history", default=False,
+                                 help="find history of status reports")
+
         self.__parser.add_option("--cause", "-a", type="string", action="store", dest="cause",
-                                 help="filter by cause { %s }" % causes)
+                                 help="filter history by cause { %s }" % causes)
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -58,7 +65,13 @@ class CmdAlertStatus(object):
         if self.id is None:
             return False
 
-        if self.latest == self.history:
+        if self.find == self.delete:
+            return False
+
+        if self.find and self.latest == self.history:
+            return False
+
+        if not self.find and (self.latest or self.history):
             return False
 
         if self.latest and self.__opts.cause is not None:
@@ -75,6 +88,7 @@ class CmdAlertStatus(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity...
 
     @property
     def credentials_name(self):
@@ -85,6 +99,22 @@ class CmdAlertStatus(object):
     def id(self):
         return self.__args[0] if self.__args else None
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: operations...
+
+    @property
+    def find(self):
+        return self.__opts.find
+
+
+    @property
+    def delete(self):
+        return self.__opts.delete
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: filters...
 
     @property
     def latest(self):
@@ -100,6 +130,9 @@ class CmdAlertStatus(object):
     def cause(self):
         return None if self.__opts.cause is None else self.__CAUSES[self.__opts.cause]
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: output...
 
     @property
     def indent(self):
@@ -118,7 +151,7 @@ class CmdAlertStatus(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlertStatus:{credentials_name:%s, id:%s, latest:%s, history:%s, cause:%s, " \
+        return "CmdAlertStatus:{credentials_name:%s, id:%s, find:%s, delete:%s, latest:%s, history:%s, cause:%s, " \
                "indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.id, self.latest, self.history, self.__opts.cause,
+               (self.credentials_name, self.id, self.find, self.delete, self.latest, self.history, self.__opts.cause,
                 self.indent, self.verbose)
