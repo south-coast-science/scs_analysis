@@ -8,21 +8,22 @@ Created on 29 Jun 2021
 DESCRIPTION
 The alert utility is used to create, update, delete or find alert specifications.
 
-Alerts take the form of emails, sent when a parameter falls below or above specified bounds, or when the value is null
-(a null value is being reported, or no reports are available). The alert specification sets these bounds, together with
-the aggregation period (usually in minutes). The minimum period is one minute.
+Alerts take the form of emails. These are sent when a parameter falls below or above specified bounds, or when the
+value is null (a null value is being reported, or no reports are available). The alert specification sets these bounds,
+together with the aggregation period (usually in minutes). The minimum period is one minute.
 
 WARNING: when an alert is triggered, only one email is sent to each of the specified recipients. No further email
-is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds.
+is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds. The end of an
+out-of-bound event is logged in the alert status history. A history of out-of-bounds events for each alert
+specification can be found using the alert_status utility.
 
 In --find mode, results can be filtered by description, topic, field or creator email address.
-
-A history of out-of-bounds events for each alert specification can be found using the alert_status utility.
+Finder matches are exact.
 
 SYNOPSIS
 alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER]
-[-u UPPER] [-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-e EMAIL_ADDR] [-r EMAIL_ADDR]
-[-i INDENT] [-v]
+[-u UPPER] [-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-i INDENT] [-v] [-e EMAIL_ADDR]
+[-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]
 
 EXAMPLES
 alert.py -vi4 -c bruno -C -d "warm" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -u 30 -n 1 -a 1 M
@@ -69,13 +70,12 @@ from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
-from scs_core.aws.manager.alert_status_manager import AlertStatusManager
 from scs_core.aws.manager.byline_manager import BylineManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPException
+from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -139,7 +139,6 @@ if __name__ == '__main__':
 
         byline_manager = BylineManager(requests)
         specification_manager = AlertSpecificationManager(requests)
-        status_manager = AlertStatusManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -152,20 +151,22 @@ if __name__ == '__main__':
             logger.error('the ID must be an integer.')
             exit(2)
 
-        if cmd.to is not None and not Datum.is_email_address(cmd.to):
-            logger.error("the To email address '%s' is not valid." % cmd.to)
+        if cmd.email is not None and not Datum.is_email_address(cmd.email):
+            logger.error("the email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if cmd.cc_email is not None and not Datum.is_email_address(cmd.cc_email):
-            logger.error("the CC email address '%s' is not valid." % cmd.to)
-            exit(2)
+        if cmd.cc:
+            for email in cmd.cc_list:
+                if email is not None and not Datum.is_email_address(email):
+                    logger.error("the email address '%s' is not valid." % email)
+                    exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.creator)
+            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.email)
             report = sorted(response.alerts)
 
         if cmd.retrieve:
@@ -191,8 +192,8 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
-            to = credentials.email if cmd.to is None else cmd.to
-            cc = {cmd.cc_email} if cmd.cc_function == 'A' else {}
+            to = credentials.email if cmd.email is None else cmd.email
+            cc = cmd.cc_list if cmd.cc else {}
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
@@ -228,17 +229,12 @@ if __name__ == '__main__':
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
-            to = alert.to if cmd.to is None else cmd.to
-
-            if cmd.cc_function == 'A':
-                alert.add_cc(cmd.cc_email)
-
-            elif cmd.cc_function == 'R':
-                alert.remove_cc(cmd.cc_email)
+            to = alert.to if cmd.email is None else cmd.email
+            cc = cmd.cc_list if cmd.cc else alert.cc_list
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, test_interval,
-                                         alert.creator_email_address, to, alert.cc_list, suspended)
+                                         alert.creator_email_address, to, cc, suspended)
 
             if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -251,14 +247,10 @@ if __name__ == '__main__':
             report = specification_manager.update(auth.id_token, updated)
 
         if cmd.delete:
-            alert = specification_manager.retrieve(auth.id_token, cmd.id)
-
-            # if alert is None:
-            #     logger.error("no alert found with ID %s." % cmd.id)
-            #     exit(2)
-
-            specification_manager.delete(auth.id_token, cmd.id)
-            # status_manager.delete(auth.id_token, cmd.id)
+            try:
+                specification_manager.delete(auth.id_token, cmd.id)
+            except HTTPNotFoundException:
+                logger.error("no alert found with ID %s." % cmd.id)
 
 
         # ------------------------------------------------------------------------------------------------------------

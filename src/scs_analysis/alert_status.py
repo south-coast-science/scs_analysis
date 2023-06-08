@@ -12,12 +12,13 @@ Alert causes are:
 * L - Below lower threshold
 * U - Above upper threshold
 * N - Null value
+* OK - data has returned within bounds
 
 SYNOPSIS
-alert_status.py [-c CREDENTIALS] { -l | -d [-a CAUSE] } [-i INDENT] [-v] ID
+alert_status.py [-c CREDENTIALS] { -F { -l | -d [-a CAUSE] } | -D } [-i INDENT] [-v] ID
 
 EXAMPLES
-alert_status.py -vi4 -c bruno -l 87
+alert_status.py -vi4 -c bruno -Fl 87
 
 DOCUMENT EXAMPLE
 {"id": 77, "rec": "2021-09-07T11:40:00Z", "cause": null, "val": 589.6}
@@ -32,13 +33,12 @@ import sys
 
 from scs_analysis.cmd.cmd_alert_status import CmdAlertStatus
 
-from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
 from scs_core.aws.manager.alert_status_manager import AlertStatusManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPException
+from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.json import JSONify
 
@@ -51,26 +51,24 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    logger = None
     response = None
     report = None
 
+    # ------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdAlertStatus()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
+    Logging.config('alert_status', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
+
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # cmd...
-
-        cmd = CmdAlertStatus()
-
-        if not cmd.is_valid():
-            cmd.print_help(sys.stderr)
-            exit(2)
-
-        Logging.config('alert_status', verbose=cmd.verbose)
-        logger = Logging.getLogger()
-
-        logger.info(cmd)
-
-
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
@@ -90,7 +88,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        specification_manager = AlertSpecificationManager(requests)
         status_manager = AlertStatusManager(requests)
 
 
@@ -103,23 +100,21 @@ if __name__ == '__main__':
             logger.error('the ID must be an integer.')
             exit(2)
 
-        specification = specification_manager.retrieve(auth.id_token, cmd.id)
-
-        if specification is None:
-            logger.error("no alert found with ID %s." % cmd.id)
-            exit(2)
-
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.latest:
-            response = status_manager.find(auth.id_token, cmd.id, None, cmd.response_mode())
-            report = response.alert_statuses[0] if response.alert_statuses else None
+        if cmd.find:
+            if cmd.latest:
+                response = status_manager.find(auth.id_token, cmd.id, None, cmd.response_mode())
+                report = response.alert_statuses[0] if response.alert_statuses else None
 
-        if cmd.history:
-            response = status_manager.find(auth.id_token, cmd.id, cmd.cause, cmd.response_mode())
-            report = sorted(response.alert_statuses)
+            if cmd.history:
+                response = status_manager.find(auth.id_token, cmd.id, cmd.cause, cmd.response_mode())
+                report = sorted(response.alert_statuses)
+
+        if cmd.delete:
+            status_manager.delete(auth.id_token, cmd.id)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -135,6 +130,10 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except HTTPNotFoundException:
+        logger.error("no alert found with ID %s." % cmd.id)
+        exit(2)
 
     except HTTPException as ex:
         logger.error(ex.error_report)
