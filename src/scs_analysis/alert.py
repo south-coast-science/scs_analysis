@@ -197,7 +197,7 @@ if __name__ == '__main__':
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       cmd.test_interval, None, to, cc, bool(cmd.suspended))
+                                       cmd.test_interval, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -228,13 +228,14 @@ if __name__ == '__main__':
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
+            json_message = alert.json_message if cmd.suspended is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else alert.cc_list
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, test_interval,
-                                         alert.creator_email_address, to, cc, suspended)
+                                         json_message, alert.creator_email_address, to, cc, suspended)
 
             if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
