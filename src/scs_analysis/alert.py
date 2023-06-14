@@ -259,6 +259,8 @@ if __name__ == '__main__':
 
         # report...
         if report is not None:
+            for item in report:
+                print(item)
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
