@@ -76,6 +76,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: remove APIAuth requirement
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

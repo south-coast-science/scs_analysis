@@ -20,8 +20,8 @@ class CmdAlert(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
-                                                    "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-i INDENT] [-v] "
+                                                    "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-j { 1 | 0 }] "
+                                                    "[-s { 1 | 0 }] [-i INDENT] [-v] "
                                                     "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]",
                                               version="%prog 1.0")
 
@@ -70,7 +70,7 @@ class CmdAlert(object):
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",
                                  help="test interval (NOT IN USE)")
 
-        self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_-message",
+        self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_message",
                                  default=None, help="message body is JSON (default false)")
 
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
