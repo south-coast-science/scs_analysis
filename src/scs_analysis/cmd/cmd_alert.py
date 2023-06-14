@@ -70,6 +70,9 @@ class CmdAlert(object):
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",
                                  help="test interval (NOT IN USE)")
 
+        self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_-message",
+                                 default=None, help="message body is JSON (default false)")
+
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
                                  default=None, help="suspended (default false)")
 
@@ -236,6 +239,11 @@ class CmdAlert(object):
 
 
     @property
+    def json_message(self):
+        return self.__opts.json_message
+
+
+    @property
     def suspended(self):
         return self.__opts.suspended
 
@@ -280,9 +288,9 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, " \
                "delete:%s, topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, " \
-               "alert_on_none:%s, aggregation_period:%s, test_interval:%s, suspended:%s, email:%s, " \
-               "cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
+               "alert_on_none:%s, aggregation_period:%s, test_interval:%s, json_message:%s, suspended:%s, " \
+               "email:%s, cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
                 self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
-                self.alert_on_none, self.aggregation_period, self.test_interval, self.suspended, self.email,
-                self.cc, self.cc_list, self.indent, self.verbose)
+                self.alert_on_none, self.aggregation_period, self.test_interval, self.suspended, self.json_message,
+                self.email, self.cc, self.cc_list, self.indent, self.verbose)
