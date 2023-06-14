@@ -125,6 +125,9 @@ class CmdAlert(object):
         if self.alert_on_none is not None and self.alert_on_none != 0 and self.alert_on_none != 1:
             return False
 
+        if self.json_message is not None and self.json_message != 0 and self.json_message != 1:
+            return False
+
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
@@ -292,5 +295,5 @@ class CmdAlert(object):
                "email:%s, cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
                 self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
-                self.alert_on_none, self.aggregation_period, self.test_interval, self.suspended, self.json_message,
+                self.alert_on_none, self.aggregation_period, self.test_interval, self.json_message, self.suspended,
                 self.email, self.cc, self.cc_list, self.indent, self.verbose)

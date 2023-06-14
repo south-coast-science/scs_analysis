@@ -36,17 +36,18 @@ DOCUMENT EXAMPLE
     "field": "val.tmp",
     "lower-threshold": null,
     "upper-threshold": 30.0,
-    "alert-on-none": true,
+    "alert-on-none": false,
     "aggregation-period": {
         "interval": 1,
         "units": "M"
     },
     "test-interval": null,
-    "creator-email-address": "someone@southcoastscience.com",
-    "to": "someone@southcoastscience.com",
+    "json-message": false,
+    "creator-email-address": "bruno.beloff@southcoastscience.com",
+    "to": "bruno.beloff@southcoastscience.com",
     "cc-list": [
-        "someone@me.com",
-        "someone@outlook.com"
+        "bbeloff@me.com",
+        "jadempage@outlook.com"
     ],
     "suspended": false
 }
@@ -228,7 +229,7 @@ if __name__ == '__main__':
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
-            json_message = alert.json_message if cmd.suspended is None else bool(cmd.json_message)
+            json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else alert.cc_list
@@ -259,8 +260,6 @@ if __name__ == '__main__':
 
         # report...
         if report is not None:
-            for item in report:
-                print(item)
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
