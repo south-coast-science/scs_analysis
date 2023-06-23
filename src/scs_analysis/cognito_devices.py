@@ -40,7 +40,7 @@ import sys
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_device_v1 import CognitoDeviceIdentity
+from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -126,7 +126,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
-            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None)
+            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None, None)
 
             report = device_manager.create(auth.id_token, identity)
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
+            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None, None)
 
             auth = gatekeeper.user_login(credentials)                          # renew credentials
             device_manager.update(auth.id_token, report)
