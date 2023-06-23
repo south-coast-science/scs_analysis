@@ -186,8 +186,8 @@ if __name__ == '__main__':
                     logger.error("no bylines found for %s." % device_tag)
                     continue
 
-                gases_topic = group.latest_topic('/gases')
-                control_topic = group.latest_topic('/control')
+                gases_topic = group.latest_topic(suffix='/gases')
+                control_topic = group.latest_topic(suffix='/control')
 
                 if gases_topic is None:
                     logger.error("no gases topic found for %s." % device_tag)
