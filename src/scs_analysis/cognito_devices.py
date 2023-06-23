@@ -40,7 +40,7 @@ import sys
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_device import CognitoDeviceIdentity
+from scs_core.aws.security.cognito_device_v1 import CognitoDeviceIdentity
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_device_manager import CognitoDeviceManager
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
