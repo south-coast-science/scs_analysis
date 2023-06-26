@@ -56,6 +56,7 @@ from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
 
+from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
@@ -155,8 +156,16 @@ if __name__ == '__main__':
                 logger.error("The email address '%s' is not valid." % cmd.email)
                 exit(1)
 
+            # TODO: check if email address is already in use
+
+            password = StdIO.prompt("Enter password")
+
+            if not CognitoUserIdentity.is_valid_password(password):
+                logger.error("The password '%s' is not valid." % password)
+                exit(1)
+
             identity = CognitoUserIdentity(None, None, None, True, False, cmd.email,
-                                           cmd.given_name, cmd.family_name, None, False, False,
+                                           cmd.given_name, cmd.family_name, password, False, False,
                                            False, None)
 
             manager = CognitoUserCreator(requests)
@@ -175,6 +184,8 @@ if __name__ == '__main__':
             email = identity.email if cmd.email is None else cmd.email
             given_name = identity.given_name if cmd.given_name is None else cmd.given_name
             family_name = identity.family_name if cmd.family_name is None else cmd.family_name
+
+            # TODO: update password option
 
             if not Datum.is_email_address(email):
                 logger.error("The email address '%s' is not valid." % email)
