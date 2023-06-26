@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
             # TODO: check if email address is already in use
 
-            password = StdIO.prompt("Enter password")
+            password = StdIO.prompt("Enter password")       # TODO: don't set password - use FORCE CHANGE
 
             if not CognitoUserIdentity.is_valid_password(password):
                 logger.error("The password '%s' is not valid." % password)
