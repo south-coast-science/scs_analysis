@@ -17,7 +17,7 @@ class CmdCognitoDevices(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
-                                                    "{ -F [-t TAG] [-m] "
+                                                    "{ -F [{ -t TAG | -n INVOICE }] [-m] "
                                                     "| -U TAG INVOICE "
                                                     "| -D TAG } "
                                                     "[-i INDENT] [-v]",
@@ -40,6 +40,9 @@ class CmdCognitoDevices(object):
         # filters...
         self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
                                  help="filter by device tag")
+
+        self.__parser.add_option("--invoice", "-n", type="string", action="store", dest="invoice_name",
+                                 help="filter by invoice")
 
         # output...
         self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
@@ -72,6 +75,9 @@ class CmdCognitoDevices(object):
             return False
 
         if self.memberships and not self.find:
+            return False
+
+        if self.tag and self.invoice_name:
             return False
 
         return True
@@ -115,6 +121,11 @@ class CmdCognitoDevices(object):
 
 
     @property
+    def invoice_name(self):
+        return self.__opts.invoice_name
+
+
+    @property
     def memberships(self):
         return self.__opts.memberships
 
@@ -137,6 +148,6 @@ class CmdCognitoDevices(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdCognitoDevices:{credentials_name:%s, find:%s, update:%s, delete:%s, " \
-               "tag:%s, memberships:%s, indent:%s, verbose:%s}" % \
+               "tag:%s, invoice:%s, memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.update, self.delete,
-                self.tag, self.memberships, self.indent, self.verbose)
+                self.tag, self.invoice_name, self.memberships, self.indent, self.verbose)
