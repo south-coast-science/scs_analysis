@@ -22,7 +22,8 @@ EXAMPLES
 cognito_devices.py -vi4 -c super -F -m
 
 DOCUMENT EXAMPLE
-{"username": "scs-ph1-28", "created": "2023-04-04T09:08:55Z", "last-updated": "2023-04-04T09:08:56Z"}
+{"username": "scs-bgx-401", "invoice": "INV-000123",
+"created": "2023-06-23T10:32:52+01:00", "last-updated": "2023-06-23T10:32:52+01:00"}
 
 SEE ALSO
 scs_analysis/cognito_credentials
@@ -111,7 +112,7 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.tag is not None:
-                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
+                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))   # TODO: Internal Server Error on null tag
 
             else:
                 report = sorted(finder.find_all(auth.id_token))
@@ -129,10 +130,8 @@ if __name__ == '__main__':
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update_tag, None, cmd.update_invoice, None, None)
-
-            auth = gatekeeper.user_login(credentials)                          # renew credentials
-            device_manager.update(auth.id_token, report)
+            updated = CognitoDeviceIdentity(cmd.update_tag, None, cmd.update_invoice, None, None)
+            report = device_manager.update(auth.id_token, updated)
 
         if cmd.delete:
             device_manager.delete(auth.id_token, cmd.delete)
