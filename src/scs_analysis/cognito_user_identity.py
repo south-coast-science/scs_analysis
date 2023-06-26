@@ -135,8 +135,8 @@ if __name__ == '__main__':
                 exit(1)
 
             # save identity...
-            report = CognitoUserIdentity(email, None, None, True, False, email, given_name, family_name, password,
-                                         False, False, None)
+            report = CognitoUserIdentity(email, None, None, True, False, email,
+                                         given_name, family_name, password, False, False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(report)
@@ -184,9 +184,9 @@ if __name__ == '__main__':
                 exit(1)
 
             # save identity...
-            identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified,
-                                           email, given_name, family_name, password,
-                                           identity.is_super, identity.is_tester, None)
+            identity = CognitoUserIdentity(identity.username, None, None, True, identity.email_verified, email,
+                                           given_name, family_name, password, identity.is_super, identity.is_tester,
+                                           identity.is_financial, None)
 
             auth = gatekeeper.user_login(credentials)                          # renew credentials
             manager = CognitoUserEditor(requests, auth.id_token)
