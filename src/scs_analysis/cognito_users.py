@@ -211,5 +211,5 @@ if __name__ == '__main__':
         exit(1)
 
     except HTTPException as ex:
-        logger.error(ex.data)
+        logger.error(ex.error_report)
         exit(1)

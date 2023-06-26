@@ -22,7 +22,8 @@ EXAMPLES
 cognito_devices.py -vi4 -c super -F -m
 
 DOCUMENT EXAMPLE
-{"username": "scs-ph1-28", "created": "2023-04-04T09:08:55Z", "last-updated": "2023-04-04T09:08:56Z"}
+{"username": "scs-bgx-401", "invoice": "INV-000123",
+"created": "2023-06-23T10:32:52+01:00", "last-updated": "2023-06-23T10:32:52+01:00"}
 
 SEE ALSO
 scs_analysis/cognito_credentials
@@ -47,7 +48,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_membership import CognitoMembership
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.client.http_exception import HTTPConflictException
+from scs_core.client.http_exception import HTTPException, HTTPConflictException
 
 from scs_core.data.json import JSONify
 
@@ -111,7 +112,7 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.tag is not None:
-                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
+                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))   # TODO: Internal Server Error on null tag
 
             else:
                 report = sorted(finder.find_all(auth.id_token))
@@ -120,33 +121,17 @@ if __name__ == '__main__':
                 org_devices = org_manager.find_devices(auth.id_token)
                 report = CognitoMembership.merge(report, org_devices)
 
-        if cmd.create:
-            if not CognitoDeviceIdentity.is_valid_password(cmd.create[1]):
-                logger.error("password must be at least 16 characters.")
-                exit(2)
-
-            # create...
-            identity = CognitoDeviceIdentity(cmd.create[0], cmd.create[1], None, None)
-
-            report = device_manager.create(auth.id_token, identity)
-
         if cmd.update:
-            if not CognitoDeviceIdentity.is_valid_password(cmd.update[1]):
-                logger.error("password must be at least 16 characters.")
-                exit(2)
-
             # find...
-            device = finder.get_by_tag(auth.id_token, cmd.update[0])
+            device = finder.get_by_tag(auth.id_token, cmd.update_tag)
 
             if device is None:
                 logger.error("no device found for tag: '%s'." % cmd.update)
                 exit(1)
 
             # update...
-            report = CognitoDeviceIdentity(cmd.update[0], cmd.update[1], None, None)
-
-            auth = gatekeeper.user_login(credentials)                          # renew credentials
-            device_manager.update(auth.id_token, report)
+            updated = CognitoDeviceIdentity(cmd.update_tag, None, cmd.update_invoice, None, None)
+            report = device_manager.update(auth.id_token, updated)
 
         if cmd.delete:
             device_manager.delete(auth.id_token, cmd.delete)
@@ -166,4 +151,8 @@ if __name__ == '__main__':
 
     except HTTPConflictException as ex:
         logger.error("the tag '%s' is already in use." % report.tag)
+        exit(1)
+
+    except HTTPException as ex:
+        logger.error(ex.error_report)
         exit(1)
