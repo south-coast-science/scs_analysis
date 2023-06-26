@@ -1,6 +1,5 @@
 """
 Created on 4 Sep 2020
-Updated 23 Mar 2021
 
 @author: Jade Page (jade.page@southcoastscience.com)
 
@@ -65,7 +64,6 @@ setuptools.setup(
         'src/scs_analysis/aws_byline.py',
         'src/scs_analysis/aws_client_auth.py',
         'src/scs_analysis/aws_mqtt_client.py',
-        'src/scs_analysis/aws_mqtt_control.py',
         'src/scs_analysis/aws_topic_history.py',
         'src/scs_analysis/aws_topic_publisher.py',
         'src/scs_analysis/aws_upload_interval.py',
@@ -89,7 +87,6 @@ setuptools.setup(
         'src/scs_analysis/histo_chart.py',
         'src/scs_analysis/localised_datetime.py',
         'src/scs_analysis/monitor_auth.py',
-        'src/scs_analysis/mqtt_peers.py',
         'src/scs_analysis/multi_chart.py',
         'src/scs_analysis/node.py',
         'src/scs_analysis/organisation_devices.py',

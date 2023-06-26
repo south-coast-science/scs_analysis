@@ -17,9 +17,8 @@ class CmdCognitoDevices(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
-                                                    "{ -F [-t TAG] [-m] "
-                                                    "| -C TAG SHARED_SECRET "
-                                                    "| -U TAG SHARED_SECRET "
+                                                    "{ -F [-t TAG] [-n INVOICE] [-m] "
+                                                    "| -U TAG INVOICE "
                                                     "| -D TAG } "
                                                     "[-i INDENT] [-v]",
                                               version="%prog 1.0")
@@ -32,9 +31,6 @@ class CmdCognitoDevices(object):
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
                                  help="list the devices visible to me")
 
-        self.__parser.add_option("--Create", "-C", type="string", action="store", nargs=2, dest="create",
-                                 help="create a device")
-
         self.__parser.add_option("--Update", "-U", type="string", action="store", nargs=2, dest="update",
                                  help="update the device")
 
@@ -44,6 +40,9 @@ class CmdCognitoDevices(object):
         # filters...
         self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
                                  help="filter by device tag")
+
+        self.__parser.add_option("--invoice", "-n", type="string", action="store", dest="invoice",
+                                 help="filter by invoice")
 
         # output...
         self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
@@ -66,10 +65,7 @@ class CmdCognitoDevices(object):
         if self.find:
             count += 1
 
-        if self.create is not None:
-            count += 1
-
-        if self.update is not None:
+        if self.update:
             count += 1
 
         if self.delete is not None:
@@ -97,13 +93,18 @@ class CmdCognitoDevices(object):
 
 
     @property
-    def create(self):
-        return self.__opts.create
+    def update(self):
+        return bool(self.__opts.update)
 
 
     @property
-    def update(self):
-        return self.__opts.update
+    def update_tag(self):
+        return self.__opts.update[0] if self.update else None
+
+
+    @property
+    def update_invoice(self):
+        return self.__opts.update[1] if self.update else None
 
 
     @property
@@ -114,6 +115,11 @@ class CmdCognitoDevices(object):
     @property
     def tag(self):
         return self.__opts.tag
+
+
+    @property
+    def invoice(self):
+        return self.__opts.invoice
 
 
     @property
@@ -138,7 +144,7 @@ class CmdCognitoDevices(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoDevices:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
-               "tag:%s, memberships:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.find, self.create, self.update, self.delete,
-                self.tag, self.memberships, self.indent, self.verbose)
+        return "CmdCognitoDevices:{credentials_name:%s, find:%s, update:%s, delete:%s, " \
+               "tag:%s, invoice:%s, memberships:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.update, self.delete,
+                self.tag, self.invoice, self.memberships, self.indent, self.verbose)

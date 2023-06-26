@@ -18,11 +18,16 @@ class CmdAlert(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  { -F | -R ID | -C | -U ID | -D ID } "
-                                                    "[-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
-                                                    "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] "
-                                                    "[-c EMAIL_ADDR] [-e EMAIL_ADDR] [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
+                                                    "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
+                                                    "[-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-j { 1 | 0 }] "
+                                                    "[-s { 1 | 0 }] [-i INDENT] [-v] "
+                                                    "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]",
                                               version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # operations...
         self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
@@ -41,6 +46,9 @@ class CmdAlert(object):
                                  help="delete alert with given ID")
 
         # fields...
+        self.__parser.add_option("--description", "-d", type="string", action="store", dest="description",
+                                 default="", help="description")
+
         self.__parser.add_option("--topic-path", "-p", type="string", action="store", dest="topic",
                                  help="topic path")
 
@@ -60,17 +68,20 @@ class CmdAlert(object):
                                  dest="aggregation_period", help="aggregation interval and units { D | H | M }")
 
         self.__parser.add_option("--test-interval", "-t", type="string", action="store", dest="test_interval",
-                                 help="test interval")
+                                 help="test interval (NOT IN USE)")
+
+        self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_message",
+                                 default=None, help="message body is JSON (default false)")
 
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
-                                 default=False, help="suspended (default false)")
+                                 default=None, help="suspended (default false)")
 
         # email...
-        self.__parser.add_option("--creator", "-c", type="string", action="store", dest="creator",
-                                 help="email address of alert creator (admin use only)")
+        self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
+                                 help="email To address or creator address")
 
-        self.__parser.add_option("--email-to", "-e", type="string", action="store", dest="to",
-                                 help="email To address")
+        self.__parser.add_option("--cc-list", "-g", action="store_true", dest="cc", default=False,
+                                 help="email CC list")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -114,6 +125,9 @@ class CmdAlert(object):
         if self.alert_on_none is not None and self.alert_on_none != 0 and self.alert_on_none != 1:
             return False
 
+        if self.json_message is not None and self.json_message != 0 and self.json_message != 1:
+            return False
+
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
@@ -134,15 +148,33 @@ class CmdAlert(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity...
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    @property
+    def id(self):
+        if self.__opts.retrieve_id is not None:
+            return self.__opts.retrieve_id
+
+        if self.__opts.update_id is not None:
+            return self.__opts.update_id
+
+        if self.__opts.delete_id is not None:
+            return self.__opts.delete_id
+
+        return None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: operations...
 
     @property
     def find(self):
         return self.__opts.find
-
-
-    @property
-    def retrieve_id(self):
-        return self.__opts.retrieve_id
 
 
     @property
@@ -156,23 +188,21 @@ class CmdAlert(object):
 
 
     @property
-    def update_id(self):
-        return self.__opts.update_id
-
-
-    @property
     def update(self):
         return self.__opts.update_id is not None
 
 
     @property
-    def delete_id(self):
-        return self.__opts.delete_id
-
-
-    @property
     def delete(self):
         return self.__opts.delete_id is not None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: fields...
+
+    @property
+    def description(self):
+        return self.__opts.description
 
 
     @property
@@ -212,19 +242,35 @@ class CmdAlert(object):
 
 
     @property
+    def json_message(self):
+        return self.__opts.json_message
+
+
+    @property
     def suspended(self):
         return self.__opts.suspended
 
 
-    @property
-    def creator(self):
-        return self.__opts.creator
-
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: email...
 
     @property
-    def to(self):
-        return self.__opts.to
+    def email(self):
+        return self.__opts.email
 
+
+    @property
+    def cc(self):
+        return self.__opts.cc
+
+
+    @property
+    def cc_list(self):
+        return self.__args if self.cc else None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # fields: output...
 
     @property
     def indent(self):
@@ -243,9 +289,11 @@ class CmdAlert(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlert:{find:%s, retrieve:%s, create:%s, update:%s, delete:%s, topic:%s, field:%s, " \
-               "lower_threshold:%s, upper_threshold:%s, alert_on_none:%s, aggregation_period:%s, " \
-               "test_interval:%s, suspended:%s, creator:%s, to:%s, indent:%s, verbose:%s}" % \
-               (self.find, self.retrieve_id, self.create, self.update_id, self.delete_id, self.topic, self.field,
-                self.lower_threshold, self.upper_threshold, self.alert_on_none, self.aggregation_period,
-                self.test_interval, self.suspended, self.creator, self.to, self.indent, self.verbose)
+        return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, " \
+               "delete:%s, topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, " \
+               "alert_on_none:%s, aggregation_period:%s, test_interval:%s, json_message:%s, suspended:%s, " \
+               "email:%s, cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
+                self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
+                self.alert_on_none, self.aggregation_period, self.test_interval, self.json_message, self.suspended,
+                self.email, self.cc, self.cc_list, self.indent, self.verbose)

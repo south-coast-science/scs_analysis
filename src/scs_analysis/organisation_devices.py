@@ -171,5 +171,5 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPException as ex:
-        logger.error(ex.data)
+        logger.error(ex.error_report)
         exit(1)
