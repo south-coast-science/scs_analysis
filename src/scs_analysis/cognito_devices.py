@@ -15,8 +15,7 @@ If the --Create function is used, an email is sent to the new user. The verifica
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_devices.py  [-c CREDENTIALS] { -F [-t TAG] [-m] | -C TAG SHARED_SECRET | -U TAG SHARED_SECRET | -D TAG } \
-[-i INDENT] [-v]
+cognito_devices.py  [-c CREDENTIALS] { -F [{ -t TAG | -n INVOICE }] [-m] | -U TAG INVOICE | -D TAG } [-i INDENT] [-v]
 
 EXAMPLES
 cognito_devices.py -vi4 -c super -F -m
@@ -116,6 +115,9 @@ if __name__ == '__main__':
 
             else:
                 report = sorted(finder.find_all(auth.id_token))
+
+            if cmd.invoice_name is not None:
+                report = [device for device in report if device.invoice_number == cmd.invoice_name]
 
             if cmd.memberships:
                 org_devices = org_manager.find_devices(auth.id_token)
