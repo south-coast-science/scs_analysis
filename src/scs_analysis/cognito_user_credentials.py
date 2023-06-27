@@ -158,7 +158,7 @@ if __name__ == '__main__':
     # end...
 
         if credentials:
-            print(JSONify.dumps(credentials, indent=cmd.is_valid()))
+            print(JSONify.dumps(credentials))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

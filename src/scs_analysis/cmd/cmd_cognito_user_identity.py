@@ -16,7 +16,7 @@ class CmdCognitoUserIdentity(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -C | -R | -U } [-i INDENT] [-v]",
                                               version="%prog 1.0")
 
         # identity...
