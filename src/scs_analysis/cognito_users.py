@@ -167,8 +167,7 @@ if __name__ == '__main__':
                 exit(1)
 
             identity = CognitoUserIdentity(None, None, None, True, False, cmd.email,
-                                           cmd.given_name, cmd.family_name, password, False, False,
-                                           False, None)
+                                           cmd.given_name, cmd.family_name, password, False, False, False, None)
 
             manager = CognitoUserCreator(requests)
             report = manager.create(identity)

@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # save identity...
-            report = CognitoUserIdentity(email, None, None, True, False, email,
+            report = CognitoUserIdentity(None, None, None, True, False, email,
                                          given_name, family_name, password, False, False, False, None)
 
             manager = CognitoUserCreator(requests)
