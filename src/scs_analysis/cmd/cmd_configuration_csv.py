@@ -19,7 +19,7 @@ class CmdConfigurationCSV(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -n | -s | -l OUTPUT_CSV | "
-                                                    "{ -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-e]] "
+                                                    "{ -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-x]] "
                                                     "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
 
         # identity...
@@ -47,7 +47,7 @@ class CmdConfigurationCSV(object):
         self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
                                  help="the device for the history report")
 
-        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
                                  help="exact match for tag")
 
         # output...
