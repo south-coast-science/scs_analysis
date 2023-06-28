@@ -110,7 +110,7 @@ if __name__ == '__main__':
             report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
 
         if cmd.delete:
-            manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
+            report = manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
 
 
         # ------------------------------------------------------------------------------------------------------------
