@@ -98,7 +98,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        report = manager.find(auth.id_token, device_tag_filter=cmd.tag_filter, exact=True)
+        report = manager.find(auth.id_token, device_tag_filter=cmd.tag_filter, exact=cmd.exact_match)
 
 
         # ------------------------------------------------------------------------------------------------------------
