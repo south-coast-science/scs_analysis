@@ -6,7 +6,8 @@ Created on 28 Jun 2023
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The device_monitor utility is used to
+The device monitor periodically checks on the availability and health of every air quality monitoring device. The
+device_monitor utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
 
@@ -26,16 +27,13 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
-from scs_core.aws.client.api_auth import APIAuth
-
-from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
-
 from scs_core.aws.manager.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
+from scs_core.client.http_exception import HTTPException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -63,7 +61,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('device_monitor', verbose=cmd.verbose)        # level=logging.DEBUG
+        Logging.config('device_monitor', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -81,13 +79,6 @@ if __name__ == '__main__':
 
         if not auth.is_ok():
             logger.error("login: %s" % auth.authentication_status.description)
-            exit(1)
-
-        # APIAuth (for BylineManager)...
-        api_auth = APIAuth.load(Host)
-
-        if api_auth is None:
-            logger.error("APIAuth is not available")
             exit(1)
 
 
@@ -115,7 +106,12 @@ if __name__ == '__main__':
         if cmd.find:
             report = manager.find(auth.id_token, email_address=cmd.email, device_tag=cmd.device_tag, exact=True)
 
-            print("report: %s" % report)
+        if cmd.add:
+            report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
+
+        if cmd.delete:
+            manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # end...
