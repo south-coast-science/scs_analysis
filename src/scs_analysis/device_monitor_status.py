@@ -7,7 +7,7 @@ Created on 28 Jun 2023
 
 DESCRIPTION
 The device monitor periodically checks on the availability and health of every air quality monitoring device. The
-device_monitor utility is used to manage the email addresses associated with individual devices.
+device_monitor_status utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
 
@@ -25,9 +25,9 @@ scs_analysis/cognito_user_credentials
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
+from scs_analysis.cmd.cmd_device_monitor_status import CmdDeviceMonitorStatus
 
-from scs_core.aws.manager.device_monitor_specification_manager import DeviceMonitorSpecificationManager
+from scs_core.aws.manager.device_monitor_status_manager import DeviceMonitorStatusManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
@@ -35,7 +35,6 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
-from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
@@ -43,7 +42,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: needs to handle non-exact
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -56,13 +54,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdDeviceMonitor()
+        cmd = CmdDeviceMonitorStatus()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('device_monitor', verbose=cmd.verbose)
+        Logging.config('device_monitor_status', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -86,32 +84,21 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # validation...
 
-        if cmd.email is not None and not Datum.is_email_address(cmd.email):
-            logger.error("The email address '%s' is not valid." % cmd.email)
-            exit(2)
-
-        if cmd.device_tag is not None and not CognitoDeviceCredentials.is_valid_tag(cmd.device_tag):
-            logger.error("The device tag '%s' is not valid." % cmd.device_tag)
+        if cmd.tag_filter is not None and cmd.exact_match and not CognitoDeviceCredentials.is_valid_tag(cmd.tag_filter):
+            logger.error("The device tag '%s' is not valid." % cmd.tag_filter)
             exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = DeviceMonitorSpecificationManager(requests)
+        manager = DeviceMonitorStatusManager(requests)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.find:
-            report = manager.find(auth.id_token, email_address=cmd.email, device_tag=cmd.device_tag, exact=True)
-
-        if cmd.add:
-            report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
-
-        if cmd.delete:
-            report = manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
+        report = manager.find(auth.id_token, device_tag_filter=cmd.tag_filter, exact=True)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -120,8 +107,6 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
-
-        if cmd.find:
             logger.info('retrieved: %s' % len(report))
 
     except KeyboardInterrupt:
