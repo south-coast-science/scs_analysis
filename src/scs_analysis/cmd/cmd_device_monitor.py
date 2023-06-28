@@ -70,11 +70,11 @@ class CmdDeviceMonitor(object):
         if count != 1:
             return False
 
-        if self.add or self.delete and self.__opts.email is not None:
-            return False
-
-        if self.add and self.__opts.device_tag is not None:
-            return False
+        # if self.add or self.delete and self.__opts.email is not None:
+        #     return False
+        #
+        # if self.add and self.__opts.device_tag is not None:
+        #     return False
 
         return True
 
