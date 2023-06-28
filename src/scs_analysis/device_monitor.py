@@ -43,7 +43,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: needs to handle non-exact
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -86,11 +85,11 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # validation...
 
-        if cmd.email is not None and not Datum.is_email_address(cmd.email):
+        if cmd.email is not None and cmd.exact_match and not Datum.is_email_address(cmd.email):
             logger.error("The email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if cmd.device_tag is not None and not CognitoDeviceCredentials.is_valid_tag(cmd.device_tag):
+        if cmd.device_tag is not None and cmd.exact_match and not CognitoDeviceCredentials.is_valid_tag(cmd.device_tag):
             logger.error("The device tag '%s' is not valid." % cmd.device_tag)
             exit(2)
 
@@ -105,7 +104,8 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.find(auth.id_token, email_address=cmd.email, device_tag=cmd.device_tag, exact=True)
+            report = manager.find(auth.id_token, email_address=cmd.email, device_tag=cmd.device_tag,
+                                  exact=cmd.exact_match)
 
         if cmd.add:
             report = manager.add(auth.id_token, cmd.email, cmd.device_tag)

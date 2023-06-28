@@ -18,7 +18,8 @@ class CmdDeviceMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG }] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
+                                                    "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
                                                     "-A EMAIL_ADDR DEVICE_TAG | -D EMAIL_ADDR [-t DEVICE_TAG] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
@@ -42,6 +43,9 @@ class CmdDeviceMonitor(object):
 
         self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
                                  help="device tag")
+
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
+                                 help="exact match for tag")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -120,6 +124,11 @@ class CmdDeviceMonitor(object):
         return self.__opts.device_tag
 
 
+    @property
+    def exact_match(self):
+        return self.__opts.exact_match
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # properties: output...
 
@@ -141,6 +150,6 @@ class CmdDeviceMonitor(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, delete:%s, " \
-               "email:%s, device_tag:%s, indent:%s, verbose:%s}" % \
+               "email:%s, device_tag:%s, exact_match:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.delete,
-                self.__opts.email, self.__opts.device_tag, self.indent, self.verbose)
+                self.__opts.email, self.__opts.device_tag, self.exact_match, self.indent, self.verbose)

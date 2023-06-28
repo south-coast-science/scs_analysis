@@ -18,7 +18,7 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-e]] { -l | -f | -d | -o } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-x]] { -l | -f | -d | -o } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -29,7 +29,7 @@ class CmdConfigurationMonitor(object):
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
-        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
                                  help="exact match for tag")
 
         # mode...

@@ -18,7 +18,7 @@ class CmdDeviceMonitorStatus(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t DEVICE_TAG [-e]]"
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t DEVICE_TAG [-x]] "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -29,7 +29,7 @@ class CmdDeviceMonitorStatus(object):
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
-        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
                                  help="exact match for tag")
 
         # output...

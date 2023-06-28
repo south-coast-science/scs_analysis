@@ -10,7 +10,7 @@ The device monitor periodically checks on the availability and health of every a
 device_monitor_status utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
-
+device_monitor_status.py [-c CREDENTIALS] [-t DEVICE_TAG [-x]] [-i INDENT] [-v]
 
 EXAMPLES
 
@@ -64,6 +64,7 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         logger.info(cmd)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
