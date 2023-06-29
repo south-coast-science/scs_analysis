@@ -9,25 +9,28 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoPassword(object):
+class CmdCognitoEmail(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -e | -s | -r } EMAIL [-v]",
+        self.__parser = optparse.OptionParser(usage="%prog { -e | -c | -s | -r } EMAIL",
                                               version="%prog 1.0")
 
         # functions...
-        self.__parser.add_option("--send-email", "-e", type="string", action="store", dest="send_email",
-                                 help="send password email")
+        self.__parser.add_option("--send-email", "-e", action="store_true", dest="send_email",
+                                 help="send access email")
 
-        self.__parser.add_option("--set-password", "-s", type="string", action="store", dest="set_password",
+        self.__parser.add_option("--confirm", "-c", action="store_true", dest="confirm",
+                                 help="confirm account (using confirmation code)")
+
+        self.__parser.add_option("--set-password", "-s", action="store_true", dest="set_password",
                                  help="set password (using temporary password)")
 
-        self.__parser.add_option("--reset-password", "-r", type="string", action="store", dest="reset_password",
-                                 help="reset password (using code)")
+        self.__parser.add_option("--reset-password", "-r", action="store_true", dest="reset_password",
+                                 help="reset password (using reset code)")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -44,6 +47,9 @@ class CmdCognitoPassword(object):
         if self.send_email:
             count += 1
 
+        if self.confirm:
+            count += 1
+
         if self.set_password:
             count += 1
 
@@ -53,43 +59,42 @@ class CmdCognitoPassword(object):
         if count != 1:
             return False
 
+        if self.email is None:
+            return False
+
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def email(self):
-        if self.send_email:
-            return self.__opts.send_email
-
-        if self.set_password:
-            return self.__opts.set_password
-
-        if self.reset_password:
-            return self.__opts.reset_password
-
-        return None
+    def send_email(self):
+        return self.__opts.send_email
 
 
     @property
-    def send_email(self):
-        return self.__opts.send_email is not None
+    def confirm(self):
+        return self.__opts.confirm
 
 
     @property
     def set_password(self):
-        return self.__opts.set_password is not None
+        return self.__opts.set_password
 
 
     @property
     def reset_password(self):
-        return self.__opts.reset_password is not None
+        return self.__opts.reset_password
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def email(self):
+        return self.__args[0] if self.__args else None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -99,5 +104,5 @@ class CmdCognitoPassword(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoPassword:{send_email:%s, set_password:%s, reset:%s, verbose:%s}" % \
-               (self.__opts.send_email, self.__opts.set_password, self.__opts.reset_password, self.verbose)
+        return "CmdCognitoEmail:{send_email:%s, confirm:%s, set_password:%s, reset:%s, verbose:%s}" % \
+               (self.send_email, self.confirm, self.set_password, self.reset_password, self.verbose)

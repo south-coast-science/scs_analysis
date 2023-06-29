@@ -8,7 +8,7 @@ Created on 9 Feb 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_password utility is used to set or reset the user's password, or to request an email to permit
+The cognito_email utility is used to set or reset the user's password, or to request an email to permit
 password operations. Which email message is sent depends on the state of the state of the user's account:
 
 * UNCONFIRMED - the account creation email is re-sent
@@ -19,10 +19,10 @@ password operations. Which email message is sent depends on the state of the sta
 Emails cannot be sent to users in the DISABLED state.
 
 SYNOPSIS
-cognito_password.py { -e | -s | -r } EMAIL [-v]
+cognito_email.py { -e | -s | -r } EMAIL [-v]
 
 EXAMPLES
-./cognito_password.py -r someone@me.com
+./cognito_email.py -r someone@me.com
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
@@ -33,12 +33,13 @@ scs_analysis/cognito_users
 import requests
 import sys
 
-from scs_analysis.cmd.cmd_cognito_password import CmdCognitoPassword
+from scs_analysis.cmd.cmd_cognito_email import CmdCognitoEmail
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager, AuthenticationStatus
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
+from scs_core.aws.security.cognito_user_manager import CognitoUserCreator
 
 from scs_core.client.http_exception import HTTPException, HTTPBadRequestException, HTTPUnauthorizedException, \
     HTTPNotFoundException, HTTPNotAllowedException
@@ -62,9 +63,9 @@ def do_password(do_set):
 
     try:
         if do_set:
-            manager.do_set_password(cmd.email, new_password, auth.content.session)
+            password_manager.do_set_password(cmd.email, new_password, auth.content.session)
         else:
-            manager.do_reset_password(cmd.email, code, new_password)
+            password_manager.do_reset_password(cmd.email, code, new_password)
 
     except HTTPNotFoundException:
         logger.error("no user could be found for email '%s'." % cmd.email)
@@ -102,13 +103,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # cmd...
 
-        cmd = CmdCognitoPassword()
+        cmd = CmdCognitoEmail()
 
         if not cmd.is_valid():
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('cognito_password', verbose=cmd.verbose)
+        Logging.config('cognito_email', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
@@ -117,7 +118,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = CognitoPasswordManager(requests)
+        password_manager = CognitoPasswordManager(requests)
+        user_manager = CognitoUserCreator(requests)
+
         gatekeeper = CognitoLoginManager(requests)
 
 
@@ -134,7 +137,7 @@ if __name__ == '__main__':
 
         if cmd.send_email:
             try:
-                manager.send_email(cmd.email)
+                password_manager.send_email(cmd.email)
                 logger.error("an email has been sent.")
                 exit(0)
 
@@ -145,6 +148,11 @@ if __name__ == '__main__':
             except HTTPNotFoundException:
                 logger.error("no user could be found for email '%s'." % cmd.email)
                 exit(1)
+
+        if cmd.confirm:
+            confirmation_code = StdIO.prompt("Enter confirmation code")
+
+            user_manager.confirm(cmd.email, confirmation_code)
 
         if cmd.set_password:
             temporary_password = StdIO.prompt("Enter temporary password")
