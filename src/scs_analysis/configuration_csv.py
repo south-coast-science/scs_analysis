@@ -38,8 +38,8 @@ For diff-histories and full-histories modes, a single rec value is included, equ
 Output CSV cell values are always wrapped in quotes ('"').
 
 SYNOPSIS
-configuration_csv.py { -n | -s | -l OUTPUT_CSV | { -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-e]] [-v]
-[NODE_1..NODE_N]
+configuration_csv.py [-c CREDENTIALS] { -n | -s | -l OUTPUT_CSV | { -d | -f } [-o OUTPUT_CSV_DIR] }
+[-t DEVICE_TAG [-x]] [-v] [NODE_1..NODE_N]
 
 EXAMPLES
 configuration_csv.py -vs configs.csv

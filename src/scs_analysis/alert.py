@@ -12,8 +12,8 @@ Alerts take the form of emails. These are sent when a parameter falls below or a
 value is null (a null value is being reported, or no reports are available). The alert specification sets these bounds,
 together with the aggregation period (usually in minutes). The minimum period is one minute.
 
-WARNING: when an alert is triggered, only one email is sent to each of the specified recipients. No further email
-is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds. The end of an
+Important note: when an alert is triggered, only one email is sent to each of the specified recipients. No further
+email is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds. The end of an
 out-of-bound event is logged in the alert status history. A history of out-of-bounds events for each alert
 specification can be found using the alert_status utility.
 
@@ -263,7 +263,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
-            logger.info('retrieved: %s' % len(response.alerts))
+            logger.info('retrieved: %s' % len(response))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
