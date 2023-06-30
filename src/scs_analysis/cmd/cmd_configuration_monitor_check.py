@@ -22,7 +22,7 @@ class CmdConfigurationMonitorCheck(object):
         """
         codes = ' | '.join(ConfigurationCheck.result_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -f TAG | [-t TAG [-e]] [-o] } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -f TAG | [-t TAG [-x]] [-o] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -37,7 +37,7 @@ class CmdConfigurationMonitorCheck(object):
         self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
                                  help="the (partial) tag of the device(s)")
 
-        self.__parser.add_option("--exactly", "-e", action="store_true", dest="exact_match", default=False,
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
                                  help="exact match for tag")
 
         self.__parser.add_option("--result", "-r", type="string", nargs=1, action="store", dest="result_code",

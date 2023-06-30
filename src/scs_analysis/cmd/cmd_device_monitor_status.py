@@ -1,5 +1,5 @@
 """
-Created on 24 Nov 2021
+Created on 28 Jun 2023
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -9,29 +9,28 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdCognitoUserIdentity(object):
+class CmdDeviceMonitorStatus(object):
     """unix command line handler"""
+
+    # --------------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -C | -R | -U } [-i INDENT] [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t DEVICE_TAG [-x]] "
+                                                    "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
-        # operations...
-        self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create my identity")
+        # filters...
+        self.__parser.add_option("--tag-filter", "-t", type="string", action="store", dest="tag_filter",
+                                 help="the (partial) tag of the device(s)")
 
-        self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
-                                 help="retrieve my identity")
-
-        self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
-                                 help="update my identity")
+        self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
+                                 help="exact match for tag")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
@@ -46,44 +45,36 @@ class CmdCognitoUserIdentity(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        count = 0
-
-        if self.create:
-            count += 1
-
-        if self.retrieve:
-            count += 1
-
-        if self.update:
-            count += 1
-
-        if count != 1:
+        if self.exact_match and self.tag_filter is None:
             return False
 
         return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity...
 
     @property
     def credentials_name(self):
         return self.__opts.credentials_name
 
 
-    @property
-    def create(self):
-        return self.__opts.create
-
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: filters...
 
     @property
-    def retrieve(self):
-        return self.__opts.retrieve
+    def tag_filter(self):
+        return self.__opts.tag_filter
 
 
     @property
-    def update(self):
-        return self.__opts.update
+    def exact_match(self):
+        return self.__opts.exact_match
 
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: output...
 
     @property
     def indent(self):
@@ -102,7 +93,5 @@ class CmdCognitoUserIdentity(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCognitoUserIdentity:{credentials_name:%s, retrieve:%s, create:%s, update:%s, indent:%s, " \
-               "verbose:%s}" % \
-               (self.credentials_name, self.retrieve, self.create, self.update, self.indent,
-                self.verbose)
+        return "CmdDeviceMonitorStatus:{credentials_name:%s, tag_filter:%s, exact_match:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.tag_filter, self.exact_match, self.indent, self.verbose)
