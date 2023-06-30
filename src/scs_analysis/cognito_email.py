@@ -41,11 +41,10 @@ from scs_core.aws.security.cognito_password_manager import CognitoPasswordManage
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator
 
-from scs_core.client.http_exception import HTTPException, HTTPBadRequestException, HTTPUnauthorizedException, \
-    HTTPNotFoundException, HTTPNotAllowedException
+from scs_core.client.http_exception import HTTPException, HTTPBadRequestException, HTTPGoneException, \
+    HTTPNotFoundException, HTTPNotAllowedException, HTTPUnauthorizedException
 
 from scs_core.data.datum import Datum
-
 
 from scs_core.sys.logging import Logging
 
@@ -147,12 +146,23 @@ if __name__ == '__main__':
 
             except HTTPNotFoundException:
                 logger.error("no user could be found for email '%s'." % cmd.email)
-                exit(1)
+                exit(2)
 
         if cmd.confirm:
             confirmation_code = StdIO.prompt("Enter confirmation code")
 
-            user_manager.confirm(cmd.email, confirmation_code)
+            try:
+                user_manager.confirm(cmd.email, confirmation_code)
+                logger.error("OK")
+                exit(0)
+
+            except HTTPNotFoundException:
+                logger.error("no user could be found for email '%s'." % cmd.email)
+                exit(2)
+
+            except HTTPGoneException:
+                logger.error("the account has already been confirmed.")
+                exit(1)
 
         if cmd.set_password:
             temporary_password = StdIO.prompt("Enter temporary password")
@@ -173,7 +183,7 @@ if __name__ == '__main__':
             code = StdIO.prompt("Enter verification code")
 
             do_password(False)
-            logger.error("the password has been reset.")
+            logger.error("the password has been reset - update your stored credentials.")
             exit(0)
 
 

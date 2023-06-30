@@ -152,7 +152,7 @@ if __name__ == '__main__':
             # update identity...
             given_name = StdIO.prompt("Enter given name", default=identity.given_name)
             family_name = StdIO.prompt("Enter family name", default=identity.family_name)
-            email = StdIO.prompt("Enter email", default=identity.email)
+            email = StdIO.prompt("Enter email address", default=identity.email)
             password = StdIO.prompt("Enter password (RETURN to keep existing)")
 
             if not password:
