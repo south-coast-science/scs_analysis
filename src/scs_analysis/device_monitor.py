@@ -10,16 +10,18 @@ The device monitor periodically checks on the availability and health of every a
 device_monitor utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
-
+device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
+-D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
 
 EXAMPLES
-
+device_monitor.py -c super -Ft scs-opc-109
 
 DOCUMENT EXAMPLE
+{"scs-opc-109": ["somebody@somewhere.com", "somebody@somewhere-else.com"], ...}
 
 SEE ALSO
-scs_analysis/alert_status
 scs_analysis/cognito_user_credentials
+scs_analysis/device_monitor_status
 """
 
 import requests

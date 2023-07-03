@@ -21,7 +21,7 @@ EXAMPLES
 alert_status.py -vi4 -c bruno -Fl 87
 
 DOCUMENT EXAMPLE
-{"id": 77, "rec": "2021-09-07T11:40:00Z", "cause": null, "val": 589.6}
+{"id": 88, "rec": "2023-06-29T09:48:42Z", "cause": "NV", "val": null}
 
 SEE ALSO
 scs_analysis/alert

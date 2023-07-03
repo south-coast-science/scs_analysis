@@ -7,19 +7,49 @@ Created on 28 Jun 2023
 
 DESCRIPTION
 The device monitor periodically checks on the availability and health of every air quality monitoring device. The
-device_monitor_status utility is used to manage the email addresses associated with individual devices.
+device_monitor_status utility is used to deliver the most recent report for the specified device(s).
 
 SYNOPSIS
 device_monitor_status.py [-c CREDENTIALS] [-t DEVICE_TAG [-x]] [-i INDENT] [-v]
 
 EXAMPLES
-
+device_monitor_status.py -vi4 -c super -t scs-bgx-570 -x
 
 DOCUMENT EXAMPLE
+{
+    "scs-bgx-570": {
+        "device-tag": "scs-bgx-570",
+        "availability": {
+            "is-ok": true,
+            "since": "2023-01-16T13:45:42Z"
+        },
+        "data": {
+            "south-coast-science-test/pmx/device/praxis-000570/status": {
+                "is-ok": false,
+                "since": "2021-07-30T11:30:43Z"
+            },
+            "south-coast-science-test/pmx/loc/570/climate": {
+                "is-ok": false,
+                "since": "2021-07-30T11:45:42Z"
+            },
+            "south-coast-science-test/pmx/loc/570/particulates": {
+                "is-ok": false,
+                "since": "2021-07-30T12:00:43Z"
+            }
+        },
+        "power": {
+            "is-ok": true,
+            "since": "2023-01-16T14:15:42Z"
+        },
+        "uptime": {
+            "period": null
+        }
+    }
+}
 
 SEE ALSO
-scs_analysis/alert_status
 scs_analysis/cognito_user_credentials
+scs_analysis/device_monitor
 """
 
 import requests

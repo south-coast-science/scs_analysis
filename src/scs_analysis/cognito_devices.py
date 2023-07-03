@@ -9,10 +9,10 @@ source repo: scs_analysis
 
 DESCRIPTION
 The cognito_devices utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
-by organisation administrators and superusers.
+by customer organisation administrators, SCS administrators and superusers.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
-excercised in order for the account to gain a CONFIRMED status.
+excercised using the cognito_email utility in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
 cognito_devices.py  [-c CREDENTIALS] { -F [{ -t TAG | -n INVOICE }] [-m] | -U TAG INVOICE | -D TAG } [-i INDENT] [-v]
@@ -26,6 +26,7 @@ DOCUMENT EXAMPLE
 
 SEE ALSO
 scs_analysis/cognito_credentials
+scs_analysis/cognito_email
 scs_analysis/cognito_users
 scs_analysis/organisation_devices
 
@@ -61,8 +62,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    credentials = None
-    finder = None
     report = None
 
     try:
@@ -116,8 +115,8 @@ if __name__ == '__main__':
             else:
                 report = sorted(finder.find_all(auth.id_token))
 
-            if cmd.invoice_name is not None:
-                report = [device for device in report if device.invoice_number == cmd.invoice_name]
+            if cmd.invoice_number is not None:
+                report = [device for device in report if device.invoice_number == cmd.invoice_number]
 
             if cmd.memberships:
                 org_devices = org_manager.find_devices(auth.id_token)
