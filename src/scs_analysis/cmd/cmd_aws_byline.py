@@ -18,7 +18,7 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-m] "
+        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # search types...
@@ -31,10 +31,14 @@ class CmdAWSByline(object):
         self.__parser.add_option("--all", "-a", action="store_true", dest="all", default=False,
                                  help="report all bylines")
 
-        # output...
+        # filters...
         self.__parser.add_option("--excluded", "-x", type="string", nargs=1, action="store", dest="excluded",
                                  help="exclude topics ending with EXCLUDED")
 
+        self.__parser.add_option("--strict", "-s", action="store_true", dest="strict", default=False,
+                                 help="only report devices with valid tags")
+
+        # output...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="only report the most recent byline")
 
@@ -101,6 +105,11 @@ class CmdAWSByline(object):
 
 
     @property
+    def strict(self):
+        return self.__opts.strict
+
+
+    @property
     def include_messages(self):
         return self.__opts.include_messages
 
@@ -122,7 +131,7 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, include_messages:%s, " \
-               "indent:%s, verbose:%s}" % \
-               (self.device, self.topic, self.latest, self.all, self.excluded, self.include_messages,
-                self.indent, self.verbose)
+        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, strict:%s, " \
+               "include_messages:%s, indent:%s, verbose:%s}" % \
+               (self.device, self.topic, self.latest, self.all, self.excluded, self.strict,
+                self.include_messages, self.indent, self.verbose)
