@@ -41,7 +41,7 @@ class CmdCognitoDevices(object):
         self.__parser.add_option("--tag", "-t", type="string", action="store", dest="tag",
                                  help="filter by device tag")
 
-        self.__parser.add_option("--invoice", "-n", type="string", action="store", dest="invoice_name",
+        self.__parser.add_option("--invoice", "-n", type="string", action="store", dest="invoice_number",
                                  help="filter by invoice")
 
         # output...
@@ -77,7 +77,7 @@ class CmdCognitoDevices(object):
         if self.memberships and not self.find:
             return False
 
-        if self.tag and self.invoice_name:
+        if self.tag and self.invoice_number:
             return False
 
         return True
@@ -121,8 +121,8 @@ class CmdCognitoDevices(object):
 
 
     @property
-    def invoice_name(self):
-        return self.__opts.invoice_name
+    def invoice_number(self):
+        return self.__opts.invoice_number
 
 
     @property
@@ -150,4 +150,4 @@ class CmdCognitoDevices(object):
         return "CmdCognitoDevices:{credentials_name:%s, find:%s, update:%s, delete:%s, " \
                "tag:%s, invoice:%s, memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.update, self.delete,
-                self.tag, self.invoice_name, self.memberships, self.indent, self.verbose)
+                self.tag, self.invoice_number, self.memberships, self.indent, self.verbose)
