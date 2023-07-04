@@ -11,7 +11,7 @@ device_monitor utility is used to manage the email addresses associated with ind
 
 SYNOPSIS
 device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
--D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
+-S DEVICE_TAG { 1 | 0 } | -D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
 
 EXAMPLES
 device_monitor.py -c super -Ft scs-opc-109
@@ -35,7 +35,7 @@ from scs_core.aws.security.cognito_client_credentials import CognitoClientCreden
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
-from scs_core.client.http_exception import HTTPException
+from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
@@ -49,25 +49,24 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
-    logger = None
     response = None
     report = None
 
+    # ------------------------------------------------------------------------------------------------------------
+    # cmd...
+
+    cmd = CmdDeviceMonitor()
+
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
+    Logging.config('device_monitor', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
+
     try:
-        # ------------------------------------------------------------------------------------------------------------
-        # cmd...
-
-        cmd = CmdDeviceMonitor()
-
-        if not cmd.is_valid():
-            cmd.print_help(sys.stderr)
-            exit(2)
-
-        Logging.config('device_monitor', verbose=cmd.verbose)
-        logger = Logging.getLogger()
-
-        logger.info(cmd)
-
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
@@ -109,10 +108,13 @@ if __name__ == '__main__':
             report = manager.find(auth.id_token, email_address=cmd.email, device_tag=cmd.device_tag,
                                   exact=cmd.exact_match)
 
-        if cmd.add:
+        elif cmd.add:
             report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
 
-        if cmd.delete:
+        elif cmd.suspend is not None:
+            report = manager.set_suspended(auth.id_token, cmd.device_tag, bool(cmd.suspend))
+
+        elif cmd.delete:
             report = manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
 
 
@@ -128,6 +130,10 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
+
+    except HTTPNotFoundException:
+        logger.error("device '%s' not found." % cmd.device_tag)
+        exit(1)
 
     except HTTPException as ex:
         logger.error(ex.error_report)
