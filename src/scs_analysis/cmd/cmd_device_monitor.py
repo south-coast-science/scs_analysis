@@ -117,6 +117,7 @@ class CmdDeviceMonitor(object):
     def is_suspended(self):
         return bool(int(self.__opts.suspend[1])) if self.suspend else None
 
+
     @property
     def delete(self):
         return bool(self.__opts.delete)
