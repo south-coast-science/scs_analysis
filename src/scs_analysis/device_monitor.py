@@ -111,8 +111,8 @@ if __name__ == '__main__':
         elif cmd.add:
             report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
 
-        elif cmd.suspend is not None:
-            report = manager.set_suspended(auth.id_token, cmd.device_tag, bool(cmd.suspend))
+        elif cmd.suspend:
+            report = manager.set_suspended(auth.id_token, cmd.device_tag, bool(cmd.is_suspended))
 
         elif cmd.delete:
             report = manager.remove(auth.id_token, cmd.email, device_tag=cmd.device_tag)
