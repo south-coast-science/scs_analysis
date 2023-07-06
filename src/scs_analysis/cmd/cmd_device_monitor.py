@@ -6,7 +6,6 @@ Created on 28 Jun 2023
 
 import optparse
 
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdDeviceMonitor(object):
@@ -20,7 +19,8 @@ class CmdDeviceMonitor(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
-                                                    "-A EMAIL_ADDR DEVICE_TAG | -D EMAIL_ADDR [-t DEVICE_TAG] } "
+                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 1 | 0 } | "
+                                                    "-D EMAIL_ADDR [-t DEVICE_TAG] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -33,6 +33,9 @@ class CmdDeviceMonitor(object):
 
         self.__parser.add_option("--add", "-A", type="string", nargs=2, action="store", dest="add",
                                  help="add email address to device")
+
+        self.__parser.add_option("--suspend", "-S", type="string", nargs=2, action="store", dest="suspend",
+                                 help="suspend monitoring of the device")
 
         self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
                                  help="delete email address (from device or throughout)")
@@ -68,10 +71,16 @@ class CmdDeviceMonitor(object):
         if self.add:
             count += 1
 
+        if self.suspend is not None:
+            count += 1
+
         if self.delete:
             count += 1
 
         if count != 1:
+            return False
+
+        if self.suspend not in [None, 0, 1]:
             return False
 
         return True
@@ -96,6 +105,12 @@ class CmdDeviceMonitor(object):
     @property
     def add(self):
         return bool(self.__opts.add)
+
+
+    @property
+    def suspend(self):
+        return None if self.__opts.suspend is None else int(self.__opts.suspend)
+
 
     @property
     def delete(self):
