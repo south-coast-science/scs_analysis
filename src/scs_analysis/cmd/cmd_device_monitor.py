@@ -6,6 +6,7 @@ Created on 28 Jun 2023
 
 import optparse
 
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdDeviceMonitor(object):
@@ -71,7 +72,7 @@ class CmdDeviceMonitor(object):
         if self.add:
             count += 1
 
-        if self.suspend is not None:
+        if self.suspend:
             count += 1
 
         if self.delete:
@@ -80,7 +81,7 @@ class CmdDeviceMonitor(object):
         if count != 1:
             return False
 
-        if self.suspend not in [None, 0, 1]:
+        if self.suspend and self.__opts.suspend[1] not in [None, 0, 1]:
             return False
 
         return True
@@ -109,7 +110,12 @@ class CmdDeviceMonitor(object):
 
     @property
     def suspend(self):
-        return None if self.__opts.suspend is None else int(self.__opts.suspend)
+        return bool(self.__opts.suspend)
+
+
+    @property
+    def is_suspended(self):
+        return bool(int(self.__opts.suspend[1])) if self.suspend else None
 
 
     @property
@@ -135,6 +141,9 @@ class CmdDeviceMonitor(object):
     def device_tag(self):
         if self.add:
             return self.__opts.add[1]
+
+        if self.suspend:
+            return self.__opts.suspend[0]
 
         return self.__opts.device_tag
 
@@ -164,7 +173,7 @@ class CmdDeviceMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, delete:%s, " \
+        return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, suspend:%s, delete:%s, " \
                "email:%s, device_tag:%s, exact_match:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.delete,
+               (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.suspend, self.__opts.delete,
                 self.__opts.email, self.__opts.device_tag, self.exact_match, self.indent, self.verbose)
