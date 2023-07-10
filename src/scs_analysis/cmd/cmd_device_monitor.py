@@ -20,8 +20,8 @@ class CmdDeviceMonitor(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
-                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 1 | 0 } | "
-                                                    "-D EMAIL_ADDR [-t DEVICE_TAG] } "
+                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 0 | 1 } | "
+                                                    "-D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -40,6 +40,9 @@ class CmdDeviceMonitor(object):
 
         self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
                                  help="delete email address (from device or throughout)")
+
+        # self.__parser.add_option("--force", "-f", type="string", action="store", dest="force",
+        #                          help="force deletion from multiple devices")
 
         # filters...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
@@ -81,7 +84,7 @@ class CmdDeviceMonitor(object):
         if count != 1:
             return False
 
-        if self.suspend and self.__opts.suspend[1] not in [None, 0, 1]:
+        if self.suspend and self.__opts.suspend[1] not in [None, '0', '1']:
             return False
 
         return True
