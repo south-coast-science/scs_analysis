@@ -41,8 +41,8 @@ class CmdDeviceMonitor(object):
         self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
                                  help="delete email address (from device or throughout)")
 
-        self.__parser.add_option("--force", "-f", type="string", action="store", dest="delete",
-                                 help="delete email address (from device or throughout)")
+        # self.__parser.add_option("--force", "-f", type="string", action="store", dest="force",
+        #                          help="force deletion from multiple devices")
 
         # filters...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
