@@ -17,7 +17,7 @@ email is sent until the parameter has returned within bounds and then, subsequen
 out-of-bound event is logged in the alert status history. A history of out-of-bounds events for each alert
 specification can be found using the alert_status utility.
 
-In --find mode, results can be filtered by description, topic, field or creator email address.
+In --find mode, results can be filtered by description, topic, field or email address.
 Finder matches are exact.
 
 SYNOPSIS
@@ -28,29 +28,21 @@ alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] 
 EXAMPLES
 alert.py -vi4 -c bruno -C -d "warm" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -u 30 -n 1 -a 1 M
 
-DOCUMENT EXAMPLE
-{
-    "id": 88,
-    "description": "warm",
-    "topic": "south-coast-science-dev/development/loc/1/climate",
-    "field": "val.tmp",
-    "lower-threshold": null,
-    "upper-threshold": 30.0,
-    "alert-on-none": false,
-    "aggregation-period": {
-        "interval": 1,
-        "units": "M"
-    },
-    "test-interval": null,
-    "json-message": false,
-    "creator-email-address": "bruno.beloff@southcoastscience.com",
-    "to": "bruno.beloff@southcoastscience.com",
-    "cc-list": [
-        "bbeloff@me.com",
-        "jadempage@outlook.com"
-    ],
-    "suspended": false
-}
+DOCUMENT EXAMPLE (recurring)
+{"id": null, "description": "my description", "topic": "my/topic", "field": "my.field",
+"lower-threshold": null,  "upper-threshold": 100.0, "alert-on-none": true,
+"aggregation-period": {"type": "recurring", "interval": 5, "units": "M"},
+"test-interval": {"type": "recurring", "interval": 1, "units": "M"}, "json-message": true,
+"creator-email-address": "bruno.beloff@southcoastscience.com", "to": "bruno.beloff@southcoastscience.com",
+"cc-list": ["bbeloff@me.com", "hhopton@me.com"], "suspended": false}
+
+DOCUMENT EXAMPLE (diurnal)
+{"id": null, "description": "my description", "topic": "my/topic", "field": "my.field",
+"lower-threshold": null, "upper-threshold": 100.0, "alert-on-none": true,
+"aggregation-period": {"type": "diurnal", "start": "09:00:00", "end": "17:00:00", "timezone": "Europe/London"},
+"test-interval": {"type": "recurring", "interval": 1, "units": "M"}, "json-message": true,
+"creator-email-address": "bruno.beloff@southcoastscience.com", "to": "bruno.beloff@southcoastscience.com",
+"cc-list": ["bbeloff@me.com", "hhopton@me.com"], "suspended": false}
 
 SEE ALSO
 scs_analysis/alert_status
@@ -93,7 +85,6 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    response = None
     report = None
 
     try:
@@ -167,8 +158,10 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.email)
-            report = sorted(response.alerts)
+            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, None)
+            filtered = [alert for alert in response.alerts if cmd.email in alert] if cmd.email else response.alerts
+
+            report = sorted(filtered)
 
         if cmd.retrieve:
             report = specification_manager.retrieve(auth.id_token, cmd.id)
@@ -263,7 +256,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
-            logger.info('retrieved: %s' % len(response))
+            logger.info('retrieved: %s' % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
