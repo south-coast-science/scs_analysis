@@ -31,7 +31,7 @@ alert.py -vi4 -c bruno -C -d "warm" -p south-coast-science-dev/development/loc/1
 DOCUMENT EXAMPLE (recurring)
 {"id": null, "description": "my description", "topic": "my/topic", "field": "my.field",
 "lower-threshold": null,  "upper-threshold": 100.0, "alert-on-none": true,
-"aggregation-period": {"type": "recurring", "interval": 5, "units": "M"},
+"aggregation-period": {"type": "recurring", "interval": 1, "units": "D", "timezone": "Europe/London"},
 "test-interval": {"type": "recurring", "interval": 1, "units": "M"}, "json-message": true,
 "creator-email-address": "bruno.beloff@southcoastscience.com", "to": "bruno.beloff@southcoastscience.com",
 "cc-list": ["bbeloff@me.com", "hhopton@me.com"], "suspended": false}
@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       cmd.test_interval, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
+                                       None, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -221,14 +221,13 @@ if __name__ == '__main__':
             upper_threshold = alert.upper_threshold if cmd.upper_threshold is None else cmd.upper_threshold
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
-            test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else alert.cc_list
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
-                                         upper_threshold, alert_on_none, aggregation_period, test_interval,
+                                         upper_threshold, alert_on_none, aggregation_period, None,
                                          json_message, alert.creator_email_address, to, cc, suspended)
 
             if not updated.has_valid_thresholds():
