@@ -31,7 +31,7 @@ class CmdAlert(object):
 
         # operations...
         self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
-                                 help="find alerts for given TOPIC (and FIELD) or creator email")
+                                 help="find alerts for given description, topic, field or email")
 
         self.__parser.add_option("--retrieve", "-R", type="int", action="store", dest="retrieve_id",
                                  help="retrieve alert with given ID")
@@ -78,7 +78,7 @@ class CmdAlert(object):
 
         # email...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
-                                 help="email To address or creator address")
+                                 help="email To address (any on find)")
 
         self.__parser.add_option("--cc-list", "-g", action="store_true", dest="cc", default=False,
                                  help="email CC list")
