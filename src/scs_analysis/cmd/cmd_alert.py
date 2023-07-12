@@ -9,6 +9,8 @@ import optparse
 from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringPeriod
 
+from scs_core.location.timezone import Timezone
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,12 +21,13 @@ class CmdAlert(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } "
+        self.__parser = optparse.OptionParser(usage="%prog { -z | [-c CREDENTIALS]  "
+                                                    "{ -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 1 | 0 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
                                                     "[-j { 1 | 0 }] [-s { 1 | 0 }] [-i INDENT] [-v] "
-                                                    "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]",
+                                                    "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
                                               version="%prog 1.0")
 
         # identity...
@@ -32,6 +35,9 @@ class CmdAlert(object):
                                  help="the stored credentials to be presented")
 
         # operations...
+        self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
+                                 help="list the available timezone names to stderr")
+
         self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
                                  help="find alerts for given description, topic, field or email")
 
@@ -100,6 +106,9 @@ class CmdAlert(object):
     def is_valid(self):
         count = 0
 
+        if self.list:
+            count += 1
+
         if self.find:
             count += 1
 
@@ -117,12 +126,6 @@ class CmdAlert(object):
 
         if count != 1:
             return False
-
-        # if self.__opts.aggregation_period is not None:
-        #     try:
-        #         int(self.__opts.aggregation_period[0])
-        #     except ValueError:
-        #         return False
 
         if self.alert_on_none is not None and self.alert_on_none != 0 and self.alert_on_none != 1:
             return False
@@ -145,6 +148,30 @@ class CmdAlert(object):
 
         if self.lower_threshold is None and self.upper_threshold is None and not self.alert_on_none:
             return False
+
+        return True
+
+
+    def is_valid_start_time(self):
+        if self.__opts.timed_period is None:
+            return True
+
+        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[0])
+
+
+    def is_valid_end_time(self):
+        if self.__opts.timed_period is None:
+            return True
+
+        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[1])
+
+
+    def is_valid_timezone(self):
+        if self.__opts.recurring_period is not None:
+            return Timezone.is_valid(self.__opts.recurring_period[2])
+
+        if self.__opts.timed_period is not None:
+            return Timezone.is_valid(self.__opts.timed_period[2])
 
         return True
 
@@ -173,6 +200,11 @@ class CmdAlert(object):
 
     # ----------------------------------------------------------------------------------------------------------------
     # properties: operations...
+
+    @property
+    def list(self):
+        return self.__opts.list
+
 
     @property
     def find(self):
@@ -297,11 +329,11 @@ class CmdAlert(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAlert:{credentials_name:%s, find:%s, retrieve:%s, create:%s, update:%s, " \
-               "delete:%s, topic:%s, field:%s, lower_threshold:%s, upper_threshold:%s, " \
-               "alert_on_none:%s, recurring_period:%s, timed_period:%s, " \
+        return "CmdAlert:{list:%s, credentials_name:%s, find:%s, retrieve:%s, create:%s, " \
+               "update:%s, delete:%s, topic:%s, field:%s, lower_threshold:%s, " \
+               "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, timed_period:%s, " \
                " json_message:%s, suspended:%s, email:%s, cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.find, self.__opts.retrieve_id, self.create, self.__opts.update_id,
-                self.__opts.delete_id, self.topic, self.field, self.lower_threshold, self.upper_threshold,
-                self.alert_on_none, self.__opts.recurring_period, self.__opts.timed_period,
+               (self.list, self.credentials_name, self.find, self.__opts.retrieve_id, self.create,
+                self.__opts.update_id, self.__opts.delete_id, self.topic, self.field, self.lower_threshold,
+                self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.timed_period,
                 self.json_message, self.suspended, self.email, self.cc, self.cc_list, self.indent, self.verbose)
