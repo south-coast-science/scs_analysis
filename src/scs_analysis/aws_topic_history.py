@@ -30,8 +30,8 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
-aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
-{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC
+aws_topic_history.py [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | -t { [[DD-]HH:]MM[:SS] | :SS } |
+-s START [-e END] } { -p HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -42,11 +42,9 @@ DOCUMENT EXAMPLE - OUTPUT
 
 {"val": {"hmd": 68.4, "tmp": 12.3}, "rec": "2019-01-11T12:15:36Z", "tag": "scs-bgx-401"}
 
-FILES
-~/SCS/aws/aws_api_auth.json
-
 SEE ALSO
-scs_analysis/localised_datetime
+scs_analysis/aws_byline
+scs_analysis/cognito_user_credentials
 
 RESOURCES
 https://github.com/curl/curl

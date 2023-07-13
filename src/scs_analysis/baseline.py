@@ -25,8 +25,6 @@ If the --rehearse flag is used, the baseline utility shows what changes would be
 Operating parameters are specified by the baseline_conf utility, and may be overridden by the baseline utility flags.
 Any number of named baseline_conf files may be stored.
 
-The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
-
 SYNOPSIS
 Usage: baseline.py [-c CREDENTIALS] -n CONF_NAME -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END]
 [-p AGGREGATION] [-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N
@@ -38,8 +36,7 @@ FILES
 ~/SCS/conf/baseline_conf/NAME_baseline_conf.json
 
 SEE ALSO
-scs_analysis/access_key
-scs_analysis/aws_client_auth
+scs_analysis/cognito_user_credentials
 scs_analysis/baseline_conf
 
 scs_dev/gases_sampler

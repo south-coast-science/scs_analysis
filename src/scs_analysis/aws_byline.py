@@ -16,7 +16,7 @@ Output is in the form of zero or more JSON documents, indicating the device, top
 latest sense event.
 
 SYNOPSIS
-Usage: aws_byline.py { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-m] [-i INDENT] [-v]
+aws_byline.py [-c CREDENTIALS] { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]
 
 EXAMPLES
 aws_byline.py -t south-coast-science-demo -v -x /control
@@ -29,6 +29,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 SEE ALSO
 scs_analysis/aws_topic_history
+scs_analysis/cognito_user_credentials
 """
 
 import requests
