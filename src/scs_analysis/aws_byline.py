@@ -39,6 +39,9 @@ from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.manager.byline_manager import BylineManager
 
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+
 from scs_core.client.http_exception import HTTPException
 from scs_core.client.network import Network
 from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
@@ -46,6 +49,8 @@ from scs_core.client.resource_unavailable_exception import ResourceUnavailableEx
 from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
+
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -69,6 +74,22 @@ if __name__ == '__main__':
     logger.info(cmd)
 
     try:
+        # ------------------------------------------------------------------------------------------------------------
+        # authentication...
+
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+
+        if not credentials:
+            exit(1)
+
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
+            exit(1)
+
+
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 

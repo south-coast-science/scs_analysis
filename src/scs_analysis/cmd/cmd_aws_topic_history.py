@@ -23,10 +23,14 @@ class CmdAWSTopicHistory(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -l | -a LATEST_AT [-b BACK-OFF] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | "
                                                     "-t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } "
-                                                    "{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC",
+                                                    "{ -p HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC",
                                               version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # functions...
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
@@ -48,7 +52,7 @@ class CmdAWSTopicHistory(object):
                                  help="ISO 8601 datetime END")
 
         # aggregation...
-        self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
+        self.__parser.add_option("--checkpoint", "-p", type="string", nargs=1, action="store", dest="checkpoint",
                                  help="a time specification as **:/05:00")
 
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
@@ -165,6 +169,14 @@ class CmdAWSTopicHistory(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity...
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def latest(self):
@@ -248,9 +260,9 @@ class CmdAWSTopicHistory(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicHistory:{latest:%s, latest_at:%s, latest_at:%s, timedelta:%s, start:%s, end:%s, " \
-               "fetch_last:%s, checkpoint:%s, include_wrapper:%s, rec_only:%s, min_max:%s, " \
-               "exclude_remainder:%s, verbose:%s, debug:%s, topic:%s}" % \
-                    (self.latest, self.__opts.latest_at, self.back_off, self.__opts.timedelta, self.start, self.end,
-                     self.fetch_last, self.checkpoint, self.include_wrapper, self.rec_only, self.min_max,
-                     self.exclude_remainder, self.verbose, self.debug, self.topic)
+        return "CmdAWSTopicHistory:{credentials_name:%s, latest:%s, latest_at:%s, latest_at:%s, timedelta:%s, " \
+               "start:%s, end:%s, fetch_last:%s, checkpoint:%s, include_wrapper:%s, rec_only:%s, " \
+               "min_max:%s, exclude_remainder:%s, verbose:%s, debug:%s, topic:%s}" % \
+                    (self.credentials_name, self.latest, self.__opts.latest_at, self.back_off, self.__opts.timedelta,
+                     self.start, self.end, self.fetch_last, self.checkpoint, self.include_wrapper, self.rec_only,
+                     self.min_max, self.exclude_remainder, self.verbose, self.debug, self.topic)
