@@ -46,7 +46,6 @@ FILES
 ~/SCS/aws/aws_api_auth.json
 
 SEE ALSO
-scs_analysis/aws_api_auth
 scs_analysis/localised_datetime
 
 RESOURCES

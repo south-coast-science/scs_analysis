@@ -39,7 +39,6 @@ FILES
 
 SEE ALSO
 scs_analysis/access_key
-scs_analysis/aws_api_auth
 scs_analysis/aws_client_auth
 scs_analysis/baseline_conf
 
