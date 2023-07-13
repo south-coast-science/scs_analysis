@@ -6,6 +6,7 @@ Created on 28 Jun 2023
 
 import optparse
 
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class CmdDeviceMonitor(object):
@@ -19,8 +20,8 @@ class CmdDeviceMonitor(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
-                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 1 | 0 } | "
-                                                    "-D EMAIL_ADDR [-t DEVICE_TAG] } "
+                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 0 | 1 } | "
+                                                    "-D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } "
                                                     "[-i INDENT] [-v]", version="%prog 1.0")
 
         # identity...
@@ -39,6 +40,9 @@ class CmdDeviceMonitor(object):
 
         self.__parser.add_option("--delete", "-D", type="string", action="store", dest="delete",
                                  help="delete email address (from device or throughout)")
+
+        # self.__parser.add_option("--force", "-f", type="string", action="store", dest="force",
+        #                          help="force deletion from multiple devices")
 
         # filters...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
@@ -71,7 +75,7 @@ class CmdDeviceMonitor(object):
         if self.add:
             count += 1
 
-        if self.suspend is not None:
+        if self.suspend:
             count += 1
 
         if self.delete:
@@ -80,7 +84,7 @@ class CmdDeviceMonitor(object):
         if count != 1:
             return False
 
-        if self.suspend not in [None, 0, 1]:
+        if self.suspend and self.__opts.suspend[1] not in [None, '0', '1']:
             return False
 
         return True
@@ -109,7 +113,12 @@ class CmdDeviceMonitor(object):
 
     @property
     def suspend(self):
-        return None if self.__opts.suspend is None else int(self.__opts.suspend)
+        return bool(self.__opts.suspend)
+
+
+    @property
+    def is_suspended(self):
+        return bool(int(self.__opts.suspend[1])) if self.suspend else None
 
 
     @property
@@ -135,6 +144,9 @@ class CmdDeviceMonitor(object):
     def device_tag(self):
         if self.add:
             return self.__opts.add[1]
+
+        if self.suspend:
+            return self.__opts.suspend[0]
 
         return self.__opts.device_tag
 
@@ -164,7 +176,7 @@ class CmdDeviceMonitor(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, delete:%s, " \
+        return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, suspend:%s, delete:%s, " \
                "email:%s, device_tag:%s, exact_match:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.delete,
+               (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.suspend, self.__opts.delete,
                 self.__opts.email, self.__opts.device_tag, self.exact_match, self.indent, self.verbose)
