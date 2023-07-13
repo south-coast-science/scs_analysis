@@ -17,47 +17,39 @@ email is sent until the parameter has returned within bounds and then, subsequen
 out-of-bound event is logged in the alert status history. A history of out-of-bounds events for each alert
 specification can be found using the alert_status utility.
 
-In --find mode, results can be filtered by description, topic, field or creator email address.
+In --find mode, results can be filtered by description, topic, field or email address.
 Finder matches are exact.
 
 SYNOPSIS
-alert.py [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER]
-[-u UPPER] [-n { 1 | 0 }] [-a INTERVAL UNITS] [-t INTERVAL] [-s { 1 | 0 }] [-i INDENT] [-v] [-e EMAIL_ADDR]
-[-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]
+alert.py { -z | [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD]
+[-l LOWER] [-u UPPER] [-n { 1 | 0 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] [-j { 1 | 0 }]
+[-s { 1 | 0 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
 
 EXAMPLES
-alert.py -vi4 -c bruno -C -d "warm" -p south-coast-science-dev/development/loc/1/climate -f val.tmp -u 30 -n 1 -a 1 M
+alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/development/loc/1/climate -f val.tmp \
+-u 10 -n 1 -t 16:00 8:00 Europe/London -e bruno.beloff@southcoastscience.com -g jade.page@southcoastscience.com
 
-DOCUMENT EXAMPLE
-{
-    "id": 88,
-    "description": "warm",
-    "topic": "south-coast-science-dev/development/loc/1/climate",
-    "field": "val.tmp",
-    "lower-threshold": null,
-    "upper-threshold": 30.0,
-    "alert-on-none": false,
-    "aggregation-period": {
-        "interval": 1,
-        "units": "M"
-    },
-    "test-interval": null,
-    "json-message": false,
-    "creator-email-address": "bruno.beloff@southcoastscience.com",
-    "to": "bruno.beloff@southcoastscience.com",
-    "cc-list": [
-        "bbeloff@me.com",
-        "jadempage@outlook.com"
-    ],
-    "suspended": false
-}
+DOCUMENT EXAMPLE (recurring)
+{"id": null, "description": "my description", "topic": "my/topic",
+"field": "my.field", "lower-threshold": null,  "upper-threshold": 100.0, "alert-on-none": true,
+"aggregation-period": {"type": "recurring", "interval": 1, "units": "D", "timezone": "Europe/London"},
+"test-interval": {"type": "recurring", "interval": 1, "units": "M"}, "json-message": true,
+"creator-email-address": "bruno.beloff@southcoastscience.com", "to": "bruno.beloff@southcoastscience.com",
+"cc-list": ["bbeloff@me.com", "hhopton@me.com"], "suspended": false}
+
+DOCUMENT EXAMPLE (diurnal)
+{"id": 107, "description": "be2-3-nightime-test", "topic": "south-coast-science-dev/development/loc/1/climate",
+"field": "val.tmp", "lower-threshold": null, "upper-threshold": 10.0, "alert-on-none": true,
+"aggregation-period": {"type": "diurnal", "start": "16:00:00", "end": "08:00:00", "timezone": "Europe/London"},
+"test-interval": null, "json-message": false, "creator-email-address": "production@southcoastscience.com",
+"to": "bruno.beloff@southcoastscience.com", "cc-list": ["jade.page@southcoastscience.com"], "suspended": false}
 
 SEE ALSO
 scs_analysis/alert_status
 scs_analysis/cognito_user_credentials
 
 BUGS
-The --test-interval flag is not currently in use, and is ignored.
+The test-interval field is not currently in use, and is ignored.
 """
 
 import json
@@ -65,8 +57,6 @@ import requests
 import sys
 
 from scs_analysis.cmd.cmd_alert import CmdAlert
-
-from scs_core.aws.client.api_auth import APIAuth
 
 from scs_core.aws.data.alert import AlertSpecification
 
@@ -83,6 +73,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
 
+from scs_core.location.timezone import Timezone
+
 from scs_core.sys.logging import Logging
 
 from scs_host.sys.host import Host
@@ -93,7 +85,8 @@ from scs_host.sys.host import Host
 if __name__ == '__main__':
 
     logger = None
-    response = None
+    credentials = None
+    auth = None
     report = None
 
     try:
@@ -115,24 +108,18 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # authentication...
 
-        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
+        if not cmd.list:
+            credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
-        if not credentials:
-            exit(1)
+            if not credentials:
+                exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
-        auth = gatekeeper.user_login(credentials)
+            gatekeeper = CognitoLoginManager(requests)
+            auth = gatekeeper.user_login(credentials)
 
-        if not auth.is_ok():
-            logger.error("login: %s" % auth.authentication_status.description)
-            exit(1)
-
-        # APIAuth (for BylineManager)...
-        api_auth = APIAuth.load(Host)
-
-        if api_auth is None:
-            logger.error("APIAuth is not available")
-            exit(1)
+            if not auth.is_ok():
+                logger.error("login: %s" % auth.authentication_status.description)
+                exit(1)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -162,13 +149,32 @@ if __name__ == '__main__':
                     logger.error("the email address '%s' is not valid." % email)
                     exit(2)
 
+        if not cmd.is_valid_start_time():
+            logger.error("the start time is invalid.")
+            exit(2)
+
+        if not cmd.is_valid_end_time():
+            logger.error("the end time is invalid.")
+            exit(2)
+
+        if not cmd.is_valid_timezone():
+            logger.error("the timezone is invalid.")
+            exit(2)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        if cmd.list:
+            for zone in Timezone.zones():
+                print(zone, file=sys.stderr)
+            exit(0)
+
         if cmd.find:
-            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, cmd.email)
-            report = sorted(response.alerts)
+            response = specification_manager.find(auth.id_token, cmd.description, cmd.topic, cmd.field, None)
+            filtered = [alert for alert in response.alerts if cmd.email in alert] if cmd.email else response.alerts
+
+            report = sorted(filtered)
 
         if cmd.retrieve:
             report = specification_manager.retrieve(auth.id_token, cmd.id)
@@ -198,7 +204,7 @@ if __name__ == '__main__':
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       cmd.test_interval, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
+                                       None, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -228,14 +234,13 @@ if __name__ == '__main__':
             upper_threshold = alert.upper_threshold if cmd.upper_threshold is None else cmd.upper_threshold
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
-            test_interval = alert.test_interval if cmd.test_interval is None else cmd.test_interval
             json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else alert.cc_list
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
-                                         upper_threshold, alert_on_none, aggregation_period, test_interval,
+                                         upper_threshold, alert_on_none, aggregation_period, None,
                                          json_message, alert.creator_email_address, to, cc, suspended)
 
             if not updated.has_valid_thresholds():
@@ -263,7 +268,7 @@ if __name__ == '__main__':
             print(JSONify.dumps(report, indent=cmd.indent))
 
         if cmd.find:
-            logger.info('retrieved: %s' % len(response))
+            logger.info('retrieved: %s' % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)

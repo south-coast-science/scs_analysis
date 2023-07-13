@@ -6,8 +6,11 @@ Created on 28 Jul 2021
 
 import optparse
 
+from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringMinutes
+
 from scs_core.estate.baseline_conf import BaselineConf
+
 from scs_core.gas.minimum import Minimum
 
 
@@ -50,17 +53,17 @@ class CmdBaseline(object):
 
         self.__parser.add_option("--uptake", "-u", type="string", nargs=1, action="store", dest="uptake",
                                  default=self.__DEFAULT_UPTAKE_CMD,
-                                 help="{ %s }, default '%s'" % (cmds, self.__DEFAULT_UPTAKE_CMD))
+                                 help="{ %s } default '%s'" % (cmds, self.__DEFAULT_UPTAKE_CMD))
 
         # fields...
-        self.__parser.add_option("--start-hour", "-s", type="int", nargs=1, action="store", dest="start_hour",
-                                 help="override the configuration's start hour")
+        self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
+                                 help="override the configuration's start time")
 
-        self.__parser.add_option("--end-hour", "-e", type="int", nargs=1, action="store", dest="end_hour",
-                                 help="override the configuration's end hour")
+        self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
+                                 help="override the configuration's end time")
 
         self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
-                                 dest="aggregation_period", help="override the configuration's aggregation period")
+                                 dest="interval", help="override the configuration's aggregation period")
 
         self.__parser.add_option("--minimum", "-m", type="string", nargs=2, action="store", dest="minimum",
                                  help="override configuration's minimum for GAS")
@@ -103,14 +106,16 @@ class CmdBaseline(object):
 
 
     def override(self, conf: BaselineConf):
-        start_hour = conf.start_hour if self.start_hour is None else self.start_hour
-        end_hour = conf.end_hour if self.end_hour is None else self.end_hour
-        aggregation_period = conf.aggregation_period if self.aggregation_period is None else \
-            RecurringMinutes(self.aggregation_period)
+        start_str = str(conf.sample_period.start_time) if self.start is None else self.start
+        end_str = str(conf.sample_period.end_time) if self.end is None else self.end
+        sample_period = DiurnalPeriod.construct(start_str, end_str, str(conf.timezone))
+
+        aggregation_period = conf.aggregation_period if self.start is None else \
+            RecurringMinutes(self.start, conf.timezone)
 
         minimums = {self.only_gas: conf.minimum(self.only_gas)} if self.only_gas else conf.minimums
 
-        conf = BaselineConf(conf.name, conf.timezone, start_hour, end_hour, aggregation_period, minimums)
+        conf = BaselineConf(conf.name, sample_period, aggregation_period, minimums)
 
         if self.minimum_gas is not None:
             conf.set_minimum(self.minimum_gas, self.minimum_value)
@@ -153,18 +158,18 @@ class CmdBaseline(object):
 
 
     @property
-    def start_hour(self):
-        return self.__opts.start_hour
+    def start(self):
+        return self.__opts.start
 
 
     @property
-    def end_hour(self):
-        return self.__opts.end_hour
+    def end(self):
+        return self.__opts.end
 
 
     @property
-    def aggregation_period(self):
-        return self.__opts.aggregation_period
+    def interval(self):
+        return self.__opts.interval
 
 
     @property
@@ -204,9 +209,9 @@ class CmdBaseline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdBaseline:{credentials_name:%s, conf_name:%s, fields:%s, rehearse:%s, uptake:%s, start_hour:%s, " \
-               "end_hour:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, " \
+        return "CmdBaseline:{credentials_name:%s, conf_name:%s, fields:%s, rehearse:%s, uptake:%s, start:%s, " \
+               "end:%s, aggregation_period:%s, minimum:%s, only_gas:%s, exclude_gas:%s, " \
                "verbose:%s, device_tags:%s}" % \
-               (self.credentials_name, self.conf_name, self.fields, self.rehearse, self.uptake, self.start_hour,
-                self.end_hour, self.aggregation_period, self.__opts.minimum, self.only_gas, self.exclude_gas,
+               (self.credentials_name, self.conf_name, self.fields, self.rehearse, self.uptake, self.start,
+                self.end, self.interval, self.__opts.minimum, self.only_gas, self.exclude_gas,
                 self.verbose, self.device_tags)

@@ -30,8 +30,8 @@ curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
 
 SYNOPSIS
-aws_topic_history.py { -l | -a LATEST_AT | -t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] }
-{ -c HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC
+aws_topic_history.py [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | -t { [[DD-]HH:]MM[:SS] | :SS } |
+-s START [-e END] } { -p HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC
 
 EXAMPLES
 aws_topic_history.py south-coast-science-dev/production-test/loc/1/gases -t 1 -v -w
@@ -42,12 +42,9 @@ DOCUMENT EXAMPLE - OUTPUT
 
 {"val": {"hmd": 68.4, "tmp": 12.3}, "rec": "2019-01-11T12:15:36Z", "tag": "scs-bgx-401"}
 
-FILES
-~/SCS/aws/aws_api_auth.json
-
 SEE ALSO
-scs_analysis/aws_api_auth
-scs_analysis/localised_datetime
+scs_analysis/aws_byline
+scs_analysis/cognito_user_credentials
 
 RESOURCES
 https://github.com/curl/curl
@@ -59,9 +56,11 @@ import sys
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
+
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 from scs_core.client.network import Network
@@ -76,7 +75,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: remove APIAuth requirement
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -121,16 +119,23 @@ if __name__ == '__main__':
 
     try:
         # ------------------------------------------------------------------------------------------------------------
-        # resources...
+        # authentication...
 
-        # APIAuth...
-        api_auth = APIAuth.load(Host)
+        credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
-        if api_auth is None:
-            logger.error("APIAuth not available.")
+        if not credentials:
             exit(1)
 
-        logger.info(api_auth)
+        gatekeeper = CognitoLoginManager(requests)
+        auth = gatekeeper.user_login(credentials)
+
+        if not auth.is_ok():
+            logger.error("login: %s" % auth.authentication_status.description)
+            exit(1)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # resources...
 
         # reporter...
         reporter = BatchDownloadReporter()
@@ -139,9 +144,10 @@ if __name__ == '__main__':
         byline_manager = BylineManager(requests)
 
         # MessageManager...
-        message_manager = MessageManager(api_auth, reporter=reporter)
+        message_manager = MessageManager(reporter=reporter)
 
         logger.info(message_manager)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # check...
