@@ -58,8 +58,6 @@ import sys
 
 from scs_analysis.cmd.cmd_alert import CmdAlert
 
-from scs_core.aws.client.api_auth import APIAuth
-
 from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
@@ -121,13 +119,6 @@ if __name__ == '__main__':
 
             if not auth.is_ok():
                 logger.error("login: %s" % auth.authentication_status.description)
-                exit(1)
-
-            # APIAuth (for BylineManager)...
-            api_auth = APIAuth.load(Host)
-
-            if api_auth is None:
-                logger.error("APIAuth is not available")
                 exit(1)
 
 

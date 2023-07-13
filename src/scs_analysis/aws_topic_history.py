@@ -59,7 +59,6 @@ import sys
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
@@ -73,10 +72,7 @@ from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
 
-from scs_host.sys.host import Host
 
-
-# TODO: remove APIAuth requirement
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -123,15 +119,6 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # APIAuth...
-        api_auth = APIAuth.load(Host)
-
-        if api_auth is None:
-            logger.error("APIAuth not available.")
-            exit(1)
-
-        logger.info(api_auth)
-
         # reporter...
         reporter = BatchDownloadReporter()
 
@@ -139,7 +126,7 @@ if __name__ == '__main__':
         byline_manager = BylineManager(requests)
 
         # MessageManager...
-        message_manager = MessageManager(api_auth, reporter=reporter)
+        message_manager = MessageManager(reporter=reporter)
 
         logger.info(message_manager)
 

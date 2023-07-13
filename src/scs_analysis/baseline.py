@@ -28,14 +28,14 @@ Any number of named baseline_conf files may be stored.
 The baseline utility requires access_key, aws_api_auth and aws_client_auth to be set.
 
 SYNOPSIS
-baseline.py [-a] -c NAME -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM]
-[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N
+Usage: baseline.py [-c CREDENTIALS] -n CONF_NAME -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END]
+[-p AGGREGATION] [-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N
 
 EXAMPLES
-baseline.py -ac freshfield -t scs-be2-3 -f E -r
+baseline.py -c super -n freshfield -e 07:00 -fV scs-bgb-410
 
 FILES
-~/SCS/conf/NAME_baseline_conf.json
+~/SCS/conf/baseline_conf/NAME_baseline_conf.json
 
 SEE ALSO
 scs_analysis/access_key
@@ -58,7 +58,6 @@ from scs_analysis.cmd.cmd_baseline import CmdBaseline
 
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.manager.byline_manager import BylineManager
 from scs_core.aws.manager.lambda_message_manager import MessageManager
@@ -69,6 +68,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.client.http_exception import HTTPGatewayTimeoutException
 
 from scs_core.data.datetime import LocalizedDatetime
+from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.json import JSONify
 from scs_core.data.timedelta import Timedelta
 
@@ -127,12 +127,17 @@ if __name__ == '__main__':
             logger.error("login: %s" % auth.authentication_status.description)
             exit(1)
 
-        # APIAuth (for MessageManager)...
-        api_auth = APIAuth.load(Host)
 
-        if api_auth is None:
-            logger.error("APIAuth is not available")
-            exit(1)
+        # ------------------------------------------------------------------------------------------------------------
+        # validation...
+
+        if cmd.start is not None and not DiurnalPeriod.is_valid_time(cmd.start):
+            logger.error("the start time is invalid.")
+            exit(2)
+
+        if cmd.end is not None and not DiurnalPeriod.is_valid_time(cmd.end):
+            logger.error("the end time is invalid.")
+            exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -145,7 +150,7 @@ if __name__ == '__main__':
         byline_manager = BylineManager(requests, reporter=reporter)
 
         # MessageManager...
-        message_manager = MessageManager(api_auth, reporter=reporter)
+        message_manager = MessageManager(reporter=reporter)
 
         # DeviceControlClient...
         client = DeviceControlClient(requests)
