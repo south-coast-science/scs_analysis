@@ -18,8 +18,12 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -d DEVICE | -t TOPIC [-l] | -a } "
+                                                    "[-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]", version="%prog 1.0")
+
+        # identity...
+        self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
+                                 help="the stored credentials to be presented")
 
         # search types...
         self.__parser.add_option("--device", "-d", type="string", nargs=1, action="store", dest="device",
@@ -78,6 +82,14 @@ class CmdAWSByline(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity...
+
+    @property
+    def credentials_name(self):
+        return self.__opts.credentials_name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def device(self):
@@ -131,7 +143,7 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{device:%s, topic:%s, latest:%s, all:%s, excluded:%s, strict:%s, " \
+        return "CmdAWSByline:{credentials_name:%s, device:%s, topic:%s, latest:%s, all:%s, excluded:%s, strict:%s, " \
                "include_messages:%s, indent:%s, verbose:%s}" % \
-               (self.device, self.topic, self.latest, self.all, self.excluded, self.strict,
+               (self.credentials_name, self.device, self.topic, self.latest, self.all, self.excluded, self.strict,
                 self.include_messages, self.indent, self.verbose)

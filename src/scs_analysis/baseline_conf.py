@@ -16,18 +16,19 @@ on the previous day.
 Any number of separate baseline_conf files may be stored. The --list flag lists those that are available.
 
 SYNOPSIS
-baseline_conf.py [-a] { -z | -l | -c NAME [-t TIMEZONE_NAME] [-s START] [-e END] [-p AGGREGATION]
+baseline_conf.py [-a] { -z | -l | -n FROM TO | -c NAME [-s START] [-e END] [-p AGGREGATION] [-t TIMEZONE]
 [-g GAS MINIMUM] [-r GAS] } [-i INDENT] [-v]
 
 EXAMPLES
-./baseline_conf.py -c freshfield -t Europe/London -s 23 -e 8 -a 5 -g NO2 10
+./baseline_conf.py -c freshfield -s 23:00 -e 08:00 -a 5 -t Europe/London -g NO2 10
 
 DOCUMENT EXAMPLE
-{"timezone": "Europe/London", "start-hour": 17, "end-hour": 8, "aggregation-period": {"interval": 5, "units": "M"},
-"gas-minimums": {"CO": 200, "CO2": 420, "H2S": 5, "NO": 10, "NO2": 10, "SO2": 5}}
+{"sample-period": {"type": "diurnal", "start": "23:00:00", "end": "08:00:00", "timezone": "Europe/London"},
+"aggregation-period": {"type": "recurring", "interval": 5, "units": "M", "timezone": "Europe/London"},
+"minimums": {"CO": 300, "CO2": 420, "H2S": 5, "NO": 10, "NO2": 10, "Ox": 50, "SO2": 5, "VOC": 250}}
 
 FILES
-~/SCS/conf/NAME_baseline_conf.json
+~/SCS/conf/baseline_conf/NAME_baseline_conf.json
 
 SEE ALSO
 scs_analysis/baseline
@@ -42,8 +43,9 @@ from scs_core.aws.client.access_key import AccessKey
 from scs_core.aws.client.client import Client
 from scs_core.aws.manager.s3_manager import S3PersistenceManager
 
+from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.json import JSONify
-from scs_core.data.recurring_period import RecurringMinutes
+from scs_core.data.recurring_period import RecurringMinutes, RecurringPeriod
 
 from scs_core.estate.baseline_conf import BaselineConf
 
@@ -102,7 +104,7 @@ if __name__ == '__main__':
 
         # GasModelConf...
         if not cmd.duplicate():
-            conf = BaselineConf.load(persistence_manager, name=cmd.conf_name)
+            conf = BaselineConf.load(persistence_manager, name=cmd.conf_name, skeleton=True)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -137,23 +139,35 @@ if __name__ == '__main__':
                 logger.error("unrecognised timezone name: %s." % cmd.timezone)
                 exit(2)
 
-            if cmd.aggregation_period and cmd.aggregation_period not in RecurringMinutes.valid_intervals():
+            if cmd.interval and cmd.interval not in RecurringMinutes.valid_intervals():
                 logger.error("aggregation period must be one of: %s." % str(RecurringMinutes.valid_intervals()))
                 exit(2)
 
-            timezone = conf.timezone if cmd.timezone is None else cmd.timezone
-            start_hour = conf.start_hour if cmd.start_hour is None else cmd.start_hour
-            end_hour = conf.end_hour if cmd.end_hour is None else cmd.end_hour
-            aggregation_period = conf.aggregation_period if cmd.aggregation_period is None else \
-                RecurringMinutes(cmd.aggregation_period)
+            if cmd.start is not None and not DiurnalPeriod.is_valid_time(cmd.start):
+                logger.error("the start time is invalid.")
+                exit(2)
 
-            if start_hour == end_hour:
+            if cmd.end is not None and not DiurnalPeriod.is_valid_time(cmd.end):
+                logger.error("the end time is invalid.")
+                exit(2)
+
+            start_time_str = str(conf.sample_period.start_time) if cmd.start is None else cmd.start
+            end_time_str = str(conf.sample_period.end_time) if cmd.end is None else cmd.end
+            timezone_str = str(conf.timezone) if cmd.timezone is None else cmd.timezone
+
+            sample_period = DiurnalPeriod.construct(start_time_str, end_time_str, timezone_str)
+
+            interval = conf.aggregation_period.interval if cmd.interval is None else cmd.interval
+
+            aggregation_period = RecurringPeriod.construct(interval, 'M', timezone_str)
+
+            if sample_period.start_time == sample_period.end_time:
                 logger.error("the start and end hours may not be the same.")
                 exit(2)
 
             minimums = {} if conf is None else conf.minimums
 
-            conf = BaselineConf(cmd.conf_name, timezone, start_hour, end_hour, aggregation_period, minimums)
+            conf = BaselineConf(cmd.conf_name, sample_period, aggregation_period, minimums)
 
             if cmd.set_gas_name:
                 if cmd.set_gas_name not in BaselineConf.supported_gases():

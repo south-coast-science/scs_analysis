@@ -8,15 +8,12 @@ Created on 23 May 2020
 
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.client.api_auth import APIAuth
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.json import JSONify
 
 from scs_core.sys.logging import Logging
-
-from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,16 +22,12 @@ topic = "south-coast-science-dev/mobile/device/praxis-handheld-000008/status"
 # up_to = LocalizedDatetime.construct_from_iso8601('2020-05-24T00:00:00Z')
 up_to = LocalizedDatetime.now()
 
-# APIAuth...
-api_auth = APIAuth.load(Host)
-print(api_auth)
-
 # reporter...
 Logging.config('lambda_message_manager_test')
 reporter = BatchDownloadReporter()
 
 # message manager...
-message_manager = MessageManager(api_auth, reporter=reporter)
+message_manager = MessageManager(reporter=reporter)
 print(message_manager)
 
 document = message_manager.find_latest_for_topic(topic, up_to, None, True, False, None)
