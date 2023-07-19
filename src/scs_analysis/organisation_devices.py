@@ -39,6 +39,7 @@ from scs_analysis.cmd.cmd_organisation_devices import CmdOrganisationDevices
 from scs_core.aws.config.project import Project
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.aws.security.organisation import Organisation, OrganisationPathRoot, OrganisationDevice
@@ -82,7 +83,7 @@ if __name__ == '__main__':
             logger.error("the organisation label '%s' is not valid." % cmd.org_label)
             exit(2)
 
-        if cmd.device_tag is not None and not OrganisationDevice.is_valid_tag(cmd.device_tag):
+        if cmd.device_tag is not None and not CognitoDeviceCredentials.is_valid_tag(cmd.device_tag):
             logger.error("the device tag '%s' is not valid." % cmd.device_tag)
             exit(2)
 
