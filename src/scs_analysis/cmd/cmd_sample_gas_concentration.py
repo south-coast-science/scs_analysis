@@ -13,7 +13,7 @@ from scs_core.gas.gas import Gas
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleConcentration(object):
+class CmdSampleGasConcentration(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -85,5 +85,5 @@ class CmdSampleConcentration(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s, p_path:%s}" % \
+        return "CmdSampleGasConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s, p_path:%s}" % \
                (self.pressure, self.verbose, self.gas, self.density_path, self.t_path, self.p_path)
