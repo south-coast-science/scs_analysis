@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdCSVReader(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # optional...
         self.__parser.add_option("--string", "-s", action="store_true", dest="string", default=False,

@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class CmdSampleTally(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version=version())
 
         # optional...
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",

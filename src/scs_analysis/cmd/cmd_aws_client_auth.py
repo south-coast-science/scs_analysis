@@ -11,6 +11,8 @@ example document:
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ class CmdAWSClientAuth(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # optional...
         self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",

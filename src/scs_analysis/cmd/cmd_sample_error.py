@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +23,7 @@ class CmdSampleError(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -l | -s } [-p PRECISION] [-v] "
-                                                    "REFERENCE_PATH REPORTED_PATH ERROR_PATH", version="%prog 1.0")
+                                                    "REFERENCE_PATH REPORTED_PATH ERROR_PATH", version=version())
 
         # compulsory...
         self.__parser.add_option("--linear", "-l", action="store_true", dest="linear", default=False,

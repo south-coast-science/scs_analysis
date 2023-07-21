@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ class CmdSampleCollator(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog -x IND_PATH [-n NAME] -y DEP_PATH "
                                                     "[-l LOWER_BOUND] -u UPPER_BOUND -d DELTA [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # compulsory...
         self.__parser.add_option("--ind-path", "-x", type="string", nargs=1, action="store", dest="ind_path",

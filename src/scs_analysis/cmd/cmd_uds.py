@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class CmdUDS(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] UDS_SUB", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v] UDS_SUB", version=version())
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

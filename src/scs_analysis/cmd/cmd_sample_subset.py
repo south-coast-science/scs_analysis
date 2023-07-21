@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 
@@ -22,7 +24,7 @@ class CmdSampleSubset(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -i | -n | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
-                                                    "[-t] [-x] [-v] PATH", version="%prog 1.0")
+                                                    "[-t] [-x] [-v] PATH", version=version())
 
         # casting...
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,

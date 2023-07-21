@@ -6,6 +6,8 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.aws.manager.configuration_finder import ConfigurationRequest
 
 
@@ -19,7 +21,7 @@ class CmdConfigurationMonitor(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-x]] { -l | -f | -d | -o } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

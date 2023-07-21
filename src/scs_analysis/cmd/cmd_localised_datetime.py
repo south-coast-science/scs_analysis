@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdLocalizedDatetime(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { [-o HOURS] [-m MINUTES] [-s SECONDS] [-t TIMEZONE_NAME] | "
-                                                    "-z }", version="%prog 1.0")
+                                                    "-z }", version=version())
 
         # optional...
         self.__parser.add_option("--hours", "-o", type="int", nargs=1, default=0, action="store", dest="hours",

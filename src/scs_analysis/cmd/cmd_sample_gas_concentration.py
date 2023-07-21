@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.gas.gas import Gas
 
 
@@ -21,7 +23,7 @@ class CmdSampleGasConcentration(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # optional...
         self.__parser.add_option("--pressure", "-p", type="float", nargs=1, action="store", dest="pressure",

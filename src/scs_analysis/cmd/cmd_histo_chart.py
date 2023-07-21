@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +23,7 @@ class CmdHistoChart(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] "
-                                                    "[-o FILENAME] [-e] [-t TITLE] [-v] PATH", version="%prog 1.0")
+                                                    "[-o FILENAME] [-e] [-t TITLE] [-v] PATH", version=version())
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,

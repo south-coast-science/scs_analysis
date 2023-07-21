@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdSampleStats(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-i] [-p PRECISION] [-a] [-r] [-v] "
-                                                    "PATH1 [PATH2 .. PATHN]", version="%prog 1.0")
+                                                    "PATH1 [PATH2 .. PATHN]", version=version())
 
         # input...
         self.__parser.add_option("--tag", "-t", type="string", nargs=1, action="store", default='tag', dest="tag",

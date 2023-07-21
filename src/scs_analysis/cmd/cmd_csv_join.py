@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdCSVJoin(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TYPE] [-i] [-v] -l PREFIX PK FILENAME "
-                                                    "-r PREFIX PK FILENAME", version="%prog 1.0")
+                                                    "-r PREFIX PK FILENAME", version=version())
 
         # compulsory...
         self.__parser.add_option("--left", "-l", type="string", nargs=3, action="store", dest="left",

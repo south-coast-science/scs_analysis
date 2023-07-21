@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdCSVWriter(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # functions...
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,

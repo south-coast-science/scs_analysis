@@ -6,6 +6,8 @@ Created on 28 Jul 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringMinutes
 
@@ -34,7 +36,7 @@ class CmdBaseline(object):
                                                     "[{ -r | -u COMMAND }] "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM] "
                                                     "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

@@ -6,6 +6,8 @@ Created on 24 Jan 2022
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
 
 
@@ -28,7 +30,7 @@ class CmdCognitoUsers(object):
                                                     "[-s { 1 | 0 }] "
                                                     "| -D EMAIL_ADDR } "
                                                     "[-i INDENT] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

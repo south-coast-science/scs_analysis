@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdMultiChart(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-b] [-x POINTS] [-y MIN MAX] [-e] [-t TITLE] [-v] "
-                                                    "PATH_1 .. PATH_N", version="%prog 1.0")
+                                                    "PATH_1 .. PATH_N", version=version())
 
         # optional...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,

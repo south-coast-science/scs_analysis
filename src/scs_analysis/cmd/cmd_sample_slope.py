@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.timedelta import Timedelta
 
 
@@ -21,7 +23,7 @@ class CmdSampleSlope(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-m [DD-]HH:MM[:SS]] [-x] "
-                                                    "[-p PRECISION] [-v] PATH", version="%prog 1.0")
+                                                    "[-p PRECISION] [-v] PATH", version=version())
 
         # compulsory...
         self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",

@@ -9,6 +9,8 @@ source repo: scs_analysis
 import logging
 import optparse
 
+from scs_airnow import version
+
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.timedelta import Timedelta
 
@@ -26,7 +28,7 @@ class CmdAWSTopicHistory(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | "
                                                     "-t { [[DD-]HH:]MM[:SS] | :SS } | -s START [-e END] } "
                                                     "{ -p HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

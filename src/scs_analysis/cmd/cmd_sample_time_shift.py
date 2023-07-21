@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.timedelta import Timedelta
 
 
@@ -23,7 +25,7 @@ class CmdSampleTimeShift(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -t { + | - } [[DD-]HH:]MM[:SS] [-v] [PATH]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # functions...
         self.__parser.add_option("--timedelta", "-t", type="string", nargs=2, action="store", dest="timedelta",

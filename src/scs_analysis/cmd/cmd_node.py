@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 from scs_core.data.path_dict import PathDict
 
 
@@ -21,7 +23,7 @@ class CmdNode(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] "
-                                                    "[SUB_PATH_1 .. SUB_PATH_N]", version="%prog 1.0")
+                                                    "[SUB_PATH_1 .. SUB_PATH_N]", version=version())
 
         # optional...
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,

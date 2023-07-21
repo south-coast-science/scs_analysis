@@ -6,6 +6,8 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ class CmdMonitorAuth(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -d }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -d }] [-v]", version=version())
 
         # commands..
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,

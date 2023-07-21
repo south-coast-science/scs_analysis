@@ -11,6 +11,8 @@ example document:
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ class CmdAWSAPIAuth(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # set...
         self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",

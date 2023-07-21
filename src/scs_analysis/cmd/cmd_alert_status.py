@@ -6,6 +6,8 @@ Created on 29 Jun 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.aws.manager.alert_status_manager import AlertStatusFindRequest
 
 
@@ -25,8 +27,7 @@ class CmdAlertStatus(object):
         causes = ' | '.join(self.__CAUSES)
 
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -l | -d [-a CAUSE] } | -D } "
-                                                    "[-i INDENT] [-v] ID",
-                                              version="%prog 1.0")
+                                                    "[-i INDENT] [-v] ID", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

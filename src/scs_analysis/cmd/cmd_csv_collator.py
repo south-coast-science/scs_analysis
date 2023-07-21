@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdCSVCollator(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -l LOWER_BOUND -u UPPER_BOUND -d DELTA [-f FILE_PREFIX] "
-                                                    "[-v] PATH", version="%prog 1.0")
+                                                    "[-v] PATH", version=version())
 
         # compulsory...
         self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", dest="lower",

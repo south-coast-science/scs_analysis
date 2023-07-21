@@ -6,6 +6,8 @@ Created on 31 Jul 2021
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +22,7 @@ class CmdBaselineConf(object):
         self.__parser = optparse.OptionParser(usage="%prog [-a] { -z | -l | -d FROM TO | -n NAME "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-t TIMEZONE] "
                                                     "[-g GAS MINIMUM] [-r GAS] } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-i INDENT] [-v]", version=version())
 
         # source...
         self.__parser.add_option("--aws", "-a", action="store_true", dest="aws", default=False,

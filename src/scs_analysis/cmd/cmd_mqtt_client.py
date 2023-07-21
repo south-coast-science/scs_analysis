@@ -6,6 +6,8 @@ Created on 23 Mar 2017
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.str import Str
 
 
@@ -21,7 +23,7 @@ class CmdMQTTClient(object):
         self.__parser = optparse.OptionParser(usage="%prog [-p UDS_PUB] "
                                                     "[-s] { -c { C | G | P | S | X } (UDS_SUB_1) | "
                                                     "[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } "
-                                                    "[-n] [-t] [-e] [-v]", version="%prog 1.0")
+                                                    "[-n] [-t] [-e] [-v]", version=version())
 
         # optional...
         self.__parser.add_option("--pub", "-p", type="string", nargs=1, action="store", dest="uds_pub",

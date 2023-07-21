@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ class CmdSampleNullify(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -t TARGET_PATH -s SOURCE_PATH [-l LOWER] [-u UPPER]"
-                                                    " [-v]", version="%prog 1.0")
+                                                    " [-v]", version=version())
 
         # compulsory...
         self.__parser.add_option("--target", "-t", type="string", nargs=1, action="store", dest="target",

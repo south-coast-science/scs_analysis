@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +23,7 @@ class CmdSampleISO8601(object):
         self.__parser = optparse.OptionParser(usage="%prog { -z | { -o | -f DATE_FORMAT } "
                                                     "[-t TIMEZONE_NAME [-u]] [-i ISO_PATH] "
                                                     "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-s] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # optional...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,

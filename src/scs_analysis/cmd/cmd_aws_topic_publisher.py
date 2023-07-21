@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class CmdAWSTopicPublisher(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]", version=version())
 
         # compulsory...
         self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",

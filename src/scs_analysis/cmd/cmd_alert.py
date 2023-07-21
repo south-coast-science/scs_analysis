@@ -6,6 +6,8 @@ Created on 29 Jun 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringPeriod
 
@@ -28,7 +30,7 @@ class CmdAlert(object):
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
                                                     "[-j { 1 | 0 }] [-s { 1 | 0 }] [-i INDENT] [-v] "
                                                     "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
