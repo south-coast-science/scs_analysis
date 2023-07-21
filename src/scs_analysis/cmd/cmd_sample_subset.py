@@ -40,13 +40,13 @@ class CmdSampleSubset(object):
                                  help="halt on type errors")
 
         # function...
-        self.__parser.add_option("--equal", "-e", type="string", nargs=1, action="store", dest="equal",
+        self.__parser.add_option("--equal", "-e", type="string", action="store", dest="equal",
                                  help="equal to")
 
-        self.__parser.add_option("--lower", "-l", type="string", nargs=1, action="store", dest="lower",
+        self.__parser.add_option("--lower", "-l", type="string", action="store", dest="lower",
                                  help="lower bound")
 
-        self.__parser.add_option("--upper", "-u", type="string", nargs=1, action="store", dest="upper",
+        self.__parser.add_option("--upper", "-u", type="string", action="store", dest="upper",
                                  help="upper bound")
 
         # output...

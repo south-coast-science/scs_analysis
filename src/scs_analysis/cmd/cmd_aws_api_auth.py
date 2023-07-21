@@ -27,10 +27,10 @@ class CmdAWSAPIAuth(object):
                                               version=version())
 
         # set...
-        self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
+        self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="set API endpoint")
 
-        self.__parser.add_option("--api-key", "-a", type="string", nargs=1, action="store", dest="api_key",
+        self.__parser.add_option("--api-key", "-a", type="string", action="store", dest="api_key",
                                  help="set API key")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,

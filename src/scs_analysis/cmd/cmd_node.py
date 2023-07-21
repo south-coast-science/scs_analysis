@@ -9,7 +9,6 @@ source repo: scs_analysis
 import optparse
 
 from scs_airnow import version
-
 from scs_core.data.path_dict import PathDict
 
 
@@ -35,11 +34,11 @@ class CmdNode(object):
         self.__parser.add_option("--sequence", "-s", action="store_true", dest="sequence", default=False,
                                  help="output the contents of the input array node(s) as a sequence")
 
-        self.__parser.add_option("--file", "-f", type="string", nargs=1, action="store", dest="filename",
+        self.__parser.add_option("--file", "-f", type="string", action="store", dest="filename",
                                  help="read from FILE instead of stdin")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

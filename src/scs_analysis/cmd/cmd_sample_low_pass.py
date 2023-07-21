@@ -26,14 +26,14 @@ class CmdLowPass(object):
                                               version=version())
 
         # compulsory...
-        self.__parser.add_option("--delta", "-d", type="float", nargs=1, action="store", dest="delta",
+        self.__parser.add_option("--delta", "-d", type="float", action="store", dest="delta",
                                  help="sampling time interval")
 
-        self.__parser.add_option("--cut-off", "-c", type="float", nargs=1, action="store", dest="cut_off",
+        self.__parser.add_option("--cut-off", "-c", type="float", action="store", dest="cut_off",
                                  help="cut-off frequency")
 
-        # optional...
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=None, dest="precision",
                                  help="precision (default 0 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

@@ -22,7 +22,7 @@ class CmdSampleRecord(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-v] [PATH]", version=version())
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

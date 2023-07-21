@@ -32,22 +32,23 @@ class CmdHistoChart(object):
         self.__parser.add_option("--x", "-x", type="float", nargs=2, action="store", default=(-1.0, 1.0), dest="x",
                                  help="set x-axis to min / max (default -1, 1)")
 
-        self.__parser.add_option("--bincount", "-c", type="int", nargs=1, action="store", default=200, dest="bin_count",
+        self.__parser.add_option("--bincount", "-c", type="int", action="store", default=200, dest="bin_count",
                                  help="number of bins (default 200)")
 
-        self.__parser.add_option("--precision", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
+        self.__parser.add_option("--precision", "-p", type="int", action="store", default=3, dest="precision",
                                  help="precision of reported deltas (default 3)")
 
         self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
                                  help="ignore rows with missing path values")
 
-        self.__parser.add_option("--output", "-o", type="string", nargs=1, action="store", dest="outfile",
+        # output...
+        self.__parser.add_option("--output", "-o", type="string", action="store", dest="outfile",
                                  help="output histogram to CSV file")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
 
-        self.__parser.add_option("--title", "-t", type="string", nargs=1, action="store", dest="title",
+        self.__parser.add_option("--title", "-t", type="string", action="store", dest="title",
                                  help="chart title")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

@@ -7,7 +7,6 @@ Created on 23 Mar 2017
 import optparse
 
 from scs_analysis import version
-
 from scs_core.data.str import Str
 
 
@@ -26,13 +25,13 @@ class CmdMQTTClient(object):
                                                     "[-n] [-t] [-e] [-v]", version=version())
 
         # optional...
-        self.__parser.add_option("--pub", "-p", type="string", nargs=1, action="store", dest="uds_pub",
+        self.__parser.add_option("--pub", "-p", type="string", action="store", dest="uds_pub",
                                  default=None, help="read publications from UDS instead of stdin")
 
         self.__parser.add_option("--sub", "-s", action="store_true", dest="uds_sub",
                                  help="write subscriptions to UDS instead of stdout")
 
-        self.__parser.add_option("--channel", "-c", type="string", nargs=1, action="store", dest="channel",
+        self.__parser.add_option("--channel", "-c", type="string", action="store", dest="channel",
                                  help="subscribe to channel")
 
         self.__parser.add_option("--no-wrapper", "-n", action="store_true", dest="no_wrapper", default=False,
@@ -41,6 +40,7 @@ class CmdMQTTClient(object):
         self.__parser.add_option("--timed", "-t", action="store_true", dest="timed", default=False,
                                  help="add a field for received datetime")
 
+        # output...
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo input to stdout (if not writing subscriptions to stdout)")
 

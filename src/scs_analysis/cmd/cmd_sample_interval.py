@@ -24,8 +24,8 @@ class CmdSampleInterval(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] [PATH]", version=version())
 
-        # optional...
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=3, dest="precision",
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=3, dest="precision",
                                  help="precision (default 3 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

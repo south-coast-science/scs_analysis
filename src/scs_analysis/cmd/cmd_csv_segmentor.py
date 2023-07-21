@@ -9,7 +9,6 @@ source repo: scs_analysis
 import optparse
 
 from scs_analysis import version
-
 from scs_core.data.timedelta import Timedelta
 
 
@@ -26,14 +25,15 @@ class CmdCSVSegmentor(object):
                                                     "[-v]", version=version())
 
         # compulsory...
-        self.__parser.add_option("--max-interval", "-m", type="string", nargs=1, action="store", dest="max_interval",
+        self.__parser.add_option("--max-interval", "-m", type="string", action="store", dest="max_interval",
                                  help="maximum permitted interval")
 
         # optional...
-        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
 
-        self.__parser.add_option("--file-prefix", "-f", type="string", nargs=1, action="store", dest="file_prefix",
+        # output...
+        self.__parser.add_option("--file-prefix", "-f", type="string", action="store", dest="file_prefix",
                                  help="file prefix for contiguous CSVs")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

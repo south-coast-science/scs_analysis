@@ -27,7 +27,7 @@ class CmdMonitorAuth(object):
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the authentication")
 
-        # reporting flag..
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

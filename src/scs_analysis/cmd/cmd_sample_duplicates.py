@@ -29,6 +29,7 @@ class CmdSampleDuplicates(object):
         self.__parser.add_option("--counts", "-c", action="store_true", dest="counts", default=False,
                                  help="only list the count of matching documents")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

@@ -27,20 +27,21 @@ class CmdMultiChart(object):
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
                                  help="wait for all data before displaying chart")
 
-        self.__parser.add_option("--x", "-x", type="int", nargs=1, action="store", default=600, dest="x",
+        self.__parser.add_option("--x", "-x", type="int", action="store", default=600, dest="x",
                                  help="number of x points (default 600)")
 
         self.__parser.add_option("--y", "-y", type="float", nargs=2, action="store", default=(-10.0, 10.0), dest="y",
                                  help="set y-axis to min / max (default -10, 10)")
 
-        self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
-                                 help="echo stdin to stdout")
-
         self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
                                  help="ignore rows with missing path values")
 
-        self.__parser.add_option("--title", "-t", type="string", nargs=1, action="store", dest="title",
+        # output...
+        self.__parser.add_option("--title", "-t", type="string", action="store", dest="title",
                                  help="chart title")
+
+        self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
+                                 help="echo stdin to stdout")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")

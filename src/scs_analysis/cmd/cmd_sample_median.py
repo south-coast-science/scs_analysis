@@ -26,10 +26,11 @@ class CmdSampleMedian(object):
                                               version=version())
 
         # optional...
-        self.__parser.add_option("--window", "-w", type="int", nargs=1, action="store", dest="window", default=3,
+        self.__parser.add_option("--window", "-w", type="int", action="store", dest="window", default=3,
                                  help="window size (must be an odd number, default 3)")
 
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=None, dest="precision",
                                  help="precision (default 0 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

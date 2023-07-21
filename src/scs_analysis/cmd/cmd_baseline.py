@@ -43,38 +43,38 @@ class CmdBaseline(object):
                                  help="the stored credentials to be presented")
 
         # target...
-        self.__parser.add_option("--conf-name", "-n", type="string", nargs=1, action="store", dest="conf_name",
+        self.__parser.add_option("--conf-name", "-n", type="string", action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
 
         # function...
-        self.__parser.add_option("--fields", "-f", type="string", nargs=1, action="store", dest="fields",
+        self.__parser.add_option("--fields", "-f", type="string", action="store", dest="fields",
                                  help="baseline Val or Exg fields")
 
         self.__parser.add_option("--rehearse", "-r", action="store_true", dest="rehearse", default=False,
                                  help="show what actions should be performed")
 
-        self.__parser.add_option("--uptake", "-u", type="string", nargs=1, action="store", dest="uptake",
+        self.__parser.add_option("--uptake", "-u", type="string", action="store", dest="uptake",
                                  default=self.__DEFAULT_UPTAKE_CMD,
                                  help="{ %s } default '%s'" % (cmds, self.__DEFAULT_UPTAKE_CMD))
 
         # fields...
-        self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
+        self.__parser.add_option("--start", "-s", type="string", action="store", dest="start",
                                  help="override the configuration's start time")
 
-        self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
+        self.__parser.add_option("--end", "-e", type="string", action="store", dest="end",
                                  help="override the configuration's end time")
 
-        self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
+        self.__parser.add_option("--aggregation-period", "-p", type="int", action="store",
                                  dest="interval", help="override the configuration's aggregation period")
 
         self.__parser.add_option("--minimum", "-m", type="string", nargs=2, action="store", dest="minimum",
                                  help="override configuration's minimum for GAS")
 
         # exclusions...
-        self.__parser.add_option("--only-gas", "-o", type="string", nargs=1, action="store", dest="only_gas",
+        self.__parser.add_option("--only-gas", "-o", type="string", action="store", dest="only_gas",
                                  help="baseline only GAS")
 
-        self.__parser.add_option("--exclude-gas", "-x", type="string", nargs=1, action="store", dest="exclude_gas",
+        self.__parser.add_option("--exclude-gas", "-x", type="string", action="store", dest="exclude_gas",
                                  help="exclude GAS")
 
         # output...

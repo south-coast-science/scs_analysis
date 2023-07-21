@@ -24,19 +24,20 @@ class CmdSampleNullify(object):
                                                     " [-v]", version=version())
 
         # compulsory...
-        self.__parser.add_option("--target", "-t", type="string", nargs=1, action="store", dest="target",
+        self.__parser.add_option("--target", "-t", type="string", action="store", dest="target",
                                  help="field to be nullified")
 
-        self.__parser.add_option("--source", "-s", type="string", nargs=1, action="store", dest="source",
+        self.__parser.add_option("--source", "-s", type="string", action="store", dest="source",
                                  help="field providing the test value")
 
         # optional...
-        self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", dest="lower",
+        self.__parser.add_option("--lower", "-l", type="float", action="store", dest="lower",
                                  help="lower bound")
 
-        self.__parser.add_option("--upper", "-u", type="float", nargs=1, action="store", dest="upper",
+        self.__parser.add_option("--upper", "-u", type="float", action="store", dest="upper",
                                  help="upper bound")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

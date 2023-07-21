@@ -28,12 +28,13 @@ class CmdSampleDistance(object):
                                  help="position (in degrees)")
 
         # optional...
-        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
 
-        self.__parser.add_option("--quality", "-q", type="int", nargs=1, action="store", dest="quality",
+        self.__parser.add_option("--quality", "-q", type="int", action="store", dest="quality",
                                  help="minimum acceptable GPS quality")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

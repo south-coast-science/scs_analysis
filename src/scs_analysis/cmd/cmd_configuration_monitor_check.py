@@ -9,7 +9,6 @@ import optparse
 from scs_analysis import version
 
 from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckRequest
-
 from scs_core.estate.configuration_check import ConfigurationCheck
 
 
@@ -42,14 +41,14 @@ class CmdConfigurationMonitorCheck(object):
         self.__parser.add_option("--exactly", "-x", action="store_true", dest="exact_match", default=False,
                                  help="exact match for tag")
 
-        self.__parser.add_option("--result", "-r", type="string", nargs=1, action="store", dest="result_code",
+        self.__parser.add_option("--result", "-r", type="string", action="store", dest="result_code",
                                  help="match the result { %s }" % codes)
 
         # output...
         self.__parser.add_option("--tags-only", "-o", action="store_true", dest="tags_only", default=False,
                                  help="report device tags only")
 
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

@@ -27,18 +27,19 @@ class CmdAWSClientAuth(object):
                                               version=version())
 
         # optional...
-        self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
+        self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="set broker endpoint")
 
-        self.__parser.add_option("--client", "-c", type="string", nargs=1, action="store", dest="client_id",
+        self.__parser.add_option("--client", "-c", type="string", action="store", dest="client_id",
                                  help="set client ID")
 
-        self.__parser.add_option("--cert", "-i", type="string", nargs=1, action="store", dest="cert_id",
+        self.__parser.add_option("--cert", "-i", type="string", action="store", dest="cert_id",
                                  help="set certificate ID")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the client authentication")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

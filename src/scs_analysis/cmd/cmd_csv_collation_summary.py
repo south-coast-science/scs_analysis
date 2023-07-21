@@ -8,10 +8,9 @@ source repo: scs_analysis
 
 import optparse
 
-from scs_analysis import version
-
 from glob import glob
 
+from scs_analysis import version
 from scs_core.data.model_delta import ModelDelta
 
 
@@ -31,13 +30,13 @@ class CmdCollationSummary(object):
                                               version=version())
 
         # compulsory...
-        self.__parser.add_option("--file-prefix", "-f", type="string", nargs=1, action="store", dest="file_prefix",
+        self.__parser.add_option("--file-prefix", "-f", type="string", action="store", dest="file_prefix",
                                  help="file prefix for collated CSVs")
 
-        self.__parser.add_option("--ind-path", "-i", type="string", nargs=1, action="store", dest="ind_path",
+        self.__parser.add_option("--ind-path", "-i", type="string", action="store", dest="ind_path",
                                  help="path to independent variable")
 
-        # optional...
+        # output...
         self.__parser.add_option("--prec", "-p", type="int", nargs=2, action="store", dest="precisions",
                                  help="precision for independent and dependent variables (default 1, 3 decimals)")
 

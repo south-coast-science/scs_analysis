@@ -23,10 +23,10 @@ class CmdAWSTopicPublisher(object):
         self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]", version=version())
 
         # compulsory...
-        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+        self.__parser.add_option("--topic", "-t", type="string", action="store", dest="topic",
                                  help="topic path")
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

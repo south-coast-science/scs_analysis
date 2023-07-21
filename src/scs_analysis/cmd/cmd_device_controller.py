@@ -33,7 +33,7 @@ class CmdDeviceController(object):
                                  help="the device tag")
 
         # mode...
-        self.__parser.add_option("--message", "-m", type="string", nargs=1, action="store", dest="message",
+        self.__parser.add_option("--message", "-m", type="string", action="store", dest="message",
                                  help="send the given command line string")
 
         # output...
@@ -43,7 +43,7 @@ class CmdDeviceController(object):
         self.__parser.add_option("--std", "-s", action="store_true", dest="std", default=False,
                                  help="write to stderr and stdout")
 
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

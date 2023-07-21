@@ -39,30 +39,30 @@ class CmdBaselineConf(object):
         self.__parser.add_option("--duplicate", "-d", type="string", nargs=2, action="store", dest="duplicate",
                                  help="create a new configuration based on FROM")
 
-        self.__parser.add_option("--conf-name", "-n", type="string", nargs=1, action="store", dest="conf_name",
+        self.__parser.add_option("--conf-name", "-n", type="string", action="store", dest="conf_name",
                                  help="the name of the baseline configuration")
 
         # fields...
-        self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
+        self.__parser.add_option("--start", "-s", type="string", action="store", dest="start",
                                  help="start of test period")
 
-        self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
+        self.__parser.add_option("--end", "-e", type="string", action="store", dest="end",
                                  help="end of test period")
 
-        self.__parser.add_option("--aggregation-period", "-p", type="int", nargs=1, action="store",
+        self.__parser.add_option("--aggregation-period", "-p", type="int", action="store",
                                  dest="interval", help="aggregation in minutes")
 
-        self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store", dest="timezone",
+        self.__parser.add_option("--timezone", "-t", type="string", action="store", dest="timezone",
                                  help="set the timezone for the tests")
 
         self.__parser.add_option("--set-gas", "-g", type="string", nargs=2, action="store", dest="set_gas",
                                  help="set minimum for GAS")
 
-        self.__parser.add_option("--remove-gas", "-r", type="string", nargs=1, action="store", dest="remove_gas",
+        self.__parser.add_option("--remove-gas", "-r", type="string", action="store", dest="remove_gas",
                                  help="remove GAS from minimums")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

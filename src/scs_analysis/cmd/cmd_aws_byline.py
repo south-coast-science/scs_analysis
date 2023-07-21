@@ -28,17 +28,17 @@ class CmdAWSByline(object):
                                  help="the stored credentials to be presented")
 
         # search types...
-        self.__parser.add_option("--device", "-d", type="string", nargs=1, action="store", dest="device",
+        self.__parser.add_option("--device", "-d", type="string", action="store", dest="device",
                                  help="report bylines for DEVICE")
 
-        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+        self.__parser.add_option("--topic", "-t", type="string", action="store", dest="topic",
                                  help="report bylines for TOPIC")
 
         self.__parser.add_option("--all", "-a", action="store_true", dest="all", default=False,
                                  help="report all bylines")
 
         # filters...
-        self.__parser.add_option("--excluded", "-x", type="string", nargs=1, action="store", dest="excluded",
+        self.__parser.add_option("--excluded", "-x", type="string", action="store", dest="excluded",
                                  help="exclude topics ending with EXCLUDED")
 
         self.__parser.add_option("--strict", "-s", action="store_true", dest="strict", default=False,

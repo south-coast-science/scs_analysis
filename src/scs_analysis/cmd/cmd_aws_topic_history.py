@@ -38,23 +38,23 @@ class CmdAWSTopicHistory(object):
         self.__parser.add_option("--latest", "-l", action="store_true", dest="latest", default=False,
                                  help="the most recent document")
 
-        self.__parser.add_option("--latest-at", "-a", type="string", nargs=1, action="store", dest="latest_at",
+        self.__parser.add_option("--latest-at", "-a", type="string", action="store", dest="latest_at",
                                  help="the most recent document before ISO 8601 datetime")
 
-        self.__parser.add_option("--back-off", "-b", type="int", nargs=1, action="store", dest="back_off",
+        self.__parser.add_option("--back-off", "-b", type="int", action="store", dest="back_off",
                                  help="maximum look-back period (seconds)")
 
-        self.__parser.add_option("--timedelta", "-t", type="string", nargs=1, action="store", dest="timedelta",
+        self.__parser.add_option("--timedelta", "-t", type="string", action="store", dest="timedelta",
                                  help="starting days / hours / minutes / seconds ago, and ending now")
 
-        self.__parser.add_option("--start", "-s", type="string", nargs=1, action="store", dest="start",
+        self.__parser.add_option("--start", "-s", type="string", action="store", dest="start",
                                  help="ISO 8601 datetime START")
 
-        self.__parser.add_option("--end", "-e", type="string", nargs=1, action="store", dest="end",
+        self.__parser.add_option("--end", "-e", type="string", action="store", dest="end",
                                  help="ISO 8601 datetime END")
 
         # aggregation...
-        self.__parser.add_option("--checkpoint", "-p", type="string", nargs=1, action="store", dest="checkpoint",
+        self.__parser.add_option("--checkpoint", "-p", type="string", action="store", dest="checkpoint",
                                  help="a time specification as **:/05:00")
 
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,

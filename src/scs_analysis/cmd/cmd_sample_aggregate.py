@@ -9,7 +9,6 @@ source repo: scs_analysis
 import optparse
 
 from scs_airnow import version
-
 from scs_core.data.timedelta import Timedelta
 
 
@@ -26,22 +25,23 @@ class CmdSampleAggregate(object):
                                                     "[-x] [-v] [PATH_1 .. PATH_N]", version=version())
 
         # compulsory...
-        self.__parser.add_option("--checkpoint", "-c", type="string", nargs=1, action="store", dest="checkpoint",
+        self.__parser.add_option("--checkpoint", "-c", type="string", action="store", dest="checkpoint",
                                  help="a time specification i.e. **:/05:00")
 
         # optional...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="report min and max in addition to midpoint")
 
-        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
 
-        self.__parser.add_option("--rule", "-r", type="string", nargs=1, action="store", dest="rule",
+        self.__parser.add_option("--rule", "-r", type="string", action="store", dest="rule",
                                  help="apply 75% rule with sampling INTERVAL")
 
         self.__parser.add_option("--exclude-remainder", "-x", action="store_true", dest="exclude_remainder",
                                  help="ignore data points after the last complete period")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
