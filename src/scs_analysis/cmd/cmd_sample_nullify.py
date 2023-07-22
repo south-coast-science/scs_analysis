@@ -23,14 +23,14 @@ class CmdSampleNullify(object):
         self.__parser = optparse.OptionParser(usage="%prog -t TARGET_PATH -s SOURCE_PATH [-l LOWER] [-u UPPER]"
                                                     " [-v]", version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--target", "-t", type="string", action="store", dest="target",
                                  help="field to be nullified")
 
         self.__parser.add_option("--source", "-s", type="string", action="store", dest="source",
                                  help="field providing the test value")
 
-        # optional...
+        # operation...
         self.__parser.add_option("--lower", "-l", type="float", action="store", dest="lower",
                                  help="lower bound")
 

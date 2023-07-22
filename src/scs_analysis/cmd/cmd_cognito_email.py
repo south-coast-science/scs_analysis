@@ -21,7 +21,7 @@ class CmdCognitoEmail(object):
         self.__parser = optparse.OptionParser(usage="%prog { -e | -c | -s | -r } EMAIL",
                                               version=version())
 
-        # functions...
+        # operations...
         self.__parser.add_option("--send-email", "-e", action="store_true", dest="send_email",
                                  help="send access email")
 

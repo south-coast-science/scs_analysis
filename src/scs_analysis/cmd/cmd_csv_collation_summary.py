@@ -29,7 +29,7 @@ class CmdCollationSummary(object):
                                                     "[-p IND_PRECISION DEP_PRECISION] [-v] DEP_PATH_1 .. DEP_PATH_N",
                                               version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--file-prefix", "-f", type="string", action="store", dest="file_prefix",
                                  help="file prefix for collated CSVs")
 

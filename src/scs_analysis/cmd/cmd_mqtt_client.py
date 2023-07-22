@@ -24,7 +24,7 @@ class CmdMQTTClient(object):
                                                     "[SUB_TOPIC_1 (UDS_SUB_1) .. SUB_TOPIC_N (UDS_SUB_N)] } "
                                                     "[-n] [-t] [-e] [-v]", version=version())
 
-        # optional...
+        # operations..
         self.__parser.add_option("--pub", "-p", type="string", action="store", dest="uds_pub",
                                  default=None, help="read publications from UDS instead of stdin")
 

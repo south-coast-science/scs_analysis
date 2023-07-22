@@ -23,14 +23,14 @@ class CmdCSVJoin(object):
         self.__parser = optparse.OptionParser(usage="%prog [-t TYPE] [-i] [-v] -l PREFIX PK FILENAME "
                                                     "-r PREFIX PK FILENAME", version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--left", "-l", type="string", nargs=3, action="store", dest="left",
                                  help="output path prefix, primary key and filename for left-hand set")
 
         self.__parser.add_option("--right", "-r", type="string", nargs=3, action="store", dest="right",
                                  help="output path prefix, primary key and filename for right-hand set")
 
-        # optional...
+        # mode...
         self.__parser.add_option("--type", "-t", type="string", action="store", dest="type", default='INNER',
                                  help="{ 'INNER' | 'LEFT' | 'RIGHT' | 'FULL' } (default 'INNER')")
 

@@ -25,7 +25,7 @@ class CmdHistoChart(object):
         self.__parser = optparse.OptionParser(usage="%prog [-b] [-x MIN MAX] [-c BIN_COUNT] [-p PRECISION] "
                                                     "[-o FILENAME] [-e] [-t TITLE] [-v] PATH", version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
                                  help="wait for all data before displaying chart")
 
@@ -35,13 +35,13 @@ class CmdHistoChart(object):
         self.__parser.add_option("--bincount", "-c", type="int", action="store", default=200, dest="bin_count",
                                  help="number of bins (default 200)")
 
-        self.__parser.add_option("--precision", "-p", type="int", action="store", default=3, dest="precision",
-                                 help="precision of reported deltas (default 3)")
-
         self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
                                  help="ignore rows with missing path values")
 
         # output...
+        self.__parser.add_option("--precision", "-p", type="int", action="store", default=3, dest="precision",
+                                 help="precision of reported deltas (default 3)")
+
         self.__parser.add_option("--output", "-o", type="string", action="store", dest="outfile",
                                  help="output histogram to CSV file")
 

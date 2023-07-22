@@ -24,11 +24,11 @@ class CmdSampleAggregate(object):
         self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] "
                                                     "[-x] [-v] [PATH_1 .. PATH_N]", version=version())
 
-        # compulsory...
+        # operation...
         self.__parser.add_option("--checkpoint", "-c", type="string", action="store", dest="checkpoint",
                                  help="a time specification i.e. **:/05:00")
 
-        # optional...
+        # mode...
         self.__parser.add_option("--min-max", "-m", action="store_true", dest="min_max", default=False,
                                  help="report min and max in addition to midpoint")
 

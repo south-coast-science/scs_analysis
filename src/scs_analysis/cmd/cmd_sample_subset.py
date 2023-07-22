@@ -39,7 +39,7 @@ class CmdSampleSubset(object):
         self.__parser.add_option("--strict", "-t", action="store_true", dest="strict", default=False,
                                  help="halt on type errors")
 
-        # function...
+        # operation...
         self.__parser.add_option("--equal", "-e", type="string", action="store", dest="equal",
                                  help="equal to")
 

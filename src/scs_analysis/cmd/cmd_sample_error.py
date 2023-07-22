@@ -25,7 +25,7 @@ class CmdSampleError(object):
         self.__parser = optparse.OptionParser(usage="%prog { -l | -s } [-p PRECISION] [-v] "
                                                     "REFERENCE_PATH REPORTED_PATH ERROR_PATH", version=version())
 
-        # compulsory...
+        # mode...
         self.__parser.add_option("--linear", "-l", action="store_true", dest="linear", default=False,
                                  help="error is REPORTED - REFERENCE")
 

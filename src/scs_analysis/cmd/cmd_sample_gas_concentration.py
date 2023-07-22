@@ -24,10 +24,10 @@ class CmdSampleGasConcentration(object):
         self.__parser = optparse.OptionParser(usage="%prog [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]",
                                               version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--pressure", "-p", type="float", action="store", dest="pressure",
                                  default=Gas.STP_PRESSURE, help="assume constant atmospheric pressure in kPA "
-                                                                "(default 101.3)")
+                                                                "(default %s)" % Gas.STP_PRESSURE)
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

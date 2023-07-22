@@ -25,10 +25,11 @@ class CmdSampleISO8601(object):
                                                     "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-s] [-v]",
                                               version=version())
 
-        # optional...
+        # helper...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
 
+        # formats...
         self.__parser.add_option("--oad", "-o", action="store_true", dest="oad", default=False,
                                  help="datetime format is OLE Automation date")
 
@@ -44,6 +45,7 @@ class CmdSampleISO8601(object):
         self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
 
+        # mode...
         self.__parser.add_option("--skip-malformed", "-s", action="store_true", dest="skip_malformed", default=False,
                                  help="ignore rows with malformed datetimes")
 

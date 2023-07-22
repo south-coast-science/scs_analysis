@@ -26,7 +26,7 @@ class CmdAWSClientAuth(object):
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]",
                                               version=version())
 
-        # optional...
+        # fields...
         self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="set broker endpoint")
 
@@ -36,6 +36,7 @@ class CmdAWSClientAuth(object):
         self.__parser.add_option("--cert", "-i", type="string", action="store", dest="cert_id",
                                  help="set certificate ID")
 
+        # delete...
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the client authentication")
 

@@ -22,7 +22,7 @@ class CmdSampleDuplicates(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ -x | -c }] [-v] [PATH]", version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
                                  help="output non-duplicate documents only")
 

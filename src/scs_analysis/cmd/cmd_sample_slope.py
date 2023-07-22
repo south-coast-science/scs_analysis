@@ -24,11 +24,11 @@ class CmdSampleSlope(object):
         self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-m [DD-]HH:MM[:SS]] [-x] "
                                                     "[-p PRECISION] [-v] PATH", version=version())
 
-        # compulsory...
+        # identity...
         self.__parser.add_option("--name", "-n", type="string", action="store", dest="name",
                                  help="slope field name (i.e. '1min')")
 
-        # optional...
+        # mode...
         self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
 

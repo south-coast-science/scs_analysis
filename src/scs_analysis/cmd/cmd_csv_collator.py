@@ -23,7 +23,7 @@ class CmdCSVCollator(object):
         self.__parser = optparse.OptionParser(usage="%prog -l LOWER_BOUND -u UPPER_BOUND -d DELTA [-f FILE_PREFIX] "
                                                     "[-v] PATH", version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--lower", "-l", type="float", action="store", dest="lower",
                                  help="lower bound of dataset")
 

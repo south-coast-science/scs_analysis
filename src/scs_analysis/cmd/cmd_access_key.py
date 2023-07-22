@@ -20,7 +20,7 @@ class CmdAccessKey(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ -s | -d }] [-v]", version=version())
 
-        # commands...
+        # operations...
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
                                  help="set the key")
 

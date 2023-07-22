@@ -22,10 +22,11 @@ class CmdSampleTimezone(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog { -z | [-i ISO_PATH] TIMEZONE_NAME }", version=version())
 
-        # optional...
+        # helper...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="zones", default=False,
                                  help="list the available timezone names to stderr")
 
+        # input...
         self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
 

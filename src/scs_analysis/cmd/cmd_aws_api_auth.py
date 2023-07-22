@@ -26,13 +26,14 @@ class CmdAWSAPIAuth(object):
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-a API_KEY] | -d }] [-v]",
                                               version=version())
 
-        # set...
+        # fields...
         self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="set API endpoint")
 
         self.__parser.add_option("--api-key", "-a", type="string", action="store", dest="api_key",
                                  help="set API key")
 
+        # delete...
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the API configuration")
 

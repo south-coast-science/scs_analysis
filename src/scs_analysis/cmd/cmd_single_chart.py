@@ -23,7 +23,7 @@ class CmdSingleChart(object):
         self.__parser = optparse.OptionParser(usage="%prog [-b] [-r] [-x POINTS] [-y MIN MAX] [-e] [-t TITLE] [-v] "
                                                     "[PATH]", version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--batch", "-b", action="store_true", dest="batch_mode", default=False,
                                  help="wait for all data before displaying chart")
 

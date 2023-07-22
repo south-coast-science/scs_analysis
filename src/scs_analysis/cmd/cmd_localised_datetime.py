@@ -23,7 +23,7 @@ class CmdLocalizedDatetime(object):
         self.__parser = optparse.OptionParser(usage="%prog { [-o HOURS] [-m MINUTES] [-s SECONDS] [-t TIMEZONE_NAME] | "
                                                     "-z }", version=version())
 
-        # optional...
+        # fields...
         self.__parser.add_option("--hours", "-o", type="int", default=0, action="store", dest="hours",
                                  help="offset from now in hours")
 
@@ -36,6 +36,7 @@ class CmdLocalizedDatetime(object):
         self.__parser.add_option("--timezone", "-t", type="string", action="store", dest="zone",
                                  help="present the time in the given zone")
 
+        # helper...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
                                  help="list the available timezone names to stderr")
 

@@ -24,11 +24,10 @@ class CmdCSVSegmentor(object):
         self.__parser = optparse.OptionParser(usage="%prog -m { [DD-]HH:MM[:SS] | :SS } [-i ISO] [-f FILE_PREFIX] "
                                                     "[-v]", version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--max-interval", "-m", type="string", action="store", dest="max_interval",
                                  help="maximum permitted interval")
 
-        # optional...
         self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
 

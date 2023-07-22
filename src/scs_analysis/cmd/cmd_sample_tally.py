@@ -22,7 +22,7 @@ class CmdSampleTally(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--tally", "-t", type="int", action="store", dest="tally",
                                  help="generate a rolling aggregate for TALLY number of data points (default all)")
 

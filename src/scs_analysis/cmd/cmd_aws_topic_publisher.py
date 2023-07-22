@@ -22,7 +22,7 @@ class CmdAWSTopicPublisher(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog -t TOPIC [-v]", version=version())
 
-        # compulsory...
+        # fields...
         self.__parser.add_option("--topic", "-t", type="string", action="store", dest="topic",
                                  help="topic path")
 
