@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -22,28 +24,29 @@ class CmdSampleCollator(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog -x IND_PATH [-n NAME] -y DEP_PATH "
                                                     "[-l LOWER_BOUND] -u UPPER_BOUND -d DELTA [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # compulsory...
-        self.__parser.add_option("--ind-path", "-x", type="string", nargs=1, action="store", dest="ind_path",
+        self.__parser.add_option("--ind-path", "-x", type="string", action="store", dest="ind_path",
                                  help="path to independent variable")
 
-        self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",
+        self.__parser.add_option("--name", "-n", type="string", action="store", dest="name",
                                  help="name of the independent variable")
 
-        self.__parser.add_option("--dep-path", "-y", type="string", nargs=1, action="store", dest="dep_path",
+        self.__parser.add_option("--dep-path", "-y", type="string", action="store", dest="dep_path",
                                  help="path to dependent variable")
 
-        self.__parser.add_option("--upper", "-u", type="int", nargs=1, action="store", dest="upper",
+        self.__parser.add_option("--upper", "-u", type="int", action="store", dest="upper",
                                  help="upper bound of dataset")
 
-        self.__parser.add_option("--delta", "-d", type="int", nargs=1, action="store", dest="delta",
+        self.__parser.add_option("--delta", "-d", type="int", action="store", dest="delta",
                                  help="width of column domain")
 
         # optional...
-        self.__parser.add_option("--lower", "-l", type="int", nargs=1, action="store", dest="lower", default=0,
+        self.__parser.add_option("--lower", "-l", type="int", action="store", dest="lower", default=0,
                                  help="lower bound of dataset (default 0)")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

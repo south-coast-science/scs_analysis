@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,12 +20,13 @@ class CmdSocketReceiver(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-p PORT] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p PORT] [-v]", version=version())
 
-        # optional...
-        self.__parser.add_option("--port", "-p", type="int", nargs=1, action="store", default=2000, dest="port",
+        # input...
+        self.__parser.add_option("--port", "-p", type="int", action="store", default=2000, dest="port",
                                  help="socket port (default 2000)")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

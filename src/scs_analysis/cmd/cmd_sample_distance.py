@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,19 +21,20 @@ class CmdSampleDistance(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -p LAT LNG [-i ISO] [-q QUALITY] [-v] GPS_PATH",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # compulsory...
         self.__parser.add_option("--position", "-p", type="float", nargs=2, action="store", dest="position",
                                  help="position (in degrees)")
 
         # optional...
-        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime output (default 'rec')")
 
-        self.__parser.add_option("--quality", "-q", type="int", nargs=1, action="store", dest="quality",
+        self.__parser.add_option("--quality", "-q", type="int", action="store", dest="quality",
                                  help="minimum acceptable GPS quality")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

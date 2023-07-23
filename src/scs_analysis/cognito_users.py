@@ -15,7 +15,7 @@ If the --Create function is used, an email is sent to the new user. The verifica
 excercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
-cognito_users.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -c CONFIRMATION | -s { 1 | 0 } } }] | \
+cognito_users.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -c CONFIRMATION | -s { 0 | 1 } } }] | \
 -C | -U -e EMAIL_ADDR | -D -e EMAIL_ADDR } [-i INDENT] [-v]
 
 EXAMPLES
