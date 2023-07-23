@@ -8,12 +8,13 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
 from scs_core.gas.gas import Gas
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleConcentration(object):
+class CmdSampleGasConcentration(object):
     """unix command line handler"""
 
     def __init__(self):
@@ -21,13 +22,14 @@ class CmdSampleConcentration(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]",
-                                              version="%prog 1.0")
+                                              version=version())
 
-        # optional...
-        self.__parser.add_option("--pressure", "-p", type="float", nargs=1, action="store", dest="pressure",
+        # mode...
+        self.__parser.add_option("--pressure", "-p", type="float", action="store", dest="pressure",
                                  default=Gas.STP_PRESSURE, help="assume constant atmospheric pressure in kPA "
-                                                                "(default 101.3)")
+                                                                "(default %s)" % Gas.STP_PRESSURE)
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -85,5 +87,5 @@ class CmdSampleConcentration(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s, p_path:%s}" % \
+        return "CmdSampleGasConcentration:{pressure:%s, verbose:%s, gas:%s, density_path:%s, t_path:%s, p_path:%s}" % \
                (self.pressure, self.verbose, self.gas, self.density_path, self.t_path, self.p_path)

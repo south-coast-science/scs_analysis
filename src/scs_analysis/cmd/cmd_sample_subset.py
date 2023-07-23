@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.datum import Datum
 
@@ -22,7 +24,7 @@ class CmdSampleSubset(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -i | -n | -s } { [-e EQUAL] | [-l LOWER] [-u UPPER] } "
-                                                    "[-t] [-x] [-v] PATH", version="%prog 1.0")
+                                                    "[-t] [-x] [-v] PATH", version=version())
 
         # casting...
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,
@@ -37,14 +39,14 @@ class CmdSampleSubset(object):
         self.__parser.add_option("--strict", "-t", action="store_true", dest="strict", default=False,
                                  help="halt on type errors")
 
-        # function...
-        self.__parser.add_option("--equal", "-e", type="string", nargs=1, action="store", dest="equal",
+        # operation...
+        self.__parser.add_option("--equal", "-e", type="string", action="store", dest="equal",
                                  help="equal to")
 
-        self.__parser.add_option("--lower", "-l", type="string", nargs=1, action="store", dest="lower",
+        self.__parser.add_option("--lower", "-l", type="string", action="store", dest="lower",
                                  help="lower bound")
 
-        self.__parser.add_option("--upper", "-u", type="string", nargs=1, action="store", dest="upper",
+        self.__parser.add_option("--upper", "-u", type="string", action="store", dest="upper",
                                  help="upper bound")
 
         # output...

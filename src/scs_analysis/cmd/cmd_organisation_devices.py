@@ -6,6 +6,8 @@ Created on 19 Jan 2022
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,9 +20,8 @@ class CmdOrganisationDevices(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } | "
                                                     "-C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION"
-                                                    " -d DEPLOYMENT_LABEL | "
-                                                    "-D -t DEVICE_TAG } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    " -d DEPLOYMENT_LABEL | -D -t DEVICE_TAG } "
+                                                    "[-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -50,7 +51,7 @@ class CmdOrganisationDevices(object):
                                  help="the device's deployment label")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

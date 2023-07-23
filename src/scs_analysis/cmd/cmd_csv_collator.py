@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,20 +21,20 @@ class CmdCSVCollator(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -l LOWER_BOUND -u UPPER_BOUND -d DELTA [-f FILE_PREFIX] "
-                                                    "[-v] PATH", version="%prog 1.0")
+                                                    "[-v] PATH", version=version())
 
-        # compulsory...
-        self.__parser.add_option("--lower", "-l", type="float", nargs=1, action="store", dest="lower",
+        # input...
+        self.__parser.add_option("--lower", "-l", type="float", action="store", dest="lower",
                                  help="lower bound of dataset")
 
-        self.__parser.add_option("--upper", "-u", type="float", nargs=1, action="store", dest="upper",
+        self.__parser.add_option("--upper", "-u", type="float", action="store", dest="upper",
                                  help="upper bound of dataset")
 
-        self.__parser.add_option("--delta", "-d", type="float", nargs=1, action="store", dest="delta",
+        self.__parser.add_option("--delta", "-d", type="float", action="store", dest="delta",
                                  help="width of bin")
 
-        # optional...
-        self.__parser.add_option("--file-prefix", "-f", type="string", nargs=1, action="store", dest="file_prefix",
+        # output...
+        self.__parser.add_option("--file-prefix", "-f", type="string", action="store", dest="file_prefix",
                                  help="file prefix for collated CSVs")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

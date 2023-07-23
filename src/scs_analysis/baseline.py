@@ -107,6 +107,9 @@ if __name__ == '__main__':
     Logging.config('baseline', verbose=cmd.verbose)
     logger = Logging.getLogger()
 
+    logger.info(cmd)
+
+
     try:
         # ------------------------------------------------------------------------------------------------------------
         # authentication...

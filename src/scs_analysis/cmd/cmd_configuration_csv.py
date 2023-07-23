@@ -6,6 +6,8 @@ Created on 7 Jul 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.aws.manager.configuration_finder import ConfigurationRequest
 
 
@@ -20,7 +22,7 @@ class CmdConfigurationCSV(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -n | -s | -l OUTPUT_CSV | "
                                                     "{ -d | -f } [-o OUTPUT_CSV_DIR] } [-t DEVICE_TAG [-x]] "
-                                                    "[-v] [NODE_1..NODE_N]", version="%prog 1.0")
+                                                    "[-v] [NODE_1..NODE_N]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",

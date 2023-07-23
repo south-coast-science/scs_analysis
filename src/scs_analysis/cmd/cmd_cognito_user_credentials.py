@@ -6,6 +6,8 @@ Created on 22 Nov 2021
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +19,7 @@ class CmdCognitoUserCredentials(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # helpers...
         self.__parser.add_option("--list", "-l", action="store_true", dest="list", default=False,

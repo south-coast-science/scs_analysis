@@ -6,6 +6,7 @@ Created on 24 Jan 2022
 
 import optparse
 
+from scs_analysis import version
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
 
 
@@ -22,13 +23,13 @@ class CmdCognitoUsers(object):
 
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | "
-                                                    "-s { 1 | 0 } } }] [-m] "
+                                                    "-s { 0 | 1 } } }] [-m] "
                                                     "| -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR "
                                                     "| -U EMAIL_ADDR [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL_ADDR] "
-                                                    "[-s { 1 | 0 }] "
+                                                    "[-s { 0 | 1 }] "
                                                     "| -D EMAIL_ADDR } "
                                                     "[-i INDENT] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -65,13 +66,13 @@ class CmdCognitoUsers(object):
                                  help="filter list by confirmation status { %s }" % confirmations)
 
         self.__parser.add_option("--enabled-status", "-s", type="int", action="store", dest="enabled",
-                                 help="filter list by enabled status { 1 | 0 }")
+                                 help="filter list by enabled status { 0 | 1 }")
 
         # output...
         self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
                                  help="show user's organisation memberships")
 
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

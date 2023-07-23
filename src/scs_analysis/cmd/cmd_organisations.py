@@ -6,6 +6,8 @@ Created on 10 Jan 2022
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +22,7 @@ class CmdOrganisations(object):
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | "
                                                     "-D LABEL } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -53,7 +55,7 @@ class CmdOrganisations(object):
                                  help="the organisation owner email")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

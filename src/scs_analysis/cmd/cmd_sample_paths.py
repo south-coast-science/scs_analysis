@@ -8,6 +8,8 @@ source repo: scs_exegesis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class CmdSamplePaths(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-v]", version=version())
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

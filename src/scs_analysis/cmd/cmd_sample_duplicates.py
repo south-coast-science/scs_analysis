@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,15 +20,16 @@ class CmdSampleDuplicates(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -x | -c }] [-v] [PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -x | -c }] [-v] [PATH]", version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
                                  help="output non-duplicate documents only")
 
         self.__parser.add_option("--counts", "-c", action="store_true", dest="counts", default=False,
                                  help="only list the count of matching documents")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

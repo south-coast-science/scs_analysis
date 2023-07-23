@@ -8,7 +8,7 @@ Created on 15 Feb 2019
 source repo: scs_analysis
 
 DESCRIPTION
-The sample_concentration utility is used to inject a gas concentration value, based on a given density (microgrammes
+The sample_gas_concentration utility is used to inject a gas concentration value, based on a given density (microgrammes
 per cubic metre), temperature and pressure. The reported value is in parts per billion.
 
 Density and temperature must be supplied from the input JSON document. Atmospheric pressure may be supplied from the
@@ -20,10 +20,10 @@ input document indicating density. For example, if the input path is SUB-PATH.dn
 a SUB-PATH.cnc field exists in the input document, it is overwritten.
 
 SYNOPSIS
-sample_concentration.py [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]
+sample_gas_concentration.py [-v] GAS DENSITY_PATH T_PATH [{P_PATH | -p PRESSURE}]
 
 EXAMPLES
-csv_reader.py joined_2019-02.csv | sample_concentration.py -v NO2 ref.val.NO2.dns praxis.val.sht.tmp
+csv_reader.py joined_2019-02.csv | sample_gas_concentration.py -v NO2 ref.val.NO2.dns praxis.val.sht.tmp
 
 DOCUMENT EXAMPLE - INPUT
 {"rec": "2019-02-12T13:00:00Z", "praxis": {"val":
@@ -41,12 +41,14 @@ http://www.apis.ac.uk/unit-conversion
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_concentration import CmdSampleConcentration
+from scs_analysis.cmd.cmd_sample_gas_concentration import CmdSampleGasConcentration
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 from scs_core.gas.gas import Gas
+
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -63,20 +65,27 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleConcentration()
+    cmd = CmdSampleGasConcentration()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if not Gas.is_valid_name(cmd.gas):
-        print("sample_concentration: the gas '%s' is not recognised." % cmd.gas, file=sys.stderr)
-        exit(1)
+    Logging.config('sample_gas_concentration', verbose=cmd.verbose)
+    logger = Logging.getLogger()
 
-    if cmd.verbose:
-        print("sample_concentration: %s" % cmd, file=sys.stderr)
+    logger.info(cmd)
+
 
     try:
+        # ------------------------------------------------------------------------------------------------------------
+        # validation...
+
+        if not Gas.is_valid_name(cmd.gas):
+            logger.error("the gas '%s' is not recognised." % cmd.gas)
+            exit(1)
+
+
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
@@ -111,13 +120,13 @@ if __name__ == '__main__':
             try:
                 density = float(density_node)
             except ValueError:
-                print("sample_concentration: invalid value for density in %s" % jstr, file=sys.stderr)
+                logger.error("invalid value for density in %s" % jstr)
                 exit(1)
 
             try:
                 t = float(t_node)
             except ValueError:
-                print("sample_concentration: invalid value for t in %s" % jstr, file=sys.stderr)
+                logger.error("invalid value for t in %s" % jstr)
                 exit(1)
 
             # p...
@@ -130,7 +139,7 @@ if __name__ == '__main__':
                 try:
                     p = float(p_node)
                 except ValueError:
-                    print("sample_concentration: invalid value for p in %s" % jstr, file=sys.stderr)
+                    logger.error("invalid value for p in %s" % jstr)
                     exit(1)
 
             else:
@@ -165,10 +174,8 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except KeyError as ex:
-        print("sample_concentration: %s" % repr(ex), file=sys.stderr)
+        logger.error(repr(ex))
         exit(1)
 
     finally:
-        if cmd.verbose:
-            print("sample_concentration: documents: %d processed: %d" % (document_count, processed_count),
-                  file=sys.stderr)
+        logger.info("sample_gas_concentration: documents: %d processed: %d" % (document_count, processed_count))
