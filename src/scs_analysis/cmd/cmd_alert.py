@@ -26,9 +26,9 @@ class CmdAlert(object):
         self.__parser = optparse.OptionParser(usage="%prog { -z | [-c CREDENTIALS]  "
                                                     "{ -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
-                                                    "[-n { 1 | 0 }] "
+                                                    "[-n { 0 | 1 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
-                                                    "[-j { 1 | 0 }] [-s { 1 | 0 }] [-i INDENT] [-v] "
+                                                    "[-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
                                                     "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
                                               version=version())
 

@@ -23,10 +23,10 @@ class CmdCognitoUsers(object):
 
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | "
-                                                    "-s { 1 | 0 } } }] [-m] "
+                                                    "-s { 0 | 1 } } }] [-m] "
                                                     "| -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR "
                                                     "| -U EMAIL_ADDR [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL_ADDR] "
-                                                    "[-s { 1 | 0 }] "
+                                                    "[-s { 0 | 1 }] "
                                                     "| -D EMAIL_ADDR } "
                                                     "[-i INDENT] [-v]",
                                               version=version())
@@ -66,7 +66,7 @@ class CmdCognitoUsers(object):
                                  help="filter list by confirmation status { %s }" % confirmations)
 
         self.__parser.add_option("--enabled-status", "-s", type="int", action="store", dest="enabled",
-                                 help="filter list by enabled status { 1 | 0 }")
+                                 help="filter list by enabled status { 0 | 1 }")
 
         # output...
         self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,

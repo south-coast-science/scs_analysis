@@ -22,8 +22,8 @@ Finder matches are exact.
 
 SYNOPSIS
 alert.py { -z | [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD]
-[-l LOWER] [-u UPPER] [-n { 1 | 0 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] [-j { 1 | 0 }]
-[-s { 1 | 0 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
+[-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] [-j { 0 | 1 }]
+[-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
 
 EXAMPLES
 alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/development/loc/1/climate -f val.tmp \

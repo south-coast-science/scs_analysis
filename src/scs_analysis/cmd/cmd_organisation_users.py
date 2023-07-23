@@ -20,9 +20,9 @@ class CmdOrganisationUsers(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [{ -e EMAIL | -l ORG_LABEL }] | "
                                                     "-R -e EMAIL -l ORG_LABEL | "
-                                                    "-C -e EMAIL -l ORG_LABEL -o { 1 | 0 } -d { 1 | 0 } | "
-                                                    "-U -e EMAIL -l ORG_LABEL [-o { 1 | 0 }] [-d { 1 | 0 }] "
-                                                    "[-s { 1 | 0 }] | "
+                                                    "-C -e EMAIL -l ORG_LABEL -o { 0 | 1 } -d { 0 | 1 } | "
+                                                    "-U -e EMAIL -l ORG_LABEL [-o { 0 | 1 }] [-d { 0 | 1 }] "
+                                                    "[-s { 0 | 1 }] | "
                                                     "-D -e EMAIL -l ORG_LABEL } "
                                                     "[-i INDENT] [-v]", version=version())
 
