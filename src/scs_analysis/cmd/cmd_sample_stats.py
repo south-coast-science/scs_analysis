@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,17 +21,17 @@ class CmdSampleStats(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-i] [-p PRECISION] [-a] [-r] [-v] "
-                                                    "PATH1 [PATH2 .. PATHN]", version="%prog 1.0")
+                                                    "PATH1 [PATH2 .. PATHN]", version=version())
 
         # input...
-        self.__parser.add_option("--tag", "-t", type="string", nargs=1, action="store", default='tag', dest="tag",
+        self.__parser.add_option("--tag", "-t", type="string", action="store", default='tag', dest="tag",
                                  help="name of the tag field (default 'tag')")
 
         # output...
         self.__parser.add_option("--include-tag", "-i", action="store_true", dest="include_tag", default=False,
                                  help="include the device tag")
 
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=6, dest="precision",
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=6, dest="precision",
                                  help="precision (default 6 decimal places)")
 
         self.__parser.add_option("--analytic", "-a", action="store_true", dest="analytic", default=False,

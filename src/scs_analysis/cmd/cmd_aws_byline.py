@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,24 +21,24 @@ class CmdAWSByline(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -d DEVICE | -t TOPIC [-l] | -a } "
-                                                    "[-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
         # search types...
-        self.__parser.add_option("--device", "-d", type="string", nargs=1, action="store", dest="device",
+        self.__parser.add_option("--device", "-d", type="string", action="store", dest="device",
                                  help="report bylines for DEVICE")
 
-        self.__parser.add_option("--topic", "-t", type="string", nargs=1, action="store", dest="topic",
+        self.__parser.add_option("--topic", "-t", type="string", action="store", dest="topic",
                                  help="report bylines for TOPIC")
 
         self.__parser.add_option("--all", "-a", action="store_true", dest="all", default=False,
                                  help="report all bylines")
 
         # filters...
-        self.__parser.add_option("--excluded", "-x", type="string", nargs=1, action="store", dest="excluded",
+        self.__parser.add_option("--excluded", "-x", type="string", action="store", dest="excluded",
                                  help="exclude topics ending with EXCLUDED")
 
         self.__parser.add_option("--strict", "-s", action="store_true", dest="strict", default=False,

@@ -11,7 +11,7 @@ device_monitor utility is used to manage the email addresses associated with ind
 
 SYNOPSIS
 device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
--S DEVICE_TAG { 1 | 0 } | -D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
+-S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
 
 EXAMPLES
 device_monitor.py -c super -Ft scs-opc-109

@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,22 +21,23 @@ class CmdCSVJoin(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TYPE] [-i] [-v] -l PREFIX PK FILENAME "
-                                                    "-r PREFIX PK FILENAME", version="%prog 1.0")
+                                                    "-r PREFIX PK FILENAME", version=version())
 
-        # compulsory...
+        # input...
         self.__parser.add_option("--left", "-l", type="string", nargs=3, action="store", dest="left",
                                  help="output path prefix, primary key and filename for left-hand set")
 
         self.__parser.add_option("--right", "-r", type="string", nargs=3, action="store", dest="right",
                                  help="output path prefix, primary key and filename for right-hand set")
 
-        # optional...
-        self.__parser.add_option("--type", "-t", type="string", nargs=1, action="store", dest="type", default='INNER',
+        # mode...
+        self.__parser.add_option("--type", "-t", type="string", action="store", dest="type", default='INNER',
                                  help="{ 'INNER' | 'LEFT' | 'RIGHT' | 'FULL' } (default 'INNER')")
 
         self.__parser.add_option("--iso8601", "-i", action="store_true", dest="iso8601", default=False,
                                  help="interpret the primary key as an ISO 8601 datetime")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

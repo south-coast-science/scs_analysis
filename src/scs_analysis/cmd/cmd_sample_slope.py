@@ -8,6 +8,7 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
 from scs_core.data.timedelta import Timedelta
 
 
@@ -21,26 +22,27 @@ class CmdSampleSlope(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -n NAME [-i ISO] [-t TALLY] [-m [DD-]HH:MM[:SS]] [-x] "
-                                                    "[-p PRECISION] [-v] PATH", version="%prog 1.0")
+                                                    "[-p PRECISION] [-v] PATH", version=version())
 
-        # compulsory...
-        self.__parser.add_option("--name", "-n", type="string", nargs=1, action="store", dest="name",
+        # identity...
+        self.__parser.add_option("--name", "-n", type="string", action="store", dest="name",
                                  help="slope field name (i.e. '1min')")
 
-        # optional...
-        self.__parser.add_option("--iso-path", "-i", type="string", nargs=1, action="store", default="rec", dest="iso",
+        # mode...
+        self.__parser.add_option("--iso-path", "-i", type="string", action="store", default="rec", dest="iso",
                                  help="path for ISO 8601 datetime field (default 'rec')")
 
-        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", default=2, dest="tally",
+        self.__parser.add_option("--tally", "-t", type="int", action="store", default=2, dest="tally",
                                  help="compute for rolling TALLY number of data points (default 2)")
 
-        self.__parser.add_option("--max-interval", "-m", type="string", nargs=1, action="store", dest="max_interval",
+        self.__parser.add_option("--max-interval", "-m", type="string", action="store", dest="max_interval",
                                  help="restart regression on long intervals")
 
         self.__parser.add_option("--exclude-incomplete", "-x", action="store_true", dest="exclude_incomplete",
                                  default=False, help="exclude incomplete tallies")
 
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=6, dest="precision",
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=6, dest="precision",
                                  help="precision (default 6 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

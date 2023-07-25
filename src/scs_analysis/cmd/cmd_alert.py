@@ -6,6 +6,8 @@ Created on 29 Jun 2021
 
 import optparse
 
+from scs_analysis import version
+
 from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringPeriod
 
@@ -24,11 +26,11 @@ class CmdAlert(object):
         self.__parser = optparse.OptionParser(usage="%prog { -z | [-c CREDENTIALS]  "
                                                     "{ -F | -R ID | -C | -U ID | -D ID } "
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
-                                                    "[-n { 1 | 0 }] "
+                                                    "[-n { 0 | 1 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
-                                                    "[-j { 1 | 0 }] [-s { 1 | 0 }] [-i INDENT] [-v] "
+                                                    "[-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
                                                     "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -92,7 +94,7 @@ class CmdAlert(object):
                                  help="email CC list")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

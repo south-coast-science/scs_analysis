@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,24 +21,26 @@ class CmdLocalizedDatetime(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { [-o HOURS] [-m MINUTES] [-s SECONDS] [-t TIMEZONE_NAME] | "
-                                                    "-z }", version="%prog 1.0")
+                                                    "-z }", version=version())
 
-        # optional...
-        self.__parser.add_option("--hours", "-o", type="int", nargs=1, default=0, action="store", dest="hours",
+        # fields...
+        self.__parser.add_option("--hours", "-o", type="int", default=0, action="store", dest="hours",
                                  help="offset from now in hours")
 
-        self.__parser.add_option("--minutes", "-m", type="int", nargs=1, default=0, action="store", dest="minutes",
+        self.__parser.add_option("--minutes", "-m", type="int", default=0, action="store", dest="minutes",
                                  help="offset from now in minutes")
 
-        self.__parser.add_option("--seconds", "-s", type="int", nargs=1, default=0, action="store", dest="seconds",
+        self.__parser.add_option("--seconds", "-s", type="int", default=0, action="store", dest="seconds",
                                  help="offset from now in seconds")
 
-        self.__parser.add_option("--timezone", "-t", type="string", nargs=1, action="store", dest="zone",
+        self.__parser.add_option("--timezone", "-t", type="string", action="store", dest="zone",
                                  help="present the time in the given zone")
 
+        # helper...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
                                  help="list the available timezone names to stderr")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

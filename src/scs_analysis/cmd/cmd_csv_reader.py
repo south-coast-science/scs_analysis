@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_airnow import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -19,18 +21,19 @@ class CmdCSVReader(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]",
-                                              version="%prog 1.0")
+                                              version=version())
 
-        # optional...
+        # mode...
         self.__parser.add_option("--string", "-s", action="store_true", dest="string", default=False,
                                  help="interpret all values as strings")
 
         self.__parser.add_option("--nullify", "-n", action="store_true", dest="nullify", default=False,
                                  help="convert empty or \"NULL\" strings to nulls")
 
-        self.__parser.add_option("--limit", "-l", type="int", nargs=1, action="store", dest="limit",
+        self.__parser.add_option("--limit", "-l", type="int", action="store", dest="limit",
                                  help="output a maximum of LIMIT rows")
 
+        # output...
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
                                  help="output JSON documents as array instead of a sequence")
 

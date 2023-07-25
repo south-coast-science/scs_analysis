@@ -11,6 +11,8 @@ example document:
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -22,21 +24,23 @@ class CmdAWSClientAuth(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ [-e ENDPOINT] [-c CLIENT_ID] [-I CERT_ID] | -d }] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
-        # optional...
-        self.__parser.add_option("--endpoint", "-e", type="string", nargs=1, action="store", dest="endpoint",
+        # fields...
+        self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="set broker endpoint")
 
-        self.__parser.add_option("--client", "-c", type="string", nargs=1, action="store", dest="client_id",
+        self.__parser.add_option("--client", "-c", type="string", action="store", dest="client_id",
                                  help="set client ID")
 
-        self.__parser.add_option("--cert", "-i", type="string", nargs=1, action="store", dest="cert_id",
+        self.__parser.add_option("--cert", "-i", type="string", action="store", dest="cert_id",
                                  help="set certificate ID")
 
+        # delete...
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the client authentication")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

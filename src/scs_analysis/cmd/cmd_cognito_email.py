@@ -6,6 +6,8 @@ Created on 22 Nov 2021
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,9 +19,9 @@ class CmdCognitoEmail(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { -e | -c | -s | -r } EMAIL",
-                                              version="%prog 1.0")
+                                              version=version())
 
-        # functions...
+        # operations...
         self.__parser.add_option("--send-email", "-e", action="store_true", dest="send_email",
                                  help="send access email")
 

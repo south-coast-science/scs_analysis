@@ -8,6 +8,8 @@ source repo: scs_analysis
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -18,13 +20,14 @@ class CmdSampleTally(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-t TALLY] [-p PRECISION] [-v] [PATH]", version=version())
 
-        # optional...
-        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+        # mode...
+        self.__parser.add_option("--tally", "-t", type="int", action="store", dest="tally",
                                  help="generate a rolling aggregate for TALLY number of data points (default all)")
 
-        self.__parser.add_option("--prec", "-p", type="int", nargs=1, action="store", default=None, dest="precision",
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=None, dest="precision",
                                  help="precision (default 0 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

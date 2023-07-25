@@ -1,31 +1,33 @@
 """
-Created on 17 Oct 2020
+Created on 17 Jul 2023
 
-@author: Jade Page (jade.page@southcoastscience.com)
+@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+source repo: scs_analysis
 """
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdAccessKey(object):
-    """unix command line handler"""
+class CmdSampleGasDensity(object):
+    """
+    unix command line handler
+    """
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -s | -d }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-v] PATH", version=version())
 
-        # commands..
-        self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
-                                 help="set the key")
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=1, dest="precision",
+                                 help="precision (default 1 decimal place)")
 
-        self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
-                                 help="delete the key")
-
-        # reporting flag..
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -35,7 +37,7 @@ class CmdAccessKey(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.set and self.delete:
+        if len(self.__args) != 1:
             return False
 
         return True
@@ -44,18 +46,18 @@ class CmdAccessKey(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def set(self):
-        return self.__opts.set
-
-
-    @property
-    def delete(self):
-        return self.__opts.delete
+    def precision(self):
+        return self.__opts.precision
 
 
     @property
     def verbose(self):
         return self.__opts.verbose
+
+
+    @property
+    def path(self):
+        return None if self.__args is None else self.__args[0]
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -65,5 +67,5 @@ class CmdAccessKey(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAccessKey:{set:%s, delete:%s, verbose:%s}" % \
-               (self.set, self.delete, self.verbose)
+        return "CmdSampleGasDensity:{precision:%s, verbose:%s, path:%s}" % \
+               (self.precision, self.verbose, self.path)

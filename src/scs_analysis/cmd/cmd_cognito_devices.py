@@ -6,6 +6,8 @@ Created on 24 Jan 2022
 
 import optparse
 
+from scs_analysis import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +23,7 @@ class CmdCognitoDevices(object):
                                                     "| -U TAG INVOICE "
                                                     "| -D TAG } "
                                                     "[-i INDENT] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -34,7 +36,7 @@ class CmdCognitoDevices(object):
         self.__parser.add_option("--Update", "-U", type="string", action="store", nargs=2, dest="update",
                                  help="update the device")
 
-        self.__parser.add_option("--Delete", "-D", type="string", action="store", nargs=1, dest="delete",
+        self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
                                  help="delete the device (superuser only)")
 
         # filters...
@@ -48,7 +50,7 @@ class CmdCognitoDevices(object):
         self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
                                  help="show device's organisation memberships")
 
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

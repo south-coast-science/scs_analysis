@@ -6,6 +6,7 @@ Created on 20 Apr 2021
 
 import optparse
 
+from scs_analysis import version
 from scs_core.aws.manager.configuration_finder import ConfigurationRequest
 
 
@@ -19,7 +20,7 @@ class CmdConfigurationMonitor(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-x]] { -l | -f | -d | -o } "
-                                                    "[-i INDENT] [-v]", version="%prog 1.0")
+                                                    "[-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -46,7 +47,7 @@ class CmdConfigurationMonitor(object):
                                  help="report device tags only")
 
         # output...
-        self.__parser.add_option("--indent", "-i", type="int", nargs=1, action="store", dest="indent",
+        self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
