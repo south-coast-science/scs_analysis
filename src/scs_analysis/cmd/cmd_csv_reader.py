@@ -8,7 +8,7 @@ source repo: scs_analysis
 
 import optparse
 
-from scs_airnow import version
+from scs_analysis import version
 
 
 # --------------------------------------------------------------------------------------------------------------------

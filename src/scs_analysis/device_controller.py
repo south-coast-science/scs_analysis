@@ -30,7 +30,10 @@ SEE ALSO
 scs_analysis/cognito_credentials
 
 BUGS
-Interactive history features may be unavailable in macOS.
+On macOS, interactive history features require full disk access for the Terminal app:
+
+PermissionError: [Errno 1] Operation not permitted after macOS Catalina Update
+https://stackoverflow.com/questions/58479686/permissionerror-errno-1-operation-not-permitted-after-macos-catalina-update
 """
 
 import json
