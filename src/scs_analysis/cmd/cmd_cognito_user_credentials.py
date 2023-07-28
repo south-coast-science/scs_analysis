@@ -18,8 +18,8 @@ class CmdCognitoUserCredentials(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] [-v]",
-                                              version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] "
+                                                    "[-v]", version=version())
 
         # helpers...
         self.__parser.add_option("--list", "-l", action="store_true", dest="list", default=False,
@@ -38,6 +38,9 @@ class CmdCognitoUserCredentials(object):
 
         self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
                                  help="test the credentials")
+
+        self.__parser.add_option("--environment", "-e", action="store_true", dest="environment", default=False,
+                                 help="set the retrieval password on the shell environment")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the credentials")
