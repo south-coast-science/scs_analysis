@@ -9,7 +9,7 @@ source repo: scs_analysis
 import logging
 import optparse
 
-from scs_airnow import version
+from scs_analysis import version
 
 from scs_core.data.datetime import LocalizedDatetime
 from scs_core.data.timedelta import Timedelta
