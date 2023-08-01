@@ -55,7 +55,7 @@ from scs_analysis.cmd.cmd_baseline import CmdBaseline
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.client.device_control_client import DeviceControlClient
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline_finder import BylineFinder
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -145,8 +145,8 @@ if __name__ == '__main__':
         # reporter...
         reporter = BatchDownloadReporter()
 
-        # BylineManager...
-        byline_manager = BylineManager(requests, reporter=reporter)
+        # BylineFinder...
+        byline_finder = BylineFinder(requests, reporter=reporter)
 
         # MessageManager...
         message_manager = MessageManager(reporter=reporter)
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 host_tag = Host.name()
 
                 # topics...
-                group = byline_manager.find_bylines_for_device(device_tag)
+                group = byline_finder.find_bylines_for_device(auth.id_token, device_tag)
 
                 if group is None:
                     logger.error("no bylines found for %s." % device_tag)

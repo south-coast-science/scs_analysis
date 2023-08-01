@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.tag is not None:
-                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))   # TODO: Internal Server Error on null tag
+                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
 
             else:
                 report = sorted(finder.find_all(auth.id_token))

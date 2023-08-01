@@ -56,7 +56,7 @@ import sys
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline_finder import BylineFinder
 from scs_core.aws.manager.topic_history_manager import TopicHistoryManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -140,8 +140,8 @@ if __name__ == '__main__':
         # reporter...
         reporter = BatchDownloadReporter()
 
-        # BylineManager...
-        byline_manager = BylineManager(requests)
+        # BylineFinder...
+        byline_finder = BylineFinder(requests)
 
         # MessageManager...
         message_manager = TopicHistoryManager(requests, reporter=reporter)
@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
         # start / end times...
         if cmd.latest:
-            byline = byline_manager.find_latest_byline_for_topic(cmd.topic)
+            byline = byline_finder.find_latest_byline_for_topic(auth.id_token, cmd.topic)
 
             if byline is None:
                 exit(0)

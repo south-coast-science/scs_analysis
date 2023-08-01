@@ -180,6 +180,7 @@ if __name__ == '__main__':
                 time = pieces[1].strip()
 
                 # ISO 8601...
+                # TODO: if format is None...
                 iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             else:

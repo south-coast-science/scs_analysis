@@ -61,7 +61,7 @@ from scs_analysis.cmd.cmd_alert import CmdAlert
 from scs_core.aws.data.alert import AlertSpecification
 
 from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline_finder import BylineFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -125,7 +125,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        byline_manager = BylineManager(requests)
+        byline_finder = BylineFinder(requests)
         specification_manager = AlertSpecificationManager(requests)
 
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
                 logger.error("minimum parameters are topic, path, a threshold, and an aggregation period.")
                 exit(2)
 
-            byline = byline_manager.find_latest_byline_for_topic(cmd.topic)
+            byline = byline_finder.find_latest_byline_for_topic(auth.id_token, cmd.topic)
 
             if byline is None or cmd.topic != byline.topic:
                 logger.error("the topic '%s' is not available." % cmd.topic)
