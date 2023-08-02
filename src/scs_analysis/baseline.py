@@ -47,7 +47,6 @@ scs_mfr/scd30_baseline
 """
 
 import json
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_baseline import CmdBaseline
@@ -119,7 +118,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -146,13 +145,13 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # BylineFinder...
-        byline_finder = BylineFinder(requests, reporter=reporter)
+        byline_finder = BylineFinder(reporter=reporter)
 
         # MessageManager...
         message_manager = MessageManager(reporter=reporter)
 
         # DeviceControlClient...
-        client = DeviceControlClient(requests)
+        client = DeviceControlClient()
 
 
         # ------------------------------------------------------------------------------------------------------------

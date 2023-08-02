@@ -40,8 +40,6 @@ import json
 import os
 import sys
 
-import requests
-
 from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
 
 from scs_core.aws.client.device_control_client import DeviceControlClient
@@ -106,7 +104,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -117,7 +115,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        client = DeviceControlClient(requests)
+        client = DeviceControlClient()
 
 
         # ------------------------------------------------------------------------------------------------------------

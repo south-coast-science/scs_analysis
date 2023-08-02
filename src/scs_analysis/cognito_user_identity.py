@@ -33,7 +33,6 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-yo
 https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito_user_identity import CmdCognitoUserIdentity
@@ -91,7 +90,7 @@ if __name__ == '__main__':
             if not credentials:
                 exit(1)
 
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager()
             auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
@@ -103,7 +102,7 @@ if __name__ == '__main__':
         # resources...
 
         if not cmd.create:
-            finder = CognitoUserFinder(requests)
+            finder = CognitoUserFinder()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -140,7 +139,7 @@ if __name__ == '__main__':
             identity = CognitoUserIdentity(None, None, None, True, False, email,
                                            given_name, family_name, password, False, False, False, None)
 
-            manager = CognitoUserCreator(requests)
+            manager = CognitoUserCreator()
             report = manager.create(identity)
 
             # create credentials...
@@ -191,8 +190,8 @@ if __name__ == '__main__':
                                            identity.is_financial, None)
 
             auth = gatekeeper.user_login(credentials)                          # renew credentials
-            manager = CognitoUserEditor(requests, auth.id_token)
-            report = manager.update(identity)
+            manager = CognitoUserEditor()
+            report = manager.update(auth.id_token, identity)
 
             # update credentials...
             credentials = CognitoClientCredentials(credentials.name, email, password, retrieval_password)

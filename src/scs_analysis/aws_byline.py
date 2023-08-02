@@ -32,7 +32,6 @@ scs_analysis/aws_topic_history
 scs_analysis/cognito_user_credentials
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
@@ -83,7 +82,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -98,7 +97,7 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # BylineFinder...
-        finder = BylineFinder(requests, reporter=reporter)
+        finder = BylineFinder(reporter=reporter)
         logger.info(finder)
 
 

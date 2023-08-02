@@ -9,8 +9,6 @@ Created on 1 Aug 2023
 import json
 import sys
 
-import requests
-
 from scs_core.aws.data.byline import DeviceBylineGroup
 from scs_core.aws.manager.byline_finder import BylineFinder
 
@@ -30,7 +28,7 @@ credentials = CognitoClientCredentials.load_for_user(Host, name='super')
 if not credentials:
     exit(1)
 
-gatekeeper = CognitoLoginManager(requests)
+gatekeeper = CognitoLoginManager()
 auth = gatekeeper.user_login(credentials)
 
 if not auth.is_ok():
@@ -40,7 +38,7 @@ if not auth.is_ok():
 
 # --------------------------------------------------------------------------------------------------------------------
 
-finder = BylineFinder(requests)
+finder = BylineFinder()
 print(finder)
 print("1-")
 

@@ -9,7 +9,6 @@ DEPRECATED: replaced with byline_finder_test.py
 """
 
 import json
-import requests
 
 from scs_core.aws.data.byline import DeviceBylineGroup
 from scs_core.aws.manager.byline_manager import BylineManager
@@ -19,7 +18,7 @@ from scs_core.data.json import JSONify
 
 # --------------------------------------------------------------------------------------------------------------------
 
-manager = BylineManager(requests)
+manager = BylineManager()
 print(manager)
 print("1-")
 

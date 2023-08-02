@@ -30,7 +30,6 @@ scs_analysis/cognito_user_identity
 scs_analysis/cognito_users
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito_email import CmdCognitoEmail
@@ -117,10 +116,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        password_manager = CognitoPasswordManager(requests)
-        user_manager = CognitoUserCreator(requests)
-
-        gatekeeper = CognitoLoginManager(requests)
+        password_manager = CognitoPasswordManager()
+        user_manager = CognitoUserCreator()
+        gatekeeper = CognitoLoginManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

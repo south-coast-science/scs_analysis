@@ -31,7 +31,6 @@ scs_analysis/cognito_credentials
 scs_analysis/cognito_devices
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_organisation_devices import CmdOrganisationDevices
@@ -109,7 +108,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -120,7 +119,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = OrganisationManager(requests)
+        manager = OrganisationManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

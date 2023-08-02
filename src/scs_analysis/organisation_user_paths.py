@@ -26,7 +26,6 @@ SEE ALSO
 scs_analysis/cognito_credentials
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_organisation_user_paths import CmdOrganisationUserPaths
@@ -91,7 +90,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -102,8 +101,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = CognitoUserFinder(requests)
-        manager = OrganisationManager(requests)
+        finder = CognitoUserFinder()
+        manager = OrganisationManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

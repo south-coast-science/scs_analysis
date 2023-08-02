@@ -55,7 +55,6 @@ scs_mfr/configuration
 """
 
 import os
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
@@ -118,7 +117,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -137,8 +136,8 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # ConfigurationFinder...
-        configuration_finder = ConfigurationFinder(requests, reporter=reporter)
-        check_finder = ConfigurationCheckFinder(requests)
+        configuration_finder = ConfigurationFinder(reporter=reporter)
+        check_finder = ConfigurationCheckFinder()
 
         # ConfigurationCSVGenerator...
         csv_generator = ConfigurationCSVGenerator(cmd.verbose)

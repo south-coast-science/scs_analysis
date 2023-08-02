@@ -53,7 +53,6 @@ The test-interval field is not currently in use, and is ignored.
 """
 
 import json
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_alert import CmdAlert
@@ -114,7 +113,7 @@ if __name__ == '__main__':
             if not credentials:
                 exit(1)
 
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager()
             auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
@@ -125,8 +124,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        byline_finder = BylineFinder(requests)
-        specification_manager = AlertSpecificationManager(requests)
+        byline_finder = BylineFinder()
+        specification_manager = AlertSpecificationManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

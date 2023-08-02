@@ -50,7 +50,6 @@ RESOURCES
 https://github.com/curl/curl
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
@@ -126,7 +125,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -141,10 +140,10 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # BylineFinder...
-        byline_finder = BylineFinder(requests)
+        byline_finder = BylineFinder()
 
         # MessageManager...
-        message_manager = TopicHistoryManager(requests, reporter=reporter)
+        message_manager = TopicHistoryManager(reporter=reporter)
 
         logger.info(message_manager)
 

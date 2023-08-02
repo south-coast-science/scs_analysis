@@ -25,7 +25,6 @@ scs_analysis/monitor_auth
 scs_mfr/configuration
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
@@ -74,7 +73,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -89,7 +88,7 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
 
         # ConfigurationFinder...
-        finder = ConfigurationFinder(requests, reporter=reporter)
+        finder = ConfigurationFinder(reporter=reporter)
 
 
         # ------------------------------------------------------------------------------------------------------------
