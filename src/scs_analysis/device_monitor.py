@@ -24,7 +24,6 @@ scs_analysis/cognito_user_credentials
 scs_analysis/device_monitor_status
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
@@ -75,7 +74,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -98,7 +97,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        manager = DeviceMonitorSpecificationManager(requests)
+        manager = DeviceMonitorSpecificationManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

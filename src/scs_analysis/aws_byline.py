@@ -32,13 +32,12 @@ scs_analysis/aws_topic_history
 scs_analysis/cognito_user_credentials
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline_finder import BylineFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -83,7 +82,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -97,9 +96,9 @@ if __name__ == '__main__':
         # reporter...
         reporter = BatchDownloadReporter()
 
-        # BylineManager...
-        manager = BylineManager(requests, reporter=reporter)
-        logger.info(manager)
+        # BylineFinder...
+        finder = BylineFinder(reporter=reporter)
+        logger.info(finder)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -117,13 +116,13 @@ if __name__ == '__main__':
 
         # find...
         if cmd.topic:
-            group = manager.find_bylines_for_topic(cmd.topic, excluded=cmd.excluded)
+            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded)
 
         elif cmd.device:
-            group = manager.find_bylines_for_device(cmd.device, excluded=cmd.excluded)
+            group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded)
 
         else:
-            group = manager.find_bylines(excluded=cmd.excluded)         # all
+            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded)         # all
 
         # report...
         report = []

@@ -41,7 +41,6 @@ BUGS
 Result code not currently in use.
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMonitorCheck
@@ -91,7 +90,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -102,8 +101,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = ConfigurationCheckFinder(requests)
-        requester = ConfigurationCheckRequester(requests)
+        finder = ConfigurationCheckFinder()
+        requester = ConfigurationCheckRequester()
 
 
         # ------------------------------------------------------------------------------------------------------------

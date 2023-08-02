@@ -37,7 +37,6 @@ RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito_user_credentials import CmdCognitoUserCredentials
@@ -132,7 +131,7 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
         elif cmd.test:
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager()
 
             credentials = load_credentials(cmd.credentials_name)
 
