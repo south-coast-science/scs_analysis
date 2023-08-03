@@ -50,14 +50,13 @@ RESOURCES
 https://github.com/curl/curl
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.byline_manager import BylineManager
-from scs_core.aws.manager.lambda_message_manager import MessageManager
+from scs_core.aws.manager.byline_finder import BylineFinder
+from scs_core.aws.manager.topic_history_manager import TopicHistoryManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -126,7 +125,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -140,11 +139,11 @@ if __name__ == '__main__':
         # reporter...
         reporter = BatchDownloadReporter()
 
-        # BylineManager...
-        byline_manager = BylineManager(requests)
+        # BylineFinder...
+        byline_finder = BylineFinder()
 
         # MessageManager...
-        message_manager = MessageManager(reporter=reporter)
+        message_manager = TopicHistoryManager(reporter=reporter)
 
         logger.info(message_manager)
 
@@ -163,8 +162,8 @@ if __name__ == '__main__':
         start_time = LocalizedDatetime.now()
 
         if cmd.latest_at:
-            message = message_manager.find_latest_for_topic(cmd.topic, cmd.latest_at, None, cmd.include_wrapper,
-                                                            cmd.rec_only, None)
+            message = message_manager.find_latest_for_topic(auth.id_token, cmd.topic, cmd.latest_at, None,
+                                                            cmd.include_wrapper, cmd.rec_only, None)
 
             if message:
                 print(JSONify.dumps(message))
@@ -173,7 +172,7 @@ if __name__ == '__main__':
 
         # start / end times...
         if cmd.latest:
-            byline = byline_manager.find_latest_byline_for_topic(cmd.topic)
+            byline = byline_finder.find_latest_byline_for_topic(auth.id_token, cmd.topic)
 
             if byline is None:
                 exit(0)
@@ -193,8 +192,8 @@ if __name__ == '__main__':
         logger.info("end: %s" % end)
 
         # messages...
-        for message in message_manager.find_for_topic(cmd.topic, start, end, None, cmd.fetch_last, cmd.checkpoint,
-                                                      cmd.include_wrapper, cmd.rec_only, cmd.min_max,
+        for message in message_manager.find_for_topic(auth.id_token, cmd.topic, start, end, None, cmd.fetch_last,
+                                                      cmd.checkpoint, cmd.include_wrapper, cmd.rec_only, cmd.min_max,
                                                       cmd.exclude_remainder, False, None):
             print(JSONify.dumps(message))
             sys.stdout.flush()

@@ -35,7 +35,6 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-yo
 https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito_devices import CmdCognitoDevices
@@ -88,7 +87,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -99,10 +98,9 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        device_manager = CognitoDeviceManager(requests)
-        org_manager = OrganisationManager(requests)
-
-        finder = CognitoDeviceFinder(requests)
+        device_manager = CognitoDeviceManager()
+        org_manager = OrganisationManager()
+        finder = CognitoDeviceFinder()
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -110,7 +108,7 @@ if __name__ == '__main__':
 
         if cmd.find:
             if cmd.tag is not None:
-                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))   # TODO: Internal Server Error on null tag
+                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
 
             else:
                 report = sorted(finder.find_all(auth.id_token))

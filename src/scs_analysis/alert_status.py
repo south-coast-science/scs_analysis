@@ -28,7 +28,6 @@ scs_analysis/alert
 scs_analysis/cognito_user_credentials
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_alert_status import CmdAlertStatus
@@ -77,7 +76,7 @@ if __name__ == '__main__':
         if not credentials:
             exit(1)
 
-        gatekeeper = CognitoLoginManager(requests)
+        gatekeeper = CognitoLoginManager()
         auth = gatekeeper.user_login(credentials)
 
         if not auth.is_ok():
@@ -88,7 +87,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        status_manager = AlertStatusManager(requests)
+        status_manager = AlertStatusManager()
 
 
         # ------------------------------------------------------------------------------------------------------------

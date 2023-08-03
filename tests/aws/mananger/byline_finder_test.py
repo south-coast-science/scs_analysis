@@ -1,29 +1,50 @@
 #!/usr/bin/env python3
 
 """
-Created on 7 Oct 2020
+Created on 1 Aug 2023
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-
-DEPRECATED: replaced with byline_finder_test.py
 """
 
 import json
+import sys
 
 from scs_core.aws.data.byline import DeviceBylineGroup
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline_finder import BylineFinder
+
+from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.data.json import JSONify
+
+from scs_host.sys.host import Host
+
+
+# ------------------------------------------------------------------------------------------------------------
+# authentication...
+
+credentials = CognitoClientCredentials.load_for_user(Host, name='super')
+
+if not credentials:
+    exit(1)
+
+gatekeeper = CognitoLoginManager()
+auth = gatekeeper.user_login(credentials)
+
+if not auth.is_ok():
+    print("login: %s." % auth.authentication_status.description, file=sys.stderr)
+    exit(1)
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-manager = BylineManager()
-print(manager)
+finder = BylineFinder()
+print(finder)
 print("1-")
 
 # TopicBylineGroup...
-group = manager.find_bylines_for_topic('acsoft/holding-pool/device/praxis-000752/status', excluded='/control')
+group = finder.find_bylines_for_topic(auth.id_token, 'acsoft/holding-pool/device/praxis-000752/status',
+                                      excluded='/control')
 print(group)
 print("2-")
 
@@ -46,11 +67,11 @@ for device in group.devices:
 print("=")
 
 # DeviceBylineGroup...
-group = manager.find_bylines_for_device('scs-opc-198')
+group = finder.find_bylines_for_device(auth.id_token, 'scs-opc-198')
 print(group)
 print("5-")
 
-group = manager.find_bylines_for_device('scs-opc-198', excluded='/control')
+group = finder.find_bylines_for_device(auth.id_token, 'scs-opc-198', excluded='/control')
 print(group)
 print("6-")
 
@@ -74,7 +95,8 @@ print("latest rec: %s" % group.latest_rec())
 print("X-")
 
 
-group = manager.find_bylines()
+group = finder.find_bylines(auth.id_token)
 print(group)
 jstr = JSONify.dumps(group.as_json(), indent=4)
 print(jstr)
+

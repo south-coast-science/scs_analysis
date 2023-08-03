@@ -37,7 +37,6 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-yo
 https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html
 """
 
-import requests
 import sys
 
 from scs_analysis.cmd.cmd_cognito_users import CmdCognitoUsers
@@ -101,7 +100,7 @@ if __name__ == '__main__':
             if not credentials:
                 exit(1)
 
-            gatekeeper = CognitoLoginManager(requests)
+            gatekeeper = CognitoLoginManager()
             auth = gatekeeper.user_login(credentials)
 
             if not auth.is_ok():
@@ -113,9 +112,9 @@ if __name__ == '__main__':
         # resources...
 
         if not cmd.create:
-            finder = CognitoUserFinder(requests)
+            finder = CognitoUserFinder()
 
-        manager = OrganisationManager(requests)
+        manager = OrganisationManager()
 
         if cmd.org_label:
             org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)
@@ -169,7 +168,7 @@ if __name__ == '__main__':
             identity = CognitoUserIdentity(None, None, None, True, False, cmd.email,
                                            cmd.given_name, cmd.family_name, password, False, False, False, None)
 
-            manager = CognitoUserCreator(requests)
+            manager = CognitoUserCreator()
             report = manager.create(identity)
 
         if cmd.update:
@@ -197,13 +196,13 @@ if __name__ == '__main__':
                                                identity.is_financial, None)
 
             auth = gatekeeper.user_login(credentials)                          # renew credentials
-            manager = CognitoUserEditor(requests, auth.id_token)
-            report = manager.update(new_identity)
+            manager = CognitoUserEditor()
+            report = manager.update(auth.id_token, new_identity)
 
         if cmd.delete:
             # TODO: delete user from organisations?
-            manager = CognitoUserDeleter(requests, auth.id_token)
-            manager.delete(cmd.delete)
+            manager = CognitoUserDeleter()
+            manager.delete(auth.id_token, cmd.delete)
 
 
         # ------------------------------------------------------------------------------------------------------------
