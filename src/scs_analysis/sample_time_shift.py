@@ -27,6 +27,10 @@ DOCUMENT EXAMPLE - INPUT
 DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2021-10-31T22:01:00Z", "meteo": {"T": 15.2, "rH": 62}, "gas": {"SO2": 11}}
 ...
+
+SEE ALSO
+scs_analysis/sample_iso_8601
+scs_analysis/sample_localize
 """
 
 import sys
