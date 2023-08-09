@@ -52,6 +52,10 @@ DOCUMENT EXAMPLE - OUTPUT
 "Average of ref": {"NOCNC1 (Processed)": 1.606666667, "NO2CNC1 (Processed)": 6.473333333},
 "15 minute \"real\" data": 5.92}
 
+SEE ALSO
+scs_analysis/sample_localize
+scs_analysis/sample_time_shift
+
 RESOURCES
 https://en.wikipedia.org/wiki/ISO_8601
 https://github.com/south-coast-science/scs_dev/wiki/3:-Data-formats
@@ -67,6 +71,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
 from scs_core.location.timezone import Timezone
+
+from scs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -90,24 +96,27 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if not cmd.zones and not cmd.oad and not DateParser.is_valid_format(cmd.format):
-        print("sample_iso_8601: unsupported format: %s" % cmd.format, file=sys.stderr)
-        exit(2)
+    Logging.config('sample_iso_8601', verbose=cmd.verbose)
+    logger = Logging.getLogger()
 
-    if cmd.verbose:
-        print("sample_iso_8601: %s" % cmd, file=sys.stderr)
+    logger.info(cmd)
 
     try:
+        # ------------------------------------------------------------------------------------------------------------
+        # validation...
+
+        if not cmd.zones and not cmd.oad and not DateParser.is_valid_format(cmd.format):
+            logger.error("unsupported format: %s" % cmd.format)
+            exit(2)
+
+
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
         # format...
         if cmd.format:
             parser = DateParser.construct(cmd.format)
-
-            if cmd.verbose:
-                print("sample_iso_8601: %s" % parser, file=sys.stderr)
-                sys.stderr.flush()
+            logger.info(parser)
 
         # timezone...
         if cmd.timezone is not None:
@@ -116,12 +125,11 @@ if __name__ == '__main__':
                 zone = timezone.zone
 
             except ValueError:
-                print("sample_iso_8601: unrecognised timezone:%s" % cmd.timezone, file=sys.stderr)
+                logger.error("unrecognised timezone: '%s'." % cmd.timezone)
                 exit(2)
 
-            if cmd.verbose:
-                print("sample_iso_8601: %s" % timezone, file=sys.stderr)
-                sys.stderr.flush()
+            logger.info(timezone)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -145,7 +153,7 @@ if __name__ == '__main__':
             if cmd.oad:
                 # OAD...
                 if cmd.datetime_path not in paths:
-                    print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    logger.error("datetime path '%s' not in %s" % (cmd.datetime_path, jstr))
                     exit(1)
 
                 # ISO 8601...
@@ -154,7 +162,7 @@ if __name__ == '__main__':
             elif cmd.uses_datetime():
                 # datetime...
                 if cmd.datetime_path not in paths:
-                    print("sample_iso_8601: datetime path '%s' not in %s" % (cmd.datetime_path, jstr), file=sys.stderr)
+                    logger.error("datetime path '%s' not in %s" % (cmd.datetime_path, jstr))
                     exit(1)
 
                 try:
@@ -164,33 +172,30 @@ if __name__ == '__main__':
                     if cmd.skip_malformed:
                         continue
 
-                    print("sample_iso_8601: malformed datetime (AttributeError) '%s' in %s" % (cmd.datetime_path, jstr),
-                          file=sys.stderr)
+                    logger.error("malformed datetime (AttributeError) '%s' in %s" % (cmd.datetime_path, jstr))
                     exit(1)
 
                 if len(pieces) != 2:
                     if cmd.skip_malformed:
                         continue
 
-                    print("sample_iso_8601: 2: malformed datetime (field count) '%s' in %s" % (cmd.datetime_path, jstr),
-                          file=sys.stderr)
+                    logger.error("malformed datetime (field count) '%s' in %s" % (cmd.datetime_path, jstr))
                     exit(1)
 
                 date = pieces[0].strip()
                 time = pieces[1].strip()
 
                 # ISO 8601...
-                # TODO: if format is None...
                 iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
 
             else:
                 # date / time...
                 if cmd.date_path not in paths:
-                    print("sample_iso_8601: date path '%s' not in %s" % (cmd.date_path, jstr), file=sys.stderr)
+                    logger.error("date path '%s' not in %s" % (cmd.date_path, jstr))
                     exit(1)
 
                 if cmd.time_path not in paths:
-                    print("sample_iso_8601: time path '%s' not in %s" % (cmd.time_path, jstr), file=sys.stderr)
+                    logger.error("time path '%s' not in %s" % (cmd.time_path, jstr))
                     exit(1)
 
                 date = datum.node(cmd.date_path)
@@ -203,7 +208,7 @@ if __name__ == '__main__':
                 if cmd.skip_malformed:
                     continue
 
-                print("sample_iso_8601: malformed date/time in %s" % jstr, file=sys.stderr)
+                logger.error("malformed date/time in %s" % jstr)
                 exit(1)
 
             if cmd.timezone is not None and cmd.utc:
@@ -231,9 +236,9 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except KeyError as ex:
-        print("sample_iso_8601: %s" % repr(ex), file=sys.stderr)
+        logger.error(repr(ex))
         exit(1)
 
     finally:
-        if cmd.verbose:
-            print("sample_iso_8601: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+        if not cmd.zones:
+            logger.info("documents: %d processed: %d" % (document_count, processed_count))
