@@ -23,8 +23,8 @@ import sys
 
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
 
-from scs_core.aws.security.client_traffic import ClientTrafficLocus
-from scs_core.aws.security.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
+from scs_core.aws.client_traffic.client_traffic import ClientTrafficLocus
+from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -105,8 +105,6 @@ if __name__ == '__main__':
                 logger.error("the user '%s' could not be found." % cmd.user)
                 exit(2)
 
-            print("user: %s" % user)
-
         else:
             organisation = organisation_finder.get_organisation_by_label(auth.id_token, cmd.organisation)
 
@@ -118,8 +116,11 @@ if __name__ == '__main__':
 
             org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
 
+            for org_user in org_users:
+                print(org_user)
+
             usernames = [org_user.username for org_user in org_users]
-            print("usernames: %s" % usernames)
+            # print("usernames: %s" % usernames)
 
             users = user_finder.find_by_usernames(auth.id_token, usernames)
 
@@ -135,12 +136,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
-        #
-        # if cmd.organisation and not cmd.separate:
-        #     response = traffic_finder.find_for_organisation(auth.id_token, request)
-        # else:
-        #     response = traffic_finder.find_for_user(auth.id_token, request)
+        request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
+
+        if cmd.organisation and not cmd.separate:
+            response = traffic_finder.find_for_organisation(auth.id_token, request)
+        else:
+            response = traffic_finder.find_for_users(auth.id_token, request)
 
 
         # ------------------------------------------------------------------------------------------------------------
