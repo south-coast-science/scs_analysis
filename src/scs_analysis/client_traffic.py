@@ -19,6 +19,7 @@ SEE ALSO
 scs_analysis/cognito_user_credentials
 """
 
+import logging
 import sys
 
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
@@ -45,6 +46,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    clients = []
     response = None
     report = None
 
@@ -57,7 +59,7 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    Logging.config('client_traffic', verbose=cmd.verbose)
+    Logging.config('client_traffic', level=logging.DEBUG)        # , verbose=cmd.verbose
     logger = Logging.getLogger()
 
     logger.info(cmd)
@@ -99,38 +101,32 @@ if __name__ == '__main__':
         # run...
 
         if cmd.user:
-            user = user_finder.get_by_email(auth.id_token, cmd.user)
+            for client in cmd.clients:
+                user = user_finder.get_by_email(auth.id_token, client)
 
-            if user is None:
-                logger.error("the user '%s' could not be found." % cmd.user)
-                exit(2)
+                if user is None:
+                    logger.error("the user '%s' could not be found." % client)
+                    exit(2)
 
-        else:
-            organisation = organisation_finder.get_organisation_by_label(auth.id_token, cmd.organisation)
+                clients.append(user.email)
 
-            if organisation is None:
-                logger.error("the organisation '%s' could not be found." % cmd.organisation)
-                exit(2)
+        if cmd.organisation:
+            for client in cmd.clients:
+                organisation = organisation_finder.get_organisation_by_label(auth.id_token, client)
 
-            print("organisation: %s" % organisation)
+                if organisation is None:
+                    logger.error("the organisation '%s' could not be found." % client)
+                    exit(2)
 
-            org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
+                if cmd.separate:
+                    org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
+                    users = user_finder.find_by_usernames(auth.id_token, [org_user.username for org_user in org_users])
 
-            for org_user in org_users:
-                print(org_user)
+                    clients.extend([user.email for user in users])
 
-            usernames = [org_user.username for org_user in org_users]
-            # print("usernames: %s" % usernames)
+        print("clients: %s" % clients)
 
-            users = user_finder.find_by_usernames(auth.id_token, usernames)
-
-            # if cmd.separate:
-            #     users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
-
-            for user in users:
-                print("user: %s" % user)
-
-                # TODO: exclude bruno.beloff, etc.
+        # TODO: exclude bruno.beloff, etc.
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -139,9 +135,9 @@ if __name__ == '__main__':
         request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
 
         if cmd.organisation and not cmd.separate:
-            response = traffic_finder.find_for_organisation(auth.id_token, request)
+            report = sorted(traffic_finder.find_for_organisation(auth.id_token, request))
         else:
-            response = traffic_finder.find_for_users(auth.id_token, request)
+            report = sorted(traffic_finder.find_for_users(auth.id_token, request))
 
 
         # ------------------------------------------------------------------------------------------------------------
