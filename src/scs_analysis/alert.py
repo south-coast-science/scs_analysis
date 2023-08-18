@@ -12,11 +12,6 @@ Alerts take the form of emails. These are sent when a parameter falls below or a
 value is null (a null value is being reported, or no reports are available). The alert specification sets these bounds,
 together with the aggregation period (usually in minutes). The minimum period is one minute.
 
-Important note: when an alert is triggered, only one email is sent to each of the specified recipients. No further
-email is sent until the parameter has returned within bounds and then, subsequently, exceeds the bounds. The end of an
-out-of-bound event is logged in the alert status history. A history of out-of-bounds events for each alert
-specification can be found using the alert_status utility.
-
 In --find mode, results can be filtered by description, topic, field or email address.
 Finder matches are exact.
 
@@ -30,18 +25,17 @@ alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/deve
 -u 10 -n 1 -t 16:00 8:00 Europe/London -e bruno.beloff@southcoastscience.com -g jade.page@southcoastscience.com
 
 DOCUMENT EXAMPLE (recurring)
-{"id": null, "description": "my description", "topic": "my/topic",
-"field": "my.field", "lower-threshold": null,  "upper-threshold": 100.0, "alert-on-none": true,
-"aggregation-period": {"type": "recurring", "interval": 1, "units": "D", "timezone": "Europe/London"},
-"test-interval": {"type": "recurring", "interval": 1, "units": "M"}, "json-message": true,
-"creator-email-address": "bruno.beloff@southcoastscience.com", "to": "bruno.beloff@southcoastscience.com",
-"cc-list": ["bbeloff@me.com", "hhopton@me.com"], "suspended": false}
+{"id": 85, "description": "test", "topic": "south-coast-science-demo/brighton-urban/loc/1/particulates",
+"field": "exg.val.pm2p5", "lower-threshold": null, "upper-threshold": 20.0, "alert-on-none": false,
+"aggregation-period": {"type": "recurring", "interval": 1, "units": "M", "timezone": "Europe/London"},
+"contiguous-alerts": false, "json-message": false, "creator-email-address": "bruno.beloff@southcoastscience.com",
+"to": "bruno.beloff@southcoastscience.com", "cc-list": [], "suspended": false}
 
 DOCUMENT EXAMPLE (diurnal)
 {"id": 107, "description": "be2-3-nightime-test", "topic": "south-coast-science-dev/development/loc/1/climate",
-"field": "val.tmp", "lower-threshold": null, "upper-threshold": 10.0, "alert-on-none": true,
-"aggregation-period": {"type": "diurnal", "start": "16:00:00", "end": "08:00:00", "timezone": "Europe/London"},
-"test-interval": null, "json-message": false, "creator-email-address": "production@southcoastscience.com",
+"field": "val.tmp", "lower-threshold": null, "upper-threshold": 10.0, "alert-on-none": false,
+"aggregation-period": {"type": "diurnal", "start": "20:00:00", "end": "09:50:00", "timezone": "Europe/London"},
+"contiguous-alerts": true, "json-message": false, "creator-email-address": "production@southcoastscience.com",
 "to": "bruno.beloff@southcoastscience.com", "cc-list": ["jade.page@southcoastscience.com"], "suspended": false}
 
 SEE ALSO
@@ -198,12 +192,15 @@ if __name__ == '__main__':
                 exit(2)
 
             # create...
+            contiguous_alerts = True if cmd.contiguous_alerts is None else bool(cmd.contiguous_alerts)
+            json_message = False if cmd.json_message is None else bool(cmd.json_message)
             to = credentials.email if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else {}
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       None, bool(cmd.json_message), None, to, cc, bool(cmd.suspended))
+                                       None, contiguous_alerts, json_message,
+                                       None, to, cc, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -233,13 +230,14 @@ if __name__ == '__main__':
             upper_threshold = alert.upper_threshold if cmd.upper_threshold is None else cmd.upper_threshold
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
+            contiguous_alerts = alert.contiguous_alerts if cmd.contiguous_alerts is None else cmd.contiguous_alerts
             json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
             cc = cmd.cc_list if cmd.cc else alert.cc_list
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
-                                         upper_threshold, alert_on_none, aggregation_period, None,
+                                         upper_threshold, alert_on_none, aggregation_period, None, contiguous_alerts,
                                          json_message, alert.creator_email_address, to, cc, suspended)
 
             if not updated.has_valid_thresholds():
