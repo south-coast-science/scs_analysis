@@ -10,7 +10,11 @@ The alert utility is used to create, update, delete or find alert specifications
 
 Alerts take the form of emails. These are sent when a parameter falls below or above specified bounds, or when the
 value is null (a null value is being reported, or no reports are available). The alert specification sets these bounds,
-together with the aggregation period (usually in minutes). The minimum period is one minute.
+together with the aggregation period. One of two types of period may be specified:
+
+* Recurring - a period of a given number of minutes, hours or days. Recurring periods are sampled back-to back.
+* Diurnal - a daily period with given start time and end times. Diurnal periods are sampled immediately after the end
+time.
 
 In --find mode, results can be filtered by description, topic, field or email address.
 Finder matches are exact.
