@@ -75,11 +75,11 @@ class CmdAlert(object):
                                  default=False, help="alert on none (default false)")
 
         self.__parser.add_option("--recurring-period", "-r", type="string", nargs=3, action="store",
-                                 help="aggregation interval, units { D | H | M } and timezone",
-                                 dest="recurring_period")
+                                 dest="recurring_period",
+                                 help="aggregation interval, units { D | H | M } and timezone")
 
-        self.__parser.add_option("--timed-period", "-t", type="string", nargs=3, action="store",
-                                 dest="timed_period", help="aggregation start and end")
+        self.__parser.add_option("--diurnal-period", "-t", type="string", nargs=3, action="store",
+                                 dest="diurnal_period", help="aggregation start, end and timezone")
 
         self.__parser.add_option("--contiguous-alerts", "-a", type="int", action="store",
                                  dest="contiguous_alerts", default=None,
@@ -164,25 +164,25 @@ class CmdAlert(object):
 
 
     def is_valid_start_time(self):
-        if self.__opts.timed_period is None:
+        if self.__opts.diurnal_period is None:
             return True
 
-        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[0])
+        return DiurnalPeriod.is_valid_time(self.__opts.diurnal_period[0])
 
 
     def is_valid_end_time(self):
-        if self.__opts.timed_period is None:
+        if self.__opts.diurnal_period is None:
             return True
 
-        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[1])
+        return DiurnalPeriod.is_valid_time(self.__opts.diurnal_period[1])
 
 
     def is_valid_timezone(self):
         if self.__opts.recurring_period is not None:
             return Timezone.is_valid(self.__opts.recurring_period[2])
 
-        if self.__opts.timed_period is not None:
-            return Timezone.is_valid(self.__opts.timed_period[2])
+        if self.__opts.diurnal_period is not None:
+            return Timezone.is_valid(self.__opts.diurnal_period[2])
 
         return True
 
@@ -277,7 +277,7 @@ class CmdAlert(object):
 
     @property
     def aggregation_period(self):
-        return self.timed_period if self.recurring_period is None else self.recurring_period
+        return self.diurnal_period if self.recurring_period is None else self.recurring_period
 
 
     @property
@@ -287,8 +287,8 @@ class CmdAlert(object):
 
 
     @property
-    def timed_period(self):
-        period = self.__opts.timed_period
+    def diurnal_period(self):
+        period = self.__opts.diurnal_period
         return None if period is None else DiurnalPeriod.construct(period[0], period[1], period[2])
 
 
@@ -347,11 +347,11 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{list:%s, credentials_name:%s, find:%s, retrieve:%s, create:%s, " \
                "update:%s, delete:%s, topic:%s, field:%s, lower_threshold:%s, " \
-               "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, timed_period:%s, " \
+               "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, diurnal_period:%s, " \
                "json_message:%s, json_message:%s, suspended:%s, email:%s, cc:%s, cc_list:%s, " \
                "indent:%s, verbose:%s}" % \
                (self.list, self.credentials_name, self.find, self.__opts.retrieve_id, self.create,
                 self.__opts.update_id, self.__opts.delete_id, self.topic, self.field, self.lower_threshold,
-                self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.timed_period,
+                self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.diurnal_period,
                 self.contiguous_alerts, self.json_message, self.suspended, self.email, self.cc, self.cc_list,
                 self.indent, self.verbose)
