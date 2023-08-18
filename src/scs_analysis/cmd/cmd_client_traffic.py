@@ -22,7 +22,7 @@ class CmdClientTraffic(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-e ENDPOINT] "
                                                     "{ -u | -o [-s] } -p PERIOD [-a] "
-                                                    "[-i INDENT] [-v] CLIENT_1..CLIENT_N", version=version())
+                                                    "[-i INDENT] [-v] CLIENT_1 [.. CLIENT_N]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
