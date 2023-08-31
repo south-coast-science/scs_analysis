@@ -31,7 +31,7 @@ DOCUMENT EXAMPLE
 {"email": "production@southcoastscience.com", "password": "###", "retrieval-password": "###"}
 
 SEE ALSO
-scs_analysis/cognito_identity
+scs_analysis/cognito_user_identity
 
 RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python

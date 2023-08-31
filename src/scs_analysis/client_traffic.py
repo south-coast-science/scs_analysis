@@ -6,20 +6,39 @@ Created on 8 Aug 2023
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The client_traffic utility is used to
+Usage statistics are continuously collected for each web API by endpoint, date and user. The client_traffic utility is
+used to query these statistics. Compulsory query fields are:
+
+* -p PERIOD - should be in the form YYYY, YYYY-MM, or YYYY-MM-DD
+* -u or -o CLIENT_1 [.. CLIENT_N] - specifies one or more email addresses, or one or more organisation labels
+
+Optional query fields are:
+
+* -e ENDPOINT - if specified, statistics for the given endpoint are reported, otherwise, all endpoints are reported
+
+Other parameters are:
+
+* --separate - (only permitted when specifying a single organisation) the organisation is broken down by individual
+user members
+* --aggregate - (only relevant when specifying a year or month period) statistics are aggregated to totals for the
+period
+
+Statistics are available only for the clients(s) that are visible to the user. Only organisation admins may view
+statistics for whole organisations.
 
 SYNOPSIS
-client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u EMAIL | -l ORG_LABEL [-s] } -p PERIOD [-a] [-i INDENT] [-v]
+client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v] CLIENT_1 [..CLIENT_N]
 
 EXAMPLES
+client_traffic.py -c super -o Ricardo -e test1 -p 2023-08-22
 
 DOCUMENT EXAMPLE
+[{"endpoint": "test1", "client": "MyOrg", "period": "2023-08-22", "queries": 99, "invocations": 99, "documents": 495}]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
 """
 
-import logging
 import sys
 
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
@@ -33,7 +52,7 @@ from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
+from scs_core.client.http_exception import HTTPException
 
 from scs_core.data.json import JSONify
 
@@ -59,7 +78,7 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    Logging.config('client_traffic', verbose=cmd.verbose)        # , level=logging.DEBUG
+    Logging.config('client_traffic', verbose=cmd.verbose)
     logger = Logging.getLogger()
 
     logger.info(cmd)

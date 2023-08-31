@@ -22,7 +22,7 @@ class CmdClientTraffic(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-e ENDPOINT] "
                                                     "{ -u | -o [-s] } -p PERIOD [-a] "
-                                                    "[-i INDENT] [-v] CLIENT_1 [.. CLIENT_N]", version=version())
+                                                    "[-i INDENT] [-v] CLIENT_1 [..CLIENT_N]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -32,10 +32,10 @@ class CmdClientTraffic(object):
         self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="a specific endpoint")
 
-        self.__parser.add_option("--user", "-u", action="store_true", dest="user", default=False,
+        self.__parser.add_option("--users", "-u", action="store_true", dest="user", default=False,
                                  help="a specific user")
 
-        self.__parser.add_option("--organisation", "-o", action="store_true", dest="organisation", default=False,
+        self.__parser.add_option("--organisations", "-o", action="store_true", dest="organisation", default=False,
                                  help="a specific organisation")
 
         self.__parser.add_option("--separate", "-s", action="store_true", dest="separate", default=False,
@@ -63,13 +63,16 @@ class CmdClientTraffic(object):
         if bool(self.user) == bool(self.organisation):
             return False
 
-        if not self.organisation and self.separate:
-            return False
-
         if self.period is None:
             return False
 
         if not self.clients:
+            return False
+
+        if self.separate and not self.organisation:
+            return False
+
+        if self.separate and len(self.clients) > 1:
             return False
 
         return True
