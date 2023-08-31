@@ -124,7 +124,7 @@ if __name__ == '__main__':
                     clients.extend([user.email for user in users])
 
                 else:
-                    clients.append(organisation.org_id)
+                    clients.append(organisation.label)
 
         print("clients: %s" % clients)
 
