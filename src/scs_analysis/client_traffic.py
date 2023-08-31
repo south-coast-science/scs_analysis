@@ -118,6 +118,8 @@ if __name__ == '__main__':
                     logger.error("the organisation '%s' could not be found." % client)
                     exit(2)
 
+                clients = client
+
                 if cmd.separate:
                     org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
                     users = user_finder.find_by_usernames(auth.id_token, [org_user.username for org_user in org_users])
