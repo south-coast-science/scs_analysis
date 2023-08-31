@@ -59,7 +59,7 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    Logging.config('client_traffic', level=logging.DEBUG)        # , verbose=cmd.verbose
+    Logging.config('client_traffic', verbose=cmd.verbose)        # , level=logging.DEBUG
     logger = Logging.getLogger()
 
     logger.info(cmd)
@@ -118,13 +118,13 @@ if __name__ == '__main__':
                     logger.error("the organisation '%s' could not be found." % client)
                     exit(2)
 
-                clients = client
-
                 if cmd.separate:
                     org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
                     users = user_finder.find_by_usernames(auth.id_token, [org_user.username for org_user in org_users])
-
                     clients.extend([user.email for user in users])
+
+                else:
+                    clients.append(organisation.org_id)
 
         print("clients: %s" % clients)
 
@@ -148,7 +148,6 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
-
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
