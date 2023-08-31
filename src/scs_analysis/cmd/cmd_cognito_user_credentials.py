@@ -27,7 +27,7 @@ class CmdCognitoUserCredentials(object):
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
-                                 help="the stored credentials to be presented")
+                                 help="the stored credentials to be used")
 
         # operations...
         self.__parser.add_option("--set", "-s", action="store_true", dest="set", default=False,
@@ -38,9 +38,6 @@ class CmdCognitoUserCredentials(object):
 
         self.__parser.add_option("--test", "-t", action="store_true", dest="test", default=False,
                                  help="test the credentials")
-
-        self.__parser.add_option("--environment", "-e", action="store_true", dest="environment", default=False,
-                                 help="set the retrieval password on the shell environment")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete", default=False,
                                  help="delete the credentials")
