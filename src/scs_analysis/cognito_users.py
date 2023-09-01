@@ -61,6 +61,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: add updates for status booleans
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -71,7 +72,6 @@ if __name__ == '__main__':
     credentials = None
     auth = None
     finder = None
-    manager = None
     org = None
     report = None
 
