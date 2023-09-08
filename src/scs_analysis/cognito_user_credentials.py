@@ -9,17 +9,20 @@ source repo: scs_analysis
 
 DESCRIPTION
 The cognito_user_credentials utility is used to manage the AWS Cognito credentials for the user. The credentials are
-composed of an email address and a password.
+composed of an email address and a password. The password must be specified when the credentials are created
+and is required when the credentials are accessed.
 
 The JSON identity document managed by this utility is encrypted, and a password must be used to retrieve the document.
 By default, the retrieval password is the same as the Cognito credentials password. However, a separate retrieval
 password can be specified (in order, for example, to standardise the retrieval password across multiple Cognito
 credentials.
 
-The password must be specified when the credentials are created and is required when the credentials are accessed.
+The --credentials flag is only required where the user wishes to store multiple identities.
+
+Setting the credentials is done interactively using the command line interface.
 
 SYNOPSIS
-cognito_user_credentials.py [{ -l | [-c CREDENTIALS] [{ -s | -t | -d }] }] [-v]
+cognito_user_credentials.py [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] [-v]
 
 EXAMPLES
 ./cognito_user_credentials.py -s
@@ -31,7 +34,7 @@ DOCUMENT EXAMPLE
 {"email": "production@southcoastscience.com", "password": "###", "retrieval-password": "###"}
 
 SEE ALSO
-scs_analysis/cognito_identity
+scs_analysis/cognito_user_identity
 
 RESOURCES
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python

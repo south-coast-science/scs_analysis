@@ -45,6 +45,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: add support for parent ID
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -113,7 +114,7 @@ if __name__ == '__main__':
             report = sorted(manager.find_organisations(auth.id_token))
 
         if cmd.create:
-            org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner)
+            org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner, None)
             report = manager.insert_organisation(auth.id_token, org)
 
         if cmd.update:
@@ -130,7 +131,7 @@ if __name__ == '__main__':
             url = org.url if cmd.url is None else cmd.url
             owner = org.owner if cmd.owner is None else cmd.owner
 
-            report = Organisation(org.org_id, label, long_name, url, owner)
+            report = Organisation(org.org_id, label, long_name, url, owner, None)
             manager.update_organisation(auth.id_token, report)
 
         if cmd.delete:

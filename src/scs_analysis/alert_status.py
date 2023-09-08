@@ -20,6 +20,8 @@ alert_status.py [-c CREDENTIALS] { -F { -l | -d [-a CAUSE] } | -D } [-i INDENT] 
 EXAMPLES
 alert_status.py -vi4 -c bruno -Fl 87
 
+alert_status.py -v -c bruno -Fd 107 | node.py -s | csv_writer.py
+
 DOCUMENT EXAMPLE
 {"id": 88, "rec": "2023-06-29T09:48:42Z", "cause": "NV", "val": null}
 

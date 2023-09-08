@@ -6,14 +6,34 @@ Created on 8 Aug 2023
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The client_traffic utility is used to
+Usage statistics are continuously collected for each web API by endpoint, date and user. The client_traffic utility is
+used to query these statistics. Compulsory query fields are:
+
+* -p PERIOD - should be in the form YYYY, YYYY-MM, or YYYY-MM-DD
+* -u or -o CLIENT_1 [.. CLIENT_N] - specifies one or more email addresses, or one or more organisation labels
+
+Optional query fields are:
+
+* -e ENDPOINT - if specified, statistics for the given endpoint are reported, otherwise, all endpoints are reported
+
+Other parameters are:
+
+* --separate - (only permitted when specifying a single organisation) the organisation is broken down by individual
+user members
+* --aggregate - (only relevant when specifying a year or month period) statistics are aggregated to totals for the
+period
+
+Statistics are available only for the clients(s) that are visible to the user. Only organisation admins may view
+statistics for whole organisations.
 
 SYNOPSIS
-client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u EMAIL | -l ORG_LABEL [-s] } -p PERIOD [-a] [-i INDENT] [-v]
+client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v] CLIENT_1 [..CLIENT_N]
 
 EXAMPLES
+client_traffic.py -c super -o Ricardo -e test1 -p 2023-08-22
 
 DOCUMENT EXAMPLE
+[{"endpoint": "test1", "client": "MyOrg", "period": "2023-08-22", "queries": 99, "invocations": 99, "documents": 495}]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
@@ -23,8 +43,8 @@ import sys
 
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
 
-from scs_core.aws.security.client_traffic import ClientTrafficLocus
-from scs_core.aws.security.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
+from scs_core.aws.client_traffic.client_traffic import ClientTrafficLocus
+from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -32,7 +52,7 @@ from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
 
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
+from scs_core.client.http_exception import HTTPException
 
 from scs_core.data.json import JSONify
 
@@ -45,6 +65,7 @@ from scs_host.sys.host import Host
 
 if __name__ == '__main__':
 
+    clients = []
     response = None
     report = None
 
@@ -99,48 +120,45 @@ if __name__ == '__main__':
         # run...
 
         if cmd.user:
-            user = user_finder.get_by_email(auth.id_token, cmd.user)
+            for client in cmd.clients:
+                user = user_finder.get_by_email(auth.id_token, client)
 
-            if user is None:
-                logger.error("the user '%s' could not be found." % cmd.user)
-                exit(2)
+                if user is None:
+                    logger.error("the user '%s' could not be found." % client)
+                    exit(2)
 
-            print("user: %s" % user)
+                clients.append(user.email)
 
-        else:
-            organisation = organisation_finder.get_organisation_by_label(auth.id_token, cmd.organisation)
+        if cmd.organisation:
+            for client in cmd.clients:
+                organisation = organisation_finder.get_organisation_by_label(auth.id_token, client)
 
-            if organisation is None:
-                logger.error("the organisation '%s' could not be found." % cmd.organisation)
-                exit(2)
+                if organisation is None:
+                    logger.error("the organisation '%s' could not be found." % client)
+                    exit(2)
 
-            print("organisation: %s" % organisation)
+                if cmd.separate:
+                    org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
+                    users = user_finder.find_by_usernames(auth.id_token, [org_user.username for org_user in org_users])
+                    clients.extend([user.email for user in users])
 
-            org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
+                else:
+                    clients.append(organisation.label)
 
-            usernames = [org_user.username for org_user in org_users]
-            print("usernames: %s" % usernames)
+        # print("clients: %s" % clients)
 
-            users = user_finder.find_by_usernames(auth.id_token, usernames)
-
-            # if cmd.separate:
-            #     users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
-
-            for user in users:
-                print("user: %s" % user)
-
-                # TODO: exclude bruno.beloff, etc.
+        # TODO: exclude bruno.beloff, etc.
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        # request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
-        #
-        # if cmd.organisation and not cmd.separate:
-        #     response = traffic_finder.find_for_organisation(auth.id_token, request)
-        # else:
-        #     response = traffic_finder.find_for_user(auth.id_token, request)
+        request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
+
+        if cmd.organisation and not cmd.separate:
+            report = sorted(traffic_finder.find_for_organisation(auth.id_token, request))
+        else:
+            report = sorted(traffic_finder.find_for_users(auth.id_token, request))
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -149,7 +167,6 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
-
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
