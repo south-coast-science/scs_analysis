@@ -21,8 +21,8 @@ class CmdClientTraffic(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-e ENDPOINT] "
-                                                    "{ -u EMAIL | -o ORG_LABEL [-s] } -p PERIOD [-a] "
-                                                    "[-i INDENT] [-v]", version=version())
+                                                    "{ -u | -o [-s] } -p PERIOD [-a] "
+                                                    "[-i INDENT] [-v] CLIENT_1 [..CLIENT_N]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -32,10 +32,10 @@ class CmdClientTraffic(object):
         self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
                                  help="a specific endpoint")
 
-        self.__parser.add_option("--user", "-u", type="string", action="store", dest="user",
+        self.__parser.add_option("--users", "-u", action="store_true", dest="user", default=False,
                                  help="a specific user")
 
-        self.__parser.add_option("--organisation", "-o", type="string", action="store", dest="organisation",
+        self.__parser.add_option("--organisations", "-o", action="store_true", dest="organisation", default=False,
                                  help="a specific organisation")
 
         self.__parser.add_option("--separate", "-s", action="store_true", dest="separate", default=False,
@@ -63,10 +63,16 @@ class CmdClientTraffic(object):
         if bool(self.user) == bool(self.organisation):
             return False
 
-        if self.organisation is None and self.separate:
+        if self.period is None:
             return False
 
-        if self.period is None:
+        if not self.clients:
+            return False
+
+        if self.separate and not self.organisation:
+            return False
+
+        if self.separate and len(self.clients) > 1:
             return False
 
         return True
@@ -113,6 +119,11 @@ class CmdClientTraffic(object):
         return self.__opts.aggregate
 
 
+    @property
+    def clients(self):
+        return self.__args
+
+
     # ----------------------------------------------------------------------------------------------------------------
     # properties: output...
 
@@ -134,6 +145,6 @@ class CmdClientTraffic(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdClientTraffic:{credentials_name:%s, endpoint:%s, user:%s, organisation:%s, separate:%s, " \
-               "period:%s, aggregate:%s, indent:%s, verbose:%s}" % \
+               "period:%s, aggregate:%s, indent:%s, verbose:%s, clients:%s}" % \
                (self.credentials_name, self.endpoint, self.user, self.organisation, self.separate,
-                self.period, self.aggregate, self.indent, self.verbose)
+                self.period, self.aggregate, self.indent, self.verbose, self.clients)

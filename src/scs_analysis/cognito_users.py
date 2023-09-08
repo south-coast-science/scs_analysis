@@ -24,7 +24,7 @@ cognito_users.py -Fe bruno.beloff@southcoastscience.com
 DOCUMENT EXAMPLE
 {"username": "506cd055-1978-4984-9f17-2fad77797fa1", "email": "bruno.beloff@southcoastscience.com",
 "given-name": "Bruno", "family-name": "Beloff", "confirmation-status": "CONFIRMED", "enabled": true,
-"email-verified": true, "is-super": false, "is-tester": false, "is-financial": false,
+"email-verified": true, "is-super": true, "is-tester": true, "is-financial": true,
 "created": "2023-04-20T11:45:21Z", "last-updated": "2023-06-26T14:39:17Z"}
 
 SEE ALSO
@@ -61,6 +61,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: add updates for status booleans
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -71,7 +72,6 @@ if __name__ == '__main__':
     credentials = None
     auth = None
     finder = None
-    manager = None
     org = None
     report = None
 

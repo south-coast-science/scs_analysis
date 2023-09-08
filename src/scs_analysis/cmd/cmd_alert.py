@@ -28,7 +28,7 @@ class CmdAlert(object):
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 0 | 1 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
-                                                    "[-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
+                                                    "[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
                                                     "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
                                               version=version())
 
@@ -75,10 +75,15 @@ class CmdAlert(object):
                                  default=False, help="alert on none (default false)")
 
         self.__parser.add_option("--recurring-period", "-r", type="string", nargs=3, action="store",
-                                 dest="recurring_period", help="aggregation interval and units { D | H | M }")
+                                 dest="recurring_period",
+                                 help="aggregation interval, units { D | H | M } and timezone")
 
-        self.__parser.add_option("--timed-period", "-t", type="string", nargs=3, action="store",
-                                 dest="timed_period", help="aggregation start and end")
+        self.__parser.add_option("--diurnal-period", "-t", type="string", nargs=3, action="store",
+                                 dest="diurnal_period", help="aggregation start, end and timezone")
+
+        self.__parser.add_option("--contiguous-alerts", "-a", type="int", action="store",
+                                 dest="contiguous_alerts", default=None,
+                                 help="raise alert on contiguous exceedence (default true)")
 
         self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_message",
                                  default=None, help="message body is JSON (default false)")
@@ -135,6 +140,10 @@ class CmdAlert(object):
         if self.json_message is not None and self.json_message != 0 and self.json_message != 1:
             return False
 
+        if self.contiguous_alerts is not None and \
+                self.contiguous_alerts != 0 and self.contiguous_alerts != 1:
+            return False
+
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
@@ -155,25 +164,25 @@ class CmdAlert(object):
 
 
     def is_valid_start_time(self):
-        if self.__opts.timed_period is None:
+        if self.__opts.diurnal_period is None:
             return True
 
-        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[0])
+        return DiurnalPeriod.is_valid_time(self.__opts.diurnal_period[0])
 
 
     def is_valid_end_time(self):
-        if self.__opts.timed_period is None:
+        if self.__opts.diurnal_period is None:
             return True
 
-        return DiurnalPeriod.is_valid_time(self.__opts.timed_period[1])
+        return DiurnalPeriod.is_valid_time(self.__opts.diurnal_period[1])
 
 
     def is_valid_timezone(self):
         if self.__opts.recurring_period is not None:
             return Timezone.is_valid(self.__opts.recurring_period[2])
 
-        if self.__opts.timed_period is not None:
-            return Timezone.is_valid(self.__opts.timed_period[2])
+        if self.__opts.diurnal_period is not None:
+            return Timezone.is_valid(self.__opts.diurnal_period[2])
 
         return True
 
@@ -268,7 +277,7 @@ class CmdAlert(object):
 
     @property
     def aggregation_period(self):
-        return self.timed_period if self.recurring_period is None else self.recurring_period
+        return self.diurnal_period if self.recurring_period is None else self.recurring_period
 
 
     @property
@@ -278,9 +287,14 @@ class CmdAlert(object):
 
 
     @property
-    def timed_period(self):
-        period = self.__opts.timed_period
+    def diurnal_period(self):
+        period = self.__opts.diurnal_period
         return None if period is None else DiurnalPeriod.construct(period[0], period[1], period[2])
+
+
+    @property
+    def contiguous_alerts(self):
+        return self.__opts.contiguous_alerts
 
 
     @property
@@ -333,9 +347,11 @@ class CmdAlert(object):
     def __str__(self, *args, **kwargs):
         return "CmdAlert:{list:%s, credentials_name:%s, find:%s, retrieve:%s, create:%s, " \
                "update:%s, delete:%s, topic:%s, field:%s, lower_threshold:%s, " \
-               "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, timed_period:%s, " \
-               " json_message:%s, suspended:%s, email:%s, cc:%s, cc_list:%s, indent:%s, verbose:%s}" % \
+               "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, diurnal_period:%s, " \
+               "json_message:%s, json_message:%s, suspended:%s, email:%s, cc:%s, cc_list:%s, " \
+               "indent:%s, verbose:%s}" % \
                (self.list, self.credentials_name, self.find, self.__opts.retrieve_id, self.create,
                 self.__opts.update_id, self.__opts.delete_id, self.topic, self.field, self.lower_threshold,
-                self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.timed_period,
-                self.json_message, self.suspended, self.email, self.cc, self.cc_list, self.indent, self.verbose)
+                self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.diurnal_period,
+                self.contiguous_alerts, self.json_message, self.suspended, self.email, self.cc, self.cc_list,
+                self.indent, self.verbose)
