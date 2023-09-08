@@ -145,7 +145,7 @@ if __name__ == '__main__':
                 else:
                     clients.append(organisation.label)
 
-        print("clients: %s" % clients)
+        # print("clients: %s" % clients)
 
         # TODO: exclude bruno.beloff, etc.
 
