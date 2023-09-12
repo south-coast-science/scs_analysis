@@ -19,8 +19,10 @@ class CmdOrganisations(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F | "
-                                                    "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | "
-                                                    "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | "
+                                                    "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL "
+                                                    "[-p PARENT_LABEL] | "
+                                                    "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] "
+                                                    "[-p PARENT_LABEL] | "
                                                     "-D LABEL } "
                                                     "[-i INDENT] [-v]", version=version())
 
@@ -53,6 +55,9 @@ class CmdOrganisations(object):
 
         self.__parser.add_option("--owner", "-o", type="string", action="store", dest="owner",
                                  help="the organisation owner email")
+
+        self.__parser.add_option("--parent", "-p", type="string", action="store", dest="parent_label",
+                                 help="the label of the parent organisation ('none' to remove)")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
@@ -138,6 +143,11 @@ class CmdOrganisations(object):
 
 
     @property
+    def parent_label(self):
+        return self.__opts.parent_label
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -155,6 +165,6 @@ class CmdOrganisations(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdOrganisations:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
-               "label:%s, long_name:%s, url:%s, owner:%s, indent:%s, verbose:%s}" % \
+               "label:%s, long_name:%s, url:%s, owner:%s, parent_label:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.create, self.update, self.delete,
-                self.label, self.long_name, self.url, self.owner, self.indent, self.verbose)
+                self.label, self.long_name, self.url, self.owner, self.parent_label, self.indent, self.verbose)

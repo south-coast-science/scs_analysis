@@ -8,11 +8,15 @@ Created on 10 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The organisations utility is used to
+The organisations utility is used to find, create, update or delete organisation records.
+
+The utility supports a parent / child relationship between organisations - a child organisation can be
+thought of as a subdivision of its parent. Users belonging to an organisation have the same rights over
+child organisation data and devices as then have
 
 SYNOPSIS
-organisations.py  { -F | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL | \
--U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] | -D LABEL } [-i INDENT] [-v]
+organisations.py  [-c CREDENTIALS] { -F | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL [-p PARENT_LABEL] |
+-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] [-p PARENT_LABEL] | -D LABEL } [-i INDENT] [-v]
 
 EXAMPLES
 organisations.py -F
@@ -45,7 +49,6 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
-# TODO: add support for parent ID
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -106,6 +109,19 @@ if __name__ == '__main__':
 
         manager = OrganisationManager()
 
+        if cmd.parent_label == 'none':
+            parent_id = None
+
+        else:
+            parent = manager.get_organisation_by_label(auth.id_token, cmd.parent_label)
+
+            if parent is None:
+                logger.error("the parent '%s' could not be found." % cmd.parent_label)
+                exit(2)
+
+            else:
+                parent_id = parent.org_id
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -114,7 +130,7 @@ if __name__ == '__main__':
             report = sorted(manager.find_organisations(auth.id_token))
 
         if cmd.create:
-            org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner, None)
+            org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner, parent_id)
             report = manager.insert_organisation(auth.id_token, org)
 
         if cmd.update:
@@ -131,7 +147,9 @@ if __name__ == '__main__':
             url = org.url if cmd.url is None else cmd.url
             owner = org.owner if cmd.owner is None else cmd.owner
 
-            report = Organisation(org.org_id, label, long_name, url, owner, None)
+            parent_id = org.parent_id if cmd.parent_label is None else parent_id
+
+            report = Organisation(org.org_id, label, long_name, url, owner, parent_id)
             manager.update_organisation(auth.id_token, report)
 
         if cmd.delete:
