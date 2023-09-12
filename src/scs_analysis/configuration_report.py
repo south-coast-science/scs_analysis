@@ -96,7 +96,7 @@ if __name__ == '__main__':
             try:
                 finder.get_by_tag(auth.id_token, device_tag)
             except HTTPNotFoundException:
-                logger.error("the device '%s' could not be found." % device_tag)
+                logger.error("no device found for tag: '%s'." % device_tag)
                 exit(2)
 
 
