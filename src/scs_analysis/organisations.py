@@ -39,7 +39,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.organisation import Organisation
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
-from scs_core.client.http_exception import HTTPException
+from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.json import JSONify
 
@@ -109,25 +109,25 @@ if __name__ == '__main__':
 
         manager = OrganisationManager()
 
-        if cmd.parent_label == 'none':
+        if cmd.parent_label is None or cmd.parent_label == 'none':
             parent_id = None
 
         else:
-            parent = manager.get_organisation_by_label(auth.id_token, cmd.parent_label)
-
-            if parent is None:
-                logger.error("the parent '%s' could not be found." % cmd.parent_label)
-                exit(2)
-
-            else:
+            try:
+                parent = manager.get_organisation_by_label(auth.id_token, cmd.parent_label)
                 parent_id = parent.org_id
+
+            except HTTPNotFoundException:
+                logger.error("no organisation found for parent label: '%s'." % cmd.parent_label)
+                exit(2)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.find:
-            report = sorted(manager.find_organisations(auth.id_token))
+            report = manager.get_organisation_by_label(auth.id_token, cmd.label) if cmd.label else \
+                sorted(manager.find_organisations(auth.id_token))
 
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner, parent_id)
@@ -146,7 +146,6 @@ if __name__ == '__main__':
             long_name = org.long_name if cmd.long_name is None else cmd.long_name
             url = org.url if cmd.url is None else cmd.url
             owner = org.owner if cmd.owner is None else cmd.owner
-
             parent_id = org.parent_id if cmd.parent_label is None else parent_id
 
             report = Organisation(org.org_id, label, long_name, url, owner, parent_id)
@@ -175,7 +174,7 @@ if __name__ == '__main__':
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
 
-        if cmd.find:
+        if cmd.find and not cmd.label:
             logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
