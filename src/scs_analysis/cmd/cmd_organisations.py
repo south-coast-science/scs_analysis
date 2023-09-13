@@ -18,7 +18,7 @@ class CmdOrganisations(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l LABEL] [-m] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F [-l LABEL] [-m] | "
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL "
                                                     "[-p PARENT_LABEL] | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] "

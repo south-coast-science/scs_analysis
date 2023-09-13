@@ -15,7 +15,7 @@ thought of as a subdivision of its parent. Users belonging to an organisation ha
 child organisation data and devices as then have
 
 SYNOPSIS
-organisations.py  [-c CREDENTIALS] {
+organisations.py [-c CREDENTIALS] {
 -F [-l LABEL] [-m] |
 -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL [-p PARENT_LABEL] |
 -U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] [-p PARENT_LABEL] |
