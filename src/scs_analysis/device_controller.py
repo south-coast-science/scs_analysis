@@ -188,6 +188,5 @@ if __name__ == '__main__':
         logger.error(ex.error_report)
         exit(1)
 
-
     finally:
         StdIO.save_history(history_filename)
