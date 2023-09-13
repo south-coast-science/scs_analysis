@@ -133,8 +133,10 @@ if __name__ == '__main__':
             if cmd.memberships:
                 if cmd.label:
                     report = [report]
+                    orgs = manager.find_organisations(auth.id_token)
+                else:
+                    orgs = report
 
-                orgs = manager.find_organisations(auth.id_token)
                 report = OrganisationMembership.merge(report, orgs)
 
         if cmd.create:
