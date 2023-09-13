@@ -18,7 +18,7 @@ class CmdOrganisations(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l LABEL] | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l LABEL] [-m] | "
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL "
                                                     "[-p PARENT_LABEL] | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] "
@@ -60,6 +60,9 @@ class CmdOrganisations(object):
                                  help="the label of the parent organisation ('none' to remove)")
 
         # output...
+        self.__parser.add_option("--memberships", "-m", action="store_true", dest="memberships", default=False,
+                                 help="show organisation's children")
+
         self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")
 
@@ -148,6 +151,11 @@ class CmdOrganisations(object):
 
 
     @property
+    def memberships(self):
+        return self.__opts.memberships
+
+
+    @property
     def indent(self):
         return self.__opts.indent
 
@@ -165,6 +173,8 @@ class CmdOrganisations(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdOrganisations:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
-               "label:%s, long_name:%s, url:%s, owner:%s, parent_label:%s, indent:%s, verbose:%s}" % \
+               "label:%s, long_name:%s, url:%s, owner:%s, parent_label:%s, " \
+               "memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.create, self.update, self.delete,
-                self.label, self.long_name, self.url, self.owner, self.parent_label, self.indent, self.verbose)
+                self.label, self.long_name, self.url, self.owner, self.parent_label,
+                self.memberships, self.indent, self.verbose)

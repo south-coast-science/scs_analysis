@@ -38,6 +38,7 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.aws.security.organisation import Organisation
 from scs_core.aws.security.organisation_manager import OrganisationManager
+from scs_core.aws.security.organisation_membership import OrganisationMembership
 
 from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
@@ -128,6 +129,13 @@ if __name__ == '__main__':
         if cmd.find:
             report = manager.get_organisation_by_label(auth.id_token, cmd.label) if cmd.label else \
                 sorted(manager.find_organisations(auth.id_token))
+
+            if cmd.memberships:
+                if cmd.label:
+                    report = [report]
+
+                orgs = manager.find_organisations(auth.id_token)
+                report = OrganisationMembership.merge(report, orgs)
 
         if cmd.create:
             org = Organisation(0, cmd.label, cmd.long_name, cmd.url, cmd.owner, parent_id)
