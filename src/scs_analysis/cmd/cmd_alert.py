@@ -147,6 +147,9 @@ class CmdAlert(object):
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
+        if self.cc and not self.cc_list:
+            return False
+
         return True
 
 
@@ -185,6 +188,19 @@ class CmdAlert(object):
             return Timezone.is_valid(self.__opts.diurnal_period[2])
 
         return True
+
+
+    def updated_cc_list(self, existing_cc_list):
+        if not self.cc:
+            return existing_cc_list
+
+        if self.cc_list[0] == 'a':
+            return existing_cc_list + self.cc_list[1:]
+
+        if self.cc_list[0] == 'r':
+            return filter(lambda email: email not in self.cc_list[1:], existing_cc_list)
+
+        return self.cc
 
 
     # ----------------------------------------------------------------------------------------------------------------

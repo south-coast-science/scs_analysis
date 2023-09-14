@@ -142,6 +142,9 @@ if __name__ == '__main__':
 
         if cmd.cc:
             for email in cmd.cc_list:
+                if cmd.update and email in ['a', 'r']:
+                    continue
+
                 if email is not None and not Datum.is_email_address(email):
                     logger.error("the email address '%s' is not valid." % email)
                     exit(2)
@@ -238,7 +241,7 @@ if __name__ == '__main__':
             json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
-            cc = cmd.cc_list if cmd.cc else alert.cc_list
+            cc = cmd.updated_cc_list(alert.cc_list)
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, None, contiguous_alerts,
