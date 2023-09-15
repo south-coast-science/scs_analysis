@@ -36,8 +36,8 @@ FILES
 ~/SCS/conf/baseline_conf/NAME_baseline_conf.json
 
 SEE ALSO
-scs_analysis/cognito_user_credentials
 scs_analysis/baseline_conf
+scs_analysis/cognito_user_credentials
 
 scs_dev/gases_sampler
 

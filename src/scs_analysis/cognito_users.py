@@ -28,8 +28,8 @@ DOCUMENT EXAMPLE
 "created": "2023-04-20T11:45:21Z", "last-updated": "2023-06-26T14:39:17Z"}
 
 SEE ALSO
-scs_analysis/cognito_credentials
 scs_analysis/cognito_devices
+scs_analysis/cognito_user_credentials
 scs_analysis/organisation_users
 
 RESOURCES

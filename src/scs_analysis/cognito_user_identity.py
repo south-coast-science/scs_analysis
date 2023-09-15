@@ -26,7 +26,7 @@ DOCUMENT EXAMPLE
 "created": "2023-04-20T11:45:21Z", "last-updated": "2023-06-26T14:39:17Z"}
 
 SEE ALSO
-scs_analysis/cognito_credentials
+scs_analysis/cognito_user_credentials
 
 RESOURCES
 https://docs.aws.amazon.com/cognito/latest/developerguide/signing-up-users-in-your-app.html
