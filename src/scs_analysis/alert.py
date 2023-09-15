@@ -18,7 +18,7 @@ time.
 
 In --find mode, results can be filtered by description, topic, field or email address. Finder matches are exact.
 
-When doing an update, the cc list (-g flag) may be proceeded with:
+When doing an update, the cc list (-g flag) may be preceeded with:
 
 * a - add the following email address(es)
 * r - remove the following email address(es)
