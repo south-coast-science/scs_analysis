@@ -16,13 +16,20 @@ together with the aggregation period. One of two types of period may be specifie
 * Diurnal - a daily period with given start time and end times. Diurnal periods are sampled immediately after the end
 time.
 
-In --find mode, results can be filtered by description, topic, field or email address.
-Finder matches are exact.
+In --find mode, results can be filtered by description, topic, field or email address. Finder matches are exact.
+
+When doing an update, the cc list (-g flag) may be proceeded with:
+
+* a - add the following email address(es)
+* r - remove the following email address(es)
+
+If neither indicator is used, then the specified email address(es) replace the current ones.
 
 SYNOPSIS
 alert.py { -z | [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD]
-[-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] [-j { 0 | 1 }]
-[-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
+[-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }]
+[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR]
+[-g [{ a | r }] EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
 
 EXAMPLES
 alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/development/loc/1/climate -f val.tmp \
@@ -142,6 +149,9 @@ if __name__ == '__main__':
 
         if cmd.cc:
             for email in cmd.cc_list:
+                if cmd.update and email in ['a', 'r']:
+                    continue
+
                 if email is not None and not Datum.is_email_address(email):
                     logger.error("the email address '%s' is not valid." % email)
                     exit(2)
@@ -238,7 +248,7 @@ if __name__ == '__main__':
             json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
-            cc = cmd.cc_list if cmd.cc else alert.cc_list
+            cc = cmd.updated_cc_list(alert.cc_list)
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, None, contiguous_alerts,

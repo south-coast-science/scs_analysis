@@ -15,15 +15,24 @@ thought of as a subdivision of its parent. Users belonging to an organisation ha
 child organisation data and devices as then have
 
 SYNOPSIS
-organisations.py  [-c CREDENTIALS] { -F | -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL [-p PARENT_LABEL] |
--U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] [-p PARENT_LABEL] | -D LABEL } [-i INDENT] [-v]
+organisations.py [-c CREDENTIALS] {
+-F [-l LABEL] [-m] |
+-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL [-p PARENT_LABEL] |
+-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] [-p PARENT_LABEL] |
+-D LABEL } [-i INDENT] [-v]
 
 EXAMPLES
 organisations.py -F
 
 DOCUMENT EXAMPLE
 {"OrgID": 1, "Label": "SCS", "LongName": "South Coast Science", "URL": "https://www.southcoastscience.com",
-"Owner": "bruno.beloff@southcoastscience.com"}
+"Owner": "bruno.beloff@southcoastscience.com", "ParentID": null}
+
+DOCUMENT EXAMPLE - MEMBERSHIPS
+{"organisation": {"OrgID": 11, "Label": "CEPEMAR", "LongName": "CEPEMAR", "URL": "http://cepemar.com",
+"Owner": "felipe.tatagiba@cepemar.com", "ParentID": null}, "children": [
+{"OrgID": 82, "Label": "Vale", "LongName": "Vale S.A.", "URL": "http://www.vale.com/",
+"Owner": "felipe.tatagiba@cepemar.com", "ParentID": 11}]}
 
 SEE ALSO
 scs_analysis/cognito_credentials

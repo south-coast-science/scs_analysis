@@ -49,7 +49,6 @@ from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinde
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_user_finder import CognitoUserFinder
-
 from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.client.http_exception import HTTPException
@@ -145,10 +144,6 @@ if __name__ == '__main__':
                 else:
                     clients.append(organisation.label)
 
-        # print("clients: %s" % clients)
-
-        # TODO: exclude bruno.beloff, etc.
-
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
@@ -167,6 +162,7 @@ if __name__ == '__main__':
         # report...
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
+            logger.info('reports: %s' % len(report))
 
     except KeyboardInterrupt:
         print(file=sys.stderr)
