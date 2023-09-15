@@ -16,13 +16,20 @@ together with the aggregation period. One of two types of period may be specifie
 * Diurnal - a daily period with given start time and end times. Diurnal periods are sampled immediately after the end
 time.
 
-In --find mode, results can be filtered by description, topic, field or email address.
-Finder matches are exact.
+In --find mode, results can be filtered by description, topic, field or email address. Finder matches are exact.
+
+When doing an update, the cc list (-g flag) may be proceeded with:
+
+* a - add the following email address(es)
+* r - remove the following email address(es)
+
+If neither indicator is used, then the specified email address(es) replace the current ones.
 
 SYNOPSIS
 alert.py { -z | [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD]
-[-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] [-j { 0 | 1 }]
-[-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
+[-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }]
+[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR]
+[-g [{ a | r }] EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
 
 EXAMPLES
 alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/development/loc/1/climate -f val.tmp \

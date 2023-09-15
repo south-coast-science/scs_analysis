@@ -29,7 +29,7 @@ class CmdAlert(object):
                                                     "[-n { 0 | 1 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
                                                     "[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
-                                                    "[-e EMAIL_ADDR] [-g EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
+                                                    "[-e EMAIL_ADDR] [-g [{ a | r }] EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
                                               version=version())
 
         # identity...
