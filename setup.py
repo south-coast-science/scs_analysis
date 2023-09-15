@@ -76,6 +76,7 @@ setuptools.setup(
         'src/scs_analysis/configuration_csv.py',
         'src/scs_analysis/configuration_monitor.py',
         'src/scs_analysis/configuration_monitor_check.py',
+        'src/scs_analysis/configuration_report.py',
         'src/scs_analysis/csv_collation_summary.py',
         'src/scs_analysis/csv_collator.py',
         'src/scs_analysis/csv_join.py',
