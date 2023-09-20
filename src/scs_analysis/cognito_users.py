@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 org_users = manager.find_users_by_organisation(auth.id_token, org.org_id)
                 usernames = [org_user.username for org_user in org_users]
 
-                report = sorted(finder.find_by_usernames(auth.id_token, usernames))
+                report = sorted(manager.find_cognito_users_by_organisation(auth.id_token, usernames))
 
             elif cmd.confirmation_status is not None:
                 report = sorted(finder.find_by_status(auth.id_token,
