@@ -35,7 +35,7 @@ DOCUMENT EXAMPLE - MEMBERSHIPS
 "Owner": "felipe.tatagiba@cepemar.com", "ParentID": 11}]}
 
 SEE ALSO
-scs_analysis/cognito_credentials
+scs_analysis/cognito_user_credentials
 """
 
 import sys

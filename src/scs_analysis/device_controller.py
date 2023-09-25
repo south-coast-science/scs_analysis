@@ -27,7 +27,7 @@ EXAMPLES
 device_controller.py -c super -t scs-be2-3 -m "vcal_baseline -i4" -s
 
 SEE ALSO
-scs_analysis/cognito_credentials
+scs_analysis/cognito_user_credentials
 
 BUGS
 On macOS, interactive history features require full disk access for the Terminal app:

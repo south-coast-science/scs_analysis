@@ -27,8 +27,8 @@ DOCUMENT EXAMPLE
 "DeploymentLabel": "Preston Circus"}
 
 SEE ALSO
-scs_analysis/cognito_credentials
 scs_analysis/cognito_devices
+scs_analysis/cognito_user_credentials
 """
 
 import sys
