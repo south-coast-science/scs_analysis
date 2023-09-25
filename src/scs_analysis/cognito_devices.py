@@ -25,9 +25,8 @@ DOCUMENT EXAMPLE
 "created": "2023-06-23T10:32:52+01:00", "last-updated": "2023-06-23T10:32:52+01:00"}
 
 SEE ALSO
-scs_analysis/cognito_credentials
-scs_analysis/cognito_email
 scs_analysis/cognito_users
+scs_analysis/cognito_user_credentials
 scs_analysis/organisation_devices
 
 RESOURCES

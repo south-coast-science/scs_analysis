@@ -21,7 +21,7 @@ DOCUMENT EXAMPLE
 {"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
 
 SEE ALSO
-scs_analysis/cognito_credentials
+scs_analysis/cognito_user_credentials
 """
 
 import sys

@@ -23,7 +23,7 @@ DOCUMENT EXAMPLE
 {"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
 
 SEE ALSO
-scs_analysis/cognito_credentials
+scs_analysis/cognito_user_credentials
 """
 
 import sys

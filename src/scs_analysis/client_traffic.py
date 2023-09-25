@@ -136,13 +136,7 @@ if __name__ == '__main__':
                     logger.error("the organisation '%s' could not be found." % client)
                     exit(2)
 
-                if cmd.separate:
-                    org_users = organisation_finder.find_users_by_organisation(auth.id_token, organisation.org_id)
-                    users = user_finder.find_by_usernames(auth.id_token, [org_user.username for org_user in org_users])
-                    clients.extend([user.email for user in users])
-
-                else:
-                    clients.append(organisation.label)
+                clients.append(organisation.label)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -151,9 +145,9 @@ if __name__ == '__main__':
         request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
 
         if cmd.organisation and not cmd.separate:
-            report = sorted(traffic_finder.find_for_organisation(auth.id_token, request))
+            report = sorted(traffic_finder.find_for_organisations(auth.id_token, request))
         else:
-            report = sorted(traffic_finder.find_for_users(auth.id_token, request))
+            report = sorted(traffic_finder.find_for_organisations_users(auth.id_token, request))
 
 
         # ------------------------------------------------------------------------------------------------------------
