@@ -9,6 +9,6 @@
 
 rm -rf dist
 python -m build
-twine upload dist/* --repository scs-analysis
+twine upload dist/* $@
 
 rm -rf dist
