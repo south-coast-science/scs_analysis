@@ -22,7 +22,7 @@ class CmdSampleISO8601(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog { -z | { -o | -f DATE_FORMAT } "
                                                     "[-t TIMEZONE_NAME [-u]] [-i ISO_PATH] "
-                                                    "{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-s] [-v]",
+                                                    "{ DATETIME_PATH [-n] | DATE_PATH TIME_PATH } } [-s] [-v]",
                                               version=version())
 
         # helper...
@@ -35,6 +35,9 @@ class CmdSampleISO8601(object):
 
         self.__parser.add_option("--format", "-f", type="string", action="store", dest="format",
                                  help="specifies format of input date string, e.g. YYYY-MM-DD")
+
+        self.__parser.add_option("--no-time", "-n", action="store_true", dest="no_time", default=False,
+                                 help="no time is input (use 24:00:00)")
 
         self.__parser.add_option("--timezone", "-t", type="string", action="store",
                                  dest="timezone", help="source timezone (default 'UTC')")
@@ -71,7 +74,13 @@ class CmdSampleISO8601(object):
         if self.utc and self.timezone is None:
             return False
 
+        if not self.__args:
+            return False
+
         if len(self.__args) < 1 or len(self.__args) > 2:
+            return False
+
+        if self.no_time and len(self.__args) != 1:
             return False
 
         return True
@@ -110,6 +119,11 @@ class CmdSampleISO8601(object):
     @property
     def format(self):
         return self.__opts.format
+
+
+    @property
+    def no_time(self):
+        return self.__opts.no_time
 
 
     @property
@@ -159,7 +173,7 @@ class CmdSampleISO8601(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleISO8601:{zones:%s, oad:%s, format:%s, timezone:%s, utc:%s, iso:%s, skip_malformed:%s, " \
-               "verbose:%s, datetime_paths:%s}" % \
-               (self.zones, self.oad, self.format, self.timezone, self.utc, self.iso, self.skip_malformed,
-                self.verbose, self.datetime_paths())
+        return "CmdSampleISO8601:{zones:%s, oad:%s, format:%s, no_time:%s, timezone:%s, utc:%s, iso:%s, " \
+               "skip_malformed:%s, verbose:%s, datetime_paths:%s}" % \
+               (self.zones, self.oad, self.format, self.no_time, self.timezone, self.utc, self.iso,
+                self.skip_malformed, self.verbose, self.datetime_paths())
