@@ -28,6 +28,11 @@ Times in the 24-hour format HH:MM or HH:MM:SS. For datetime fields, the
 format may be YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS. Hour values may exceed the range 0-23. If fields are missing
 from the input document or are malformed, execution will terminate.
 
+The --no-time flag should be used where the input document contains a date but no time indicator. In this case, the
+the data is interpreted as being an aggregate of the whole date period. For example, if the input date is 31/01/2022
+then the output datetime will be 2022-02-01T00:00:00 (the date is moved on by one day because the datetime field
+indicates the end of the sample period).
+
 If the input datetimes are not UTC, then the timezone of the input data should be specified. In this case, the
 datetime may optionally be shifted to UTC.
 
@@ -37,7 +42,7 @@ specified.
 
 SYNOPSIS
 sample_iso_8601.py { -z | { -o | -f DATE_FORMAT } [-t TIMEZONE_NAME [-u]] [-i ISO_PATH]
-{ DATETIME_PATH | DATE_PATH TIME_PATH } } [-v]
+{ DATETIME_PATH [-n] | DATE_PATH TIME_PATH } } [-s] [-v]
 
 EXAMPLES
 csv_reader.py 15_min_Praxis_LHR2.csv -l10 | sample_iso_8601.py -v -f DD/MM/YYYY "Max of Time" -t Europe/Athens -u
@@ -175,7 +180,7 @@ if __name__ == '__main__':
                     logger.error("malformed datetime (AttributeError) '%s' in %s" % (cmd.datetime_path, jstr))
                     exit(1)
 
-                if len(pieces) != 2:
+                if (cmd.no_time and len(pieces) != 1) or (not cmd.no_time and len(pieces) != 2):
                     if cmd.skip_malformed:
                         continue
 
@@ -183,7 +188,7 @@ if __name__ == '__main__':
                     exit(1)
 
                 date = pieces[0].strip()
-                time = pieces[1].strip()
+                time = '24:00:00' if cmd.no_time else pieces[1].strip()
 
                 # ISO 8601...
                 iso = LocalizedDatetime.construct_from_date_time(parser, date, time, tz=zone)
