@@ -61,8 +61,12 @@ from scs_analysis.cmd.cmd_configuration_csv import CmdConfigurationCSV
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 from scs_analysis.handler.configuration_csv_generator import ConfigurationCSVGenerator
 
-from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder, ConfigurationCheckRequest
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder, ConfigurationRequest
+from scs_core.aws.manager.configuration.configuration_finder import ConfigurationFinder
+from scs_core.aws.manager.configuration.configuration_intercourse import ConfigurationRequest
+
+from scs_core.aws.manager.configuration.configuration_check_finder import ConfigurationCheckFinder
+from scs_core.aws.manager.configuration.configuration_check_intercourse import ConfigurationCheckRequest
+
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 

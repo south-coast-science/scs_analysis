@@ -55,7 +55,7 @@ import sys
 from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.byline_finder import BylineFinder
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 from scs_core.aws.manager.topic_history_manager import TopicHistoryManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials

@@ -8,7 +8,7 @@ import optparse
 
 from scs_analysis import version
 
-from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckRequest
+from scs_core.aws.manager.configuration.configuration_check_intercourse import ConfigurationCheckRequest
 from scs_core.estate.configuration_check import ConfigurationCheck
 
 

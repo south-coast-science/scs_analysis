@@ -45,8 +45,8 @@ import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMonitorCheck
 
-from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder
-from scs_core.aws.manager.configuration_check_requester import ConfigurationCheckRequester
+from scs_core.aws.manager.configuration.configuration_check_finder import ConfigurationCheckFinder
+from scs_core.aws.manager.configuration.configuration_check_requester import ConfigurationCheckRequester
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
