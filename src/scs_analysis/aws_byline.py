@@ -116,13 +116,14 @@ if __name__ == '__main__':
 
         # find...
         if cmd.topic:
-            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded)
+            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded,
+                                                  strict_tags=cmd.strict)
 
         elif cmd.device:
             group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded)
 
         else:
-            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded)         # all
+            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, strict_tags=cmd.strict)
 
         # report...
         report = []

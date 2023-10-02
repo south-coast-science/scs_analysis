@@ -144,10 +144,15 @@ if __name__ == '__main__':
 
         request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
 
-        if cmd.organisation and not cmd.separate:
-            report = sorted(traffic_finder.find_for_organisations(auth.id_token, request))
+        if cmd.organisation:
+            if cmd.separate:
+                report = traffic_finder.find_for_organisations_users(auth.id_token, request)
+            else:
+                report = traffic_finder.find_for_organisations(auth.id_token, request)
         else:
-            report = sorted(traffic_finder.find_for_organisations_users(auth.id_token, request))
+            report = traffic_finder.find_for_users(auth.id_token, request)
+
+        report = sorted(report)
 
 
         # ------------------------------------------------------------------------------------------------------------
