@@ -28,7 +28,7 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
-from scs_core.aws.manager.device_monitor_specification_manager import DeviceMonitorSpecificationManager
+from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials

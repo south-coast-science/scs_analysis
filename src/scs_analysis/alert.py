@@ -62,9 +62,9 @@ import sys
 
 from scs_analysis.cmd.cmd_alert import CmdAlert
 
-from scs_core.aws.data.alert import AlertSpecification
+from scs_core.aws.monitor.alert.alert import AlertSpecification
 
-from scs_core.aws.manager.alert_specification_manager import AlertSpecificationManager
+from scs_core.aws.monitor.alert.alert_specification_manager import AlertSpecificationManager
 from scs_core.aws.manager.byline_finder import BylineFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials

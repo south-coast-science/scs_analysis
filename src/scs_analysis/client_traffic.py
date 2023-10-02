@@ -44,7 +44,8 @@ import sys
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
 
 from scs_core.aws.client_traffic.client_traffic import ClientTrafficLocus
-from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
+from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder
+from scs_core.aws.client_traffic.client_traffic_intercourse import ClientTrafficRequest
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
