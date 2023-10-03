@@ -23,7 +23,7 @@ class CmdConfigurationMonitorCheck(object):
         """
         codes = ' | '.join(ConfigurationCheck.result_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -f TAG | [-t TAG [-x]] [-o] } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [{ -f TAG | -t TAG [-x] [-o] | -r CODE }] "
                                                     "[-i INDENT] [-v]", version=version())
 
         # identity...

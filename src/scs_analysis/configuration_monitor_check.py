@@ -21,7 +21,7 @@ the devices known to the system. Status levels are:
 * RUP - RECEIVED:UPDATED
 
 SYNOPSIS
-configuration_monitor_check.py [-c CREDENTIALS] { -f TAG | [-t TAG [-x]] [-o] } [-i INDENT] [-v]
+configuration_monitor_check.py [-c CREDENTIALS] [{ -f TAG | -t TAG [-x] [-o] | -r CODE }] [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor_check.py -r ERR | node.py -s | csv_writer.py
