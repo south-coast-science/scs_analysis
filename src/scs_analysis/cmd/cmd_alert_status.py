@@ -7,7 +7,7 @@ Created on 29 Jun 2021
 import optparse
 
 from scs_analysis import version
-from scs_core.aws.manager.alert_status_manager import AlertStatusFindRequest
+from scs_core.aws.monitor.alert.alert_status_intercourse import AlertStatusFindRequest
 
 
 # --------------------------------------------------------------------------------------------------------------------

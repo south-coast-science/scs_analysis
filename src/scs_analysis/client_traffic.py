@@ -44,7 +44,8 @@ import sys
 from scs_analysis.cmd.cmd_client_traffic import CmdClientTraffic
 
 from scs_core.aws.client_traffic.client_traffic import ClientTrafficLocus
-from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder, ClientTrafficRequest
+from scs_core.aws.client_traffic.client_traffic_finder import ClientTrafficFinder
+from scs_core.aws.client_traffic.client_traffic_intercourse import ClientTrafficRequest
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -144,10 +145,15 @@ if __name__ == '__main__':
 
         request = ClientTrafficRequest(cmd.endpoint, clients, cmd.period, cmd.aggregate)
 
-        if cmd.organisation and not cmd.separate:
-            report = sorted(traffic_finder.find_for_organisations(auth.id_token, request))
+        if cmd.organisation:
+            if cmd.separate:
+                report = traffic_finder.find_for_organisations_users(auth.id_token, request)
+            else:
+                report = traffic_finder.find_for_organisations(auth.id_token, request)
         else:
-            report = sorted(traffic_finder.find_for_organisations_users(auth.id_token, request))
+            report = traffic_finder.find_for_users(auth.id_token, request)
+
+        report = sorted(report)
 
 
         # ------------------------------------------------------------------------------------------------------------

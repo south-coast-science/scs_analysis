@@ -9,8 +9,8 @@ Created on 1 Aug 2023
 import json
 import sys
 
-from scs_core.aws.data.byline import DeviceBylineGroup
-from scs_core.aws.manager.byline_finder import BylineFinder
+from scs_core.aws.manager.byline.byline import DeviceBylineGroup
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager

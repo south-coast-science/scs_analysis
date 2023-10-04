@@ -10,8 +10,8 @@ DEPRECATED: replaced with byline_finder_test.py
 
 import json
 
-from scs_core.aws.data.byline import DeviceBylineGroup
-from scs_core.aws.manager.byline_manager import BylineManager
+from scs_core.aws.manager.byline.byline import DeviceBylineGroup
+from scs_core.aws.manager.byline.byline_manager import BylineManager
 
 from scs_core.data.json import JSONify
 

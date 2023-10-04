@@ -21,7 +21,7 @@ the devices known to the system. Status levels are:
 * RUP - RECEIVED:UPDATED
 
 SYNOPSIS
-configuration_monitor_check.py [-c CREDENTIALS] { -f TAG | [-t TAG [-x]] [-o] } [-i INDENT] [-v]
+configuration_monitor_check.py [-c CREDENTIALS] [{ -f TAG | -t TAG [-x] [-o] | -r CODE }] [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor_check.py -r ERR | node.py -s | csv_writer.py
@@ -45,8 +45,8 @@ import sys
 
 from scs_analysis.cmd.cmd_configuration_monitor_check import CmdConfigurationMonitorCheck
 
-from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckFinder
-from scs_core.aws.manager.configuration_check_requester import ConfigurationCheckRequester
+from scs_core.aws.manager.configuration.configuration_check_finder import ConfigurationCheckFinder
+from scs_core.aws.manager.configuration.configuration_check_requester import ConfigurationCheckRequester
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
