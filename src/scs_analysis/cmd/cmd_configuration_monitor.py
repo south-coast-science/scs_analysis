@@ -7,7 +7,7 @@ Created on 20 Apr 2021
 import optparse
 
 from scs_analysis import version
-from scs_core.aws.manager.configuration_finder import ConfigurationRequest
+from scs_core.aws.manager.configuration.configuration_intercourse import ConfigurationRequest
 
 
 # --------------------------------------------------------------------------------------------------------------------

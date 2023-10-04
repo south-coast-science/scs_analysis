@@ -8,7 +8,7 @@ import optparse
 
 from scs_analysis import version
 
-from scs_core.aws.manager.configuration_check_finder import ConfigurationCheckRequest
+from scs_core.aws.manager.configuration.configuration_check_intercourse import ConfigurationCheckRequest
 from scs_core.estate.configuration_check import ConfigurationCheck
 
 
@@ -23,7 +23,7 @@ class CmdConfigurationMonitorCheck(object):
         """
         codes = ' | '.join(ConfigurationCheck.result_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -f TAG | [-t TAG [-x]] [-o] } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [{ -f TAG | -t TAG [-x] [-o] | -r CODE }] "
                                                     "[-i INDENT] [-v]", version=version())
 
         # identity...

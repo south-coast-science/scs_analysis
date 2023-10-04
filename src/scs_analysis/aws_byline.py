@@ -37,7 +37,7 @@ import sys
 from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.byline_finder import BylineFinder
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -116,13 +116,14 @@ if __name__ == '__main__':
 
         # find...
         if cmd.topic:
-            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded)
+            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded,
+                                                  strict_tags=cmd.strict)
 
         elif cmd.device:
             group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded)
 
         else:
-            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded)         # all
+            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, strict_tags=cmd.strict)
 
         # report...
         report = []

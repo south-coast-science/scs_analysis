@@ -11,7 +11,7 @@ device_monitor utility is used to manage the email addresses associated with ind
 
 SYNOPSIS
 device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
--S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [-t DEVICE_TAG] } [-i INDENT] [-v]
+-S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } [-i INDENT] [-v]
 
 EXAMPLES
 device_monitor.py -c super -Ft scs-opc-109
@@ -28,7 +28,7 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
-from scs_core.aws.manager.device_monitor_specification_manager import DeviceMonitorSpecificationManager
+from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials

@@ -30,7 +30,7 @@ import sys
 from scs_analysis.cmd.cmd_configuration_monitor import CmdConfigurationMonitor
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
-from scs_core.aws.manager.configuration_finder import ConfigurationFinder
+from scs_core.aws.manager.configuration.configuration_finder import ConfigurationFinder
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 

@@ -34,8 +34,9 @@ import sys
 
 from scs_analysis.cmd.cmd_cognito_email import CmdCognitoEmail
 
+from scs_core.aws.security.cognito_authentication import AuthenticationStatus
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_login_manager import CognitoLoginManager, AuthenticationStatus
+from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 from scs_core.aws.security.cognito_password_manager import CognitoPasswordManager
 from scs_core.aws.security.cognito_user import CognitoUserIdentity
 from scs_core.aws.security.cognito_user_manager import CognitoUserCreator

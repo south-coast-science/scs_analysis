@@ -34,7 +34,7 @@ import sys
 
 from scs_analysis.cmd.cmd_alert_status import CmdAlertStatus
 
-from scs_core.aws.manager.alert_status_manager import AlertStatusManager
+from scs_core.aws.monitor.alert.alert_status_manager import AlertStatusManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager

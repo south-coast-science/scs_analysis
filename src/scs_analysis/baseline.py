@@ -54,7 +54,8 @@ from scs_analysis.cmd.cmd_baseline import CmdBaseline
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.client.device_control_client import DeviceControlClient
-from scs_core.aws.manager.byline_finder import BylineFinder
+
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 from scs_core.aws.manager.lambda_message_manager import MessageManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials

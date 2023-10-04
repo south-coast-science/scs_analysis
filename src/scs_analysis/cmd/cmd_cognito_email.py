@@ -18,7 +18,7 @@ class CmdCognitoEmail(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -e | -c | -s | -r } EMAIL",
+        self.__parser = optparse.OptionParser(usage="%prog { -e | -c | -s | -r } [-v] EMAIL",
                                               version=version())
 
         # operations...
