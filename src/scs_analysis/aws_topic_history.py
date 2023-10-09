@@ -136,16 +136,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # reporter...
-        reporter = BatchDownloadReporter()
-
         # BylineFinder...
         byline_finder = BylineFinder()
 
         # MessageManager...
+        reporter = BatchDownloadReporter()
         message_manager = TopicHistoryManager(reporter=reporter)
-
-        logger.info(message_manager)
 
 
         # ------------------------------------------------------------------------------------------------------------

@@ -84,10 +84,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # reporter...
-        reporter = BatchDownloadReporter()
-
         # ConfigurationFinder...
+        reporter = BatchDownloadReporter()
         finder = ConfigurationFinder(reporter=reporter)
 
 

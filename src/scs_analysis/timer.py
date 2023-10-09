@@ -25,6 +25,7 @@ import sys
 from scs_core.data.json import JSONify
 from scs_core.data.timedelta import Timedelta
 
+from scs_core.sys.logging import Logging
 from scs_core.sys.timer import Timer
 
 
@@ -35,8 +36,10 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # resources...
 
-    print("timer: starting", file=sys.stderr)
-    sys.stderr.flush()
+    Logging.config('timer', verbose=True)
+    logger = Logging.getLogger()
+
+    logger.info("starting")
 
     timer = Timer()
 
@@ -62,6 +65,6 @@ if __name__ == '__main__':
 
     finally:
         delta = Timedelta(seconds=int(round(timer.total())))
-        print("timer: %s" % JSONify.dumps(delta).strip('"'), file=sys.stderr)
+        logger.info(JSONify.dumps(delta).strip('"'))
 
         sys.stderr.close()
