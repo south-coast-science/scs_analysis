@@ -93,12 +93,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # reporter...
         reporter = BatchDownloadReporter()
-
-        # BylineFinder...
         finder = BylineFinder(reporter=reporter)
-        logger.info(finder)
 
 
         # ------------------------------------------------------------------------------------------------------------

@@ -123,11 +123,13 @@ if __name__ == '__main__':
             for client in cmd.clients:
                 user = user_finder.get_by_email(auth.id_token, client)
 
-                if user is None:
-                    logger.error("the user '%s' could not be found." % client)
-                    exit(2)
+                # if user is None:
+                #     logger.error("the user '%s' could not be found." % client)
+                #     exit(2)
 
-                clients.append(user.email)
+                email = client if user is None else user.email      # include API keys
+
+                clients.append(email)
 
         if cmd.organisation:
             for client in cmd.clients:

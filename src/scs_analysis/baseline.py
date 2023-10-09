@@ -56,7 +56,7 @@ from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 from scs_core.aws.client.device_control_client import DeviceControlClient
 
 from scs_core.aws.manager.byline.byline_finder import BylineFinder
-from scs_core.aws.manager.lambda_message_manager import MessageManager
+from scs_core.aws.manager.topic_history.topic_history_manager import TopicHistoryManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -142,14 +142,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        # reporter...
-        reporter = BatchDownloadReporter()
-
         # BylineFinder...
+        reporter = BatchDownloadReporter()
         byline_finder = BylineFinder(reporter=reporter)
 
         # MessageManager...
-        message_manager = MessageManager(reporter=reporter)
+        message_manager = TopicHistoryManager(reporter=reporter)
 
         # DeviceControlClient...
         client = DeviceControlClient()
@@ -165,7 +163,7 @@ if __name__ == '__main__':
                 # ----------------------------------------------------------------------------------------------------
                 # configuration...
 
-                logger.error("configuration...")
+                logger.info("configuration...")
 
                 # BaselineConf...
                 baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
@@ -201,8 +199,8 @@ if __name__ == '__main__':
                     logger.error("no control topic found for %s." % device_tag)
                     continue
 
-                logger.error("gases_topic: %s" % gases_topic)
-                logger.error("control_topic: %s" % control_topic)
+                logger.info("gases_topic: %s" % gases_topic)
+                logger.info("control_topic: %s" % control_topic)
 
                 # configuration...
                 response = client.interact(auth.id_token, device_tag, ['configuration'])
@@ -249,7 +247,7 @@ if __name__ == '__main__':
                 # analysis...
 
                 # data...
-                logger.error("data...")
+                logger.info("data...")
 
                 now = LocalizedDatetime.now()
 
@@ -265,20 +263,21 @@ if __name__ == '__main__':
                     end -= Timedelta(days=1)
                     logger.error("WARNING: testing previous day...")
 
-                logger.error("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
+                logger.info("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
 
-                data = list(message_manager.find_for_topic(gases_topic, start, end, None, False,
-                                                           baseline_conf.checkpoint(),
+                data = list(message_manager.find_for_topic(auth.id_token, gases_topic, start, end,
+                                                           None, False, baseline_conf.checkpoint(),
                                                            False, False, False, False, False, None))
+
                 if not data:
                     logger.error("no data found for %s." % gases_topic)
                     continue
 
-                logger.error("expected: %s retrieved: %s" % (baseline_conf.expected_data_points(start, end), len(data)))
-                logger.error("-")
+                logger.info("expected: %s retrieved: %s" % (baseline_conf.expected_data_points(start, end), len(data)))
+                logger.info("-")
 
                 # corrections...
-                logger.error("correction...")
+                logger.info("correction...")
 
                 conf_minimums = baseline_conf.minimums
                 correction_applied = False
@@ -290,8 +289,8 @@ if __name__ == '__main__':
                     if cmd.excludes_gas(gas):       # not "only this gas"
                         continue
 
-                    logger.error("-")
-                    logger.error("%s..." % minimum.path)
+                    logger.info("-")
+                    logger.info("%s..." % minimum.path)
 
                     if gas == cmd.exclude_gas:      # is excluded gas
                         logger.error("%s is excluded - skipping" % gas)
@@ -332,7 +331,8 @@ if __name__ == '__main__':
                         minimum.value = corrected.cnc
 
                     # report...
-                    logger.error(JSONify.dumps(minimum.summary(gas)))
+                    print(JSONify.dumps(minimum.summary(gas)))
+                    sys.stdout.flush()
 
                     # minimums...
                     if minimum.value == conf_minimums[gas]:
@@ -350,7 +350,7 @@ if __name__ == '__main__':
                     # update...
 
                     cmd_tokens = minimum.cmd_tokens(conf_minimums)
-                    logger.error(' '.join([str(token) for token in cmd_tokens]))
+                    logger.info(' '.join([str(token) for token in cmd_tokens]))
 
                     if cmd.rehearse:
                         continue
@@ -373,9 +373,9 @@ if __name__ == '__main__':
                     continue
 
                 # reboot...
-                logger.error("-")
+                logger.info("-")
 
-                logger.error(cmd.uptake)
+                logger.info(cmd.uptake)
 
                 client.interact(auth.id_token, device_tag, [cmd.uptake])
 
