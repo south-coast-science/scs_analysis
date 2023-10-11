@@ -23,8 +23,10 @@ class CmdDeviceMonitor(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
                                                     "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 0 | 1 } | "
-                                                    "-D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } "
+                                                    "-D EMAIL_ADDR -t DEVICE_TAG } "
                                                     "[-i INDENT] [-v]", version=version())
+
+        # [{ -t DEVICE_TAG | -f }]
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
