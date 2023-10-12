@@ -29,8 +29,7 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
-from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorRecipient, \
-    DeviceMonitorSpecificationManager
+from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
@@ -40,6 +39,8 @@ from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
+
+from scs_core.email.email import EmailRecipient
 
 from scs_core.sys.logging import Logging
 
@@ -110,7 +111,7 @@ if __name__ == '__main__':
                                   exact=cmd.exact_match)
 
         elif cmd.add:
-            receipient = DeviceMonitorRecipient(cmd.email, cmd.json_message)
+            receipient = EmailRecipient(cmd.email, cmd.json_message)
             report = manager.add(auth.id_token, cmd.device_tag, receipient)
 
         elif cmd.suspend:
