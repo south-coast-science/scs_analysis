@@ -11,6 +11,8 @@ from scs_analysis import version
 from scs_core.data.diurnal_period import DiurnalPeriod
 from scs_core.data.recurring_period import RecurringPeriod
 
+from scs_core.email.email import EmailRecipient
+
 from scs_core.location.timezone import Timezone
 
 
@@ -28,8 +30,8 @@ class CmdAlert(object):
                                                     "[-d DESCRIPTION] [-p TOPIC] [-f FIELD] [-l LOWER] [-u UPPER] "
                                                     "[-n { 0 | 1 }] "
                                                     "[{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }] "
-                                                    "[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
-                                                    "[-e EMAIL_ADDR] [-g [{ a | r }] EMAIL_ADDR_1 .. EMAIL_ADDR_N]}",
+                                                    "[-a { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] "
+                                                    "[-e EMAIL_ADDR] [-b { A | R } EMAIL_ADDR [-j]] }",
                                               version=version())
 
         # identity...
@@ -85,9 +87,6 @@ class CmdAlert(object):
                                  dest="contiguous_alerts", default=None,
                                  help="raise alert on contiguous exceedence (default true)")
 
-        self.__parser.add_option("--json-message", "-j", type="int", action="store", dest="json_message",
-                                 default=None, help="message body is JSON (default false)")
-
         self.__parser.add_option("--suspended", "-s", type="int", action="store", dest="suspended",
                                  default=None, help="suspended (default false)")
 
@@ -95,8 +94,11 @@ class CmdAlert(object):
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
                                  help="email To address (any on find)")
 
-        self.__parser.add_option("--cc-list", "-g", action="store_true", dest="cc", default=False,
-                                 help="email CC list")
+        self.__parser.add_option("--bcc-list", "-b", type="string", nargs=2, action="store", dest="bcc", default=False,
+                                 help="Add or Remove from BCC list")
+
+        self.__parser.add_option("--json-message", "-j", action="store_true", dest="json_message", default=False,
+                                 help="message body is JSON")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
@@ -147,7 +149,10 @@ class CmdAlert(object):
         if self.suspended is not None and self.suspended != 0 and self.suspended != 1:
             return False
 
-        if self.cc and not self.cc_list:
+        if self.bcc and self.bcc_action not in ['A', 'R']:
+            return False
+
+        if (not self.bcc or self.bcc_action != 'A') and self.json_message:
             return False
 
         return True
@@ -190,17 +195,17 @@ class CmdAlert(object):
         return True
 
 
-    def updated_cc_list(self, existing_cc_list):
-        if not self.cc:
-            return existing_cc_list
+    def updated_cc_dict(self, existing_cc_dict):
+        if not self.bcc:
+            return existing_cc_dict
 
-        if self.cc_list[0] == 'a':
-            return existing_cc_list + self.cc_list[1:]
+        if self.bcc[0] == 'A':
+            existing_cc_dict[self.bcc[1]] = EmailRecipient(self.bcc[1], self.json_message)
+            return existing_cc_dict
 
-        if self.cc_list[0] == 'r':
-            return filter(lambda email: email not in self.cc_list[1:], existing_cc_list)
-
-        return self.cc
+        if self.bcc[0] == 'R':
+            del existing_cc_dict[self.bcc[1]]
+            return existing_cc_dict
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -332,13 +337,18 @@ class CmdAlert(object):
 
 
     @property
-    def cc(self):
-        return self.__opts.cc
+    def bcc(self):
+        return self.__opts.bcc
 
 
     @property
-    def cc_list(self):
-        return self.__args if self.cc else None
+    def bcc_action(self):
+        return None if not self.__opts.bcc else self.__opts.bcc[0]
+
+
+    @property
+    def bcc_email(self):
+        return None if not self.__opts.bcc else self.__opts.bcc[1]
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -364,10 +374,10 @@ class CmdAlert(object):
         return "CmdAlert:{list:%s, credentials_name:%s, find:%s, retrieve:%s, create:%s, " \
                "update:%s, delete:%s, topic:%s, field:%s, lower_threshold:%s, " \
                "upper_threshold:%s, alert_on_none:%s, recurring_period:%s, diurnal_period:%s, " \
-               "json_message:%s, json_message:%s, suspended:%s, email:%s, cc:%s, cc_list:%s, " \
+               "json_message:%s, json_message:%s, suspended:%s, email:%s, bcc:%s, " \
                "indent:%s, verbose:%s}" % \
                (self.list, self.credentials_name, self.find, self.__opts.retrieve_id, self.create,
                 self.__opts.update_id, self.__opts.delete_id, self.topic, self.field, self.lower_threshold,
                 self.upper_threshold, self.alert_on_none, self.__opts.recurring_period, self.__opts.diurnal_period,
-                self.contiguous_alerts, self.json_message, self.suspended, self.email, self.cc, self.cc_list,
+                self.contiguous_alerts, self.json_message, self.suspended, self.email, self.bcc,
                 self.indent, self.verbose)
