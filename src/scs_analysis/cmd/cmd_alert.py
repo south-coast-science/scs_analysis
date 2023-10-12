@@ -195,17 +195,17 @@ class CmdAlert(object):
         return True
 
 
-    def updated_cc_dict(self, existing_cc_dict):
+    def updated_bcc_dict(self, existing_bcc_dict):
         if not self.bcc:
-            return existing_cc_dict
+            return existing_bcc_dict
 
         if self.bcc[0] == 'A':
-            existing_cc_dict[self.bcc[1]] = EmailRecipient(self.bcc[1], self.json_message)
-            return existing_cc_dict
+            existing_bcc_dict[self.bcc[1]] = EmailRecipient(self.bcc[1], self.json_message)
+            return existing_bcc_dict
 
         if self.bcc[0] == 'R':
-            del existing_cc_dict[self.bcc[1]]
-            return existing_cc_dict
+            del existing_bcc_dict[self.bcc[1]]
+            return existing_bcc_dict
 
 
     # ----------------------------------------------------------------------------------------------------------------

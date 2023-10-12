@@ -203,14 +203,12 @@ if __name__ == '__main__':
 
             # create...
             contiguous_alerts = True if cmd.contiguous_alerts is None else bool(cmd.contiguous_alerts)
-            json_message = False if cmd.json_message is None else bool(cmd.json_message)
             to = credentials.email if cmd.email is None else cmd.email
             bcc_dict = {}
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
                                        cmd.upper_threshold, cmd.alert_on_none, cmd.aggregation_period,
-                                       None, contiguous_alerts, json_message,
-                                       None, to, bcc_dict, bool(cmd.suspended))
+                                       None, contiguous_alerts, None, to, bcc_dict, bool(cmd.suspended))
 
             if not alert.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
@@ -241,14 +239,13 @@ if __name__ == '__main__':
             alert_on_none = alert.alert_on_none if cmd.alert_on_none is None else bool(cmd.alert_on_none)
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             contiguous_alerts = alert.contiguous_alerts if cmd.contiguous_alerts is None else cmd.contiguous_alerts
-            json_message = alert.json_message if cmd.json_message is None else bool(cmd.json_message)
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
             to = alert.to if cmd.email is None else cmd.email
-            bcc_dict = cmd.updated_cc_dict(alert.cc_dict)
+            bcc_dict = cmd.updated_bcc_dict(alert.bcc_dict)
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
                                          upper_threshold, alert_on_none, aggregation_period, None, contiguous_alerts,
-                                         json_message, alert.creator_email_address, to, bcc_dict, suspended)
+                                         alert.creator_email_address, to, bcc_dict, suspended)
 
             if not updated.has_valid_thresholds():
                 logger.error("threshold values are invalid.")
