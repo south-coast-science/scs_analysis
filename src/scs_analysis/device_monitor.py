@@ -10,7 +10,7 @@ The device monitor periodically checks on the availability and health of every a
 device_monitor utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
-device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
+device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG [-j] |
 -S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } [-i INDENT] [-v]
 
 EXAMPLES
@@ -29,7 +29,8 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
-from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
+from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorRecipient, \
+    DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
@@ -109,7 +110,8 @@ if __name__ == '__main__':
                                   exact=cmd.exact_match)
 
         elif cmd.add:
-            report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
+            receipient = DeviceMonitorRecipient(cmd.email, cmd.json_message)
+            report = manager.add(auth.id_token, cmd.device_tag, receipient)
 
         elif cmd.suspend:
             report = manager.set_suspended(auth.id_token, cmd.device_tag, bool(cmd.is_suspended))

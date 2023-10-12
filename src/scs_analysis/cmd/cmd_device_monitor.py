@@ -22,7 +22,7 @@ class CmdDeviceMonitor(object):
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | "
-                                                    "-A EMAIL_ADDR DEVICE_TAG | -S DEVICE_TAG { 0 | 1 } | "
+                                                    "-A EMAIL_ADDR DEVICE_TAG [-j] | -S DEVICE_TAG { 0 | 1 } | "
                                                     "-D EMAIL_ADDR -t DEVICE_TAG } "
                                                     "[-i INDENT] [-v]", version=version())
 
@@ -47,6 +47,10 @@ class CmdDeviceMonitor(object):
 
         # self.__parser.add_option("--force", "-f", type="string", action="store", dest="force",
         #                          help="force deletion from multiple devices")
+
+        # fields...
+        self.__parser.add_option("--json-message", "-j", action="store_true", dest="json_message", default=False,
+                                 help="message body is JSON")
 
         # filters...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
@@ -86,6 +90,9 @@ class CmdDeviceMonitor(object):
             count += 1
 
         if count != 1:
+            return False
+
+        if not self.add and self.json_message:
             return False
 
         if self.suspend and self.__opts.suspend[1] not in [None, '0', '1']:
@@ -128,6 +135,14 @@ class CmdDeviceMonitor(object):
     @property
     def delete(self):
         return bool(self.__opts.delete)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: fields...
+
+    @property
+    def json_message(self):
+        return self.__opts.json_message
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -181,6 +196,8 @@ class CmdDeviceMonitor(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdDeviceMonitor:{credentials_name:%s, find:%s, add:%s, suspend:%s, delete:%s, " \
-               "email:%s, device_tag:%s, exact_match:%s, indent:%s, verbose:%s}" % \
+               "email:%s, device_tag:%s, json_message:%s, exact_match:%s, " \
+               "indent:%s, verbose:%s}" % \
                (self.credentials_name, self.__opts.find, self.__opts.add, self.__opts.suspend, self.__opts.delete,
-                self.__opts.email, self.__opts.device_tag, self.exact_match, self.indent, self.verbose)
+                self.__opts.email, self.__opts.device_tag, self.json_message, self.exact_match,
+                self.indent, self.verbose)
