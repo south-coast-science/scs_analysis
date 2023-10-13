@@ -77,6 +77,8 @@ from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 from scs_core.data.str import Str
 
+from scs_core.email.email import EmailRecipient
+
 from scs_core.location.timezone import Timezone
 
 from scs_core.sys.logging import Logging
@@ -203,7 +205,9 @@ if __name__ == '__main__':
 
             # create...
             contiguous_alerts = True if cmd.contiguous_alerts is None else bool(cmd.contiguous_alerts)
-            to = credentials.email if cmd.email is None else cmd.email
+            to_email = credentials.email if cmd.email is None else cmd.email
+            to = EmailRecipient(to_email, cmd.json_message)
+
             bcc_dict = {}
 
             alert = AlertSpecification(None, cmd.description, cmd.topic, cmd.field, cmd.lower_threshold,
@@ -240,7 +244,9 @@ if __name__ == '__main__':
             aggregation_period = alert.aggregation_period if cmd.aggregation_period is None else cmd.aggregation_period
             contiguous_alerts = alert.contiguous_alerts if cmd.contiguous_alerts is None else cmd.contiguous_alerts
             suspended = alert.suspended if cmd.suspended is None else bool(cmd.suspended)
-            to = alert.to if cmd.email is None else cmd.email
+            to_email = alert.to.email_address if cmd.email is None else cmd.email
+            to = EmailRecipient(to_email, cmd.json_message)
+
             bcc_dict = cmd.updated_bcc_dict(alert.bcc_dict)
 
             updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
