@@ -54,6 +54,7 @@ from scs_host.comms.stdio import StdIO
 from scs_host.sys.host import Host
 
 
+# TODO: check for newlines on interactivity
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

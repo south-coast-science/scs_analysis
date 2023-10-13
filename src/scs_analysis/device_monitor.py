@@ -10,14 +10,15 @@ The device monitor periodically checks on the availability and health of every a
 device_monitor utility is used to manage the email addresses associated with individual devices.
 
 SYNOPSIS
-device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG |
+device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG [-j] |
 -S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } [-i INDENT] [-v]
 
 EXAMPLES
 device_monitor.py -c super -Ft scs-opc-109
 
 DOCUMENT EXAMPLE
-{"device-tag": "scs-ph1-43", "recipients": ["someone@somewhere.com"], "suspended": false}
+{"scs-ph1-44": {"device-tag": "scs-ph1-44", "recipients": [{"email": "tony.bush@apertum.co.uk", "json-message": false}],
+"suspended": false}, ...}
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
@@ -38,6 +39,8 @@ from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
+
+from scs_core.email.email import EmailRecipient
 
 from scs_core.sys.logging import Logging
 
@@ -108,7 +111,8 @@ if __name__ == '__main__':
                                   exact=cmd.exact_match)
 
         elif cmd.add:
-            report = manager.add(auth.id_token, cmd.email, cmd.device_tag)
+            receipient = EmailRecipient(cmd.email, cmd.json_message)
+            report = manager.add(auth.id_token, cmd.device_tag, receipient)
 
         elif cmd.suspend:
             report = manager.set_suspended(auth.id_token, cmd.device_tag, bool(cmd.is_suspended))
