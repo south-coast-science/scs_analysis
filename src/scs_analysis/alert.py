@@ -20,16 +20,15 @@ In --find mode, results can be filtered by description, topic, field or email ad
 
 When doing an update, the cc list (-g flag) may be preceeded with:
 
-* a - add the following email address(es)
-* r - remove the following email address(es)
+* A - add the following email address(es)
+* R - remove the following email address(es)
 
 If neither indicator is used, then the specified email address(es) replace the current ones.
 
 SYNOPSIS
 alert.py { -z | [-c CREDENTIALS]  { -F | -R ID | -C | -U ID | -D ID } [-d DESCRIPTION] [-p TOPIC] [-f FIELD]
 [-l LOWER] [-u UPPER] [-n { 0 | 1 }] [{ -r INTERVAL UNITS TIMEZONE | -t START END TIMEZONE }]
-[-a { 0 | 1 }] [-j { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR]
-[-g [{ a | r }] EMAIL_ADDR_1 .. EMAIL_ADDR_N]}
+[-a { 0 | 1 }] [-s { 0 | 1 }] [-i INDENT] [-v] [-e EMAIL_ADDR] [-b { A | R } EMAIL_ADDR [-j]] }
 
 EXAMPLES
 alert.py -vi4 -c super -C -d be2-3-nightime-test -p south-coast-science-dev/development/loc/1/climate -f val.tmp \
@@ -105,7 +104,7 @@ if __name__ == '__main__':
             cmd.print_help(sys.stderr)
             exit(2)
 
-        Logging.config('alert', verbose=cmd.verbose)        # level=logging.DEBUG
+        Logging.config('alert', verbose=cmd.verbose)
         logger = Logging.getLogger()
 
         logger.info(cmd)
