@@ -152,9 +152,6 @@ class CmdAlert(object):
         if self.bcc and self.bcc_action not in ['A', 'R']:
             return False
 
-        if (not self.bcc or self.bcc_action != 'A') and self.json_message:
-            return False
-
         return True
 
 
