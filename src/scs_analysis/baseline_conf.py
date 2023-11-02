@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
         # GasModelConf...
         if not cmd.duplicate():
-            conf = BaselineConf.load(persistence_manager, name=cmd.conf_name, skeleton=True)
+            conf = BaselineConf.load(persistence_manager, name=cmd.conf_name, skeleton=cmd.set())
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # end...
 
-        if conf:
+        if conf is not None:
             print(JSONify.dumps(conf, indent=cmd.indent))
 
     except KeyboardInterrupt:
