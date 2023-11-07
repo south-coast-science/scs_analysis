@@ -49,6 +49,9 @@ class CmdSampleTimeShift(object):
         if self.timedelta is None:
             return False
 
+        if self.__args and len(self.__args) != 1:
+            return False
+
         return True
 
 

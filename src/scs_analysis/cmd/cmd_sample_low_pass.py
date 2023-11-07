@@ -48,6 +48,9 @@ class CmdLowPass(object):
         if self.delta is None or self.cut_off is None:
             return False
 
+        if self.__args and len(self.__args) != 1:
+            return False
+
         return True
 
 

@@ -64,6 +64,9 @@ class CmdDeviceController(object):
         if (self.wrapper or self.indent or self.std) and not self.message:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 
