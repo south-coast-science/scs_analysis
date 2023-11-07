@@ -136,7 +136,7 @@ if __name__ == '__main__':
                 exit(1)
 
             # delete...
-            manager.delete_opr(auth.id_token, cmd.delete)
+            manager.delete_opr(auth.id_token, opr.opr_id)
 
 
     # ----------------------------------------------------------------------------------------------------------------

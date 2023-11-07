@@ -26,7 +26,7 @@ class CmdCollationSummary(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  -f FILE_PREFIX -i IND_PATH "
-                                                    "[-p IND_PRECISION DEP_PRECISION] [-v] DEP_PATH_1 .. DEP_PATH_N",
+                                                    "[-p IND_PRECISION DEP_PRECISION] [-v] DEP_PATH_1 [..DEP_PATH_N]",
                                               version=version())
 
         # input...

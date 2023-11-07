@@ -82,6 +82,9 @@ class CmdCognitoDevices(object):
         if self.tag and self.invoice_number:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

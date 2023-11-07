@@ -42,6 +42,9 @@ class CmdSampleTally(object):
         if self.tally is not None and self.tally < 1:
             return False
 
+        if self.__args and len(self.__args) != 1:
+            return False
+
         return True
 
 

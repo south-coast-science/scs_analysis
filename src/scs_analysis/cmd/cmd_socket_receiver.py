@@ -35,6 +35,15 @@ class CmdSocketReceiver(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self):
+        if self.__args:
+            return False
+
+        return True
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     @property
     def port(self):
         return self.__opts.port
@@ -46,6 +55,10 @@ class CmdSocketReceiver(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    def print_help(self, file):
+        self.__parser.print_help(file)
+
 
     def __str__(self, *args, **kwargs):
         return "CmdSocketReceiver:{port:%d, verbose:%s}" % (self.port, self.verbose)

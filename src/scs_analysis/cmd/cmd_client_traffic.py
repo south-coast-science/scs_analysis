@@ -75,6 +75,9 @@ class CmdClientTraffic(object):
         if self.separate and len(self.clients) > 1:
             return False
 
+        if not self.__args:
+            return False
+
         return True
 
 

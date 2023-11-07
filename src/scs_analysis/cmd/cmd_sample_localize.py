@@ -47,6 +47,9 @@ class CmdSampleLocalize(object):
         if bool(self.zones) == bool(self.timezone):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

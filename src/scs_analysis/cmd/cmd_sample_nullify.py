@@ -53,6 +53,9 @@ class CmdSampleNullify(object):
         if self.lower is not None and self.upper is not None and self.upper <= self.lower:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

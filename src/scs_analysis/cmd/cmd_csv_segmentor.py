@@ -47,6 +47,9 @@ class CmdCSVSegmentor(object):
         if self.__opts.max_interval is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

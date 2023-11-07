@@ -80,6 +80,9 @@ class CmdOrganisationPathRoots(object):
         if (self.create or self.delete) and self.path_root is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

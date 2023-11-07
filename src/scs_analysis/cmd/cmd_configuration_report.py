@@ -39,6 +39,9 @@ class CmdConfigurationReport(object):
         if not self.device_tags:
             return False
 
+        if not self.__args:
+            return False
+
         return True
 
 

@@ -95,6 +95,9 @@ class CmdOrganisations(object):
         if self.create and (self.label is None or self.long_name is None or self.url is None or self.owner is None):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

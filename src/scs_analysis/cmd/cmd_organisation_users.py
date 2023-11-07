@@ -111,6 +111,9 @@ class CmdOrganisationUsers(object):
                 (self.email is None or self.org_label is None):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

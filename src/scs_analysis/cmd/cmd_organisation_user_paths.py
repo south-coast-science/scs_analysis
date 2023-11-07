@@ -84,6 +84,9 @@ class CmdOrganisationUserPaths(object):
         if (self.create or self.delete) and self.path_extension is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

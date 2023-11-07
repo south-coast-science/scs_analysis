@@ -79,6 +79,9 @@ class CmdConfigurationMonitor(object):
         if self.exact_match and self.tag_filter is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

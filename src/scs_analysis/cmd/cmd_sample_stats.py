@@ -21,7 +21,7 @@ class CmdSampleStats(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-t TAG] [-i] [-p PRECISION] [-a] [-r] [-v] "
-                                                    "PATH1 [PATH2 .. PATHN]", version=version())
+                                                    "PATH_1 [..PATH_N]", version=version())
 
         # input...
         self.__parser.add_option("--tag", "-t", type="string", action="store", default='tag', dest="tag",

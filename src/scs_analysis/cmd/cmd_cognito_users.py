@@ -128,6 +128,9 @@ class CmdCognitoUsers(object):
         if self.enabled is not None and self.enabled not in (0, 1):
             return None
 
+        if self.__args:
+            return False
+
         return True
 
 

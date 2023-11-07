@@ -42,6 +42,9 @@ class CmdSampleDuplicates(object):
         if self.exclude and self.counts:
             return False
 
+        if self.__args and len(self.__args) != 1:
+            return False
+
         return True
 
 

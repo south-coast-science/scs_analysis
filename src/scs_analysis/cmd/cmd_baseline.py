@@ -35,7 +35,7 @@ class CmdBaseline(object):
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -n CONF_NAME -f { V | E } "
                                                     "[{ -r | -u COMMAND }] "
                                                     "[-s START] [-e END] [-p AGGREGATION] [-m GAS MINIMUM] "
-                                                    "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N",
+                                                    "[{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 [..DEVICE_TAG_N]",
                                               version=version())
 
         # identity...
@@ -102,6 +102,9 @@ class CmdBaseline(object):
             return False
 
         if self.only_gas is not None and self.exclude_gas is not None:
+            return False
+
+        if not self.__args:
             return False
 
         return True

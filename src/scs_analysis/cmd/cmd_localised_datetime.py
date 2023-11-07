@@ -53,6 +53,9 @@ class CmdLocalizedDatetime(object):
         if self.list and (self.hours or self.minutes or self.seconds or self.zone):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 
