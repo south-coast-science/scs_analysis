@@ -60,18 +60,6 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-def load_credentials(credentials_name):
-    try:
-        password = CognitoClientCredentials.password_from_user()
-        return CognitoClientCredentials.load(Host, name=credentials_name, encryption_key=password)
-
-    except (KeyError, ValueError):
-        logger.error("incorrect password.")
-        exit(1)
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
 if __name__ == '__main__':
 
     logger = None
@@ -91,6 +79,13 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         logger.info(cmd)
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # authentication...
+
+        if not (cmd.list or cmd.set or cmd.delete):
+            credentials = CognitoClientCredentials.load_for_user(Host, name=cmd.credentials_name)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -115,8 +110,6 @@ if __name__ == '__main__':
             credentials.save(Host, encryption_key=credentials.retrieval_password)
 
         elif cmd.update_password:
-            credentials = load_credentials(cmd.credentials_name)
-
             if credentials is None:
                 logger.error("credentials not found.")
                 exit(1)
@@ -136,8 +129,6 @@ if __name__ == '__main__':
         elif cmd.test:
             gatekeeper = CognitoLoginManager()
 
-            credentials = load_credentials(cmd.credentials_name)
-
             if credentials is None:
                 logger.error("no credentials are available")
                 exit(1)
@@ -151,9 +142,6 @@ if __name__ == '__main__':
 
         elif cmd.delete:
             CognitoClientCredentials.delete(Host)
-
-        else:
-            credentials = load_credentials(cmd.credentials_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
