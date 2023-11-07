@@ -45,6 +45,9 @@ class CmdSampleMedian(object):
         if self.window is not None and self.window % 2 == 0:
             return False
 
+        if self.__args and len(self.__args) != 1:
+            return False
+
         return True
 
 

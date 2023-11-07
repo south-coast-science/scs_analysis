@@ -98,6 +98,9 @@ class CmdDeviceMonitor(object):
         if self.suspend and self.__opts.suspend[1] not in [None, '0', '1']:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

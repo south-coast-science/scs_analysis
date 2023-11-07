@@ -80,6 +80,9 @@ class CmdAWSByline(object):
         if self.latest and not bool(self.topic):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

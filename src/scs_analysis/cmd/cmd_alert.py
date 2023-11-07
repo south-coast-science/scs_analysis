@@ -152,6 +152,9 @@ class CmdAlert(object):
         if self.bcc and self.bcc_action not in ['A', 'R']:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

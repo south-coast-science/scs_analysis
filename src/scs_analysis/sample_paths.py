@@ -40,6 +40,10 @@ if __name__ == '__main__':
 
     cmd = CmdSamplePaths()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     Logging.config('sample_paths', verbose=cmd.verbose)
     logger = Logging.getLogger()
 

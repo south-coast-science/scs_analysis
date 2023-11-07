@@ -80,6 +80,9 @@ class CmdAlertStatus(object):
         if self.__opts.cause is not None and self.__opts.cause not in self.__CAUSES:
             return False
 
+        if not self.__args or len(self.__args) != 1:
+            return False
+
         return True
 
 

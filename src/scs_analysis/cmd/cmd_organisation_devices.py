@@ -89,6 +89,9 @@ class CmdOrganisationDevices(object):
         if self.create and (self.__opts.project is None or self.deployment_label is None):
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

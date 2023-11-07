@@ -50,6 +50,9 @@ class CmdCSVJoin(object):
         if self.__opts.left is None or self.__opts.right is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

@@ -55,6 +55,10 @@ if __name__ == '__main__':
 
     cmd = CmdSampleInterval()
 
+    if not cmd.is_valid():
+        cmd.print_help(sys.stderr)
+        exit(2)
+
     if cmd.verbose:
         print("sample_interval: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()

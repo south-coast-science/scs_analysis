@@ -129,6 +129,9 @@ class CmdAWSTopicHistory(object):
         if self.verbose and self.debug:
             return False
 
+        if not self.__args or len(self.__args) != 1:
+            return False
+
         return True
 
 

@@ -61,7 +61,7 @@ class CmdCognitoEmail(object):
         if count != 1:
             return False
 
-        if self.email is None:
+        if not self.__args or len(self.__args) != 1:
             return False
 
         return True

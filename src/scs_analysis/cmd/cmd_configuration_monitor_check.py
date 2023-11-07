@@ -69,6 +69,9 @@ class CmdConfigurationMonitorCheck(object):
         if self.result_code and self.result_code not in ConfigurationCheck.result_codes():
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 

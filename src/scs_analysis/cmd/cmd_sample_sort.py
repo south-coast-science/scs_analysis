@@ -20,7 +20,7 @@ class CmdSampleSort(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] SORT_PATH_1 .. SORT_PATH_N", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-v] SORT_PATH_1 [..SORT_PATH_N]", version=version())
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,

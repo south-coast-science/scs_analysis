@@ -36,6 +36,15 @@ class CmdSampleInterval(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self):
+        if self.__args and len(self.__args) != 1:
+            return False
+
+        return True
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     @property
     def precision(self):
         return self.__opts.precision

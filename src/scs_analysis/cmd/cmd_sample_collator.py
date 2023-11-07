@@ -60,6 +60,9 @@ class CmdSampleCollator(object):
                 self.lower is None or self.upper is None or self.delta is None:
             return False
 
+        if self.__args:
+            return False
+
         return True
 
 
