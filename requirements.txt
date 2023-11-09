@@ -11,5 +11,5 @@ scipy~=1.5
 setuptools~=50.3.0
 tzlocal~=2.1
 
-scs-core~=3.3.0
-scs-host-posix~=3.3.0
+scs-core~=3.3.1
+scs-host-posix~=3.2.0
