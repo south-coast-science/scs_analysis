@@ -21,10 +21,10 @@ A maximum of 30 seconds is available for the device to respond to the published 
 device_controller utility will terminate.
 
 SYNOPSIS
-device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [-m CMD_TOKENS [{ [-w] [-i INDENT] | -s }]] [-v]
+device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [{ [-w] [-i INDENT] | -s }]] [-v] [-m CMD_1 [..CMD_N]]
 
 EXAMPLES
-device_controller.py -c super -t scs-be2-3 -m "vcal_baseline -i4" -s
+device_controller.py -c super -t scs-be2-3 -s -m "vcal_baseline -i4" gas_baseline
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
@@ -138,16 +138,21 @@ if __name__ == '__main__':
         # run...
 
         if cmd.message:
-            response = client.interact(auth.id_token, cmd.device_tag, cmd.message.split())
+            return_code = 0
+            for command in cmd.commands:
+                response = client.interact(auth.id_token, cmd.device_tag, command.split())
 
-            if cmd.std:
-                print_output(response.command)
+                if cmd.std:
+                    print_output(response.command)
 
-            else:
-                report = response if cmd.wrapper else response.command
-                print(JSONify.dumps(report, indent=cmd.indent))
+                else:
+                    report = response if cmd.wrapper else response.command
+                    print(JSONify.dumps(report, indent=cmd.indent))
 
-            exit(response.command.return_code)
+                if response.command.return_code != 0:
+                    return_code = response.command.return_code
+
+            exit(return_code)
 
         else:
             while True:

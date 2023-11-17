@@ -21,7 +21,7 @@ class CmdDeviceController(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -t DEVICE_TAG "
-                                                    "[-m CMD_TOKENS [{ [-w] [-i INDENT] | -s }]] [-v]",
+                                                    "[{ [-w] [-i INDENT] | -s }]] [-v] [-m CMD_1 [..CMD_N]]",
                                               version=version())
 
         # identity...
@@ -33,8 +33,8 @@ class CmdDeviceController(object):
                                  help="the device tag")
 
         # mode...
-        self.__parser.add_option("--message", "-m", type="string", action="store", dest="message",
-                                 help="send the given command line string")
+        self.__parser.add_option("--message", "-m", action="store_true", dest="message", default=False,
+                                 help="send the given command(s)")
 
         # output...
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="wrapper", default=False,
@@ -55,16 +55,13 @@ class CmdDeviceController(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.message is not None and len(self.message) < 1:
+        if self.message and not self.commands:
             return False
 
         if self.std and (self.indent is not None or self.wrapper):
             return False
 
         if (self.wrapper or self.indent or self.std) and not self.message:
-            return False
-
-        if self.__args:
             return False
 
         return True
@@ -103,6 +100,11 @@ class CmdDeviceController(object):
 
 
     @property
+    def commands(self):
+        return self.__args
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -115,6 +117,6 @@ class CmdDeviceController(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdDeviceController:{credentials_name:%s, device_tag:%s, message:%s, wrapper:%s, std:%s, " \
-               "indent:%s, verbose:%s}" % \
+               "indent:%s, commands:%s, verbose:%s}" % \
                (self.credentials_name, self.device_tag, self.message, self.wrapper, self.std,
-                self.indent, self.verbose)
+                self.indent, self.commands, self.verbose)
