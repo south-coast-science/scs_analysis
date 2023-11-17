@@ -28,7 +28,6 @@ class CmdDeviceController(object):
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
-        # target...
         self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
                                  help="the device tag")
 
@@ -68,6 +67,7 @@ class CmdDeviceController(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity
 
     @property
     def credentials_name(self):
@@ -79,10 +79,16 @@ class CmdDeviceController(object):
         return self.__opts.device_tag
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: mode
+
     @property
     def message(self):
         return self.__opts.message
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: output
 
     @property
     def wrapper(self):
