@@ -369,8 +369,8 @@ if __name__ == '__main__':
 
                     device_updates += 1
 
-                if not device_updates:
-                    continue
+                # if not device_updates:
+                #     continue
 
                 # reboot...
                 logger.info("-")
