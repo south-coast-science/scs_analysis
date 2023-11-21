@@ -21,20 +21,19 @@ class CmdDeviceController(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -t DEVICE_TAG "
-                                                    "[-m CMD_TOKENS [{ [-w] [-i INDENT] | -s }]] [-v]",
+                                                    "[{ [-w] [-i INDENT] | [-s] -m CMD_TOKENS }]] [-v] ",
                                               version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
-        # target...
         self.__parser.add_option("--device-tag", "-t", type="string", action="store", dest="device_tag",
                                  help="the device tag")
 
         # mode...
         self.__parser.add_option("--message", "-m", type="string", action="store", dest="message",
-                                 help="send the given command line string")
+                                 help="send the given command(s)")
 
         # output...
         self.__parser.add_option("--wrapper", "-w", action="store_true", dest="wrapper", default=False,
@@ -55,9 +54,6 @@ class CmdDeviceController(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.message is not None and len(self.message) < 1:
-            return False
-
         if self.std and (self.indent is not None or self.wrapper):
             return False
 
@@ -71,6 +67,7 @@ class CmdDeviceController(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: identity
 
     @property
     def credentials_name(self):
@@ -82,10 +79,16 @@ class CmdDeviceController(object):
         return self.__opts.device_tag
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: mode
+
     @property
     def message(self):
         return self.__opts.message
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: output
 
     @property
     def wrapper(self):
@@ -100,6 +103,11 @@ class CmdDeviceController(object):
     @property
     def indent(self):
         return self.__opts.indent
+
+
+    @property
+    def commands(self):
+        return self.__args
 
 
     @property
