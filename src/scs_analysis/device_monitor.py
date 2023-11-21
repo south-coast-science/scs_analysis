@@ -17,8 +17,8 @@ EXAMPLES
 device_monitor.py -c super -Ft scs-opc-109
 
 DOCUMENT EXAMPLE
-{"scs-ph1-44": {"device-tag": "scs-ph1-44", "recipients": [{"email": "tony.bush@apertum.co.uk", "json-message": false}],
-"suspended": false}, ...}
+{"scs-be2-3": {"device-tag": "scs-be2-3", "recipients": [{"email": "bbeloff@me.com", "json-message": true},
+{"email": "bruno.beloff@southcoastscience.com", "json-message": false}], "suspended": false}}
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
