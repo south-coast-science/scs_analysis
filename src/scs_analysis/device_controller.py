@@ -17,14 +17,18 @@ In the interactive mode, the aws_mqtt_control command-line interpreter supports 
 The mode supports command completion with the [TAB] key and command listing with [TAB][TAB]. Exit from the interactive
 mode with [CTRL-D].
 
+
+In the batch message mode, each command should be separated by a semicolon (;). Each command is sent as a separate
+message. Typically, message tokens are presented on the command line wrapped in double quote (") characters.
+
 A maximum of 30 seconds is available for the device to respond to the published message. After this time, the
 device_controller utility will terminate.
 
 SYNOPSIS
-device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [{ [-w] [-i INDENT] | -s }]] [-v] [-m CMD_1 [..CMD_N]]
+device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [{ [-w] [-i INDENT] | [-s] -m CMD_TOKENS }]] [-v]
 
 EXAMPLES
-device_controller.py -c super -t scs-be2-3 -s -m "vcal_baseline -i4" gas_baseline
+device_controller.py -c super -t scs-be2-3 -s -m "vcal_baseline -i4; gas_baseline"
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
@@ -139,8 +143,10 @@ if __name__ == '__main__':
 
         if cmd.message:
             return_code = 0
-            for command in cmd.commands:
-                response = client.interact(auth.id_token, cmd.device_tag, command.split())
+            for command in cmd.message.split(';'):
+                logger.info(command)
+                cmd_tokens = command.strip().split()
+                response = client.interact(auth.id_token, cmd.device_tag, cmd_tokens)
 
                 if cmd.std:
                     print_output(response.command)
@@ -161,9 +167,9 @@ if __name__ == '__main__':
                 if not line:
                     continue
 
-                cmd_tokens = line.split()
-
                 auth = gatekeeper.user_login(credentials)
+
+                cmd_tokens = line.strip().split()
                 response = client.interact(auth.id_token, cmd.device_tag, cmd_tokens)
                 print_output(response.command)
 
@@ -194,4 +200,5 @@ if __name__ == '__main__':
         exit(1)
 
     finally:
-        StdIO.save_history(history_filename)
+        if not cmd.message:
+            StdIO.save_history(history_filename)
