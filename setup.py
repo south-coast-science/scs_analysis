@@ -5,6 +5,9 @@ Created on 4 Sep 2020
 
 https://packaging.python.org/tutorials/packaging-projects/
 https://packaging.python.org/guides/single-sourcing-package-version/
+
+https://stackoverflow.com/questions/65841378/include-json-file-in-python-package-pypi
+https://stackoverflow.com/questions/45147837/including-data-files-with-setup-py
 """
 
 import codecs
@@ -48,7 +51,7 @@ setuptools.setup(
     url="https://github.com/south-coast-science/scs_analysis",
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
-    package_data={'src': ['**/*.csv', '**/*.json']},
+    package_data={'scs_analysis': ['**/*.csv', '**/*.json', '**/*.me']},
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
