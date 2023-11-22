@@ -1,2 +1,3 @@
 include *.txt
 include README.md
+recursive-include scs_analysis *.json *.csv
