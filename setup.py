@@ -48,6 +48,8 @@ setuptools.setup(
     url="https://github.com/south-coast-science/scs_analysis",
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
+    package_data={'src': ['**/*.csv', '**/*.json']},
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.11",
