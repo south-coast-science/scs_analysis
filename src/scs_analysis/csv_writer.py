@@ -54,6 +54,7 @@ from scs_analysis.cmd.cmd_csv_writer import CmdCSVWriter
 from scs_core.csv.csv_writer import CSVWriter
 
 
+# TODO: fix append mode with no newline at the end of the CSV?
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
