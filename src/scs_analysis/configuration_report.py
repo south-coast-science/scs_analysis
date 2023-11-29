@@ -82,7 +82,7 @@ if __name__ == '__main__':
         # resources...
 
         finder = CognitoDeviceFinder()
-        clu = Command(cmd.verbose)
+        clu = Command(verbose=cmd.verbose)
 
 
         # ------------------------------------------------------------------------------------------------------------

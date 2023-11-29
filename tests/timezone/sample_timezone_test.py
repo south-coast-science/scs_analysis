@@ -13,7 +13,7 @@ from scs_core.sys.command import Command
 
 timezone = 'Europe/London'
 
-clu = Command(True)
+clu = Command(verbose=True)
 
 p = clu.o(['csv_reader.py', '2021-autumn-utc.csv'])
 p = clu.io(p, ['sample_timezone.py', timezone])
