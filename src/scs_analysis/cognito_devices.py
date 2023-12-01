@@ -106,11 +106,11 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            if cmd.tag is not None:
-                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
+            if cmd.tag is None:
+                report = sorted(finder.find_all(auth.id_token))
 
             else:
-                report = sorted(finder.find_all(auth.id_token))
+                report = sorted(finder.find_by_tag(auth.id_token, cmd.tag))
 
             if cmd.invoice_number is not None:
                 report = [device for device in report if device.invoice_number == cmd.invoice_number]
