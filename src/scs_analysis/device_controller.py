@@ -199,6 +199,10 @@ if __name__ == '__main__':
         logger.error(ex.error_report)
         exit(1)
 
+    except Exception as ex:
+        logger.error(ex.__class__.__name__)
+        exit(1)
+
     finally:
         if not cmd.message:
             StdIO.save_history(history_filename)
