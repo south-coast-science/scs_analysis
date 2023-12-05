@@ -157,3 +157,7 @@ if __name__ == '__main__':
     except HTTPException as ex:
         logger.error(ex.error_report)
         exit(1)
+
+    except Exception as ex:
+        logger.error(ex.__class__.__name__)
+        exit(1)

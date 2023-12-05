@@ -44,7 +44,6 @@ from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 from scs_core.client.network import Network
-from scs_core.client.resource_unavailable_exception import ResourceUnavailableException
 
 from scs_core.data.json import JSONify
 
@@ -154,8 +153,8 @@ if __name__ == '__main__':
         logger.error(ex.error_report)
         exit(1)
 
-    except (ConnectionError, ResourceUnavailableException) as ex:
-        logger.error(repr(ex))
+    except Exception as ex:
+        logger.error(ex.__class__.__name__)
         exit(1)
 
     finally:
