@@ -29,6 +29,8 @@ import sys
 
 from scs_analysis.cmd.cmd_device_monitor import CmdDeviceMonitor
 
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
+
 from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -101,6 +103,18 @@ if __name__ == '__main__':
         # resources...
 
         manager = DeviceMonitorSpecificationManager()
+        byline_finder = BylineFinder()
+
+
+        # ------------------------------------------------------------------------------------------------------------
+        # identity...
+
+        if cmd.device_tag:
+            group = byline_finder.find_bylines_for_device(auth.id_token, cmd.device_tag)
+
+            if not group:
+                logger.error("device '%s' not found." % cmd.device_tag)
+                exit(1)
 
 
         # ------------------------------------------------------------------------------------------------------------

@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 # topics...
                 group = byline_finder.find_bylines_for_device(auth.id_token, device_tag)
 
-                if group is None:
+                if not group:
                     logger.error("no bylines found for %s." % device_tag)
                     continue
 
