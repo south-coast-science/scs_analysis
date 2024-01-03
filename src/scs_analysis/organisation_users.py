@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # validate...
+        # validation...
 
         if cmd.email:
             cognito = finder.get_by_email(auth.id_token, cmd.email)

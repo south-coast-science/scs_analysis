@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
 
         # ------------------------------------------------------------------------------------------------------------
-        # validate...
+        # validation...
 
         if cmd.org_label is not None:
             org = manager.get_organisation_by_label(auth.id_token, cmd.org_label)

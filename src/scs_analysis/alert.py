@@ -184,7 +184,7 @@ if __name__ == '__main__':
             report = specification_manager.retrieve(auth.id_token, cmd.id)
 
         if cmd.create:
-            # validate...
+            # validation...
             if not cmd.is_complete():
                 logger.error("minimum parameters are topic, path, a threshold, and an aggregation period.")
                 exit(2)
@@ -224,7 +224,7 @@ if __name__ == '__main__':
             report = specification_manager.create(auth.id_token, alert)
 
         if cmd.update:
-            # validate...
+            # validation...
             if cmd.topic is not None or cmd.field is not None:
                 logger.error("topic and field may not be changed.")
                 exit(2)
