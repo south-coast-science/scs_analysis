@@ -123,7 +123,7 @@ if __name__ == '__main__':
             if not retrieval_password:
                 retrieval_password = password
 
-            # validate...
+            # validation...
             if not given_name or not given_name:
                 logger.error("Given name and family name are required.")
                 exit(1)
@@ -172,7 +172,7 @@ if __name__ == '__main__':
                 if not retrieval_password:
                     retrieval_password = credentials.retrieval_password
 
-            # validate...
+            # validation...
             if not given_name or not given_name:
                 logger.error("Given name and family name are required.")
                 exit(1)

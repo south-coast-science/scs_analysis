@@ -107,6 +107,8 @@ if __name__ == '__main__':
         # run...
 
         for line in sys.stdin:
+            is_member = True
+
             jstr = line.strip()
             datum = PathDict.construct_from_jstr(jstr)
 
@@ -134,7 +136,7 @@ if __name__ == '__main__':
                         logger.error("invalid ISO 8601 value '%s' in %s" % (value_node, jstr))
                         exit(1)
                     else:
-                        continue
+                        is_member = False
 
             elif cmd.numeric:
                 value = Datum.float(value_node)
@@ -144,7 +146,7 @@ if __name__ == '__main__':
                         logger.error("invalid numeric value '%s' in %s" % (value_node, jstr))
                         exit(1)
                     else:
-                        continue
+                        is_member = False
 
             else:
                 value = value_node
@@ -155,22 +157,23 @@ if __name__ == '__main__':
             processed_count += 1
 
             # bounds...
-            try:
-                if equal_bound is not None:
-                    in_bounds = value == equal_bound
-                else:
-                    in_bounds = (lower_bound is None or value >= lower_bound) and \
-                                (upper_bound is None or value < upper_bound)
+            if lower_bound is not None or upper_bound is not None:
+                try:
+                    if equal_bound is not None:
+                        is_member = value == equal_bound
+                    else:
+                        is_member = (lower_bound is None or value >= lower_bound) and \
+                                    (upper_bound is None or value < upper_bound)
 
-            except TypeError as ex:
-                if cmd.strict:
-                    in_bounds = None
-                    logger.error("TypeError: %s" % jstr)
-                    exit(1)
-                else:
-                    continue
+                except TypeError as ex:
+                    if cmd.strict:
+                        logger.error("TypeError: %s" % jstr)
+                        exit(1)
+                    else:
+                        continue
 
-            if (cmd.inclusions and not in_bounds) or (cmd.exclusions and in_bounds):
+            # inclusions...
+            if (cmd.inclusions and not is_member) or (cmd.exclusions and is_member):
                 continue
 
             # report...
