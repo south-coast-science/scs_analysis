@@ -13,7 +13,7 @@ documents on stdin, and the extracted node(s) are passed to stdout. Alternativel
 can be read from a file.The extracted node may be a leaf node or an internal node.
 
 By default, only the specified nodes are passed to the output. In the --exclude mode, all nodes are passed to stdout,
-with the exception of the specified nodes. In the default mode, if no node path is specified, the whole input document
+except the specified nodes. In the default mode, if no node path is specified, the whole input document
 is passed to stdout. In the --exclude mode, if no node path is specified, then nothing is output.
 
 By default, output is in the form of a sequence of JSON documents, separated by newlines. If the array (-a) option is
