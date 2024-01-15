@@ -28,6 +28,7 @@ no data is returned.
 Equivalent to cURL:
 curl "https://aws.southcoastscience.com/topicMessages?topic=south-coast-science-dev/production-test/loc/1/gases
 &startTime=2018-12-13T07:03:59.712Z&endTime=2018-12-13T15:10:59.712Z"
+-H "Authorization: api_key de92c5ff"
 
 SYNOPSIS
 aws_topic_history.py [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | -t { [[DD-]HH:]MM[:SS] | :SS } |
