@@ -21,8 +21,8 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog -c HH:MM:SS [-m] [-i ISO] [-r { [DD-]HH:MM[:SS] | :SS }] "
-                                                    "[-x] [-v] [PATH_1..PATH_N]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-c HH:MM:SS [-x] [-r { [DD-]HH:MM[:SS]] | :SS }]] "
+                                                    "[-m] [-i ISO] [-v] [PATH_1..PATH_N]", version=version())
 
         # operation...
         self.__parser.add_option("--checkpoint", "-c", type="string", action="store", dest="checkpoint",
@@ -51,7 +51,7 @@ class CmdSampleAggregate(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.checkpoint is None:
+        if self.checkpoint is None and (self.__opts.rule is not None or self.exclude_remainder):
             return False
 
         return True
@@ -61,7 +61,7 @@ class CmdSampleAggregate(object):
         if self.__opts.rule is None:
             return True
 
-        return self.interval is not None
+        return self.rule_interval is not None
 
 
     def ignore_rule(self):
@@ -86,7 +86,7 @@ class CmdSampleAggregate(object):
 
 
     @property
-    def interval(self):
+    def rule_interval(self):
         return Timedelta.construct_from_flag(self.__opts.rule)
 
 
@@ -112,7 +112,7 @@ class CmdSampleAggregate(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, iso:%s, interval:%s, exclude_remainder:%s, " \
+        return "CmdSampleAggregate:{checkpoint:%s, min_max:%s, iso:%s, rule_interval:%s, exclude_remainder:%s, " \
                "verbose:%s, nodes:%s}" %  \
-               (self.checkpoint, self.min_max, self.iso, self.interval, self.exclude_remainder,
+               (self.checkpoint, self.min_max, self.iso, self.rule_interval, self.exclude_remainder,
                 self.verbose, self.nodes)
