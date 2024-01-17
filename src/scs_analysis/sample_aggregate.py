@@ -181,7 +181,7 @@ if __name__ == '__main__':
             checkpoint = rec
 
         if aggregate.has_value() and not cmd.exclude_remainder:
-            if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.is_valid_interval, checkpoint - prev_checkpoint):
+            if cmd.ignore_rule() or aggregate.complies_with_rule(cmd.rule_interval, checkpoint - prev_checkpoint):
                 print(JSONify.dumps(aggregate.report(checkpoint)))
                 sys.stdout.flush()
                 output_count += 1
