@@ -136,8 +136,7 @@ if __name__ == '__main__':
             regression.append(rec, value)
 
             if regression.has_regression():
-                slope = regression.slope()
-                slope = None if slope is None else round(slope, cmd.precision)
+                slope = regression.slope(precision=cmd.precision)
 
             else:
                 slope = None
