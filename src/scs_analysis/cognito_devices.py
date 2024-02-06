@@ -127,9 +127,9 @@ if __name__ == '__main__':
                 logger.error("no device found for tag: '%s'." % cmd.update)
                 exit(1)
 
-            if not CognitoDeviceIdentity.is_valid_invoice_number(cmd.update_invoice):
-                logger.error("'%s' is not a valid invoice number." % cmd.update_invoice)
-                exit(2)
+            # if not CognitoDeviceIdentity.is_valid_invoice_number(cmd.update_invoice):
+            #     logger.error("'%s' is not a valid invoice number." % cmd.update_invoice)
+            #     exit(2)
 
             # update...
             updated = CognitoDeviceIdentity(cmd.update_tag, None, cmd.update_invoice, None, None)
