@@ -18,7 +18,7 @@ class CmdOrganisations(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F [-l LABEL] [-m] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F [{ -l LABEL | -d ID }] [-m] | "
                                                     "-C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL "
                                                     "[-p PARENT_LABEL] | "
                                                     "-U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] "
@@ -46,6 +46,9 @@ class CmdOrganisations(object):
         # fields...
         self.__parser.add_option("--label", "-l", type="string", action="store", dest="label",
                                  help="the organisation label")
+
+        self.__parser.add_option("--id", "-d", type="int", action="store", dest="id",
+                                 help="the organisation ID")
 
         self.__parser.add_option("--long-name", "-n", type="string", action="store", dest="long_name",
                                  help="the organisation long name")
@@ -95,6 +98,9 @@ class CmdOrganisations(object):
         if self.create and (self.label is None or self.long_name is None or self.url is None or self.owner is None):
             return False
 
+        if self.label is not None and self.id is not None:
+            return False
+
         if self.__args:
             return False
 
@@ -131,6 +137,11 @@ class CmdOrganisations(object):
     @property
     def label(self):
         return self.__opts.label
+
+
+    @property
+    def id(self):
+        return self.__opts.id
 
 
     @property
@@ -176,8 +187,8 @@ class CmdOrganisations(object):
 
     def __str__(self, *args, **kwargs):
         return "CmdOrganisations:{credentials_name:%s, find:%s, create:%s, update:%s, delete:%s, " \
-               "label:%s, long_name:%s, url:%s, owner:%s, parent_label:%s, " \
+               "label:%s, id:%s, long_name:%s, url:%s, owner:%s, parent_label:%s, " \
                "memberships:%s, indent:%s, verbose:%s}" % \
                (self.credentials_name, self.find, self.create, self.update, self.delete,
-                self.label, self.long_name, self.url, self.owner, self.parent_label,
+                self.label, self.id, self.long_name, self.url, self.owner, self.parent_label,
                 self.memberships, self.indent, self.verbose)
