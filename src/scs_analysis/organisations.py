@@ -16,7 +16,7 @@ child organisation data and devices as then have
 
 SYNOPSIS
 organisations.py [-c CREDENTIALS] {
--F [-l LABEL] [-m] |
+-F [{ -l LABEL | -d ID }] [-m] |
 -C -l LABEL -n LONG_NAME -u URL -o OWNER_EMAIL [-p PARENT_LABEL] |
 -U LABEL [-l LABEL] [-n LONG_NAME] [-u URL] [-o OWNER_EMAIL] [-p PARENT_LABEL] |
 -D LABEL } [-i INDENT] [-v]
