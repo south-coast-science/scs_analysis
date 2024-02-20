@@ -136,11 +136,15 @@ if __name__ == '__main__':
         # run...
 
         if cmd.find:
-            report = manager.get_organisation_by_label(auth.id_token, cmd.label) if cmd.label else \
-                sorted(manager.find_organisations(auth.id_token))
+            if cmd.label is not None:
+                report = manager.get_organisation_by_label(auth.id_token, cmd.label)
+            elif cmd.id is not None:
+                report = manager.get_organisation(auth.id_token, cmd.id)
+            else:
+                report = sorted(manager.find_organisations(auth.id_token))
 
             if cmd.memberships:
-                if cmd.label:
+                if cmd.label is not None or cmd.id is not None:
                     report = [report]
                     orgs = manager.find_organisations(auth.id_token)
                 else:
@@ -193,7 +197,7 @@ if __name__ == '__main__':
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
 
-        if cmd.find and not cmd.label:
+        if cmd.find and not cmd.label and not cmd.id:
             logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
@@ -203,6 +207,6 @@ if __name__ == '__main__':
         logger.error(ex.error_report)
         exit(1)
 
-    except Exception as ex:
-        logger.error(ex.__class__.__name__)
-        exit(1)
+    # except Exception as ex:
+    #     logger.error(ex.__class__.__name__)
+    #     exit(1)
