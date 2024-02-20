@@ -197,7 +197,7 @@ if __name__ == '__main__':
         if report is not None:
             print(JSONify.dumps(report, indent=cmd.indent))
 
-        if cmd.find and not cmd.label and not cmd.id:
+        if cmd.find and cmd.label is not None and cmd.id is not None:
             logger.info("found: %s" % len(report))
 
     except KeyboardInterrupt:
