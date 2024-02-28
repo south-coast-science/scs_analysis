@@ -169,7 +169,7 @@ if __name__ == '__main__':
                 baseline_conf = BaselineConf.load(Host, name=cmd.conf_name)
 
                 if baseline_conf is None:
-                    logger.error("the BaselineConf '%s' is not available." % cmd.conf_name)
+                    logger.error("the baseline configuration '%s' is not available." % cmd.conf_name)
                     continue
 
                 try:
