@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
             if not message.has_path(cmd.field):
                 paths = Str.collection(message.paths())
-                logger.error("the field '%s' is not available. Available fields are: %s" % (cmd.field, paths))
+                logger.error("the field '%s' is not available. Available fields are: %s." % (cmd.field, paths))
                 exit(2)
 
             # create...
@@ -224,9 +224,9 @@ if __name__ == '__main__':
             report = specification_manager.create(auth.id_token, alert)
 
         if cmd.update:
-            # validation...
-            if cmd.topic is not None or cmd.field is not None:
-                logger.error("topic and field may not be changed.")
+            #  validation...
+            if cmd.topic is not None:
+                logger.error("topic may not be changed.")
                 exit(2)
 
             alert = specification_manager.retrieve(auth.id_token, cmd.id)
@@ -236,6 +236,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # update...
+            field = alert.field if not cmd.field else cmd.field
             description = alert.description if not cmd.description else cmd.description
             lower_threshold = alert.lower_threshold if cmd.lower_threshold is None else cmd.lower_threshold
             upper_threshold = alert.upper_threshold if cmd.upper_threshold is None else cmd.upper_threshold
@@ -248,8 +249,8 @@ if __name__ == '__main__':
 
             bcc_dict = cmd.updated_bcc_dict(alert.bcc_dict)
 
-            updated = AlertSpecification(alert.id, description, alert.topic, alert.field, lower_threshold,
-                                         upper_threshold, alert_on_none, aggregation_period, None, contiguous_alerts,
+            updated = AlertSpecification(alert.id, description, alert.topic, field, lower_threshold, upper_threshold,
+                                         alert_on_none, aggregation_period, None, contiguous_alerts,
                                          alert.creator_email_address, to, bcc_dict, suspended)
 
             if not updated.has_valid_thresholds():
