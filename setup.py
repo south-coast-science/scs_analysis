@@ -19,7 +19,7 @@ import setuptools
 
 def read(rel_path):
     here = os.path.abspath(os.path.dirname(__file__))
-    with codecs.open(os.path.join(here, rel_path)) as fp:
+    with codecs.open(str(os.path.join(here, rel_path))) as fp:
         return fp.read()
 
 
@@ -67,7 +67,6 @@ setuptools.setup(
         'src/scs_analysis/aws_byline.py',
         'src/scs_analysis/aws_client_auth.py',
         'src/scs_analysis/aws_mqtt_client.py',
-        'src/scs_analysis/aws_permission.py',
         'src/scs_analysis/aws_topic_history.py',
         'src/scs_analysis/aws_topic_publisher.py',
         'src/scs_analysis/aws_upload_interval.py',
