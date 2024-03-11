@@ -112,13 +112,15 @@ if __name__ == '__main__':
         # find...
         if cmd.topic:
             group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded,
-                                                  strict_tags=cmd.strict)
+                                                  strict_tags=cmd.strict, include_messages=cmd.include_messages)
 
         elif cmd.device:
-            group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded)
+            group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded,
+                                                   include_messages=cmd.include_messages)
 
         else:
-            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, strict_tags=cmd.strict)
+            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, strict_tags=cmd.strict,
+                                        include_messages=cmd.include_messages)
 
         # report...
         report = []
@@ -128,10 +130,10 @@ if __name__ == '__main__':
                     latest = byline
 
             else:
-                report.append(byline.as_json(include_message=cmd.include_messages))
+                report.append(byline.as_json())
 
         if cmd.latest and latest is not None:
-            jdict = latest.as_json(include_message=cmd.include_messages)
+            jdict = latest.as_json()
             print(JSONify.dumps(jdict, indent=cmd.indent))
 
         else:
