@@ -24,13 +24,16 @@ user members
 period
 
 Statistics are available only for the clients(s) that are visible to the user. Only organisation admins may view
-statistics for whole organisations.
+statistics for whole organisations. Only superusers can view the statistics for all users.
 
 SYNOPSIS
-client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v] CLIENT_1 [..CLIENT_N]
+client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v]  [CLIENT_1..CLIENT_N]
 
 EXAMPLES
 client_traffic.py -c super -o Ricardo -e test1 -p 2023-08-22
+
+client_traffic.py -v -c super -p 2024 -e TopicHistory -u production@southcoastscience.com | node.py -s | \
+csv_writer.py -v traffic.csv
 
 DOCUMENT EXAMPLE
 [{"endpoint": "test1", "client": "MyOrg", "period": "2023-08-22", "queries": 99, "invocations": 99, "documents": 495}]
@@ -107,6 +110,10 @@ if __name__ == '__main__':
             logger.error("the period '%s' is not valid." % cmd.period)
             exit(2)
 
+        if not cmd.organisation and not cmd.user and not cmd.endpoint:
+            logger.error("an endpoint must be specified if no user or organisation is specified.")
+            exit(2)
+
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...
@@ -131,7 +138,7 @@ if __name__ == '__main__':
 
                 clients.append(email)
 
-        if cmd.organisation:
+        elif cmd.organisation:
             for client in cmd.clients:
                 organisation = organisation_finder.get_organisation_by_label(auth.id_token, client)
 
@@ -140,6 +147,9 @@ if __name__ == '__main__':
                     exit(2)
 
                 clients.append(organisation.label)
+
+        else:
+            clients = []
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -152,8 +162,12 @@ if __name__ == '__main__':
                 report = traffic_finder.find_for_organisations_users(auth.id_token, request)
             else:
                 report = traffic_finder.find_for_organisations(auth.id_token, request)
-        else:
+
+        elif cmd.user:
             report = traffic_finder.find_for_users(auth.id_token, request)
+
+        else:
+            report = traffic_finder.find_for_endpoint(auth.id_token, request)
 
         report = sorted(report)
 
