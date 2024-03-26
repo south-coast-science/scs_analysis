@@ -15,8 +15,12 @@ or device. The user may specify a topic path (find all devices that have publish
 Output is in the form of zero or more JSON documents, indicating the device, topic and localised date / time for each
 latest sense event.
 
+Note that deleting a device / topic pair does not affect the topic messages - the corresponding messages should be
+deleted using the scs_lambda aws_message_delete utility as required.
+
 SYNOPSIS
-aws_byline.py [-c CREDENTIALS] { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]
+aws_byline.py [-c CREDENTIALS] { -F { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] |
+-D DEVICE TOPIC } [-i INDENT] [-v]
 
 EXAMPLES
 aws_byline.py -t south-coast-science-demo -v -x /control
@@ -30,6 +34,8 @@ DOCUMENT EXAMPLE - OUTPUT
 SEE ALSO
 scs_analysis/aws_topic_history
 scs_analysis/cognito_user_credentials
+
+scs_lambda/aws_message_delete
 """
 
 import sys
@@ -38,6 +44,7 @@ from scs_analysis.cmd.cmd_aws_byline import CmdAWSByline
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.manager.byline.byline_finder import BylineFinder
+from scs_core.aws.manager.byline.byline_manager import BylineManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -95,6 +102,8 @@ if __name__ == '__main__':
         reporter = BatchDownloadReporter()
         finder = BylineFinder(reporter=reporter)
 
+        manager = BylineManager()
+
 
         # ------------------------------------------------------------------------------------------------------------
         # check...
@@ -109,18 +118,21 @@ if __name__ == '__main__':
 
         latest = None
 
-        # find...
-        if cmd.topic:
-            group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded,
-                                                  strict_tags=cmd.strict, include_messages=cmd.include_messages)
+        if cmd.delete:
+            manager.delete(auth.id_token, cmd.delete_device, cmd.delete_topic)
+            group = finder.find_bylines_for_device(auth.id_token, cmd.delete_device, include_messages=False)
 
-        elif cmd.device:
-            group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded,
-                                                   include_messages=cmd.include_messages)
+        elif cmd.find:
+            if cmd.topic:
+                group = finder.find_bylines_for_topic(auth.id_token, cmd.topic, excluded=cmd.excluded,
+                                                      strict_tags=cmd.strict, include_messages=cmd.include_messages)
 
-        else:
-            group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, strict_tags=cmd.strict,
-                                        include_messages=cmd.include_messages)
+            elif cmd.device:
+                group = finder.find_bylines_for_device(auth.id_token, cmd.device, excluded=cmd.excluded,
+                                                       include_messages=cmd.include_messages)
+
+            else:
+                group = finder.find_bylines(auth.id_token, excluded=cmd.excluded, include_messages=cmd.include_messages)
 
         # report...
         report = []
@@ -160,7 +172,7 @@ if __name__ == '__main__':
         exit(1)
 
     finally:
-        if cmd.verbose and group is not None and len(group):
+        if cmd.verbose and cmd.find and group is not None and len(group):
             latest_pub = group.latest_pub()
             latest_iso = None if latest_pub is None else latest_pub.as_iso8601()
 
