@@ -20,12 +20,20 @@ class CmdAWSByline(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -d DEVICE | -t TOPIC [-l] | -a } "
-                                                    "[-x EXCLUDED] [-s] [-m] [-i INDENT] [-v]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F { -d DEVICE | -t TOPIC [-l] | -a } "
+                                                    "[-x EXCLUDED] [-s] [-m] | -D DEVICE TOPIC } [-i INDENT] [-v]",
+                                              version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
+
+        # operations...
+        self.__parser.add_option("--find", "-F", action="store_true", dest="find", default=False,
+                                 help="find bylines")
+
+        self.__parser.add_option("--delete", "-D", type="string", nargs=2, action="store", dest="delete",
+                                 help="delete TOPIC for DEVICE (superuser only)")
 
         # search types...
         self.__parser.add_option("--device", "-d", type="string", action="store", dest="device",
@@ -65,20 +73,32 @@ class CmdAWSByline(object):
     def is_valid(self):
         count = 0
 
-        if bool(self.device):
+        if self.find:
             count += 1
 
-        if bool(self.topic):
-            count += 1
-
-        if self.all:
+        if self.delete:
             count += 1
 
         if count != 1:
             return False
 
-        if self.latest and not bool(self.topic):
-            return False
+        if self.find:
+            count = 0
+
+            if bool(self.device):
+                count += 1
+
+            if bool(self.topic):
+                count += 1
+
+            if self.all:
+                count += 1
+
+            if count != 1:
+                return False
+
+            if self.latest and not bool(self.topic):
+                return False
 
         if self.__args:
             return False
@@ -95,6 +115,30 @@ class CmdAWSByline(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # properties: operations...
+
+    @property
+    def find(self):
+        return self.__opts.find
+
+
+    @property
+    def delete(self):
+        return self.__opts.delete is not None
+
+
+    @property
+    def delete_device(self):
+        return None if self.__opts.delete is None else self.__opts.delete[0]
+
+
+    @property
+    def delete_topic(self):
+        return None if self.__opts.delete is None else self.__opts.delete[1]
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: types...
 
     @property
     def device(self):
@@ -107,14 +151,12 @@ class CmdAWSByline(object):
 
 
     @property
-    def latest(self):
-        return self.__opts.latest
-
-
-    @property
     def all(self):
         return self.__opts.all
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: filters...
 
     @property
     def excluded(self):
@@ -124,6 +166,14 @@ class CmdAWSByline(object):
     @property
     def strict(self):
         return self.__opts.strict
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # properties: output...
+
+    @property
+    def latest(self):
+        return self.__opts.latest
 
 
     @property
@@ -148,7 +198,7 @@ class CmdAWSByline(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSByline:{credentials_name:%s, device:%s, topic:%s, latest:%s, all:%s, excluded:%s, strict:%s, " \
-               "include_messages:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.device, self.topic, self.latest, self.all, self.excluded, self.strict,
-                self.include_messages, self.indent, self.verbose)
+        return "CmdAWSByline:{credentials_name:%s, find:%s, delete:%s, device:%s, topic:%s, all:%s, " \
+                "excluded:%s, strict:%s, latest:%s, include_messages:%s, indent:%s, verbose:%s}" % \
+               (self.credentials_name, self.find, self.__opts.delete, self.device, self.topic, self.all,
+                self.excluded, self.strict, self.latest, self.include_messages, self.indent, self.verbose)
