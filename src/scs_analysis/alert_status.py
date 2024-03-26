@@ -116,6 +116,7 @@ if __name__ == '__main__':
 
         if cmd.delete:
             status_manager.delete(auth.id_token, cmd.id)
+            logger.warning("status history has been queued for deletion.")
 
 
         # ------------------------------------------------------------------------------------------------------------
