@@ -132,7 +132,7 @@ if __name__ == '__main__':
             #     exit(2)
 
             # update...
-            updated = CognitoDeviceIdentity(cmd.update_tag, None, cmd.update_invoice, None, None)
+            updated = CognitoDeviceIdentity(cmd.update_tag, invoice_number=cmd.update_invoice)
             report = device_manager.update(auth.id_token, updated)
 
         if cmd.delete:
