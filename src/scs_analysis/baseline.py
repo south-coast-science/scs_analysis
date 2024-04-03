@@ -157,6 +157,9 @@ if __name__ == '__main__':
         # run...
 
         for device_tag in cmd.device_tags:
+            logger.info("-")
+            logger.info("device: %s" % device_tag)
+
             try:
                 device_updates = 0
 
