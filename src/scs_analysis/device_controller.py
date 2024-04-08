@@ -49,6 +49,7 @@ from scs_analysis.cmd.cmd_device_controller import CmdDeviceController
 from scs_core.aws.client.device_control_client import DeviceControlClient
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
+from scs_core.aws.security.organisation_manager import OrganisationManager
 
 from scs_core.client.http_exception import HTTPException, HTTPNotFoundException, HTTPGatewayTimeoutException, \
     HTTPServiceUnavailableException
@@ -120,6 +121,16 @@ if __name__ == '__main__':
         # resources...
 
         client = DeviceControlClient()
+        manager = OrganisationManager()
+
+        devices = manager.find_devices_by_tag(auth.id_token, cmd.device_tag)
+
+        if not devices:
+            logger.error("the device '%s' cannot be found." % cmd.device_tag)
+            exit(2)
+
+        device = devices[-1]
+        logger.info("control topic: %s" % device.control_path)
 
 
         # ------------------------------------------------------------------------------------------------------------
