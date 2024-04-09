@@ -49,7 +49,7 @@ from scs_analysis.cmd.cmd_aws_topic_history import CmdAWSTopicHistory
 from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
 from scs_core.aws.manager.byline.byline_finder import BylineFinder
-from scs_core.aws.manager.topic_history.topic_history_manager import TopicHistoryManager
+from scs_core.aws.manager.topic_history.topic_history_finder import TopicHistoryFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
         # MessageManager...
         reporter = BatchDownloadReporter()
-        message_manager = TopicHistoryManager(reporter=reporter)
+        finder = TopicHistoryFinder(reporter=reporter)
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -150,8 +150,8 @@ if __name__ == '__main__':
         start_time = LocalizedDatetime.now()
 
         if cmd.latest_at:
-            message = message_manager.find_latest_for_topic(auth.id_token, cmd.topic, cmd.latest_at, None,
-                                                            cmd.include_wrapper, cmd.rec_only, None)
+            message = finder.find_latest_for_topic(auth.id_token, cmd.topic, cmd.latest_at, None,
+                                                   cmd.include_wrapper, cmd.rec_only, None)
 
             if message:
                 print(JSONify.dumps(message))
@@ -180,9 +180,9 @@ if __name__ == '__main__':
         logger.info("end: %s" % end)
 
         # messages...
-        for message in message_manager.find_for_topic(auth.id_token, cmd.topic, start, end, None, cmd.fetch_last,
-                                                      cmd.checkpoint, cmd.include_wrapper, cmd.rec_only, cmd.min_max,
-                                                      cmd.exclude_remainder, False, None):
+        for message in finder.find_for_topic(auth.id_token, cmd.topic, start, end, None, cmd.fetch_last,
+                                             cmd.checkpoint, cmd.include_wrapper, cmd.rec_only, cmd.min_max,
+                                             cmd.exclude_remainder, False, None):
             print(JSONify.dumps(message))
             sys.stdout.flush()
 
