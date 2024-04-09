@@ -33,6 +33,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 SEE ALSO
 scs_analysis/aws_topic_history
+scs_analysis/aws_topic_origin
 scs_analysis/cognito_user_credentials
 
 scs_lambda/aws_message_delete

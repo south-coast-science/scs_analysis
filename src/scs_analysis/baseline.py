@@ -56,7 +56,7 @@ from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 from scs_core.aws.client.device_control_client import DeviceControlClient
 
 from scs_core.aws.manager.byline.byline_finder import BylineFinder
-from scs_core.aws.manager.topic_history.topic_history_manager import TopicHistoryManager
+from scs_core.aws.manager.topic_history.topic_history_finder import TopicHistoryFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
@@ -147,7 +147,7 @@ if __name__ == '__main__':
         byline_finder = BylineFinder(reporter=reporter)
 
         # MessageManager...
-        message_manager = TopicHistoryManager(reporter=reporter)
+        history_finder = TopicHistoryFinder(reporter=reporter)
 
         # DeviceControlClient...
         client = DeviceControlClient()
@@ -268,9 +268,9 @@ if __name__ == '__main__':
 
                 logger.info("start: %s end: %s" % (start.as_iso8601(), end.as_iso8601()))
 
-                data = list(message_manager.find_for_topic(auth.id_token, gases_topic, start, end,
-                                                           None, False, baseline_conf.checkpoint(),
-                                                           False, False, False, False, False, None))
+                data = list(history_finder.find_for_topic(auth.id_token, gases_topic, start, end,
+                                                          None, False, baseline_conf.checkpoint(),
+                                                          False, False, False, False, False, None))
 
                 if not data:
                     logger.error("no data found for %s." % gases_topic)
