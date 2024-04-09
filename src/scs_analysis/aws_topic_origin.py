@@ -99,7 +99,8 @@ if __name__ == '__main__':
 
         origin = finder.find(auth.id_token, cmd.topic)
 
-        print(JSONify.dumps(origin, indent=cmd.indent))
+        if origin:
+            print(JSONify.dumps(origin, indent=cmd.indent))
 
 
     # ----------------------------------------------------------------------------------------------------------------
