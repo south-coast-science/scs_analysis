@@ -8,20 +8,20 @@ Created on 9 Apr 2024
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_topic_origin utility is used to
+The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given topic.
 
 SYNOPSIS
 aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] TOPIC
 
 EXAMPLES
-aws_topic_origin.py -vi4 -c super acsoft/uk-urban/loc/960/particulates
+aws_topic_origin.py -v -c super south-coast-science-dev/development/loc/1/climate
 
 DOCUMENT EXAMPLE - OUTPUT
-{"topic": "acsoft/uk-urban/loc/960/particulates", "device": "scs-bgx-960", "rec": "2024-03-27T15:51:54Z"}
+{"topic": "south-coast-science-dev/development/loc/1/climate", "device": "scs-be2-3", "rec": "2023-03-14T00:00:03Z"}
 
 SEE ALSO
+scs_analysis/aws_byline
 scs_analysis/aws_topic_history
-scs_analysis/aws_topic_origin.py
 
 scs_lambda/aws_message_delete
 """
