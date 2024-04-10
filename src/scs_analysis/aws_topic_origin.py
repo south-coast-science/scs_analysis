@@ -29,7 +29,9 @@ scs_lambda/aws_message_delete
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_origin import CmdAWSTopicOrigin
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 from scs_core.aws.manager.topic_origin.topic_origin_finder import TopicOriginFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -83,7 +85,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = TopicOriginFinder()
+        byline_finder = BylineFinder(reporter=BatchDownloadReporter('bylines'))
+        origin_finder = TopicOriginFinder(reporter=BatchDownloadReporter('origins'))
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -97,10 +100,12 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        origin = finder.find(auth.id_token, cmd.topic)
+        topics = byline_finder.find_topics(auth.id_token) if cmd.all else cmd.topics
+        origins = origin_finder.find_for_topics(auth.id_token, topics)
 
-        if origin:
-            print(JSONify.dumps(origin, indent=cmd.indent))
+        print(JSONify.dumps(sorted(origins), indent=cmd.indent))
+
+        logger.info("found: %s" % len(origins))
 
 
     # ----------------------------------------------------------------------------------------------------------------
