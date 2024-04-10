@@ -11,13 +11,14 @@ DESCRIPTION
 The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given topic.
 
 SYNOPSIS
-aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] TOPIC
+aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] { -a | -d DEVICE | -t TOPIC_1 [...TOPIC_N] }
 
 EXAMPLES
-aws_topic_origin.py -v -c super south-coast-science-dev/development/loc/1/climate
+aws_topic_origin.py -vi4 -c super -d scs-be2-806
 
 DOCUMENT EXAMPLE - OUTPUT
-{"topic": "south-coast-science-dev/development/loc/1/climate", "device": "scs-be2-3", "rec": "2023-03-14T00:00:03Z"}
+{"topic": "ricardo/gatwick/loc/1/gases", "device": "scs-bgx-507", "rec": "2019-05-10T09:17:39Z",
+"expiry": "2019-05-17T09:17:46Z"}
 
 SEE ALSO
 scs_analysis/aws_byline
@@ -100,10 +101,16 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        topics = byline_finder.find_topics(auth.id_token) if cmd.all else cmd.topics
+        if cmd.all:
+            topics = byline_finder.find_topics(auth.id_token)
+        elif cmd.device:
+            topics = byline_finder.find_topics_for_device(auth.id_token, cmd.device)
+        else:
+            topics = cmd.requested_topics
+
         origins = origin_finder.find_for_topics(auth.id_token, topics)
 
-        print(JSONify.dumps(sorted(origins), indent=cmd.indent))
+        print(JSONify.dumps(origins, indent=cmd.indent))
 
         logger.info("found: %s" % len(origins))
 

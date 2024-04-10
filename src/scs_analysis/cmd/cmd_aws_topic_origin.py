@@ -21,16 +21,23 @@ class CmdAWSTopicOrigin(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-i INDENT] [-v] "
-                                                    "{ -a | TOPIC_1[...TOPIC_N] }",
+                                                    "{ -a | -d DEVICE | -t TOPIC_1 [...TOPIC_N] }",
                                               version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
                                  help="the stored credentials to be presented")
 
-        # function...
+        # topic sources...
         self.__parser.add_option("--all", "-a", action="store_true", dest="all", default=False,
                                  help="all topics")
+
+        self.__parser.add_option("--device", "-d", type="string", action="store", dest="device",
+                                 help="topics for DEVICE")
+
+        self.__parser.add_option("--topics", "-t", action="store_true", dest="topics", default=False,
+                                 help="named topics")
+
 
         # output...
         self.__parser.add_option("--indent", "-i", action="store", dest="indent", type=int,
@@ -45,7 +52,24 @@ class CmdAWSTopicOrigin(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.all == bool(self.__args):
+        count = 0
+
+        if self.all:
+            count += 1
+
+        if self.device is not None:
+            count += 1
+
+        if self.topics:
+            count += 1
+
+        if count != 1:
+            return False
+
+        if self.topics and not self.requested_topics:
+            return False
+
+        if not self.topics and self.requested_topics:
             return False
 
         return True
@@ -60,7 +84,7 @@ class CmdAWSTopicOrigin(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # properties: function...
+    # properties: topic sources...
 
     @property
     def all(self):
@@ -68,7 +92,17 @@ class CmdAWSTopicOrigin(object):
 
 
     @property
+    def device(self):
+        return self.__opts.device
+
+
+    @property
     def topics(self):
+        return self.__opts.topics
+
+
+    @property
+    def requested_topics(self):
         return self.__args
 
 
@@ -92,5 +126,7 @@ class CmdAWSTopicOrigin(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdAWSTopicOrigin:{credentials_name:%s, all:%s, topics:%s, indent:%s, verbose:%s}" % \
-               (self.credentials_name, self.all, self.topics, self.indent, self.verbose)
+        return ("CmdAWSTopicOrigin:{credentials_name:%s, all:%s, device:%s, topics:%s, indent:%s, verbose:%s, "
+                "requested_topics:%s}") % \
+               (self.credentials_name, self.all, self.device, self.topics, self.indent, self.verbose,
+                self.requested_topics)
