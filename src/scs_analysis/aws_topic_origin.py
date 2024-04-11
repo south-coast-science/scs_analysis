@@ -8,15 +8,17 @@ Created on 9 Apr 2024
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given topic.
+The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given
+topic(s), for a device, or for all topics known to aws_byline.
 
 SYNOPSIS
 aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] { -a | -d DEVICE | -t TOPIC_1 [...TOPIC_N] }
 
 EXAMPLES
 aws_topic_origin.py -vi4 -c super -d scs-be2-806
+aws_topic_origin.py -v -c super -a | node.py -s | csv_writer.py -v origins-2024-04-10.csv
 
-DOCUMENT EXAMPLE - OUTPUT
+DOCUMENT EXAMPLE
 {"topic": "ricardo/gatwick/loc/1/gases", "device": "scs-bgx-507", "rec": "2019-05-10T09:17:39Z",
 "expiry": "2019-05-17T09:17:46Z"}
 
@@ -48,6 +50,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: optionally exclude control topics - they are not in DynamoDB (or shouldn't be!)
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -101,6 +104,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
+        # topics...
         if cmd.all:
             topics = byline_finder.find_topics(auth.id_token)
         elif cmd.device:
@@ -108,10 +112,10 @@ if __name__ == '__main__':
         else:
             topics = cmd.requested_topics
 
+        # origins...
         origins = origin_finder.find_for_topics(auth.id_token, topics)
 
         print(JSONify.dumps(origins, indent=cmd.indent))
-
         logger.info("found: %s" % len(origins))
 
 
