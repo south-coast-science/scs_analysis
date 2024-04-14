@@ -8,16 +8,19 @@ Created on 9 Apr 2024
 source repo: scs_analysis
 
 DESCRIPTION
-The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given topic.
+The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given
+topic(s), for a device, or for all topics known to aws_byline.
 
 SYNOPSIS
-aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] TOPIC
+aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] { -a | -d DEVICE | -t TOPIC_1 [...TOPIC_N] }
 
 EXAMPLES
-aws_topic_origin.py -v -c super south-coast-science-dev/development/loc/1/climate
+aws_topic_origin.py -vi4 -c super -d scs-be2-806
+aws_topic_origin.py -v -c super -a | node.py -s | csv_writer.py -v origins-2024-04-10.csv
 
-DOCUMENT EXAMPLE - OUTPUT
-{"topic": "south-coast-science-dev/development/loc/1/climate", "device": "scs-be2-3", "rec": "2023-03-14T00:00:03Z"}
+DOCUMENT EXAMPLE
+{"topic": "ricardo/gatwick/loc/1/gases", "device": "scs-bgx-507", "rec": "2019-05-10T09:17:39Z",
+"expiry": "2019-05-17T09:17:46Z"}
 
 SEE ALSO
 scs_analysis/aws_byline
@@ -29,7 +32,9 @@ scs_lambda/aws_message_delete
 import sys
 
 from scs_analysis.cmd.cmd_aws_topic_origin import CmdAWSTopicOrigin
+from scs_analysis.handler.batch_download_reporter import BatchDownloadReporter
 
+from scs_core.aws.manager.byline.byline_finder import BylineFinder
 from scs_core.aws.manager.topic_origin.topic_origin_finder import TopicOriginFinder
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
@@ -45,6 +50,7 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
+# TODO: optionally exclude control topics - they are not in DynamoDB (or shouldn't be!)
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -83,7 +89,8 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        finder = TopicOriginFinder()
+        byline_finder = BylineFinder(reporter=BatchDownloadReporter('bylines'))
+        origin_finder = TopicOriginFinder(reporter=BatchDownloadReporter('origins'))
 
 
         # ------------------------------------------------------------------------------------------------------------
@@ -97,10 +104,19 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        origin = finder.find(auth.id_token, cmd.topic)
+        # topics...
+        if cmd.all:
+            topics = byline_finder.find_topics(auth.id_token)
+        elif cmd.device:
+            topics = byline_finder.find_topics_for_device(auth.id_token, cmd.device)
+        else:
+            topics = cmd.requested_topics
 
-        if origin:
-            print(JSONify.dumps(origin, indent=cmd.indent))
+        # origins...
+        origins = origin_finder.find_for_topics(auth.id_token, topics)
+
+        print(JSONify.dumps(origins, indent=cmd.indent))
+        logger.info("found: %s" % len(origins))
 
 
     # ----------------------------------------------------------------------------------------------------------------

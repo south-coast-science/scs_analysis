@@ -143,11 +143,10 @@ if __name__ == '__main__':
         # resources...
 
         # BylineFinder...
-        reporter = BatchDownloadReporter()
-        byline_finder = BylineFinder(reporter=reporter)
+        byline_finder = BylineFinder(reporter=BatchDownloadReporter('bylines'))
 
         # MessageManager...
-        history_finder = TopicHistoryFinder(reporter=reporter)
+        history_finder = TopicHistoryFinder(reporter=BatchDownloadReporter('history'))
 
         # DeviceControlClient...
         client = DeviceControlClient()

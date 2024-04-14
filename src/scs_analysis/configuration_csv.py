@@ -136,11 +136,8 @@ if __name__ == '__main__':
             print(node_names, file=sys.stderr)
             exit(0)
 
-        # reporter...
-        reporter = BatchDownloadReporter()
-
         # ConfigurationFinder...
-        configuration_finder = ConfigurationFinder(reporter=reporter)
+        configuration_finder = ConfigurationFinder(reporter=BatchDownloadReporter('configurations'))
         check_finder = ConfigurationCheckFinder()
 
         # ConfigurationCSVGenerator...
