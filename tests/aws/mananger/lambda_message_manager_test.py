@@ -32,10 +32,9 @@ checkpoint =  '**:00:00'
 
 # reporter...
 Logging.config('lambda_message_manager_test')
-reporter = BatchDownloadReporter()
 
 # message manager...
-message_manager = MessageManager(reporter=reporter, api_key='NE33-2RL-1')
+message_manager = MessageManager(reporter=BatchDownloadReporter('messages'), api_key='NE33-2RL-1')
 print(message_manager)
 
 #     def find_for_topic(self, topic, start, end, path, fetch_last, checkpoint, include_wrapper, rec_only,

@@ -22,10 +22,12 @@ class BatchDownloadReporter(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self):
+    def __init__(self, name):
         """
         Constructor
         """
+        self.__name = name
+
         self.__block_count = 0
         self.__document_count = 0
         self.__start_time = time.time()
@@ -52,12 +54,19 @@ class BatchDownloadReporter(object):
         elapsed = elapsed_delta.as_json()
 
         if block_start is None:
-            self.__logger.info("docs:%d elapsed:%s" % (self.__document_count, elapsed))
+            self.__logger.info("%s: docs:%d elapsed:%s" %
+                               (self.name, self.__document_count, elapsed))
         else:
-            self.__logger.info("block start:%s docs:%d elapsed:%s" % (block_start, self.__document_count, elapsed))
+            self.__logger.info("%s: block start:%s docs:%d elapsed:%s" %
+                               (self.name, block_start, self.__document_count, elapsed))
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def name(self):
+        return self.__name
+
 
     @property
     def block_count(self):
@@ -67,5 +76,5 @@ class BatchDownloadReporter(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "BatchDownloadReporter:{block_count:%d, document_count:%d, start_time:%d}" % \
-               (self.block_count, self.__document_count, self.__start_time)
+        return "BatchDownloadReporter:{name:%d, block_count:%d, document_count:%d, start_time:%d}" % \
+               (self.name, self.block_count, self.__document_count, self.__start_time)

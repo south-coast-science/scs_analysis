@@ -100,8 +100,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        reporter = BatchDownloadReporter()
-        finder = BylineFinder(reporter=reporter)
+        finder = BylineFinder(reporter=BatchDownloadReporter('bylines'))
 
         manager = BylineManager()
 
