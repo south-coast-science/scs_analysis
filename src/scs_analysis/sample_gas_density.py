@@ -43,17 +43,17 @@ from scs_core.sys.logging import Logging
 
 def gas_name(path):
     pieces = path.split('.')
-    return pieces[len(pieces) - 2]
+    return pieces[-2]
 
 
 def is_concentration(path):
     pieces = path.split('.')
-    return pieces[len(pieces) - 1] == 'cnc'
+    return pieces[-1] == 'cnc'
 
 
 def density_path(path):
     pieces = path.split('.')
-    pieces[len(pieces) - 1] = 'dns'
+    pieces[-1] = 'dns'
 
     return '.'.join(pieces)
 
