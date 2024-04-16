@@ -47,9 +47,9 @@ configuration_csv.py -vdo afe_ids afe-id
 configuration_csv.py -vft scs-bgx-431
 
 SEE ALSO
+scs_analysis/cognito_user_credentials
 scs_analysis/configuration_monitor
 scs_analysis/configuration_monitor_check
-scs_analysis/monitor_auth
 
 scs_mfr/configuration
 """

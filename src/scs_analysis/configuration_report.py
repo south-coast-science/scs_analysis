@@ -7,16 +7,19 @@ Created on 12 Sep 2023
 
 DESCRIPTION
 The configuration_report utility is used to generate a configuration CSV file by remotely interrogating the specified
-device. The utility should be run in the directory that is scanned for raw report CSVs, such as
+device. The result is written to a CSV file named conf-scs-TYPE-NUMBER.csv
+
+The utility is normally run in the directory that is scanned for raw report CSVs, such as
 /Users/bruno/gbb/Production/ConfigurationGenerator/RawConfigs
 
 SYNOPSIS
-configuration_report.py [-c CREDENTIALS] [-v] DEVICE_TAG_1 [..DEVICE_TAG_N]
+configuration_report.py [-c CREDENTIALS] [-v] DEVICE_TAG_1 [...DEVICE_TAG_N]
 
 EXAMPLES
 configuration_report.py -v -c super scs-opc-245
 
 SEE ALSO
+scs_analysis/cognito_user_credentials
 scs_analysis/device_controller
 
 scs_mfr/configuration
