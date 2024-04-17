@@ -63,7 +63,7 @@ if __name__ == '__main__':
         exit(0)
 
     now = LocalizedDatetime.now()
-    offset = now.timedelta(hours=cmd.hours, minutes=cmd.minutes, seconds=cmd.seconds)
+    ldt = now.timedelta(hours=cmd.hours, minutes=cmd.minutes, seconds=cmd.seconds)
 
     if cmd.zone is not None:
         if not Timezone.is_valid(cmd.zone):
@@ -71,6 +71,8 @@ if __name__ == '__main__':
             exit(1)
 
         timezone = Timezone(cmd.zone)
-        offset = offset.localize(timezone.zone)
+        ldt = ldt.localize(timezone.zone)
 
-    print(offset.as_iso8601())
+    report = ldt.as_readable() if cmd.readable else ldt.as_iso8601()
+
+    print(report)

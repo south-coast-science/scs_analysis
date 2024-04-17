@@ -18,6 +18,7 @@ EXAMPLES
 configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s
 
 SEE ALSO
+scs_analysis/cognito_user_credentials
 scs_analysis/configuration_csv
 scs_analysis/configuration_monitor_check
 scs_analysis/monitor_auth

@@ -25,6 +25,7 @@ DOCUMENT EXAMPLE
 SEE ALSO
 scs_analysis/aws_byline
 scs_analysis/aws_topic_history
+scs_analysis/cognito_user_credentials
 
 scs_lambda/aws_message_delete
 """
