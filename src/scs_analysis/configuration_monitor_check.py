@@ -31,6 +31,7 @@ DOCUMENT EXAMPLE
 "context": ["TimeoutExpired(['./configuration'], 30)"]}
 
 SEE ALSO
+scs_analysis/cognito_user_credentials
 scs_analysis/configuration_csv
 scs_analysis/configuration_monitor
 scs_analysis/monitor_auth

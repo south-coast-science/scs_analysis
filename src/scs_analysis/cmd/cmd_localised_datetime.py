@@ -20,8 +20,8 @@ class CmdLocalizedDatetime(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { [-o HOURS] [-m MINUTES] [-s SECONDS] [-t TIMEZONE_NAME] | "
-                                                    "-z }", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog { [-o HOURS] [-m MINUTES] [-s SECONDS] [-t TIMEZONE_NAME] "
+                                                    "[-r] | -z }", version=version())
 
         # fields...
         self.__parser.add_option("--hours", "-o", type="int", default=0, action="store", dest="hours",
@@ -36,11 +36,15 @@ class CmdLocalizedDatetime(object):
         self.__parser.add_option("--timezone", "-t", type="string", action="store", dest="zone",
                                  help="present the time in the given zone")
 
+
         # helper...
         self.__parser.add_option("--zones", "-z", action="store_true", dest="list", default=False,
                                  help="list the available timezone names to stderr")
 
         # output...
+        self.__parser.add_option("--human-readable", "-r", action="store_true", dest="readable", default=False,
+                                 help="report in human readable form")
+
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
@@ -82,6 +86,11 @@ class CmdLocalizedDatetime(object):
 
 
     @property
+    def readable(self):
+        return self.__opts.readable
+
+
+    @property
     def list(self):
         return self.__opts.list
 
@@ -98,5 +107,7 @@ class CmdLocalizedDatetime(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdLocalizedDatetime:{hours:%s, minutes:%s, seconds:%s, seconds:%s, seconds:%s, verbose:%s}" % \
-               (self.hours, self.minutes, self.seconds, self.zone, self.list, self.verbose)
+        return "CmdLocalizedDatetime:{hours:%s, minutes:%s, seconds:%s, seconds:%s, seconds:%s, " \
+                "readable:%s, verbose:%s}" % \
+               (self.hours, self.minutes, self.seconds, self.zone, self.list,
+                self.readable, self.verbose)

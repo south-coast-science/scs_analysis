@@ -20,7 +20,7 @@ class CmdConfigurationReport(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-v] DEVICE_TAG_1 [..DEVICE_TAG_N]",
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-v] DEVICE_TAG_1 [...DEVICE_TAG_N]",
                                               version=version())
 
         # identity...
