@@ -51,7 +51,6 @@ from scs_core.sys.logging import Logging
 from scs_host.sys.host import Host
 
 
-# TODO: optionally exclude control topics - they are not in DynamoDB (or shouldn't be!)
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':

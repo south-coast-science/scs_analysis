@@ -19,9 +19,9 @@ class CmdCognitoDevices(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
-                                                    "{ -F [{ -t TAG | -n INVOICE }] [-m] "
-                                                    "| -U TAG INVOICE "
-                                                    "| -D TAG } "
+                                                    "{ -F [{ -t DEVICE_TAG | -n INVOICE }] [-m] "
+                                                    "| -U DEVICE_TAG INVOICE "
+                                                    "| -D DEVICE_TAG } "
                                                     "[-i INDENT] [-v]",
                                               version=version())
 

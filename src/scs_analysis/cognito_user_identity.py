@@ -63,6 +63,7 @@ if __name__ == '__main__':
     gatekeeper = None
     credentials = None
     auth = None
+    email = None
     finder = None
     report = None
 
@@ -209,7 +210,7 @@ if __name__ == '__main__':
         print(file=sys.stderr)
 
     except HTTPConflictException as ex:
-        logger.error("the email address '%s' is already in use." % report.email)
+        logger.error("the email address '%s' is already in use." % email)
         exit(1)
 
     except HTTPException as ex:
