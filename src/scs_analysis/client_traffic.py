@@ -27,16 +27,25 @@ Statistics are available only for the clients(s) that are visible to the user. O
 statistics for whole organisations. Only superusers can view the statistics for all users.
 
 SYNOPSIS
-client_traffic.py [-c CREDENTIALS] [-e ENDPOINT] { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v]  [CLIENT_1..CLIENT_N]
+client_traffic.py [-c CREDENTIALS] -e ENDPOINT { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v]  [CLIENT_1..CLIENT_N]
 
 EXAMPLES
-client_traffic.py -c super -o Ricardo -e test1 -p 2023-08-22
+client_traffic.py -c super -e test1 -o Ricardo -p 2023-08-22
 
-client_traffic.py -v -c super -p 2024 -e TopicHistory -u production@southcoastscience.com | node.py -s | \
+client_traffic.py -v -c super -e TopicHistory -p 2024 -u production@southcoastscience.com | node.py -s | \
 csv_writer.py -v traffic.csv
 
 DOCUMENT EXAMPLE
-[{"endpoint": "test1", "client": "MyOrg", "period": "2023-08-22", "queries": 99, "invocations": 99, "documents": 495}]
+[
+    {
+        "endpoint": "TopicHistory",
+        "client": "production@southcoastscience.com",
+        "period": "2024",
+        "queries": 855,
+        "invocations": 855,
+        "characters": 266633895
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials

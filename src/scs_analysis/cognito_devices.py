@@ -8,21 +8,47 @@ Created on 24 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_devices utility is used to create, update and retrieve AWS Cognito identities. This utility can only be used
-by customer organisation administrators, SCS administrators and superusers.
-
-If the --Create function is used, an email is sent to the new user. The verification link in the email must be
-excercised using the cognito_email utility in order for the account to gain a CONFIRMED status.
+The cognito_devices utility is used to
 
 SYNOPSIS
-cognito_devices.py  [-c CREDENTIALS] { -F [{ -t TAG | -n INVOICE }] [-m] | -U TAG INVOICE | -D TAG } [-i INDENT] [-v]
+cognito_devices.py  [-c CREDENTIALS] { -F [{ -t DEVICE_TAG | -n INVOICE }] [-m] | -U DEVICE_TAG INVOICE |
+-D DEVICE_TAG } [-i INDENT] [-v]
 
 EXAMPLES
 cognito_devices.py -vi4 -c super -F -m
 
 DOCUMENT EXAMPLE
-{"username": "scs-bgx-401", "invoice": "INV-000123",
-"created": "2023-06-23T10:32:52+01:00", "last-updated": "2023-06-23T10:32:52+01:00"}
+[
+    {
+        "username": "scs-ph1-8",
+        "invoice": "INV-0000",
+        "created": "2023-04-20T12:25:47Z",
+        "last-updated": "2024-01-29T15:37:21Z"
+    }
+]
+
+DOCUMENT EXAMPLE - WITH MEMBERSHIPS
+[
+    {
+        "account": {
+            "username": "scs-ph1-8",
+            "invoice": "INV-0000",
+            "created": "2023-04-20T12:25:47Z",
+            "last-updated": "2024-01-29T15:37:21Z"
+        },
+        "memberships": [
+            {
+                "DeviceTag": "scs-ph1-8",
+                "OrgID": 69,
+                "DeploymentLabel": "SCS Dev / Mobile 8",
+                "DevicePath": "south-coast-science-dev/mobile/device/praxis-handheld-000008/",
+                "LocationPath": "south-coast-science-dev/mobile/loc/8/",
+                "StartDatetime": "1970-01-01T00:00:00Z",
+                "EndDatetime": null
+            }
+        ]
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_users
