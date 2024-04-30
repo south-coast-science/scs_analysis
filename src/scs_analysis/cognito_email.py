@@ -49,6 +49,7 @@ from scs_core.data.datum import Datum
 from scs_core.sys.logging import Logging
 
 from scs_host.comms.stdio import StdIO
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -94,7 +95,6 @@ def do_password(do_set):
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
     logger = None
     credentials = None
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         logger = Logging.getLogger()
 
         logger.info(cmd)
-
+        logger.debug(Host)              # initialise API endpoint reporting
 
         # ------------------------------------------------------------------------------------------------------------
         # resources...

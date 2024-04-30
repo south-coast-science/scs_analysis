@@ -19,7 +19,7 @@ class CmdConfigurationMonitor(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t TAG [-x]] { -l | -f | -d | -o } "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-t DEVICE_TAG [-x]] { -l | -f | -d | -o } "
                                                     "[-i INDENT] [-v]", version=version())
 
         # identity...
