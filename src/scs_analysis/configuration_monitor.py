@@ -12,7 +12,7 @@ configuration changes. In the case of historical reports, either all the field v
 only those that changed from the previous recording.
 
 SYNOPSIS
-configuration_monitor.py [-c CREDENTIALS] [-t TAG [-x]] { -l | -f | -d | -o } [-i INDENT] [-v]
+configuration_monitor.py [-c CREDENTIALS] [-t DEVICE_TAG [-x]] { -l | -f | -d | -o } [-i INDENT] [-v]
 
 EXAMPLES
 configuration_monitor.py -t scs-bgx-401 -d | node.py -s | csv_writer.py -s

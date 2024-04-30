@@ -20,7 +20,7 @@ class CmdClientTraffic(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] [-e ENDPOINT] "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -e ENDPOINT "
                                                     "{ -u | -o [-s] } -p PERIOD [-a] "
                                                     "[-i INDENT] [-v] [CLIENT_1..CLIENT_N]", version=version())
 
@@ -30,7 +30,7 @@ class CmdClientTraffic(object):
 
         # filters...
         self.__parser.add_option("--endpoint", "-e", type="string", action="store", dest="endpoint",
-                                 help="a specific endpoint (required if no clients)")
+                                 help="a specific endpoint")
 
         self.__parser.add_option("--users", "-u", action="store_true", dest="user", default=False,
                                  help="a specific user")
@@ -60,6 +60,9 @@ class CmdClientTraffic(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
+        if not self.endpoint:
+            return False
+
         if self.user and self.organisation:
             return False
 
@@ -70,9 +73,6 @@ class CmdClientTraffic(object):
             return False
 
         if self.separate and len(self.clients) > 1:
-            return False
-
-        if not self.endpoint and not self.__args:
             return False
 
         return True
