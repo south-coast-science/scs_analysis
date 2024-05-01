@@ -8,22 +8,34 @@ Created on 18 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The organisation_user_paths utility is used to
+The organisation_user_paths utility is used to find, create or delete organisation user paths (OUPs). OUPs
+are used to restrict user access:
+
+* If no OUPs are associated with a user, then the user may view all of topics associated with the organisation(s)
+that the user is a member of
+
+* If one or more OUP is associated with a user, then the the user may only view the projects identified by the OUPs
+within an organisation path root
+
+See the organisation_path_roots utility for more information.
 
 SYNOPSIS
-organisation_user_paths.py  [-c CREDENTIALS] { -F -e EMAIL -r PATH_ROOT | \
--C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | \
--D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } \
-[-i INDENT] [-v]
+organisation_user_paths.py  [-c CREDENTIALS] { -F { -e EMAIL | -r PATH_ROOT } |
+-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | -D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } [-i INDENT] [-v]
 
 EXAMPLES
-organisation_user_paths.py -F -u NARA
+organisation_user_paths.py -i4 -c super -F -e bruno.beloff@southcoastscience.com -r south-coast-science-demo/
 
 DOCUMENT EXAMPLE
-{"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
+{
+    "Username": "506cd055-1978-4984-9f17-2fad77797fa1",
+    "OPRID": 75,
+    "PathExtension": "brighton-urban/"
+}
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
+scs_analysis/organisation_path_roots
 """
 
 import sys

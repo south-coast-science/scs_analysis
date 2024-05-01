@@ -8,20 +8,54 @@ Created on 18 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The organisation_path_roots utility is used to
+The organisation_path_roots utility is used to find, create or delete organisation path roots. Organisation path roots
+are the leftmost part of a topic path. For example, in:
+
+south-coast-science-demo/brighton-urban/loc/1/climate
+
+the organisation path root is south-coast-science-demo/. In the security system, organisation path roots are used to
+maintain a mapping between topics and organisations.
+
+The members of an organisation path root are the organisation user paths (OUPs) that restrict access to specific users.
+See the organisation_user_paths utility for more information.
 
 SYNOPSIS
-organisation_path_roots.py  [-c CREDENTIALS] \
-{ -F -l ORG_LABEL | -C -l ORG_LABEL -r PATH_ROOT | -D -l ORG_LABEL -r PATH_ROOT } [-m] [-i INDENT] [-v]
+organisation_path_roots.py  [-c CREDENTIALS] { -F [-l ORG_LABEL [-m]] | -C -l ORG_LABEL -r PATH_ROOT |
+-D -l ORG_LABEL -r PATH_ROOT } [-i INDENT] [-v]
 
 EXAMPLES
-organisation_path_roots.py -vi4 -c super -Fl 4sfera -m
+organisation_path_roots.py -vi4 -c super -Fl "South Coast Science (Demo)" -m
 
 DOCUMENT EXAMPLE
-{"OPRID": 11, "OrgID": 1, "PathRoot": "ricardo/"}
+[
+    {
+        "OPRID": 75,
+        "OrgID": 68,
+        "PathRoot": "south-coast-science-demo/"
+    }
+]
+
+DOCUMENT EXAMPLE - MEMBERSHIPS
+[
+    {
+        "opr": {
+            "OPRID": 75,
+            "OrgID": 68,
+            "PathRoot": "south-coast-science-demo/"
+        },
+        "memberships": [
+            {
+                "Username": "506cd055-1978-4984-9f17-2fad77797fa1",
+                "OPRID": 75,
+                "PathExtension": "brighton-urban/"
+            }
+        ]
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
+scs_analysis/organisation_user_paths
 """
 
 import sys
@@ -120,8 +154,8 @@ if __name__ == '__main__':
         if cmd.find:
             report = manager.find_oprs(auth.id_token, org_id=org_id)
 
-            if cmd.memberships:
-                oups = manager.find_oups(auth.id_token)
+            if report and cmd.memberships:
+                oups = manager.find_oups(auth.id_token, opr_id=report[0].opr_id)
                 report = OPRMembership.merge(report, oups)
 
         if cmd.create:
