@@ -25,7 +25,7 @@ A maximum of 30 seconds is available for the device to respond to the published 
 device_controller utility will terminate.
 
 SYNOPSIS
-device_controller.py [-c CREDENTIALS] -t DEVICE_TAG [{ [-w] [-i INDENT] | [-s] -m CMD_TOKENS }]] [-v]
+device_controller.py [-c CREDENTIALS] -t DEVICE_TAG { [-s] -m CMD_TOKENS | [-w] [-i INDENT] } [-v]
 
 EXAMPLES
 device_controller.py -c super -t scs-be2-3 -s -m "vcal_baseline -i4; gas_baseline"

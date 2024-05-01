@@ -32,16 +32,16 @@ class CmdOrganisations(object):
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="find the organisations I belong to")
+                                 help="Find the organisations visible to me")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create an organisation")
+                                 help="Create an organisation")
 
         self.__parser.add_option("--Update", "-U", type="string", action="store", dest="update",
-                                 help="update the organisation with the given LABEL")
+                                 help="Update the organisation with the given LABEL")
 
         self.__parser.add_option("--Delete", "-D", type="string", action="store", dest="delete",
-                                 help="delete the organisation")
+                                 help="Delete the organisation")
 
         # fields...
         self.__parser.add_option("--label", "-l", type="string", action="store", dest="label",

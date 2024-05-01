@@ -6,19 +6,29 @@ Created on 28 Jun 2023
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The device monitor periodically checks on the availability and health of every air quality monitoring device. The
-device_monitor utility is used to manage the email addresses associated with individual devices.
+The device monitor periodically checks on the availability and health of every air quality monitoring device.
+The device_monitor utility is used to manage the email addresses for alerts associated with individual devices.
 
 SYNOPSIS
 device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG [-j] |
 -S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } [-i INDENT] [-v]
 
 EXAMPLES
-device_monitor.py -c super -Ft scs-opc-109
+device_monitor.py -c super -Ft scs-bgx-570
 
 DOCUMENT EXAMPLE
-{"scs-be2-3": {"device-tag": "scs-be2-3", "recipients": [{"email": "bbeloff@me.com", "json-message": true},
-{"email": "bruno.beloff@southcoastscience.com", "json-message": false}], "suspended": false}}
+{
+    "scs-bgx-570": {
+        "device-tag": "scs-bgx-570",
+        "recipients": [
+            {
+                "email": "bruno.beloff@southcoastscience.com",
+                "json-message": false
+            }
+        ],
+        "suspended": false
+    }
+}
 
 SEE ALSO
 scs_analysis/cognito_user_credentials

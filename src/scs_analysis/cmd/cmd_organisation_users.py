@@ -32,19 +32,19 @@ class CmdOrganisationUsers(object):
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="find users for the given username or organisation")
+                                 help="Find users for the given username or organisation")
 
         self.__parser.add_option("--Retrieve", "-R", action="store_true", dest="retrieve", default=False,
-                                 help="retrieve the user for the given username and organisation")
+                                 help="Retrieve the user for the given username and organisation")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create a user")
+                                 help="Create a user")
 
         self.__parser.add_option("--Update", "-U", action="store_true", dest="update", default=False,
                                  help="Update the user")
 
         self.__parser.add_option("--Delete", "-D", action="store_true", dest="delete", default=False,
-                                 help="delete the user for the given username and organisation")
+                                 help="Delete the user for the given username and organisation")
 
         # fields...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
