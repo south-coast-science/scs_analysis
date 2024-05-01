@@ -29,7 +29,7 @@ class CmdOrganisationDevices(object):
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="find devices for the given organisation or device tag")
+                                 help="find devices for the organisation or device tag")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
                                  help="create a device")

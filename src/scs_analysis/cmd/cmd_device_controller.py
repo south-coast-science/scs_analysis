@@ -21,7 +21,7 @@ class CmdDeviceController(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] -t DEVICE_TAG "
-                                                    "[{ [-w] [-i INDENT] | [-s] -m CMD_TOKENS }]] [-v] ",
+                                                    "{ [-s] -m CMD_TOKENS | [-w] [-i INDENT] } [-v] ",
                                               version=version())
 
         # identity...
@@ -36,11 +36,11 @@ class CmdDeviceController(object):
                                  help="send the given command(s)")
 
         # output...
-        self.__parser.add_option("--wrapper", "-w", action="store_true", dest="wrapper", default=False,
-                                 help="report message wrapper")
-
         self.__parser.add_option("--std", "-s", action="store_true", dest="std", default=False,
                                  help="write to stderr and stdout")
+
+        self.__parser.add_option("--wrapper", "-w", action="store_true", dest="wrapper", default=False,
+                                 help="report message wrapper")
 
         self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",
                                  help="pretty-print the output with INDENT")

@@ -8,7 +8,7 @@ Created on 24 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_devices utility is used to
+The cognito_devices utility is used to find, update or delete the Cognito identity records of SCS devices.
 
 SYNOPSIS
 cognito_devices.py  [-c CREDENTIALS] { -F [{ -t DEVICE_TAG | -n INVOICE }] [-m] | -U DEVICE_TAG INVOICE |
