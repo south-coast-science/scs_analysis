@@ -18,7 +18,7 @@ class CmdOrganisationUserPaths(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F { -e EMAIL | -r PATH_ROOT } | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -e EMAIL [-r PATH_ROOT] | "
                                                     "-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | "
                                                     "-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } "
                                                     "[-i INDENT] [-v]", version=version())
@@ -29,23 +29,23 @@ class CmdOrganisationUserPaths(object):
 
         # operations...
         self.__parser.add_option("--Find", "-F", action="store_true", dest="find", default=False,
-                                 help="find users for the given username or organisation")
+                                 help="find for email (and path root)")
 
         self.__parser.add_option("--Create", "-C", action="store_true", dest="create", default=False,
-                                 help="create a user")
+                                 help="create an OUP")
 
         self.__parser.add_option("--Delete", "-D", action="store_true", dest="delete", default=False,
-                                 help="delete the user for the given username and organisation")
+                                 help="delete for email, path root and extension")
 
         # fields...
         self.__parser.add_option("--email", "-e", type="string", action="store", dest="email",
-                                 help="the user's email address'")
+                                 help="the user's email address")
 
         self.__parser.add_option("--path-root", "-r", type="string", action="store", dest="path_root",
                                  help="the organisation path root")
 
         self.__parser.add_option("--path-extension", "-x", type="string", action="store", dest="path_extension",
-                                 help="the organisation path root")
+                                 help="the path extension")
 
         # output...
         self.__parser.add_option("--indent", "-i", type="int", action="store", dest="indent",

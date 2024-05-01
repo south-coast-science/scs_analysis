@@ -8,24 +8,33 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_user_identity utility is used to create, update and retrieve the AWS Cognito identity for the user.
+The cognito_user_identity utility is used to create, update and retrieve a AWS Cognito identity for the user.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
-excercised in order for the account to gain a CONFIRMED status.
+exercised in order for the account to gain a CONFIRMED status.
 
 SYNOPSIS
 cognito_user_identity.py [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]
 
 EXAMPLES
-./cognito_user_identity.py -R
+cognito_user_identity.py -R -c super
 
 DOCUMENT EXAMPLE
-{"username": "506cd055-1978-4984-9f17-2fad77797fa1", "email": "bruno.beloff@southcoastscience.com",
-"given-name": "Bruno", "family-name": "Beloff", "confirmation-status": "CONFIRMED", "enabled": true,
-"email-verified": true, "is-super": true, "is-tester": true, "is-financial": true,
-"created": "2023-04-20T11:45:21Z", "last-updated": "2023-06-26T14:39:17Z"}
+{
+    "username": "dc4cc7c2-e591-4619-b6eb-c4700daf6dff",
+    "email": "production@southcoastscience.com",
+    "given-name": "Production",
+    "family-name": "User",
+    "confirmation-status": "CONFIRMED",
+    "enabled": true,
+    "email-verified": true,
+    "is-super": true,
+    "created": "2023-03-31T10:18:54Z",
+    "last-updated": "2023-03-31T10:34:58Z"
+}
 
 SEE ALSO
+scs_analysis/cognito_email
 scs_analysis/cognito_user_credentials
 
 RESOURCES

@@ -8,23 +8,34 @@ Created on 19 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The organisation_devices utility is used to
+The organisation_devices utility is used to manage the relationship between organisations and Cognito devices. The
+utility can find, create and delete these relationships.
+
+Over a period of time, a device may pass from ownership by one organisation to ownership by another. Each
+ownership period is represented by a separate record. Where the start of an ownership is not known, the start
+datetime is recorded as 1970-01-01T00:00:00Z.
 
 SYNOPSIS
-organisation_devices.py [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } | \
--C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION -d DEPLOYMENT_LABEL | \
--E -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION | \
--D -t DEVICE_TAG } \
-[-i INDENT] [-v]
+organisation_devices.py [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } |
+-C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION -d DEPLOYMENT_LABEL | -D -t DEVICE_TAG } [-i INDENT] [-v]
 
 EXAMPLES
-organisation_devices.py -F -l NARA
+organisation_devices.py -F -l "South Coast Science (Demo)"
+
+organisation_devices.py -c super -vi4 -F -t scs-bgx-570
 
 DOCUMENT EXAMPLE
-{"DeviceTag": "scs-bgx-401", "OrgID": 1, "DevicePath": "south-coast-science-demo/brighton/loc/1/",
-"EnvironmentPath": "south-coast-science-demo/brighton/device/praxis-000401/",
-"StartDatetime": "2022-01-17T10:40:04Z", "EndDatetime": null,
-"DeploymentLabel": "Preston Circus"}
+[
+    {
+        "DeviceTag": "scs-bgx-570",
+        "OrgID": 68,
+        "DeploymentLabel": "Praxis / Urban @ Preston Circus, Brighton",
+        "DevicePath": "south-coast-science-demo/brighton-urban/device/praxis-000570/",
+        "LocationPath": "south-coast-science-demo/brighton-urban/loc/1/",
+        "StartDatetime": "2021-07-30T10:42:38Z",
+        "EndDatetime": null
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_devices

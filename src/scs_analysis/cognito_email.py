@@ -18,11 +18,17 @@ password operations. Which email message is sent depends on the state of the sta
 
 Emails cannot be sent to users in the DISABLED state.
 
+When an email is received, the cognito_email utility should be used to process the response, which is one of:
+
+* Confirm account - using the emailed confirmation code
+* Set password - using the emailed temporary password
+* Reset password - using the emailed reset code
+
 SYNOPSIS
-cognito_email.py { -e | -s | -r } EMAIL [-v]
+cognito_email.py { -e | -c | -s | -r } [-v] EMAIL
 
 EXAMPLES
-./cognito_email.py -r someone@me.com
+cognito_email.py -r someone@me.com
 
 SEE ALSO
 scs_analysis/cognito_user_credentials

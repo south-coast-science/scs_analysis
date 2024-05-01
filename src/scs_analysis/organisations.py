@@ -11,8 +11,8 @@ DESCRIPTION
 The organisations utility is used to find, create, update or delete organisation records.
 
 The utility supports a parent / child relationship between organisations - a child organisation can be
-thought of as a subdivision of its parent. Users belonging to an organisation have the same rights over
-child organisation data and devices as then have
+thought of as a subdivision of its parent: users belonging to an organisation have the same rights over
+child organisation data and devices as they have for data and devices within their own organisation.
 
 SYNOPSIS
 organisations.py [-c CREDENTIALS] {
@@ -22,17 +22,43 @@ organisations.py [-c CREDENTIALS] {
 -D LABEL } [-i INDENT] [-v]
 
 EXAMPLES
-organisations.py -F
+organisations.py -vi4 -c super -U "South Coast Science (Test)" -p "South Coast Science (Dev)"
+
+organisations.py -vi4 -c super -Fl "South Coast Science (Dev)" -m
 
 DOCUMENT EXAMPLE
-{"OrgID": 1, "Label": "SCS", "LongName": "South Coast Science", "URL": "https://www.southcoastscience.com",
-"Owner": "bruno.beloff@southcoastscience.com", "ParentID": null}
+{
+    "OrgID": 68,
+    "Label": "South Coast Science (Demo)",
+    "LongName": "a demonstration of South Coast Science air quality monitoring instruments",
+    "URL": "https://www.southcoastscience.com",
+    "Owner": "bruno.beloff@southcoastscience.com",
+    "ParentID": null
+}
 
 DOCUMENT EXAMPLE - MEMBERSHIPS
-{"organisation": {"OrgID": 11, "Label": "CEPEMAR", "LongName": "CEPEMAR", "URL": "http://cepemar.com",
-"Owner": "felipe.tatagiba@cepemar.com", "ParentID": null}, "children": [
-{"OrgID": 82, "Label": "Vale", "LongName": "Vale S.A.", "URL": "http://www.vale.com/",
-"Owner": "felipe.tatagiba@cepemar.com", "ParentID": 11}]}
+[
+    {
+        "organisation": {
+            "OrgID": 69,
+            "Label": "South Coast Science (Dev)",
+            "LongName": "development operations for South Coast Science air quality monitoring instruments",
+            "URL": "https://www.southcoastscience.com",
+            "Owner": "bruno.beloff@southcoastscience.com",
+            "ParentID": null
+        },
+        "children": [
+            {
+                "OrgID": 71,
+                "Label": "South Coast Science (Test)",
+                "LongName": "a test account for South Coast Science customers",
+                "URL": "https://www.southcoastscience.com",
+                "Owner": "bruno.beloff@southcoastscience.com",
+                "ParentID": 69
+            }
+        ]
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials

@@ -18,10 +18,10 @@ class CmdOrganisationPathRoots(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l ORG_LABEL] | "
+        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l ORG_LABEL [-m]] | "
                                                     "-C -l ORG_LABEL -r PATH_ROOT | "
                                                     "-D -l ORG_LABEL -r PATH_ROOT } "
-                                                    "[-m] [-i INDENT] [-v]", version=version())
+                                                    "[-i INDENT] [-v]", version=version())
 
         # identity...
         self.__parser.add_option("--credentials", "-c", type="string", action="store", dest="credentials_name",
@@ -75,6 +75,9 @@ class CmdOrganisationPathRoots(object):
             return False
 
         if not self.find and self.org_label is None:
+            return False
+
+        if self.memberships and self.org_label is None:
             return False
 
         if (self.create or self.delete) and self.path_root is None:

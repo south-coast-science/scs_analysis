@@ -8,21 +8,41 @@ Created on 18 Jan 2022
 source repo: scs_analysis
 
 DESCRIPTION
-The organisation_users utility is used to
+The organisation_users utility is used to manage the relationship between organisations and Cognito users. The
+utility can find, create, update and delete organisation user records.
+
+Users may belong to more than one organisation. (Additionally, superusers typically belong to no organisation.)
+Organisation administrators and superusers can use this utility to add or remove membership of an organisation for
+individual users.
 
 SYNOPSIS
-organisation_users.py  [-c CREDENTIALS] { -F { -e EMAIL | -l ORG_LABEL } | \
--R -e EMAIL -l ORG_LABEL | \
--C -e EMAIL -l ORG_LABEL -o { 0 | 1 } -d { 0 | 1 } | \
--U -e EMAIL -l ORG_LABEL [-o { 0 | 1 }] [-d { 0 | 1 }] [-s { 0 | 1 }] | \
--D -e EMAIL -l ORG_LABEL } \
-[-i INDENT] [-v]
+organisation_users.py  [-c CREDENTIALS] {
+-F [{ -e EMAIL | -l ORG_LABEL }] |
+-R -e EMAIL -l ORG_LABEL |
+-C -e EMAIL -l ORG_LABEL -o { 0 | 1 } -d { 0 | 1 } |
+-U -e EMAIL -l ORG_LABEL [-o { 0 | 1 }] [-d { 0 | 1 }] [-s { 0 | 1 }] |
+-D -e EMAIL -l ORG_LABEL } [-i INDENT] [-v]
 
 EXAMPLES
-organisation_users.py -F -l NARA
+organisation_users.py -vi4 -c super -Fe bruno.beloff@southcoastscience.com
 
 DOCUMENT EXAMPLE
-{"Username": 111, "OrgID": 1, "IsOrgAdmin": true, "IsDeviceAdmin": true, "IsSuspended": false}
+[
+    {
+        "Username": "506cd055-1978-4984-9f17-2fad77797fa1",
+        "OrgID": 68,
+        "IsOrgAdmin": true,
+        "IsDeviceAdmin": false,
+        "IsSuspended": false
+    },
+    {
+        "Username": "506cd055-1978-4984-9f17-2fad77797fa1",
+        "OrgID": 69,
+        "IsOrgAdmin": true,
+        "IsDeviceAdmin": false,
+        "IsSuspended": false
+    }
+]
 
 SEE ALSO
 scs_analysis/cognito_user_credentials
