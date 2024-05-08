@@ -8,7 +8,9 @@ Created on 24 Nov 2021
 source repo: scs_analysis
 
 DESCRIPTION
-The cognito_user_identity utility is used to create, update and retrieve a AWS Cognito identity for the user.
+The cognito_user_identity utility is used to create, read or update an AWS Cognito identity for the user.
+
+Note that the chosen password must include lower and upper case, numeric and punctuation characters
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 exercised in order for the account to gain a CONFIRMED status.
