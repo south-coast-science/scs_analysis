@@ -27,7 +27,8 @@ Statistics are available only for the clients(s) that are visible to the user. O
 statistics for whole organisations. Only superusers can view the statistics for all users.
 
 SYNOPSIS
-client_traffic.py [-c CREDENTIALS] -e ENDPOINT { -u | -o [-s] } -p PERIOD [-a] [-i INDENT] [-v]  [CLIENT_1..CLIENT_N]
+Usage: client_traffic.py [-c CREDENTIALS] -e ENDPOINT [{ -u | -o [-s] }] -p PERIOD [-a] [-i INDENT] [-v]
+[CLIENT_1...CLIENT_N]
 
 EXAMPLES
 client_traffic.py -c super -e test1 -o Ricardo -p 2023-08-22
@@ -156,9 +157,6 @@ if __name__ == '__main__':
                     exit(2)
 
                 clients.append(organisation.label)
-
-        else:
-            clients = []
 
 
         # ------------------------------------------------------------------------------------------------------------
