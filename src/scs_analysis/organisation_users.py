@@ -194,10 +194,10 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(file=sys.stderr)
 
-    except HTTPException as ex:
-        logger.error(ex.error_report)
-        exit(1)
-
-    except Exception as ex:
-        logger.error(ex.__class__.__name__)
-        exit(1)
+    # except HTTPException as ex:
+    #     logger.error(ex.error_report)
+    #     exit(1)
+    #
+    # except Exception as ex:
+    #     logger.error(ex.__class__.__name__)
+    #     exit(1)
