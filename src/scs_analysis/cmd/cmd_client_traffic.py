@@ -63,7 +63,7 @@ class CmdClientTraffic(object):
         if not self.endpoint:
             return False
 
-        if self.user and self.organisation:
+        if self.user == self.organisation:
             return False
 
         if self.period is None:
