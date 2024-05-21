@@ -26,7 +26,7 @@ class CmdCognitoEmail(object):
                                  help="send access email")
 
         self.__parser.add_option("--confirm", "-c", action="store_true", dest="confirm",
-                                 help="confirm account (using confirmation code)")
+                                 help="confirm account (using verification code)")
 
         self.__parser.add_option("--set-password", "-s", action="store_true", dest="set_password",
                                  help="set password (using temporary password)")
