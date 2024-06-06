@@ -133,7 +133,7 @@ if __name__ == '__main__':
         byline_finder = BylineFinder()
 
         # MessageManager...
-        reporter = BatchDownloadReporter('history')
+        reporter = BatchDownloadReporter('')
         finder = TopicHistoryFinder(reporter=reporter)
 
 
