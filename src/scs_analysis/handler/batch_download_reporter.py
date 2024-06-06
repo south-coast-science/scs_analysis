@@ -43,7 +43,7 @@ class BatchDownloadReporter(object):
         self.__start_time = time.time()
 
 
-    def print(self, block_length, block_start=None):
+    def print(self, block_length, block_start=None, interval=None):
         if Logging.level() > logging.INFO:
             return
 
@@ -53,12 +53,12 @@ class BatchDownloadReporter(object):
         elapsed_delta = Timedelta(seconds=elapsed_time)
         elapsed = elapsed_delta.as_json()
 
-        if block_start is None:
-            self.__logger.info("%s: docs:%d elapsed:%s" %
-                               (self.name, self.__document_count, elapsed))
-        else:
-            self.__logger.info("%s: block start:%s docs:%d elapsed:%s" %
-                               (self.name, block_start, self.__document_count, elapsed))
+        name_str = "" if not self.name else "%s: " % self.name
+        start_str = "" if block_start is None else "block start:%s " % block_start
+        interval_str = "" if interval is None else "interval:%d " % interval
+
+        self.__logger.info("%s%sdocs:%d %selapsed:%s" %
+                           (name_str, start_str, self.__document_count, interval_str, elapsed))
 
 
     # ----------------------------------------------------------------------------------------------------------------
