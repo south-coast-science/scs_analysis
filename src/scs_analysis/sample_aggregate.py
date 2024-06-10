@@ -44,7 +44,7 @@ If the input document does not contain a specified path - or if the value is nul
 If a checkpoint is specified and the --exclude-remainder flag is used, then all of the input documents after the last
 complete checkpoint period are ignored. Where the checkpoint is specified, a --rule flag is available. If used,
 individual aggregates are rejected if less than 75% of the expected data points are present. In this case, a timedelta
-must be supplied, indicating indicating the expected interval between the input samples. The interval may be found
+must be supplied, indicating the expected interval between the input samples. The interval may be found
 using the aws_topic_history utility.
 
 WARNING: The The sample_aggregate utility uses the first input document to determine the data type for the regressions.
@@ -52,14 +52,18 @@ If csv_reader is being used to supply data, then the csv_reader's --nullify flag
 numeric fields being incorrectly identified as strings.
 
 SYNOPSIS
-sample_aggregate.py [-c HH:MM:SS [-x] [-r { [DD-]HH:MM[:SS]] | :SS }]] [-m] [-i ISO] [-v] [PATH_1..PATH_N]
+sample_aggregate.py [-p HH:MM:SS [-x] [-r { [DD-]HH:MM[:SS]] | :SS }]] [-m] [-i ISO] [-v] [PATH_1..PATH_N]
 
 EXAMPLES
-csv_reader.py -n gases.csv | sample_aggregate.py -v -r :10 -c **:/15:00
+csv_reader.py ref-scs-opc-110-meteo-pmx-Y22-15min-slope-pm10-clean-vB-xm-exg.csv | \
+sample_aggregate.py -v -p **:00:00 | \
+csv_writer.py -v ref-scs-opc-110-meteo-pmx-Y22-15min-slope-pm10-clean-vB-xm-exg-1hr.csv
 
 aws_topic_history.py -v -c super -p 00:00:00 -s 2023-12-01T00:00:00Z -e 2024-01-01T00:00:00Z \
 south-coast-science-production/reference/loc/531/particulates | node.py tag rec ver src val.sfr val.sht exg | \
 sample_aggregate.py | csv_writer.py -e 531-particulates-2023-12.csv
+
+csv_reader.py -n gases.csv | sample_aggregate.py -v -r :10 -p **:/15:00
 """
 
 import sys
