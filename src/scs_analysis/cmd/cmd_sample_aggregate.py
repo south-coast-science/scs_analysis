@@ -21,11 +21,11 @@ class CmdSampleAggregate(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c HH:MM:SS [-x] [-r { [DD-]HH:MM[:SS]] | :SS }]] "
+        self.__parser = optparse.OptionParser(usage="%prog [-p HH:MM:SS [-x] [-r { [DD-]HH:MM[:SS]] | :SS }]] "
                                                     "[-m] [-i ISO] [-v] [PATH_1..PATH_N]", version=version())
 
         # operation...
-        self.__parser.add_option("--checkpoint", "-c", type="string", action="store", dest="checkpoint",
+        self.__parser.add_option("--checkpoint", "-p", type="string", action="store", dest="checkpoint",
                                  help="a time specification i.e. **:/05:00")
 
         # mode...
