@@ -22,10 +22,13 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] "
-                                                    "[SUB_PATH_1 .. SUB_PATH_N]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-r SOURCE TARGET] [-x] [-a] [-s] [-f FILE] [-i INDENT] "
+                                                    "[-v] [SUB_PATH_1 .. SUB_PATH_N]", version=version())
 
         # mode...
+        self.__parser.add_option("--rename", "-r", type="string", nargs=2, action="store", dest="rename",
+                                 help="move SOURCE to TARGET")
+
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
                                  help="include all sub-paths except the named one(s)")
 
@@ -75,6 +78,21 @@ class CmdNode(object):
 
 
     @property
+    def rename(self):
+        return bool(self.__opts.rename)
+
+
+    @property
+    def rename_source(self):
+        return self.__opts.rename[0] if self.__opts.rename else None
+
+
+    @property
+    def rename_target(self):
+        return self.__opts.rename[1] if self.__opts.rename else None
+
+
+    @property
     def array(self):
         return self.__opts.array
 
@@ -111,5 +129,7 @@ class CmdNode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNode:{exclude:%s, array:%s, sequence:%s, filename:%s, indent:%s, verbose:%s, sub_paths:%s}" %  \
-               (self.exclude, self.array, self.sequence, self.filename, self.indent, self.verbose, self.__args)
+        return ("CmdNode:{rename:%s, exclude:%s, array:%s, sequence:%s, filename:%s, "
+                "indent:%s, verbose:%s, sub_paths:%s}") %  \
+               (self.__opts.rename, self.exclude, self.array, self.sequence, self.filename,
+                self.indent, self.verbose, self.__args)

@@ -128,6 +128,15 @@ if __name__ == '__main__':
             if cmd.exclude and not cmd.has_sub_paths():
                 continue                                # everything is excluded
 
+            # rename...
+            if cmd.rename:
+                renamed = PathDict()
+                for path in datum.paths():
+                    target_path = cmd.rename_target if path == cmd.rename_source else path
+                    renamed.append(target_path, datum.node(path))
+
+                datum = renamed
+
             # build...
             if not cmd.has_sub_paths():
                 target = datum                          # everything is included
