@@ -22,15 +22,15 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-r SOURCE TARGET] [-x] [-a] [-s] [-f FILE] [-i INDENT] "
-                                                    "[-v] [SUB_PATH_1 .. SUB_PATH_N]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-m FROM TO] [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] "
+                                                    "[NODE_1 .. NODE_N]", version=version())
 
         # mode...
-        self.__parser.add_option("--rename", "-r", type="string", nargs=2, action="store", dest="rename",
-                                 help="move SOURCE to TARGET")
+        self.__parser.add_option("--move", "-m", type="string", nargs=2, action="store", dest="move",
+                                 help="move the node at FROM to TO")
 
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
-                                 help="include all sub-paths except the named one(s)")
+                                 help="include all nodes except the named one(s)")
 
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
                                  help="output the sequence of input JSON documents as array")
@@ -78,18 +78,18 @@ class CmdNode(object):
 
 
     @property
-    def rename(self):
-        return bool(self.__opts.rename)
+    def move(self):
+        return bool(self.__opts.move)
 
 
     @property
-    def rename_source(self):
-        return self.__opts.rename[0] if self.__opts.rename else None
+    def move_from(self):
+        return self.__opts.move[0] if self.__opts.move else None
 
 
     @property
-    def rename_target(self):
-        return self.__opts.rename[1] if self.__opts.rename else None
+    def move_to(self):
+        return self.__opts.move[1] if self.__opts.move else None
 
 
     @property
@@ -129,7 +129,7 @@ class CmdNode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return ("CmdNode:{rename:%s, exclude:%s, array:%s, sequence:%s, filename:%s, "
+        return ("CmdNode:{move:%s, exclude:%s, array:%s, sequence:%s, filename:%s, "
                 "indent:%s, verbose:%s, sub_paths:%s}") %  \
-               (self.__opts.rename, self.exclude, self.array, self.sequence, self.filename,
+               (self.__opts.move, self.exclude, self.array, self.sequence, self.filename,
                 self.indent, self.verbose, self.__args)

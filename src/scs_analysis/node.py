@@ -8,9 +8,12 @@ Created on 11 Apr 2017
 source repo: scs_analysis
 
 DESCRIPTION
-The node utility is used to extract a node or nodes from within a JSON document. Data is presented as a sequence of
-documents on stdin, and the extracted node(s) are passed to stdout. Alternatively to stdin, a single JSON document
+The node utility is used to extract a node or nodes from within a JSON document tree. Data is presented as a sequence
+of documents on stdin, and the extracted node(s) are passed to stdout. Alternatively to stdin, a single JSON document
 can be read from a file.The extracted node may be a leaf node or an internal node.
+
+Using the --move flag, a single internal or leaf node may be relocated in the document tree prior to node
+selection for output.
 
 By default, only the specified nodes are passed to the output. In the --exclude mode, all nodes are passed to stdout,
 except the specified nodes. In the default mode, if no node path is specified, the whole input document
@@ -27,11 +30,11 @@ The ordering of output nodes is as follows:
 * Exclude mode - by input nodes
 * Default mode - by nodes specified on the command line
 
-WARNING: node ordering is overridden by the internal node structure. Thus the specified ordering: a.b.c, x.b.c, a.b.d
-would be rendered as: a.b.c, a.b.d, x.b.c
+WARNING: node ordering is determined by the internal node structure of the input document. Thus the specified ordering:
+a.b.c, x.b.c, a.b.d would be rendered as: a.b.c, a.b.d, x.b.c
 
 SYNOPSIS
-node.py [{ [-x] [-a] | -s }] [-f FILE] [-i INDENT] [-v] [SUB_PATH_1 .. SUB_PATH_N]
+node.py [-m FROM TO] [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] [NODE_1 .. NODE_N]
 
 EXAMPLES
 csv_reader.py climate.csv | node.py -x val.bar
@@ -128,11 +131,13 @@ if __name__ == '__main__':
             if cmd.exclude and not cmd.has_sub_paths():
                 continue                                # everything is excluded
 
-            # rename...
-            if cmd.rename:
+            # move...
+            if cmd.move and datum.has_sub_path(sub_path=cmd.move_from):
                 renamed = PathDict()
+                move_len = len(cmd.move_from)
+
                 for path in datum.paths():
-                    target_path = cmd.rename_target if path == cmd.rename_source else path
+                    target_path = cmd.move_to + path[move_len:] if path.startswith(cmd.move_from) else path
                     renamed.append(target_path, datum.node(path))
 
                 datum = renamed
