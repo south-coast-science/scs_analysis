@@ -22,7 +22,7 @@ selected, output is in the form of a JSON array - the output opens with a '[' ch
 the ',' character, and the output is terminated by a ']' character.
 
 SYNOPSIS
-csv_reader.py [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 .. FILENAME_N]
+csv_reader.py [-s] [-n] [-l LIMIT] [-a] [-v] [FILENAME_1 ... FILENAME_N]
 
 EXAMPLES
 csv_reader.py -v scs-ph1-10-status-2019-07-*.csv
@@ -52,6 +52,8 @@ from scs_analysis.cmd.cmd_csv_reader import CmdCSVReader
 from scs_core.csv.csv_reader import CSVReader, CSVReaderException
 from scs_core.csv.csv_dict import CSVHeaderError
 
+from scs_core.sys.logging import Logging
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -67,8 +69,10 @@ if __name__ == '__main__':
 
     cmd = CmdCSVReader()
 
-    if cmd.verbose:
-        print("csv_reader: %s" % cmd, file=sys.stderr)
+    Logging.config('csv_reader', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     if cmd.array:
         print('[', end='')
@@ -86,20 +90,18 @@ if __name__ == '__main__':
                 reader = CSVReader.construct_for_file(filename, cast=cmd.cast, nullify=cmd.nullify)
 
             except FileNotFoundError:
-                print("csv_reader: file not found: %s" % filename, file=sys.stderr)
+                logger.error("file not found: '%s'." % filename)
                 exit(1)
 
             except KeyError as ex:
-                print("csv_reader: empty header cell in: %s." % ex, file=sys.stderr)
+                logger.error("empty header cell in: %s." % ex)
                 exit(1)
 
             except ValueError as ex:
-                print("csv_reader: duplicate column names in: %s." % ex, file=sys.stderr)
+                logger.error("duplicate column names in: %s." % ex)
                 exit(1)
 
-            if cmd.verbose:
-                print("csv_reader: %s" % reader, file=sys.stderr)
-                sys.stderr.flush()
+            logger.info(reader)
 
 
             # --------------------------------------------------------------------------------------------------------
@@ -125,20 +127,18 @@ if __name__ == '__main__':
                     rows += 1
 
             except CSVHeaderError as ex:
-                print("csv_reader: clashing column names: '%s' and '%s'" % (ex.left, ex.right), file=sys.stderr)
+                logger.error("clashing column names: '%s' and '%s'" % (ex.left, ex.right))
                 exit(1)
 
             except CSVReaderException as ex:
-                if cmd.verbose:
-                    print("csv_reader: ending file on row %d: %s" % (rows, ex), file=sys.stderr)
-                    continue
+                logger.info("ending file on row %d: %s" % (rows, ex))
+                continue
 
             finally:
                 if reader is not None:
                     reader.close()
 
-            if cmd.verbose:
-                print("csv_reader: rows: %d" % rows, file=sys.stderr)
+            logger.info("rows: %d" % rows)
 
             total_rows += rows
 
@@ -153,5 +153,5 @@ if __name__ == '__main__':
         if cmd.array:
             print(']')
 
-        if cmd and cmd.verbose and file_count > 1:
-            print("csv_reader: files: %d total rows: %d" % (file_count, total_rows), file=sys.stderr)
+        if file_count > 1:
+            logger.info("files: %d total rows: %d" % (file_count, total_rows))

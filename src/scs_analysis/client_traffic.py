@@ -26,6 +26,9 @@ period
 Statistics are available only for the clients(s) that are visible to the user. Only organisation admins may view
 statistics for whole organisations. Only superusers can view the statistics for all users.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 Usage: client_traffic.py [-c CREDENTIALS] -e ENDPOINT [{ -u | -o [-s] }] -p PERIOD [-a] [-i INDENT] [-v]
 [CLIENT_1...CLIENT_N]

@@ -1,5 +1,5 @@
 """
-Created on 22 Aug 2017
+Created on 20 Jun 2024
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
@@ -13,22 +13,26 @@ from scs_analysis import version
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdSampleMdAPE(object):
+class CmdSampleRange(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-p PRECISION] [-e] [-v] REFERENCE_PATH PREDICTION_PATH",
+        self.__parser = optparse.OptionParser(usage="%prog [-f] [-u] [-p PRECISION] [-v] SUB_NODE",
                                               version=version())
 
-        # output...
-        self.__parser.add_option("--prec", "-p", type="int", action="store", default=3, dest="precision",
-                                 help="precision (default 3 decimal places)")
+        # mode...
+        self.__parser.add_option("--full", "-f", action="store_true", dest="full", default=False,
+                                 help="report narrative to stderr")
 
-        self.__parser.add_option("--errors", "-e", action="store_true", dest="errors", default=False,
-                                 help="output the error values")
+        self.__parser.add_option("--upper", "-u", action="store_true", dest="upper", default=False,
+                                 help="report narrative to stderr")
+
+        # output...
+        self.__parser.add_option("--prec", "-p", type="int", action="store", default=1, dest="precision",
+                                 help="precision (default 1 decimal places)")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -39,7 +43,7 @@ class CmdSampleMdAPE(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if len(self.__args) != 2:
+        if len(self.__args) != 1:
             return False
 
         return True
@@ -48,13 +52,18 @@ class CmdSampleMdAPE(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def precision(self):
-        return self.__opts.precision
+    def full(self):
+        return self.__opts.full
 
 
     @property
-    def errors(self):
-        return self.__opts.errors
+    def upper(self):
+        return self.__opts.upper
+
+
+    @property
+    def precision(self):
+        return self.__opts.precision
 
 
     @property
@@ -63,13 +72,8 @@ class CmdSampleMdAPE(object):
 
 
     @property
-    def reference_path(self):
-        return self.__args[0] if self.__args else None
-
-
-    @property
-    def prediction_path(self):
-        return self.__args[1] if self.__args else None
+    def sub_node(self):
+        return self.__args[0]
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -79,5 +83,5 @@ class CmdSampleMdAPE(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleMdAPE:{precision:%s, errors:%s, verbose:%s, paths:%s}" % \
-                    (self.precision, self.errors, self.verbose, self.__args)
+        return "CmdSampleRange:{full:%s, upper:%s, precision:%s, verbose:%s, sub_node:%s}" % \
+                (self.full, self.upper, self.precision, self.verbose, self.sub_node)

@@ -18,7 +18,7 @@ class CmdCognitoDevices(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -t DEVICE_TAG | -n INVOICE }] [-m] "
                                                     "| -U DEVICE_TAG INVOICE "
                                                     "| -D DEVICE_TAG } "

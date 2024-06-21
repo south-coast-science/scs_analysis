@@ -9,6 +9,9 @@ DESCRIPTION
 The device monitor periodically checks on the availability and health of every air quality monitoring device. The
 device_monitor_status utility is used to deliver the most recent report for the specified device(s).
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 device_monitor_status.py [-c CREDENTIALS] [-t DEVICE_TAG [-x]] [-i INDENT] [-v]
 

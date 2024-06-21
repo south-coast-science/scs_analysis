@@ -18,7 +18,7 @@ class CmdOrganisationUserPaths(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F -e EMAIL [-r PATH_ROOT] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F -e EMAIL [-r PATH_ROOT] | "
                                                     "-C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | "
                                                     "-D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } "
                                                     "[-i INDENT] [-v]", version=version())

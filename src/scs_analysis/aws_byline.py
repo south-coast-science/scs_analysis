@@ -18,6 +18,9 @@ latest sense event.
 Note that deleting a device / topic pair does not affect the topic messages - the corresponding messages should be
 deleted using the scs_lambda aws_message_delete utility as required.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 aws_byline.py [-c CREDENTIALS] { -F { -d DEVICE | -t TOPIC [-l] | -a } [-x EXCLUDED] [-s] [-m] |
 -D DEVICE TOPIC } [-i INDENT] [-v]

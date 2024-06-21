@@ -15,6 +15,9 @@ Users may belong to more than one organisation. (Additionally, superusers typica
 Organisation administrators and superusers can use this utility to add or remove membership of an organisation for
 individual users.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 organisation_users.py  [-c CREDENTIALS] {
 -F [{ -e EMAIL | -l ORG_LABEL }] |

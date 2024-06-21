@@ -17,9 +17,8 @@ By default, the retrieval password is the same as the Cognito credentials passwo
 password can be specified (in order, for example, to standardise the retrieval password across multiple Cognito
 accounts).
 
-The --credentials flag is only required where the user wishes to store multiple identities.
-
-Setting the credentials is done interactively using the command line interface.
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
 
 SYNOPSIS
 cognito_user_credentials.py [{ -l | [-c CREDENTIALS] [{ -s | -p | -t | -d }] }] [-v]
