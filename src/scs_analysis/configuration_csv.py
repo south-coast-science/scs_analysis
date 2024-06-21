@@ -37,6 +37,9 @@ For diff-histories and full-histories modes, a single rec value is included, equ
 
 Output CSV cell values are always wrapped in quotes ('"').
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 configuration_csv.py [-c CREDENTIALS] { -n | -s | -l OUTPUT_CSV | { -d | -f } [-o OUTPUT_CSV_DIR] }
 [-t DEVICE_TAG [-x]] [-v] [NODE_1..NODE_N]

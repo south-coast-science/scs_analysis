@@ -19,6 +19,9 @@ within an organisation path root
 
 See the organisation_path_roots utility for more information.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 organisation_user_paths.py  [-c CREDENTIALS] { -F { -e EMAIL | -r PATH_ROOT } |
 -C -e EMAIL -r PATH_ROOT -x PATH_EXTENSION | -D -e EMAIL -r PATH_ROOT -x PATH_EXTENSION } [-i INDENT] [-v]

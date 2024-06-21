@@ -20,7 +20,11 @@ class CmdSampleSort(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-v] SORT_PATH_1 [..SORT_PATH_N]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-r] [-v] SORT_PATH_1 [...SORT_PATH_N]", version=version())
+
+        # function...
+        self.__parser.add_option("--reverse", "-r", action="store_true", dest="reverse", default=False,
+                                 help="sort in reverse order")
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -41,6 +45,11 @@ class CmdSampleSort(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def reverse(self):
+        return self.__opts.reverse
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -57,4 +66,5 @@ class CmdSampleSort(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdSampleSort:{verbose:%s, sort_paths:%s}" % (self.verbose, self.sort_paths)
+        return ("CmdSampleSort:{reverse:%s, verbose:%s, sort_paths:%s}" %
+                (self.reverse, self.verbose, self.sort_paths))

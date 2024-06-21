@@ -19,6 +19,9 @@ maintain a mapping between topics and organisations.
 The members of an organisation path root are the organisation user paths (OUPs) that restrict access to specific users.
 See the organisation_user_paths utility for more information.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 organisation_path_roots.py  [-c CREDENTIALS] { -F [-l ORG_LABEL [-m]] | -C -l ORG_LABEL -r PATH_ROOT |
 -D -l ORG_LABEL -r PATH_ROOT } [-i INDENT] [-v]

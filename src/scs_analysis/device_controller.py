@@ -24,6 +24,9 @@ message. Typically, message tokens are presented on the command line wrapped in 
 A maximum of 30 seconds is available for the device to respond to the published message. After this time, the
 device_controller utility will terminate.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 device_controller.py [-c CREDENTIALS] -t DEVICE_TAG { [-s] -m CMD_TOKENS | [-w] [-i INDENT] } [-v]
 

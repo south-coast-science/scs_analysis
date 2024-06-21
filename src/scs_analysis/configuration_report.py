@@ -12,6 +12,9 @@ device. The result is written to a CSV file named conf-scs-TYPE-NUMBER.csv
 The utility is normally run in the directory that is scanned for raw report CSVs, such as
 /Users/bruno/gbb/Production/ConfigurationGenerator/RawConfigs
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 configuration_report.py [-c CREDENTIALS] [-v] DEVICE_TAG_1 [...DEVICE_TAG_N]
 

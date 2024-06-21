@@ -21,7 +21,7 @@ class CmdCognitoUsers(object):
         """
         confirmations = ' | '.join(CognitoUserIdentity.status_codes())
 
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] "
                                                     "{ -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | "
                                                     "-s { 0 | 1 } } }] [-m] "
                                                     "| -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR "

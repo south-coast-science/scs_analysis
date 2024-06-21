@@ -16,7 +16,7 @@ WARNING: no support is given for localised datetimes. Therefore, for example, 20
 not equal to 2022-09-16T10:00:00+01:00.
 
 SYNOPSIS
-Usage: sample_sort.py [-v] SORT_PATH_1 .. SORT_PATH_N
+sample_sort.py [-r] [-v] SORT_PATH_1 [...SORT_PATH_N]
 
 EXAMPLES
 csv_reader.py -v ref-scs-bgx-508-20H1-slp16-vcal-err-clean-on-train-vE-exg.csv | \
@@ -72,7 +72,7 @@ if __name__ == '__main__':
             data.append(datum)
 
         # report...
-        for datum in sorted(data):
+        for datum in sorted(data, reverse=cmd.reverse):
             print(JSONify.dumps(datum))
 
 

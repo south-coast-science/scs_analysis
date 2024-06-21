@@ -20,6 +20,9 @@ the devices known to the system. Status levels are:
 * RUN - RECEIVED:UNCHANGED
 * RUP - RECEIVED:UPDATED
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 configuration_monitor_check.py [-c CREDENTIALS] [{ -f DEVICE_TAG | -t DEVICE_TAG [-x] [-o] | -r CODE }] [-i INDENT] [-v]
 

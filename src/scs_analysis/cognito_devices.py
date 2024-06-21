@@ -10,6 +10,9 @@ source repo: scs_analysis
 DESCRIPTION
 The cognito_devices utility is used to find, update or delete the Cognito identity records of SCS devices.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 cognito_devices.py  [-c CREDENTIALS] { -F [{ -t DEVICE_TAG | -n INVOICE }] [-m] | -U DEVICE_TAG INVOICE |
 -D DEVICE_TAG } [-i INDENT] [-v]
