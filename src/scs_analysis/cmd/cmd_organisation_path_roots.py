@@ -18,7 +18,7 @@ class CmdOrganisationPathRoots(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog  [-c CREDENTIALS] { -F [-l ORG_LABEL [-m]] | "
+        self.__parser = optparse.OptionParser(usage="%prog [-c CREDENTIALS] { -F [-l ORG_LABEL [-m]] | "
                                                     "-C -l ORG_LABEL -r PATH_ROOT | "
                                                     "-D -l ORG_LABEL -r PATH_ROOT } "
                                                     "[-i INDENT] [-v]", version=version())

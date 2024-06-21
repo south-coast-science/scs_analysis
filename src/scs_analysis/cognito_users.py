@@ -14,6 +14,9 @@ The utility can only be used by organisation administrators and superusers.
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 exercised in order for the account to gain a CONFIRMED status.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 cognito_users.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | -s { 0 | 1 } } }] [-m] |
 -C -g GIVEN_NAME -f FAMILY_NAME -e EMAIL_ADDR | -U EMAIL_ADDR [-g GIVEN_NAME] [-f FAMILY_NAME] [-e EMAIL_ADDR]
@@ -36,6 +39,9 @@ The utility can only be used by organisation administrators and superusers.
 
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 exercised in order for the account to gain a CONFIRMED status.
+
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
 
 SYNOPSIS
 cognito_users.py  [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -l ORG_LABEL | -o CONFIRMATION | -s { 0 | 1 } } }] [-m] |

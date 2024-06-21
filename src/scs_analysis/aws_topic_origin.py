@@ -11,6 +11,9 @@ DESCRIPTION
 The aws_topic_origin utility is used to discover the datetime of the earliest recorded publication on the given
 topic(s), for a device, or for all topics known to aws_byline.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 aws_topic_origin.py [-c CREDENTIALS] [-i INDENT] [-v] { -a | -d DEVICE | -t TOPIC_1 [...TOPIC_N] }
 

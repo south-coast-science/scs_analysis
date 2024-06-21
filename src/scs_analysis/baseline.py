@@ -25,6 +25,9 @@ If the --rehearse flag is used, the baseline utility shows what changes would be
 Operating parameters are specified by the baseline_conf utility, and may be overridden by the baseline utility flags.
 Any number of named baseline_conf files may be stored.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 Usage: baseline.py [-c CREDENTIALS] -n CONF_NAME -f { V | E } [{ -r | -u COMMAND }] [-s START] [-e END]
 [-p AGGREGATION] [-m GAS MINIMUM] [{ -o GAS | -x GAS }] [-v] DEVICE_TAG_1 .. DEVICE_TAG_N

@@ -14,6 +14,9 @@ The utility supports a parent / child relationship between organisations - a chi
 thought of as a subdivision of its parent: users belonging to an organisation have the same rights over
 child organisation data and devices as they have for data and devices within their own organisation.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 organisations.py [-c CREDENTIALS] {
 -F [{ -l LABEL | -d ID }] [-m] |

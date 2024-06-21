@@ -20,12 +20,12 @@ class CmdCSVWriter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]",
+        self.__parser = optparse.OptionParser(usage="%prog [{ -a | -x | -s }] [-l LIMIT] [-q] [-e] [-v] [FILENAME]",
                                               version=version())
 
         # mode...
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,
-                                 help="append rows to existing file")
+                                 help="append rows if file exists")
 
         self.__parser.add_option("--exclude-header", "-x", action="store_true", dest="exclude_header", default=False,
                                  help="do not write the header row to stdout")
@@ -34,6 +34,9 @@ class CmdCSVWriter(object):
                                  help="scan all documents before building the header row")
 
         # output...
+        self.__parser.add_option("--limit", "-l", type="int", action="store", dest="limit",
+                                 help="output a maximum of LIMIT rows")
+
         self.__parser.add_option("--quote-all", "-q", action="store_true", dest="quote_all", default=False,
                                  help="wrap all CSV cell values in quotes")
 
@@ -84,6 +87,11 @@ class CmdCSVWriter(object):
 
 
     @property
+    def limit(self):
+        return self.__opts.limit
+
+
+    @property
     def quote_all(self):
         return self.__opts.quote_all
 
@@ -110,7 +118,7 @@ class CmdCSVWriter(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdCSVWriter:{append:%s, exclude_header:%s, header_scan:%s, quote_all:%s, echo:%s, " \
-               "verbose:%s, filename:%s}" % \
-                    (self.append, self.exclude_header, self.header_scan, self.quote_all, self.echo,
-                     self.verbose, self.filename)
+        return "CmdCSVWriter:{append:%s, exclude_header:%s, header_scan:%s, limit:%s, " \
+                "quote_all:%s, echo:%s, verbose:%s, filename:%s}" % \
+                (self.append, self.exclude_header, self.header_scan, self.limit,
+                 self.quote_all, self.echo, self.verbose, self.filename)

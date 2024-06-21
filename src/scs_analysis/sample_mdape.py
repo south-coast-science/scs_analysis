@@ -11,6 +11,9 @@ DESCRIPTION
 The sample_mdape utility is used to compute Median Absolute Percent Error (MdAPE). Output is in the form of either a
 scalar MdAPE value, or an array of data points.
 
+If the --errors flag is set, then the utility outputs an array of JSON documents specifying the reference, prediction
+and error value for each input document. Otherwise, the utility reports the computed MdAPE value.
+
 SYNOPSIS
 sample_mdape.py [-p PRECISION] [-e] [-v] REFERENCE_PATH PREDICTION_PATH
 
@@ -18,13 +21,17 @@ EXAMPLES - MdAPE
 csv_reader.py -v ref-scs-opc-mash-meteo-pmx-Y22-15min-slope-pm1-clean-validation-vB-xm-exg.csv | \
 sample_mdape.py -v src.ref.PM1 exg.PM1.vB.opc-mash.Y22
 
-EXAMPLES - Errors
+EXAMPLES - ERRORS
 csv_reader.py -v ref-scs-opc-mash-meteo-pmx-Y22-15min-slope-pm1-clean-validation-vB-xm-exg.csv | \
 sample_mdape.py -e -v src.ref.PM1 exg.PM1.vB.opc-mash.Y22 | \
 histo_chart.py -vb -x 0 100 -c 100 ape
 
-DOCUMENT EXAMPLE - OUTPUT
+DOCUMENT EXAMPLE - ERRORS OUTPUT
 [{"src.ref.PM1": 2.47, "exg.PM1.vB.opc-mash.Y22": 2.7, "ape": 9.312}, ...]
+
+RESOURCES
+MdAPE - Median Absolute Percentage Error
+https://support.numxl.com/hc/en-us/articles/115001223503-MdAPE-Median-Absolute-Percentage-Error
 """
 
 import json

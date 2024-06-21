@@ -15,6 +15,9 @@ Over a period of time, a device may pass from ownership by one organisation to o
 ownership period is represented by a separate record. Where the start of an ownership is not known, the start
 datetime is recorded as 1970-01-01T00:00:00Z.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 organisation_devices.py [-c CREDENTIALS] { -F { -l ORG_LABEL | -t DEVICE_TAG } |
 -C -l ORG_LABEL -t DEVICE_TAG -p PATH_ROOT GROUP LOCATION -d DEPLOYMENT_LABEL | -D -t DEVICE_TAG } [-i INDENT] [-v]
