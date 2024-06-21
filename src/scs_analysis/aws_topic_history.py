@@ -25,6 +25,9 @@ retrieval, and is useful if sampling continuity is being tested.
 Note that no check is made for the existence of the topic - if the topic does not exist, then no error is raised and
 no data is returned.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 aws_topic_history.py [-c CREDENTIALS] { -l | -a LATEST_AT [-b BACK-OFF] | -t { [[DD-]HH:]MM[:SS] | :SS } |
 -s START [-e END] } { -p HH:MM:SS [-m] [-x] | [-w] [-f] } [-r] [{ -v | -d }] TOPIC

@@ -14,6 +14,9 @@ Alert causes are:
 * N - Null value
 * OK - data has returned within bounds
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 alert_status.py [-c CREDENTIALS] { -F { -l | -d [-a CAUSE] } | -D } [-i INDENT] [-v] ID
 

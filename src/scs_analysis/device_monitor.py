@@ -9,6 +9,9 @@ DESCRIPTION
 The device monitor periodically checks on the availability and health of every air quality monitoring device.
 The device_monitor utility is used to manage the email addresses for alerts associated with individual devices.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 device_monitor.py [-c CREDENTIALS] { -F [{ -e EMAIL_ADDR | -t DEVICE_TAG } [-x]] | -A EMAIL_ADDR DEVICE_TAG [-j] |
 -S DEVICE_TAG { 0 | 1 } | -D EMAIL_ADDR [{ -t DEVICE_TAG | -f }] } [-i INDENT] [-v]

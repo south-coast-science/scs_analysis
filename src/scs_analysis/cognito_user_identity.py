@@ -15,6 +15,9 @@ Note that the chosen password must include lower and upper case, numeric and pun
 If the --Create function is used, an email is sent to the new user. The verification link in the email must be
 exercised in order for the account to gain a CONFIRMED status.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 cognito_user_identity.py [-c CREDENTIALS] | -C | -R | -U } [-i INDENT] [-v]
 

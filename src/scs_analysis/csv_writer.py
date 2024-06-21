@@ -30,7 +30,7 @@ fields are given a null value for that field. Any values bound to paths that bec
 Warning: the header-scan mode requires memory proportional to the size of its input.
 
 SYNOPSIS
-csv_writer.py [{ -a | -x | -s }] [-q] [-e] [-v] [FILENAME]
+csv_writer.py [{ -a | -x | -s }] [-l LIMIT] [-q] [-e] [-v] [FILENAME]
 
 EXAMPLES
 socket_receiver.py | csv_writer.py temp.csv -e
@@ -47,11 +47,14 @@ scs_analysis/csv_logger
 scs_analysis/csv_reader
 """
 
+import os
 import sys
 
 from scs_analysis.cmd.cmd_csv_writer import CmdCSVWriter
 
 from scs_core.csv.csv_writer import CSVWriter
+
+from scs_core.sys.logging import Logging
 
 
 # TODO: fix append mode with no newline at the end of the CSV?
@@ -73,25 +76,33 @@ if __name__ == '__main__':
         cmd.print_help(sys.stderr)
         exit(2)
 
-    if cmd.verbose:
-        print("csv_writer: %s" % cmd, file=sys.stderr)
-        sys.stderr.flush()
+    Logging.config('csv_writer', verbose=cmd.verbose)
+    logger = Logging.getLogger()
+
+    logger.info(cmd)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        writer = CSVWriter(filename=cmd.filename, append=cmd.append, exclude_header=cmd.exclude_header,
+        if cmd.append and cmd.filename:
+            append = os.path.isfile(cmd.filename)
+        else:
+            append = cmd.append
+
+        writer = CSVWriter(filename=cmd.filename, append=append, exclude_header=cmd.exclude_header,
                            header_scan=cmd.header_scan, quote_all=cmd.quote_all)
 
-        if cmd.verbose:
-            print("csv_writer: %s" % writer, file=sys.stderr)
+        logger.info(writer)
 
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         for line in sys.stdin:
+            if cmd.limit is not None and processed_count >= cmd.limit:
+                continue
+
             jstr = line.strip()
 
             document_count += 1
@@ -117,5 +128,4 @@ if __name__ == '__main__':
         if writer is not None:
             writer.close()
 
-        if cmd.verbose:
-            print("csv_writer: documents: %d processed: %d" % (document_count, processed_count), file=sys.stderr)
+        logger.info("documents: %d processed: %d" % (document_count, processed_count))

@@ -11,6 +11,9 @@ Flags enable the selection of either the latest recorded configuration for the d
 configuration changes. In the case of historical reports, either all the field values can be returned, or
 only those that changed from the previous recording.
 
+The --credentials flag is only required where the user wishes to store multiple identities. Setting the credentials
+is done interactively using the command line interface.
+
 SYNOPSIS
 configuration_monitor.py [-c CREDENTIALS] [-t DEVICE_TAG [-x]] { -l | -f | -d | -o } [-i INDENT] [-v]
 
