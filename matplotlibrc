@@ -1,6 +1,7 @@
 # https://matplotlib.org/faq/usage_faq.html
+# https://stackoverflow.com/questions/56656777/userwarning-matplotlib-is-currently-using-agg-which-is-a-non-gui-backend-so
 
-# put this file in scs_analysis/src/scs_analysis if required
+# put this file in your working directory if required
 # available backends: ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo']
 
 
