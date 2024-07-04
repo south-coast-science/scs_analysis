@@ -13,7 +13,7 @@ and the position in each of the input GPS JSON documents. A command flag specifi
 document that is to be examined.
 
 The quality of the GPS fix may be taken into account: if a quality is specified, then any GPS fix with a quality
-(rounded to the nearest integer) below that level is reported as a null distance.
+(rounded to the nearest integer) below that level is discarded.
 
 A simple, spherical model of the earth is used.
 
@@ -108,6 +108,9 @@ if __name__ == '__main__':
             except TypeError:
                 gps = None
                 distance = None
+
+            if distance is None:
+                continue
 
             report = PathDict()
             report.append('rec', datum.node(cmd.iso))

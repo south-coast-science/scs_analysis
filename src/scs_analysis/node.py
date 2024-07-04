@@ -10,10 +10,14 @@ source repo: scs_analysis
 DESCRIPTION
 The node utility is used to extract a node or nodes from within a JSON document tree. Data is presented as a sequence
 of documents on stdin, and the extracted node(s) are passed to stdout. Alternatively to stdin, a single JSON document
-can be read from a file.The extracted node may be a leaf node or an internal node.
+can be read from a file. The extracted node may be a leaf node or an internal node.
 
-Using the --move flag, a single internal or leaf node may be relocated in the document tree prior to node
-selection for output.
+Using the --rename flag, a single internal or leaf node may be relocated in the document tree prior to node
+selection for output. The rename TO field is always output.
+
+If the --merge flag is used, then the values of two fields A and B are joined with the JOIN string. The combined string
+has the location A in the document tree. If A is present and B is not present then the value is that of A alone.
+If B is present and A is not present, then B is discarded.
 
 By default, only the specified nodes are passed to the output. In the --exclude mode, all nodes are passed to stdout,
 except the specified nodes. In the default mode, if no node path is specified, the whole input document
@@ -34,7 +38,7 @@ WARNING: node ordering is determined by the internal node structure of the input
 a.b.c, x.b.c, a.b.d would be rendered as: a.b.c, a.b.d, x.b.c
 
 SYNOPSIS
-node.py [-m FROM TO] [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] [NODE_1 .. NODE_N]
+node.py [-r FROM TO] [-m A B JOIN] [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] [NODE_1 .. NODE_N]
 
 EXAMPLES
 csv_reader.py climate.csv | node.py -x val.bar
@@ -129,22 +133,65 @@ if __name__ == '__main__':
             document_count += 1
 
             if cmd.exclude and not cmd.has_sub_paths():
-                continue                                # everything is excluded
+                continue                                    # everything is excluded
 
-            # move...
-            if cmd.move and datum.has_sub_path(sub_path=cmd.move_from):
-                renamed = PathDict()
-                move_len = len(cmd.move_from)
+            # --------------------------------------------------------------------------------------------------------
+            # rename...
+
+            if cmd.rename and datum.has_sub_path(sub_path=cmd.rename_from):
+                target = PathDict()
+                rename_len = len(cmd.rename_from)
 
                 for path in datum.paths():
-                    target_path = cmd.move_to + path[move_len:] if path.startswith(cmd.move_from) else path
-                    renamed.append(target_path, datum.node(path))
+                    rename_from_match = PathDict.sub_path_includes_path(cmd.rename_from, path)
 
-                datum = renamed
+                    target_path = cmd.rename_to + path[rename_len:] if rename_from_match else path
+                    target.append(target_path, datum.node(path))
 
-            # build...
+                datum = target
+
+            # --------------------------------------------------------------------------------------------------------
+            # merge...
+
+            if cmd.merge and datum.has_sub_path(sub_path=cmd.merge_a) and datum.has_sub_path(sub_path=cmd.merge_b):
+                target = PathDict()
+                a = None
+                a_found = False
+                b = None
+                b_found = False
+                merged = False
+
+                for path in datum.paths():
+                    merge_a_match = PathDict.sub_path_includes_path(cmd.merge_a, path)
+                    merge_b_match = PathDict.sub_path_includes_path(cmd.merge_b, path)
+
+                    if not (merge_a_match or merge_b_match):
+                        target.append(path, datum.node(path))
+                        continue
+
+                    if merged:
+                        continue
+
+                    if merge_a_match:
+                        target.append(cmd.merge_a, datum.node(cmd.merge_a))         # insert A
+                        a = datum.node(cmd.merge_a)
+                        a_found = True
+
+                    if merge_b_match:
+                        b = datum.node(cmd.merge_b)
+                        b_found = True
+
+                    if a_found and b_found:
+                        target.append(cmd.merge_a, cmd.merge_join.join((a, b)))     # update A
+                        merged = True
+
+                datum = target
+
+            # --------------------------------------------------------------------------------------------------------
+            # output...
+
             if not cmd.has_sub_paths():
-                target = datum                          # everything is included
+                target = datum                              # everything is included
 
             else:
                 target = PathDict()
