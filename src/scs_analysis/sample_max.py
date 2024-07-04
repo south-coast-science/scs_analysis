@@ -17,10 +17,10 @@ sample_max utility includes the whole input document.
 If there are multiple input documents with the same maximum value, the first document only is written to stdout.
 
 SYNOPSIS
-sample_max.py [-v] [PATH]
+sample_max.py [{ -n | -i }] [-v] PATH
 
 EXAMPLES
-aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_max.py val.CO.cnc
+aws_topic_history.py -m60 /orgs/south-coast-science-demo/brighton/loc/1/gases | sample_max.py -n val.CO.cnc
 
 DOCUMENT EXAMPLE - INPUT
 {"tag": "scs-bgx-401", "rec": "2018-03-27T09:54:41.042+00:00", "val": {
@@ -41,7 +41,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 import sys
 
-from scs_analysis.cmd.cmd_sample_record import CmdSampleRecord
+from scs_analysis.cmd.cmd_sample_compare import CmdSampleCompare
 
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdSampleRecord()
+    cmd = CmdSampleCompare()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
@@ -85,12 +85,12 @@ if __name__ == '__main__':
             if cmd.path not in datum.paths():
                 continue
 
-            try:
-                value = float(datum.node(cmd.path))
-            except (TypeError, ValueError):
+            datum_value = cmd.value(datum.node(cmd.path))
+
+            if datum_value is None:
                 continue
 
-            if max_datum is None or value > max_datum.node(cmd.path):
+            if max_datum is None or datum_value > cmd.value(max_datum.node(cmd.path)):
                 max_datum = datum
 
             processed_count += 1

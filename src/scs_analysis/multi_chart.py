@@ -18,6 +18,9 @@ received.
 Note that the chart is a simple approximation to a timeline chart - values are plotted successively, with no account
 taken of the interval between samples.
 
+On Linux, it may be necessary to install tkinter in order for the chart to be displayed:
+sudo apt-get install python3-tk
+
 Depending on operating system, it may be necessary to use a matplotlibrc file, which specifies the Matplotlib
 back-end graphics system.
 
@@ -33,6 +36,10 @@ FILES
 SEE ALSO
 scs_analysis/histo_chart
 scs_analysis/single_chart
+
+RESOURCES
+https://matplotlib.org/2.0.2/faq/usage_faq.html#what-is-a-backend
+https://stackoverflow.com/questions/56656777/userwarning-matplotlib-is-currently-using-agg-which-is-a-non-gui-backend-so
 
 BUGS
 On some operating systems, the chart will remain as the uppermost window until all data have been received.
@@ -80,7 +87,6 @@ if __name__ == '__main__':
 
         # reader...
         reader = LineReader(sys.stdin.fileno())
-        logger.info(reader)
 
         # chart...
         chart = MultiChart(cmd.title, cmd.batch_mode, cmd.x, cmd.y[0], cmd.y[1], *cmd.paths)

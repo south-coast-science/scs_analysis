@@ -22,12 +22,15 @@ class CmdNode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-m FROM TO] [-x] [-a] [-s] [-f FILE] [-i INDENT] [-v] "
-                                                    "[NODE_1 .. NODE_N]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog [-r FROM TO] [-m A B JOIN] [-x] [-a] [-s] [-f FILE] "
+                                                    "[-i INDENT] [-v] [NODE_1 .. NODE_N]", version=version())
 
         # mode...
-        self.__parser.add_option("--move", "-m", type="string", nargs=2, action="store", dest="move",
+        self.__parser.add_option("--rename", "-r", type="string", nargs=2, action="store", dest="rename",
                                  help="move the node at FROM to TO")
+
+        self.__parser.add_option("--merge", "-m", type="string", nargs=3, action="store", dest="merge",
+                                 help="merge A and B")
 
         self.__parser.add_option("--exclude", "-x", action="store_true", dest="exclude", default=False,
                                  help="include all nodes except the named one(s)")
@@ -78,18 +81,38 @@ class CmdNode(object):
 
 
     @property
-    def move(self):
-        return bool(self.__opts.move)
+    def rename(self):
+        return bool(self.__opts.rename)
 
 
     @property
-    def move_from(self):
+    def rename_from(self):
         return self.__opts.move[0] if self.__opts.move else None
 
 
     @property
-    def move_to(self):
+    def rename_to(self):
         return self.__opts.move[1] if self.__opts.move else None
+
+
+    @property
+    def merge(self):
+        return bool(self.__opts.merge)
+
+
+    @property
+    def merge_a(self):
+        return self.__opts.merge[0] if self.__opts.merge else None
+
+
+    @property
+    def merge_b(self):
+        return self.__opts.merge[1] if self.__opts.merge else None
+
+
+    @property
+    def merge_join(self):
+        return self.__opts.merge[2] if self.__opts.merge else None
 
 
     @property
@@ -119,7 +142,18 @@ class CmdNode(object):
 
     @property
     def sub_paths(self):
-        return self.__args if self.__args else [None]           # if empty return only the root node
+        if not self.__args:
+            return [None]                   # if empty return only the root node
+
+        sub_paths = self.__args
+
+        if self.merge and self.merge_a not in sub_paths:
+            sub_paths.insert(0, self.merge_a)
+
+        if self.rename and self.rename_to not in sub_paths:
+            sub_paths.insert(0, self.rename_to)
+
+        return sub_paths
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -129,7 +163,7 @@ class CmdNode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return ("CmdNode:{move:%s, exclude:%s, array:%s, sequence:%s, filename:%s, "
-                "indent:%s, verbose:%s, sub_paths:%s}") %  \
-               (self.__opts.move, self.exclude, self.array, self.sequence, self.filename,
+        return "CmdNode:{rename:%s, merge:%s, exclude:%s, array:%s, sequence:%s, filename:%s, " \
+                "indent:%s, verbose:%s, sub_paths:%s}" %  \
+               (self.__opts.rename, self.__opts.merge, self.exclude, self.array, self.sequence, self.filename,
                 self.indent, self.verbose, self.__args)
