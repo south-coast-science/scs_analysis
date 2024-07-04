@@ -194,4 +194,5 @@ if __name__ == '__main__':
         exit(1)
 
     finally:
-        logger.info("documents: %d processed: %d output: %d" % (document_count, processed_count, output_count))
+        logger.info("documents: %d processed: %d output: %d rejected: %d" %
+                    (document_count, processed_count, output_count, document_count - output_count))
