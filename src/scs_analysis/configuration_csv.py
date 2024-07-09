@@ -165,7 +165,7 @@ if __name__ == '__main__':
                 logger.info("-")
                 logger.info(path)
 
-                csv_generator.generate(configs, [node], path)
+                csv_generator.generate(configs, [node], path, sortable=True)
 
         if cmd.latest:
             logger.info(cmd.latest)
