@@ -165,11 +165,11 @@ if __name__ == '__main__':
                 logger.info("-")
                 logger.info(path)
 
-                csv_generator.generate(configs, [node], path)
+                csv_generator.generate(configs, [node], path, sortable=True)
 
         if cmd.latest:
             logger.info(cmd.latest)
-            csv_generator.generate(configs, cmd.nodes, cmd.latest)
+            csv_generator.generate(configs, cmd.nodes, cmd.latest, sortable=True)
 
         if cmd.diff_histories or cmd.full_histories:
             if cmd.output_csv_dir is not None:
@@ -189,7 +189,7 @@ if __name__ == '__main__':
                 response = configuration_finder.find(auth.id_token, tag, True, cmd.request_mode())
                 configs = sorted(response)
 
-                csv_generator.generate(configs, cmd.nodes, path)
+                csv_generator.generate(configs, cmd.nodes, path, sortable=True)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -29,8 +29,8 @@ class ConfigurationCSVGenerator(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def generate(self, selected_configs, selected_nodes, file_path):
-        jstr = '\n'.join([JSONify.dumps(config) for config in selected_configs])
+    def generate(self, selected_configs, selected_nodes, file_path, **kwargs):
+        jstr = '\n'.join([JSONify.dumps(config, **kwargs) for config in selected_configs])
         node_args = self.COMMON_NODES + ['val.' + selected_node for selected_node in selected_nodes]
 
         if selected_nodes:
