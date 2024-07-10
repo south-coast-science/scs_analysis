@@ -62,12 +62,13 @@ from scs_analysis.cmd.cmd_device_monitor_status import CmdDeviceMonitorStatus
 from scs_core.aws.monitor.device.device_monitor_status_manager import DeviceMonitorStatusManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException
 
 from scs_core.data.json import JSONify
+
+from scs_core.estate.device_tag import DeviceTag
 
 from scs_core.sys.logging import Logging
 
@@ -117,7 +118,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # validation...
 
-        if cmd.tag_filter is not None and cmd.exact_match and not CognitoDeviceCredentials.is_valid_tag(cmd.tag_filter):
+        if cmd.tag_filter is not None and cmd.exact_match and not DeviceTag.is_valid(cmd.tag_filter):
             logger.error("The device tag '%s' is not valid." % cmd.tag_filter)
             exit(2)
 
