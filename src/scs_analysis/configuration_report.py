@@ -33,11 +33,12 @@ import sys
 from scs_analysis.cmd.cmd_configuration_report import CmdConfigurationReport
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_device_finder import CognitoDeviceFinder
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPNotFoundException
+
+from scs_core.estate.device_tag import DeviceTag
 
 from scs_core.sys.command import Command
 from scs_core.sys.filesystem import Filesystem
@@ -95,7 +96,7 @@ if __name__ == '__main__':
         # validation...
 
         for device_tag in cmd.device_tags:
-            if not CognitoDeviceCredentials.is_valid_tag(device_tag):
+            if not DeviceTag.is_valid(device_tag):
                 logger.error("the device tag '%s' is not valid." % device_tag)
                 exit(2)
 
