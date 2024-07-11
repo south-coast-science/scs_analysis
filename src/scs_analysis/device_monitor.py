@@ -47,13 +47,14 @@ from scs_core.aws.manager.byline.byline_finder import BylineFinder
 from scs_core.aws.monitor.device.device_monitor_specification_manager import DeviceMonitorSpecificationManager
 
 from scs_core.aws.security.cognito_client_credentials import CognitoClientCredentials
-from scs_core.aws.security.cognito_device import CognitoDeviceCredentials
 from scs_core.aws.security.cognito_login_manager import CognitoLoginManager
 
 from scs_core.client.http_exception import HTTPException, HTTPNotFoundException
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONify
+
+from scs_core.estate.device_tag import DeviceTag
 
 from scs_core.email.email import EmailRecipient
 
@@ -107,7 +108,7 @@ if __name__ == '__main__':
             logger.error("The email address '%s' is not valid." % cmd.email)
             exit(2)
 
-        if cmd.device_tag is not None and cmd.exact_match and not CognitoDeviceCredentials.is_valid_tag(cmd.device_tag):
+        if cmd.device_tag is not None and cmd.exact_match and not DeviceTag.is_valid(cmd.device_tag):
             logger.error("The device tag '%s' is not valid." % cmd.device_tag)
             exit(2)
 
