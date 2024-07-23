@@ -55,6 +55,9 @@ default mode:
 array mode:
 [{"val": {"hmd": 73.5, "tmp": 10.8}, "rec": "2019-02-17T08:56:53Z"},
 {"val": {"hmd": 73.6, "tmp": 10.8}, "rec": "2019-02-17T08:57:53Z"}]
+
+RESOURCES
+https://jsonlines.org
 """
 
 import json

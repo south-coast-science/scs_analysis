@@ -43,6 +43,9 @@ Array mode:
 
 SEE ALSO
 scs_analysis/csv_writer
+
+RESOURCES
+https://jsonlines.org
 """
 
 import sys
